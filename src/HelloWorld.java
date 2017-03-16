@@ -8,5 +8,6 @@ public class HelloWorld {
         System.out.println("Jesse Gaulin");
         System.out.println("Jack Moore");
         System.out.println("Jacob Komissar");
+        System.out.println("Kenneth Levasseur");
     }
 }
