@@ -20,8 +20,10 @@
 
 ## Editor user project files
 # IntelliJ
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/misc.xml
+.idea/*
+
+.idea
 # Emacs
 *~
 \#*\#
