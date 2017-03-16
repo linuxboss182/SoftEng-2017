@@ -17,3 +17,11 @@
 *.zip
 *.tar.gz
 *.rar
+
+## Editor user project files
+# IntelliJ
+.idea/workspace.xml
+.idea/tasks.xml
+# Emacs
+*~
+\#*\#
