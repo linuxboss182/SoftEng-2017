@@ -20,8 +20,9 @@
 
 ## Editor user project files
 # IntelliJ
-.idea/misc.xml
-.idea/*
+.idea/workspace.xml
+.idea/tasks.xml
+out/
 
 .idea
 # Emacs
