@@ -4,17 +4,17 @@ package Entities;
  * Created by jtgaulin on 3/29/17.
  */
 public class Node {
+    private int x;
+    private int y;
+    private String name;
+    private String desc;
+
     public Node(int x, int y, String name, String desc) {
         this.x = x;
         this.y = y;
         this.name = name;
         this.desc = desc;
     }
-
-    private int x;
-    private int y;
-    private String name;
-    private String desc;
 
     public int getX() {
         return x;
