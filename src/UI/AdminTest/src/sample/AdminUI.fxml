@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button mnemonicParsing="false" text="Logout" />
+                <Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
+                <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
+                <Pane prefHeight="30.0" prefWidth="354.0" />
+            </items>
+        </ToolBar>
+    </bottom>
+    <center>
+        <SplitPane orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
+                    <children>
+                        <Label layoutX="26.0" layoutY="37.0" text="Room Name " />
+                        <Label layoutX="26.0" layoutY="78.0" text="Room Description" />
+                        <TextField fx:id="nameField" layoutX="134.0" layoutY="33.0" />
+                        <TextField fx:id="descriptField" layoutX="134.0" layoutY="74.0" />
+                  <Button fx:id="addRoomBtn" layoutX="174.0" layoutY="193.0" mnemonicParsing="false" onMouseClicked="#addRoomClicked" text="Add room" />
+                  <TextField layoutX="135.0" layoutY="111.0" fx:id="xCoordField" />
+                  <TextField fx:id="YCoordField" layoutX="135.0" layoutY="150.0" />
+                  <Label layoutX="26.0" layoutY="115.0" text="Room X" />
+                  <Label layoutX="26.0" layoutY="154.0" text="Room Y" />
+                  <ImageView fitHeight="620.0" fitWidth="828.0" layoutX="324.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@4_thefourthfloor.png" />
+                     </image>
+                  </ImageView>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </center>
+    <top>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    </top>
+</BorderPane>
