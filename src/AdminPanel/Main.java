@@ -1,4 +1,4 @@
-package sample;
+package AdminPanel;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("AdminUI.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../Resources/AdminUI.fxml"));
         //primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 1174, 722));
         primaryStage.show();

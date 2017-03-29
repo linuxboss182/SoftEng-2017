@@ -1,4 +1,4 @@
-package sample;
+package AdminPanel;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,14 +19,14 @@ public class Controller {
     @FXML
     private ImageView imageViewMap;
 
+    @FXML
     private void addRoomBtnClicked() {
-
 
     }
 
+    @FXML
     private void mapClicked() {
 
     }
-
 
 }
