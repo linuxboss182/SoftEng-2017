@@ -42,8 +42,8 @@ CREATE TABLE Nodes (
 );
 
 CREATE TABLE Edges (
-    node1 integer references Nodes(nodeID) NOT NULL
-  , node2 integer references Nodes(nodeID) NOT NULL
+    node1 integer references Nodes(nodeID) NOT NULL ON DELETE CASCADE
+  , node2 integer references Nodes(nodeID) NOT NULL ON DELETE CASCADE
 );
 
 CREATE TABLE Rooms (
