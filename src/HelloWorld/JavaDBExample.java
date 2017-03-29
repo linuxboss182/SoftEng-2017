@@ -26,8 +26,7 @@ public class JavaDBExample {
         Connection connection = null;
 
         try {
-            // substitute your database name for myDB
-            connection = DriverManager.getConnection("jdbc:derby:FFSM;create=true");
+            connection = DriverManager.getConnection("jdbc:derby:DB;create=true");
         } catch (SQLException e) {
             System.out.println("Connection failed. Check output console.");
             e.printStackTrace();
