@@ -10,7 +10,7 @@
     <top>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-                <TextField prefHeight="25.0" prefWidth="195.0" />
+                <TextField prefHeight="25.0" prefWidth="195.0" promptText="Enter Room Number or  Name" />
                 <Button mnemonicParsing="false" text="Search" />
             </items>
         </ToolBar>

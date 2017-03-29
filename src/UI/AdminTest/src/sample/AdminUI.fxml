@@ -24,14 +24,14 @@
                     <children>
                         <Label layoutX="26.0" layoutY="37.0" text="Room Name " />
                         <Label layoutX="26.0" layoutY="78.0" text="Room Description" />
-                        <TextField fx:id="nameField" layoutX="134.0" layoutY="33.0" />
-                        <TextField fx:id="descriptField" layoutX="134.0" layoutY="74.0" />
+                        <TextField fx:id="nameField" layoutX="134.0" layoutY="33.0" promptText="Enter room name" />
+                        <TextField fx:id="descriptField" layoutX="134.0" layoutY="74.0" promptText="Enter Description" />
                   <Button fx:id="addRoomBtn" layoutX="174.0" layoutY="193.0" mnemonicParsing="false" onMouseClicked="#addRoomClicked" text="Add room" />
-                  <TextField layoutX="135.0" layoutY="111.0" fx:id="xCoordField" />
-                  <TextField fx:id="YCoordField" layoutX="135.0" layoutY="150.0" />
+                  <TextField layoutX="135.0" layoutY="111.0" promptText="Enter X axis" fx:id="xCoordField" />
+                  <TextField fx:id="YCoordField" layoutX="135.0" layoutY="150.0" promptText="Enter Y axis" />
                   <Label layoutX="26.0" layoutY="115.0" text="Room X" />
                   <Label layoutX="26.0" layoutY="154.0" text="Room Y" />
-                  <ImageView fitHeight="620.0" fitWidth="828.0" layoutX="324.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="620.0" fitWidth="828.0" layoutX="319.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@4_thefourthfloor.png" />
                      </image>
