@@ -4,10 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.application.Platform;
 
-public class Controller {
+public class Editor {
     @FXML
     private Button addRoomBtn;
+    @FXML
+    private Button logoutBtn;
     @FXML
     private TextField nameField;
     @FXML
@@ -21,12 +24,13 @@ public class Controller {
 
     @FXML
     private void addRoomBtnClicked() {
-
     }
 
     @FXML
     private void mapClicked() {
-
     }
 
+    @FXML
+    private void logoutBtnClicked() {
+    }
 }
