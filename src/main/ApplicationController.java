@@ -1,4 +1,4 @@
-package Main;
+package main;
 import javafx.application.Application;
 
 /**
@@ -7,7 +7,7 @@ import javafx.application.Application;
 public class ApplicationController {
 
     public static void main(String[] args) {
-        Application.launch(UserPanel.Window.class, args);
+        Application.launch(userpanel.Window.class, args);
     }
 
 }

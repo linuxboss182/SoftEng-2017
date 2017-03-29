@@ -1,4 +1,4 @@
-package Entities;
+package entities;
 
 /**
  * Created by jtgaulin on 3/29/17.

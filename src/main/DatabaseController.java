@@ -2,7 +2,7 @@
 // * Created by WilsonWong on 3/19/2017.
 // */
 //
-//package Main;
+//package main;
 //import java.sql.*;
 //
 //public class DatabaseController {
