@@ -24,7 +24,10 @@
 .idea/tasks.xml
 out/
 
-.idea
+.gradle
+/build/
+bin/
+
 # Emacs
 *~
 \#*\#
