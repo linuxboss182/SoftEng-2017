@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SoftEng-2017.iml" filepath="$PROJECT_DIR$/SoftEng-2017.iml" />
-      <module fileurl="file://$PROJECT_DIR$/init/init.iml" filepath="$PROJECT_DIR$/init/init.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitRepo.iml" filepath="$PROJECT_DIR$/.idea/modules/GitRepo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitRepo_main.iml" filepath="$PROJECT_DIR$/.idea/modules/GitRepo_main.iml" group="GitRepo" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitRepo_test.iml" filepath="$PROJECT_DIR$/.idea/modules/GitRepo_test.iml" group="GitRepo" />
     </modules>
   </component>
 </project>

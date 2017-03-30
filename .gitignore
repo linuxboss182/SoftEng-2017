@@ -11,7 +11,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip
@@ -22,12 +21,16 @@
 # IntelliJ
 .idea/workspace.xml
 .idea/tasks.xml
-out/
+/out/
 
 .gradle
 /build/
-bin/
+/bin/
 
 # Emacs
 *~
 \#*\#
+.\#*
+
+# OS X
+.DS_Store
