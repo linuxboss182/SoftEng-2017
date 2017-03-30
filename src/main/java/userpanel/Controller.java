@@ -5,7 +5,13 @@ import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.awt.*;
 
@@ -15,6 +21,10 @@ public class Controller
 	private Button logAsAdmin;
 	@FXML
 	private ImageView imageViewMap;
+	@FXML
+	public VBox contentVBox;
+	@FXML
+	public HBox contentHBox;
 
 	@FXML
 	private void logAsAdminClicked() throws Exception{
@@ -40,7 +50,30 @@ public class Controller
 		imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("["+e.getX()+", "+e.getY()+"]");
 			//Paint something at that location
+			paintOnLocation();
+
 
 		});
 	}
+	public VBox getContentVBox() {
+		return contentVBox;
+	}
+
+	//private String imageFile;
+	public void paintOnLocation() {
+		Image map4 = new Image("file:resources/4_thefourthfloor.png");
+		ImageView imageViewMap = new ImageView();
+		imageViewMap.setImage(map4);
+		Circle circ = new Circle(50);
+		circ.setTranslateX(120);
+		circ.setTranslateY(10);
+		circ.setCenterX(50);
+		circ.setCenterY(50);
+		circ.setFill(new ImagePattern(map4, 0.2, 0.2, 0.4, 0.4, true));
+
+		contentHBox.getChildren().add(circ);
+
+	}
+
+
 }
