@@ -15,7 +15,7 @@ public class Controller
 
 	@FXML
 	private void logAsAdminClicked() throws Exception{
-		Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
+//		Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
 //		adminScene.setTitle("Faulkner Hospital Navigator");
 //		primaryStage.setScene(new Scene(root, 1174, 722));
 //		primaryStage.setScene(adminStage);
