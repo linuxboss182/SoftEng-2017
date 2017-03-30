@@ -39,6 +39,11 @@ dependencies {
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
+
+    /* Derby jdbc thing. From here:
+https://mvnrepository.com/artifact/org.apache.derby/derby
+*/
+    compile group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'
 }
 
 
