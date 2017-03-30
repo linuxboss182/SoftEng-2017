@@ -1,49 +1,41 @@
 package entities;
 
+import java.util.HashSet;
 
+/* DEV NOTES
+
+getX and getY should eventually be replaced with getCoordinates or
+something similar; we should never need to get just one of the two.
+
+ */
+
+/**
+ * Represents a node in the graph, and its adjacencies.
+ *
+ */
 public class Node
 {
 	private int x;
 	private int y;
-	private String name;
-	private String desc;
+	private HashSet<Node> adjacencies;
 
-	public Node(int x, int y, String name, String desc) {
+	public Node(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.name = name;
-		this.desc = desc;
 	}
 
 	public int getX() {
-		return x;
+		return this.x;
 	}
 
 	public int getY() {
-		return y;
+		return this.y;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setX(int x) {
+	/** Set node coordinates */
+	public moveTo(int x, int y) {
 		this.x = x;
-	}
-
-	public void setY(int y) {
 		this.y = y;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
 }
