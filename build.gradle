@@ -6,6 +6,12 @@
  * user guide available at https://docs.gradle.org/3.4.1/userguide/tutorial_java_projects.html
  */
 
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
+
 buildscript { // this stuff operates on the rest of the scrpt; adds plugin for the script itself
     dependencies {
         classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
