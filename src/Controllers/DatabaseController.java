@@ -42,29 +42,13 @@ public class DatabaseController {
             ");";
 
     public DatabaseController(){
-        db_connection = null;
-        this.connection_string = "jdbc:derby:DB;create=true";
-
-        try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        } catch(ClassNotFoundException e) {
-            System.out.println("Java DB Driver not found. Add the classpath to your module.");
-        }
-        System.out.println("Stuff works");
-
-        try {
-            // substitute your database name for myDB
-            db_connection = DriverManager.getConnection(this.connection_string);
-        } catch (SQLException e) {
-            System.out.println("Connection failed. Check output console.");
-            e.printStackTrace();
-            return;
-        }
-        System.out.println("Java DB connection established!");
-        initSchema();
+        initDB(this.connection_string);
     }
 
     public DatabaseController(String connection_string){
+        initDB(connection_string);
+    }
+    private boolean initDB(String connection_string){
         db_connection = null;
         this.connection_string = connection_string;
 
@@ -72,6 +56,7 @@ public class DatabaseController {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
         } catch(ClassNotFoundException e) {
             System.out.println("Java DB Driver not found. Add the classpath to your module.");
+            return false;
         }
         System.out.println("Stuff works");
 
@@ -81,11 +66,11 @@ public class DatabaseController {
         } catch (SQLException e) {
             System.out.println("Connection failed. Check output console.");
             e.printStackTrace();
-            return;
+            return false;
         }
         System.out.println("Java DB connection established!");
+        return true;
     }
-    //db get/set methods below
 
     //initializes the database empty with the desired schema
     //returns true if success, false if error
