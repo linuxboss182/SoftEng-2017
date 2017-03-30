@@ -44,22 +44,69 @@ public class Node
 		this.y = y;
 	}
 
+
+	/**
+	 * Create an edge between this and the given node.
+	 *
+	 * Adds the given node to this node's adjacencies, and vice versa.
+	 *
+	 * @param n The node to connect to this node
+	 *
+	 * @return false if the edge already existed
+	 */
 	public boolean connect(Node n) {
 		return false;
 	}
 
+	/**
+	 * Remove the edge between this and the given node.
+	 *
+	 * Removes the given node from this node's adjacencies, and vice versa.
+	 *
+	 * @param n The node to disconnect from this node
+	 *
+	 * @return false if the nodes were not connected
+	 */
 	public boolean disconnect(Node n) {
 		return false;
 	}
 
+	/**
+	 * Remove any edges between this and other nodes
+	 *
+	 * Remove this node from the adjacencies of all nodes adjacent to it,
+	 * and empty this node's adjacencies
+	 *
+	 * @return false if this node had no adjacencies
+	 */
 	public boolean disconnectAll(Node n) {
 		return false;
 	}
 
+	/**
+	 * Compute the distance between this and the given node
+	 *
+	 * @param n The node to calculate distance to
+	 *
+	 * @return The distance between this and the given node
+	 */
 	public double distance(Node n) {
 		return 0;
 	}
 
+	/**
+	 * Get angle between three Nodes.
+	 *
+	 * Calculates the angle of the turn taken when moving through this point
+	 * from A to B. An angle of 0 indicates no turn. A positive angle indicates
+	 * TODO:INCOMPLETE. A negative angle indicates TODO:INCOMPLETE.
+	 *
+	 * @param A The initial node for the angle
+	 * @param B The terminal node for the angle
+	 *
+	 * @return The angle of the turn through this point when moving from A to B.
+	 */
+	// TODO: Determine which way is positive (answer: whichever makes the math easier)
 	public double angle(Node A, Node B) {
 		return 0;
 	}
