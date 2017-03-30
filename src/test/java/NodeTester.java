@@ -1,16 +1,15 @@
 import entities.Node;
 import org.junit.Test;
 import org.junit.Assert;
-/** This is a class to test the Node class.
+/**
+ * This is a class to test the Node class.
  * It is more of an example than a necessity.
  * Created by Ted on 3/30/2017.
- */
-
-/** Basically what you do is write a function for each test you want to run
+ *
+ * Basically what you do is write a function for each test you want to run
  * Once you have all of the tests, you can run it
- */
 
-/** In these examples, I only use assertTrue, but there are others:
+ In these examples, I only use assertTrue, but there are others:
  *      Asserts:
  *      assertTrue(boolean) -- asserts that a condition is true
  *      assertFalse(boolean) -- asserts that a condition is false
