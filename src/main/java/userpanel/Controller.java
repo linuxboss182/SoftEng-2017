@@ -8,24 +8,24 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 
-public class Controller {
-    @FXML
-    private Button logAsAdmin;
+public class Controller
+{
+	@FXML
+	private Button logAsAdmin;
 
-    @FXML
-    private void logAsAdminClicked() throws Exception{
-//        Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-//        adminScene.setTitle("Faulkner Hospital Navigator");
-//        primaryStage.setScene(new Scene(root, 1174, 722));
-//        primaryStage.setScene(adminStage);
-//        adminScene.show();
+	@FXML
+	private void logAsAdminClicked() throws Exception{
+		Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
+//		adminScene.setTitle("Faulkner Hospital Navigator");
+//		primaryStage.setScene(new Scene(root, 1174, 722));
+//		primaryStage.setScene(adminStage);
+//		adminScene.show();
 
-        Parent root;
-        root = FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root, 1174, 722));
-        stage.show();
-
-    }
+		Parent root;
+		root = FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
+		Stage stage = new Stage();
+		stage.setTitle("My New Stage Title");
+		stage.setScene(new Scene(root, 1174, 722));
+		stage.show();
+	}
 }

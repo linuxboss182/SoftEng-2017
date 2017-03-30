@@ -1,9 +1,8 @@
 package entities;
 
-/**
- * Created by jtgaulin on 3/29/17.
- */
-public class Node {
+
+public class Node
+{
     private int x;
     private int y;
     private String name;
