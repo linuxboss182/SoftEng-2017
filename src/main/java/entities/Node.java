@@ -16,18 +16,18 @@ Todo items in this file: (not all TODOs in this file)
  */
 public class Node
 {
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	private HashSet<Node> adjacencies;
 
-	public Node(int x, int y) {
+	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.adjacencies = new HashSet<Node>();
 	}
 
 	/** Set node coordinates */
-	public void moveTo(int x, int y) {
+	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
