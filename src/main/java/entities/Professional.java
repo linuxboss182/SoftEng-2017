@@ -16,7 +16,7 @@ public class Professional
 	}
 
 	public Professional() {
-		this("John Doe", "Anonymous", null);
+		this("John Doe", "Anonymous");
 	}
 	// Methods
 
