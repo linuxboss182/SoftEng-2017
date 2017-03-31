@@ -43,12 +43,18 @@ public class Controller
 //		primaryStage.setScene(adminStage);
 //		adminScene.show();
 
-		Parent root;
-		root = FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-		Stage stage = new Stage();
-		stage.setTitle("My New Stage Title");
-		stage.setScene(new Scene(root, 1174, 722));
-		stage.show();
+		Parent login_prompt = FXMLLoader.load(getClass().getResource("/main/java/resources/LoginPrompt.fxml"));
+		Scene login_prompt_scene = new Scene(login_prompt);
+		Stage app_stage =(Stage) ((Node) event.getSource()).getScene().getWindow();
+		app_stage.setScene(login_prompt_scene);
+		app_stage.show();
+	}
+
+	//this would be called with canLogin
+	private void loginSuccessful(){
+
+		Parent admin_UI_parent = FXMLLoader.load(getClass().getResource("/main/java/resources/AdminUI.fxml"));
+
 	}
 
 	@FXML
