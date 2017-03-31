@@ -2,11 +2,19 @@ package entities;
 
 /**
  * A class for Room(s).
- * TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
+ *
  */
+//TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
 {
-	// Constructors
+
+	/* Attributes */
+	private String name;
+	private String description;
+	private String image; // The String path of the image for this room
+	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
+
+	/* Constructors */
 	public Room(String name, String description, String image) {
 		this.name = name;
 		this.description = description;
@@ -21,11 +29,6 @@ public class Room
 		this("Anonymous Room", "A Room with no name or special description.");
 	}
 
-	// Methods
+	/* Methods */
 
-	// Attributes
-	private String name;
-	private String description;
-	private String image; // The String path of the image for this room
-	private static final String DEFAULT_IMAGE_PATH = "/src/main/resources/MysteryRoom.png"; // TODO: make sure this path works
 }
