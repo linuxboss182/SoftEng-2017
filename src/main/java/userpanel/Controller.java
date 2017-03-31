@@ -1,9 +1,11 @@
 package userpanel;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -16,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 import java.awt.*;
+import java.io.IOException;
 
 import static java.awt.Color.black;
 
@@ -31,25 +34,40 @@ public class Controller
 	public HBox contentHBox;
 	@FXML
 	public AnchorPane contentAnchor;
-
+	@FXML
+	private Slider floorSlider;
 
 
 
 	@FXML
-	private void logAsAdminClicked() throws Exception{
-//		Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-//		adminScene.setTitle("Faulkner Hospital Navigator");
-//		primaryStage.setScene(new Scene(root, 1174, 722));
-//		primaryStage.setScene(adminStage);
-//		adminScene.show();
+	private void logAsAdminClicked() throws IOException{
 
-		Parent root;
-		root = FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-		Stage stage = new Stage();
-		stage.setTitle("My New Stage Title");
-		stage.setScene(new Scene(root, 1174, 722));
-		stage.show();
+		Parent login_prompt;
+		login_prompt = FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
+		Scene login_prompt_scene = new Scene(login_prompt);
+		app_stage.setScene(login_prompt_scene);
+		app_stage.show();
+
 	}
+
+	//this would be called with canLogin
+//	private void loginSuccessful() throws Exception{
+//
+//		Parent admin_UI_parent = FXMLLoader.load(getClass().getResource("AdminUI.fxml"));
+//		Scene admin_UI_scene = new Scene(admin_UI_parent);
+//		Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		app_stage.setScene(admin_UI_scene);
+//		app_stage.show();
+//
+//
+//	}
+
+//	@FXML
+//	private void changeFloor()throws Exception{
+//
+//		int newFloor = (int) floorSlider.getValue();
+//		imageViewMap.setImage()
+//	}
 
 	@FXML
 	private void mapClicked() {
