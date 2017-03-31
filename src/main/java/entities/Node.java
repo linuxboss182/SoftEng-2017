@@ -9,9 +9,6 @@ something similar; we should never need to get just one of the two.
 
 Todo items in this file: (not all TODOs in this file)
  */
-//TODO: implement Node.connect()
-//TODO: implement Node.disconnect()
-//TODO: implement Node.disconnectAll()
 //TODO: implement Node.distance()
 //TODO: implement Node.angle()
 
@@ -56,7 +53,8 @@ public class Node
 	 * @return false if the edge already existed
 	 */
 	public boolean connect(Node n) {
-		return false;
+		n.adjacencies.add(this);
+		return this.adjacencies.add(n);
 	}
 
 	/**
@@ -69,7 +67,8 @@ public class Node
 	 * @return false if the nodes were not connected
 	 */
 	public boolean disconnect(Node n) {
-		return false;
+		n.adjacencies.remove(this);
+		return this.adjacencies.remove(n);
 	}
 
 	/**
@@ -79,6 +78,8 @@ public class Node
 	 * and empty this node's adjacencies
 	 */
 	public void disconnectAll() { // void only because HashSet.clear() is void-typed
+		this.adjacencies.stream().forEach(node -> node.adjacencies.remove(this));
+		this.adjacencies.clear();
 	}
 
 	/**
