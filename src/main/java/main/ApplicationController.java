@@ -10,6 +10,7 @@ public class ApplicationController {
 		dbc.initConnection();
 		dbc.initDB();
 		dbc.insertSampleData();
+		dbc.exampleQueries();
 		dbc.close();
 	}
 
