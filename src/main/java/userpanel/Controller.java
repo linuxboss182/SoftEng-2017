@@ -5,26 +5,35 @@ import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 import java.awt.*;
 
+import static java.awt.Color.black;
+
 public class Controller
 {
 	@FXML
 	private Button logAsAdmin;
 	@FXML
-	private ImageView imageViewMap;
+	private ImageView imageViewMap = new ImageView();
 	@FXML
 	public VBox contentVBox;
 	@FXML
 	public HBox contentHBox;
+	@FXML
+	public AnchorPane contentAnchor;
+
+
+
 
 	@FXML
 	private void logAsAdminClicked() throws Exception{
@@ -47,10 +56,11 @@ public class Controller
 		//System.out.print("Map Clicked");
 		imageViewMap.setPickOnBounds(true);
 
+
 		imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("["+e.getX()+", "+e.getY()+"]");
 			//Paint something at that location
-			paintOnLocation();
+			paintOnLocation(e.getX(), e.getY());
 
 
 		});
@@ -59,19 +69,17 @@ public class Controller
 		return contentVBox;
 	}
 
-	//private String imageFile;
-	public void paintOnLocation() {
-		Image map4 = new Image("file:resources/4_thefourthfloor.png");
-		ImageView imageViewMap = new ImageView();
-		imageViewMap.setImage(map4);
-		Circle circ = new Circle(50);
-		circ.setTranslateX(120);
-		circ.setTranslateY(10);
-		circ.setCenterX(50);
-		circ.setCenterY(50);
-		circ.setFill(new ImagePattern(map4, 0.2, 0.2, 0.4, 0.4, true));
+	public void paintOnLocation(double x, double y) {
+		//using absolute path for right now, relative path isnt working
+		Image map4 = new Image("/4_thefourthfloor.png");
 
-		contentHBox.getChildren().add(circ);
+		imageViewMap.setImage(map4);
+		Circle circ;
+		circ = new Circle(x,y,10, Color.web("0x0000FF") );
+		//circ.setFill(new ImagePattern(map4, x, y, 0.4, 0.4, true));
+
+		contentAnchor.getChildren().add(circ);
+		circ.setVisible(true);
 
 	}
 

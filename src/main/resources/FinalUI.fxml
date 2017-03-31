@@ -31,7 +31,7 @@
 	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<TextField prefHeight="25.0" prefWidth="195.0" promptText="Enter Room Number or  Name" />
+				<TextField prefHeight="25.0" prefWidth="195.0" promptText="Enter Room Number or Name" />
 				<Button mnemonicParsing="false" text="Search" />
 			<Region prefHeight="30.0" prefWidth="577.0" />
 			<TextField promptText="Start" />
@@ -56,16 +56,16 @@
 	<center>
 		<SplitPane dividerPositions="0.790625" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
 			<items>
-				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
+				<AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
 					<children>
-						<ImageView fitHeight="501.0" fitWidth="970.0" layoutX="1.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true" />
+						<ImageView fitHeight="463.0" fitWidth="651.0" layoutX="54.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true" />
 				  <HBox fx:id="contentHBox" alignment="CENTER" layoutX="-4.0" prefHeight="509.0" prefWidth="766.0">
 					 <children>
 						<VBox fx:id="contentVBox" alignment="CENTER" prefHeight="509.0" prefWidth="769.0">
 						   <children>
 							  <ImageView fx:id="imageViewMap" fitHeight="467.0" fitWidth="681.0" onMouseClicked="#mapClicked" pickOnBounds="true" preserveRatio="true">
 								 <image>
-									<Image url="@4_thefourthfloor.png" />
+									<Image url="file:/C:/Users/s7sal/IdeaProjects/SoftEng-2017/src/main/resources/4_thefourthfloor.png" />
 								 </image>
 							  </ImageView>
 						   </children>
