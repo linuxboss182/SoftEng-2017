@@ -1,5 +1,6 @@
-# Compiled class file
+# Build files
 *.class
+/out/
 
 # Log file
 *.log
@@ -17,15 +18,19 @@
 *.tar.gz
 *.rar
 
+# Gradle
+.gradle
+/build/
+
+
 ## Editor user project files
+# Any
+
 # IntelliJ
 .idea/workspace.xml
 .idea/tasks.xml
-/out/
+.idea/inspectorProfiles
 
-.gradle
-/build/
-/bin/
 
 # Emacs
 *~
