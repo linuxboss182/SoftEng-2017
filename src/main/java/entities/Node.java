@@ -11,6 +11,7 @@ Todo items in this file: (not all TODOs in this file)
  */
 //TODO: implement Node.distance()
 //TODO: implement Node.angle()
+//TODO: clean up Node.angleTo()
 
 /**
  * Represents a node in the graph, and its adjacencies.
@@ -92,7 +93,7 @@ public class Node
 	public double distance(Node n) {
 		double x2 = n.getX();
 		double y2 = n.getY();
-		return Math.sqrt(Math.pow((y2 - y), 2) + Math.pow((x2 - x), 2));
+		return Math.sqrt(Math.pow((y2 - this.y), 2) + Math.pow((x2 - this.x), 2));
 	}
 
 	/**
@@ -113,34 +114,42 @@ public class Node
 		 double AtoThis = A.angleTo(this);
 		 double thisToB = this.angleTo(B);
 		 double diff = thisToB - AtoThis;
-		 return diff + 450 % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
+		 return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
 	}
 
 
-	/**Node.angleTo(Node n): calculates the angle between the two points.
-	 Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then the expected value should be 45 (degrees)
-	 takes in a Node and returns a double
+	/**
+	 * Calculate the angle between the two points.
+	 *
+	 * Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then
+	 * the expected value should be 45 (degrees)
+	 *
+	 * @param n The other node.
+	 *
+	 * @return the angle between the nodes
 	 **/
 	private double angleTo(Node n) {
 		double x2 = n.getX();
 		double y2 = n.getY();
-		if (y2 > y && x2 > x) {
-			return (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x2 > x) {
-			return 360 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x2 == x) {
+		if (y2 > this.y && x2 > this.x) {
+			return (Math.atan((y2 - this.y)/(x2 - this.x))*180)/Math.PI;
+		} else if (y2 > this.y && this.x > x2) {
+			return 180 + (Math.atan((y2 - this.y)/(x2 - this.x))*180)/Math.PI;
+		} else if (this.y > y2 && this.x > x2) {
+			return 180 + (Math.atan((y2 - this.y)/(x2 - this.x))*180)/Math.PI;
+		} else if (this.y > y2 && x2 > this.x) {
+			return 360 + (Math.atan((y2 - this.y)/(x2 - this.x))*180)/Math.PI;
+		} else if (y2 > this.y && x2 == this.x) {
 			return 90;
-		} else if (y2 == y && x > x2) {
+		} else if (y2 == this.y && this.x > x2) {
 			return 180;
-		} else if (y > y2 && x2 == x) {
+		} else if (this.y > y2 && x2 == this.x) {
 			return 270;
-		} else if (y == y2 && x2 > x) {
+		} else if (this.y == y2 && x2 > this.x) {
 			return 0;
-		} else return Double.NaN;
+		} else {
+			return Double.NaN;
+		}
 	}
 
 }
