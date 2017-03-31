@@ -41,8 +41,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     /* Derby jdbc thing. From here:
-https://mvnrepository.com/artifact/org.apache.derby/derby
-*/
+    https://mvnrepository.com/artifact/org.apache.derby/derby
+    */
     compile group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'
 }
 
