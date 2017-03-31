@@ -1,6 +1,8 @@
 package entities;
 
 import java.util.HashSet;
+import java.util.Set;
+
 
 /* DEV NOTES
 This should inherit from javafx.geometry.Point2D.
@@ -23,7 +25,7 @@ public class Node
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.adjacencies = new HashSet<Node>();
+		this.adjacencies = new HashSet<>();
 	}
 
 	/** Set node coordinates */
@@ -32,6 +34,12 @@ public class Node
 		this.y = y;
 	}
 
+	/**
+	 * Get a copy of this node's adjacencies.
+	 */
+	public Set<Node> getNeighbors() {
+		return new HashSet<>(); //TODO: Implement Node.getNeighbors()
+	}
 
 	/**
 	 * Create an edge between this and the given node.
