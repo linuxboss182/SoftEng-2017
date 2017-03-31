@@ -11,7 +11,7 @@ public class Window
 {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-		Parent root = FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
+		Parent root = FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 		primaryStage.setScene(new Scene(root, 1174, 722));
 		primaryStage.show();
 	}
