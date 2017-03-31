@@ -37,31 +37,37 @@ public class Controller
 
 
 	@FXML
-	private void logAsAdminClicked() throws Exception{
-//		Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI.fxml"));
-//		adminScene.setTitle("Faulkner Hospital Navigator");
-//		primaryStage.setScene(new Scene(root, 1174, 722));
-//		primaryStage.setScene(adminStage);
-//		adminScene.show();
+	private void logAsAdminClicked() throws Exception {
+/*
+Parent root = (AnchorPane)FXMLLoader.load(getClass().getResource("/AdminUI
+.fxml"));
+adminScene.setTitle("Faulkner Hospital Navigator");
+primaryStage.setScene(new Scene(root, 1174, 722));
+primaryStage.setScene(adminStage);
+adminScene.show();
+*/
 
-		Parent login_prompt = FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
+		Parent login_prompt = FXMLLoader.load(getClass()
+				.getResource("LoginPrompt.fxml"));
+
 		Scene login_prompt_scene = new Scene(login_prompt);
-		Stage app_stage =(Stage) ((Node) event.getSource()).getScene().getWindow();
+		Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		app_stage.setScene(login_prompt_scene);
 		app_stage.show();
+
 	}
 
 	//this would be called with canLogin
-	private void loginSuccessful() throws Exception{
-
-		Parent admin_UI_parent = FXMLLoader.load(getClass().getResource("AdminUI.fxml"));
-		Scene admin_UI_scene = new Scene(admin_UI_parent);
-		Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		app_stage.setScene(admin_UI_scene);
-		app_stage.show();
-
-
-	}
+//	private void loginSuccessful() throws Exception{
+//
+//		Parent admin_UI_parent = FXMLLoader.load(getClass().getResource("AdminUI.fxml"));
+//		Scene admin_UI_scene = new Scene(admin_UI_parent);
+//		Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		app_stage.setScene(admin_UI_scene);
+//		app_stage.show();
+//
+//
+//	}
 
 	@FXML
 	private void mapClicked() {
