@@ -28,6 +28,7 @@ public class Node
 	public Node(int x, int y) {
 		this.x = x;
 		this.y = y;
+		this.adjacencies = new HashSet<Node>();
 	}
 
 	public int getX() {
@@ -39,7 +40,7 @@ public class Node
 	}
 
 	/** Set node coordinates */
-	public moveTo(int x, int y) {
+	public void moveTo(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -76,11 +77,8 @@ public class Node
 	 *
 	 * Remove this node from the adjacencies of all nodes adjacent to it,
 	 * and empty this node's adjacencies
-	 *
-	 * @return false if this node had no adjacencies
 	 */
-	public boolean disconnectAll(Node n) {
-		return false;
+	public void disconnectAll() { // void only because HashSet.clear() is void-typed
 	}
 
 	/**
