@@ -1,9 +1,10 @@
 package main;
+
 import javafx.application.Application;
 
 
-public class ApplicationController {
-
+public class ApplicationController
+{
 	public static void main(String[] args) {
 		DatabaseController dbc = new DatabaseController();
 		dbc.initConnection();
@@ -15,7 +16,5 @@ public class ApplicationController {
 		Application.launch(userpanel.Window.class, args);
 
 	}
-
-
 }
 
