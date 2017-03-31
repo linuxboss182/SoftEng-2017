@@ -46,7 +46,6 @@ dependencies {
     compile group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'
 }
 
-
 jfx {
     // minimal requirement for jfxJar-task
     mainClass = 'main.ApplicationController'
@@ -63,3 +62,11 @@ sourceSets {
     }
 }
 
+// Use main class for jar
+jar {
+    manifest.attributes("Main-Class": "main.ApplicationController")
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+}
