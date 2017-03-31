@@ -1,11 +1,20 @@
 package entities;
 
+//TODO: Improve documentation
+
 /**
  * A class to represent someone in the hospital's staff
  */
 public class Professional
 {
-	// Constructors
+	/* Attributes */
+	private String name;
+	private String title;
+	private Room[] locations;
+
+
+	/* Constructors */
+
 	public Professional(String name, String title, Room... locations) {
 		// for anyone who didn't know:
 		// Room... locations allows infinite parameters of type Room
@@ -18,10 +27,8 @@ public class Professional
 	public Professional() {
 		this("John Doe", "Anonymous");
 	}
-	// Methods
 
-	// Attributes
-	private String name;
-	private String title;
-	private Room[] locations;
+
+	/* Methods */
+
 }

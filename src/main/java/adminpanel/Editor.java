@@ -14,11 +14,11 @@ public class Editor
 	@FXML
 	private TextField nameField;
 	@FXML
-	private TextField descriptField;
+	private TextField descriptionField;
 	@FXML
-	private TextField XcoordField;
+	private TextField xCoordField;
 	@FXML
-	private TextField YcoordField;
+	private TextField yCoordField;
 	@FXML
 	private ImageView imageViewMap;
 
