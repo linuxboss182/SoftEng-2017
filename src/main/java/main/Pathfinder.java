@@ -30,7 +30,7 @@ public class Pathfinder
 			int leftTurns = 0, rightTurns = 0;
 
 			// Determine the direction of the turn through a bunch of if statements
-			if(turnAngle >= rightMin1 && turnAngle < rightMax1 || turnAngle >= rightMin2 && turnAngle < rightMax2) {
+			if((turnAngle >= rightMin1 && turnAngle < rightMax1) || (turnAngle >= rightMin2 && turnAngle < rightMax2)) {
 				// Right Turn
 				if(rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
@@ -47,9 +47,10 @@ public class Pathfinder
 				// Figure out if there is a left or right turn available as well, then increment the counters
 				Node[] forks = path[i].getAdjacencies();
 				for(int j = 0; j < forks.length; j++) {
+					System.out.println("{" + forks[j].getX() + ", " + forks[j].getY() + "}");
 					double forkAngle = path[i].angle(path[i-1], forks[j]);
 					// Only checks for normal right and left turns (not including soft or hard variants)
-					if(forkAngle >= rightMin1 && forkAngle < rightMax1 || forkAngle >= rightMin2 && turnAngle < rightMax2) {
+					if((forkAngle >= rightMin1 && forkAngle < rightMax1 || forkAngle >= rightMin2 && turnAngle < rightMax2)) {
 						rightTurns++;
 					}
 					if(forkAngle >= softLeftMax && forkAngle < leftMax) {
@@ -85,7 +86,24 @@ public class Pathfinder
 	}
 
 	public static void main(String[] args) {
-		Node[] path = {new Node(1,1), new Node(1, 2), new Node(2,3), new Node(2, 4), new Node(1, 3), new Node(0, 4), new Node(-1,5), new Node(-2, 6), new Node(-3, 7), new Node(-2, 8)};
+
+		Node A = new Node(1,1);
+		Node B = new Node(1,2);
+		Node C = new Node(1, 3);
+		Node D = new Node(1, 4);
+
+		Node E = new Node(2, 2);
+		Node F = new Node(2, 3);
+
+		Node I = new Node(0, 3);
+		Node J = new Node(0, 2);
+
+		B.connect(E);
+		C.connect(F);
+		B.connect(J);
+		C.connect(I);
+
+		Node[] path = {A, B, C, D, new Node (2, 4)};
 		System.out.println(getTextDirections(path));
 	}
 }
