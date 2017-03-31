@@ -10,7 +10,7 @@ import org.junit.Assert;
  * Once you have all of the tests, you can run it
 
  In these examples, I only use assertTrue, but there are others:
- *      Asserts:
+ *      Asserts: Note:: Each of these methods also can take in a String as their first parameter as a fail message. Ex: fail() can be called as fail("") for the same result, or you could do fail("I don't want this to succeed")
  *      assertTrue(boolean) -- asserts that a condition is true
  *      assertFalse(boolean) -- asserts that a condition is false
  *      fail() -- fails a test with no message
