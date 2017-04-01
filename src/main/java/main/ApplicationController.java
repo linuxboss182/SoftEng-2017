@@ -7,9 +7,9 @@ public class ApplicationController
 {
 	public static void main(String[] args) {
 		DatabaseController dbc = new DatabaseController();
-		dbc.initConnection();
 		dbc.initDB();
-		dbc.insertSampleData();
+		dbc.initSchema();
+		dbc.initData();
 		dbc.exampleQueries();
 		dbc.close();
 

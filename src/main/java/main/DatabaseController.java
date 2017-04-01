@@ -46,7 +46,7 @@ public class DatabaseController {
 
 	//initializes the database empty with the desired schema
 	//returns true if success, false if error
-	private boolean initSchema(){
+	public boolean initSchema(){
 		boolean result;
 		Statement initSchema = null;
 		try {
@@ -103,7 +103,7 @@ public class DatabaseController {
 	//populates the database with initial data specified in the stored proc
 	//database must have schema before running this
 	//returns true if success, false if error
-	private boolean initData(){
+	public boolean initData(){
 		boolean result;
 		String[] data = StoredProcedures.getInitialData();
 		String insertion = "";
