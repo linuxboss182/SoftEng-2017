@@ -1,5 +1,6 @@
 package userpanel;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -51,13 +53,19 @@ public class Controller implements Initializable
 	}
 
 	@FXML
-	private void logAsAdminClicked() throws IOException{
+	private void logAsAdminClicked() throws IOException, InvocationTargetException {
+		Parent loginPrompt = (AnchorPane)FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
+		System.out.print("here");
+		Scene loginPromptScene = new Scene(loginPrompt);
+		Stage loginPromptStage = new Stage();
+		loginPromptStage.setScene(loginPromptScene);
 
-		Parent login_prompt;
-		login_prompt = FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
-		Scene login_prompt_scene = new Scene(login_prompt);
-		//app_stage.setScene(login_prompt_scene);
-		//app_stage.show();
+
+		loginPromptStage.showAndWait();
+
+
+		//primaryStage.setScene(login_prompt_scene);
+		//primaryStage.show();
 
 	}
 
