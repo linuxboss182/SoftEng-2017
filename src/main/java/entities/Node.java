@@ -1,14 +1,20 @@
 package entities;
 
 import java.util.HashSet;
+import java.util.Set;
+
 
 /* DEV NOTES
+This should inherit from javafx.geometry.Point2D.
 getX and getY should eventually be replaced with getCoordinates or
 something similar; we should never need to get just one of the two.
+
 Todo items in this file: (not all TODOs in this file)
  */
 //TODO: implement Node.distance()
 //TODO: implement Node.angle()
+//TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
+//TODO: clean up Node.angleTo()
 
 /**
  * Represents a node in the graph, and its adjacencies.
@@ -16,11 +22,11 @@ Todo items in this file: (not all TODOs in this file)
  */
 public class Node
 {
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	private HashSet<Node> adjacencies;
 
-	public Node(int x, int y) {
+	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.adjacencies = new HashSet<Node>();
@@ -34,21 +40,18 @@ public class Node
 		return this.y;
 	}
 
-	public Node[] getAdjacencies() {
-		Object[] objs = adjacencies.toArray();
-		Node[] nodes = new Node[objs.length];
-		for(int i = 0; i < nodes.length; i++) {
-			nodes[i] = (Node) objs[i];
-		}
-		return nodes;
-	}
-
 	/** Set node coordinates */
-	public void moveTo(int x, int y) {
+	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
 
+	/**
+	 * Get a copy of this node's adjacencies.
+	 */
+	public Set<Node> getNeighbors() {
+		return new HashSet<>(this.adjacencies);
+	}
 
 	/**
 	 * Create an edge between this and the given node.
@@ -97,9 +100,7 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		double x2 = n.getX();
-		double y2 = n.getY();
-		return Math.sqrt(Math.pow((y2 - y), 2) + Math.pow((x2 - x), 2));
+		return Math.sqrt(Math.pow((n.y - this.y), 2) + Math.pow((n.x - this.x), 2));
 	}
 
 	/**
@@ -117,37 +118,43 @@ public class Node
 	 */
 	// TODO: Determine which way is positive (answer: whichever makes the math easier)
 	public double angle(Node A, Node B) {
-		double AtoThis = A.angleTo(this);
-		double thisToB = this.angleTo(B);
-		double diff = thisToB - AtoThis;
-		return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
+		 double AtoThis = A.angleTo(this);
+		 double thisToB = this.angleTo(B);
+		 double diff = thisToB - AtoThis;
+		 return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
 	}
 
 
-	/**Node.angleTo(Node n): calculates the angle between the two points.
-	 Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then the expected value should be 45 (degrees)
-	 takes in a Node and returns a double
+	/**
+	 * Calculate the angle between the two points.
+	 *
+	 * Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then
+	 * the expected value should be 45 (degrees)
+	 *
+	 * @param n The other node.
+	 *
+	 * @return the angle between the nodes
 	 **/
 	private double angleTo(Node n) {
-		double x2 = n.getX();
-		double y2 = n.getY();
-		if (y2 > y && x2 > x) {
-			return (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x2 > x) {
-			return 360 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x2 == x) {
+		if (n.y > this.y && n.x > this.x) {
+			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (n.y > this.y && this.x > n.x) {
+			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (this.y > n.y && this.x > n.x) {
+			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (this.y > n.y && n.x > this.x) {
+			return 360 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (n.y > this.y && n.x == this.x) {
 			return 90;
-		} else if (y2 == y && x > x2) {
+		} else if (n.y == this.y && this.x > n.x) {
 			return 180;
-		} else if (y > y2 && x2 == x) {
+		} else if (this.y > n.y && n.x == this.x) {
 			return 270;
-		} else if (y == y2 && x2 > x) {
+		} else if (this.y == n.y && n.x > this.x) {
 			return 0;
-		} else return Double.NaN;
+		} else {
+			return Double.NaN;
+		}
 	}
 
 }
