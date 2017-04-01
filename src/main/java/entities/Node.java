@@ -120,7 +120,7 @@ public class Node
 		double AtoThis = A.angleTo(this);
 		double thisToB = this.angleTo(B);
 		double diff = thisToB - AtoThis;
-		return diff + 450 % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
+		return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
 	}
 
 

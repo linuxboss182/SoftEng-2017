@@ -86,5 +86,37 @@ public class NodeTester {
         double delta = 0.001;
         Assert.assertEquals((double) 45 , b.angle(a, c), delta);
     }
+    @Test
+    public void testAngleOddCase() {
+        // fixed the code from this one
+        // turns out java does modulo operations before addition
+        // sooo a + 450 % 360 is equivalent to a + 90;
+        Node a = new Node(0, 0);
+        Node b = new Node(1, -1);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 225, b.angle(a, c), delta);
+    }
+
+    @Test
+    public void testAngleOppositeOddCase() {
+        // fixed the code from this one
+        // turns out java does modulo operations before addition
+        // sooo a + 450 % 360 is equivalent to a + 90;
+        Node a = new Node(0, 0);
+        Node b = new Node(1, -1);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 315, c.angle(a, b), delta);
+    }
+
+    @Test
+    public void testAngleNoMove() {
+        Node a = new Node(0,0);
+        double delta = 0.001;
+        Assert.assertEquals((double) Double.NaN, a.angle(a, a), delta);
+    }
+    // I think it's safe to say that Node.angle works
+    // The logic is sound and the code has been fixed for the odd cases
 
 }
