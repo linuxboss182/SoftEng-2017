@@ -23,7 +23,7 @@ public class DatabaseController {
 	//initialize the database
 	//returns true if success, false if failure
 	public boolean initDB(){
-		db_connection = null;
+		this.db_connection = null;
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 		} catch(ClassNotFoundException e) {
@@ -34,7 +34,7 @@ public class DatabaseController {
 
 		try {
 			// substitute your database name for myDB
-			db_connection = DriverManager.getConnection(this.connection_string);
+			this.db_connection = DriverManager.getConnection(this.connection_string);
 		} catch (SQLException e) {
 			System.out.println("Connection failed. Check output console.");
 			e.printStackTrace();
@@ -73,7 +73,7 @@ public class DatabaseController {
 				}
 				//commit changes to the database
 				try{
-					db_connection.commit();
+					this.db_connection.commit();
 				} catch (SQLException e) {
 					//fail if we can't commit changes
 					e.printStackTrace();
@@ -81,14 +81,14 @@ public class DatabaseController {
 				}
 				//make the table if it doesn't exist
 				try{
-					initSchema.executeUpdate(schema[i]);
+					initSchema.executeUpdate(schema[i]);.
 				} catch (SQLException e) {
 					System.out.println("Table"+table+"already exists, continuing...");
 				}
 				//commit changes to the database
 				//close connection via statement
 				try{
-					db_connection.commit();
+					this.db_connection.commit();
 					initSchema.close();
 				} catch (SQLException e) {
 					//fail if we can't commit changes
