@@ -24,10 +24,9 @@ public class Pathfinder
 		int hardRightMax = 345;
 
 		String directions = "First, ";
-
+		int leftTurns = 0, rightTurns = 0;
 		for(int i = 1; i < path.length - 1; i++) {
 			double turnAngle = path[i].angle(path[i-1], path[i+1]);
-			int leftTurns = 0, rightTurns = 0;
 
 			// Determine the direction of the turn through a bunch of if statements
 			if((turnAngle >= rightMin1 && turnAngle < rightMax1) || (turnAngle >= rightMin2 && turnAngle < rightMax2)) {
@@ -35,6 +34,7 @@ public class Pathfinder
 				if(rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
 				} else {
+					rightTurns++;
 					directions += "take the " + rightTurns + "rd Right,\n Then";
 					rightTurns = 0;
 				}
@@ -47,10 +47,10 @@ public class Pathfinder
 				// Figure out if there is a left or right turn available as well, then increment the counters
 				Node[] forks = path[i].getAdjacencies();
 				for(int j = 0; j < forks.length; j++) {
-					System.out.println("{" + forks[j].getX() + ", " + forks[j].getY() + "}");
-					double forkAngle = path[i].angle(path[i-1], forks[j]);
+					int forkAngle = (int)path[i].angle(path[i-1], forks[j]);
+
 					// Only checks for normal right and left turns (not including soft or hard variants)
-					if((forkAngle >= rightMin1 && forkAngle < rightMax1 || forkAngle >= rightMin2 && turnAngle < rightMax2)) {
+					if((forkAngle >= rightMin1 && forkAngle < rightMax1) || (forkAngle >= rightMin2 && forkAngle < rightMax2)) {
 						rightTurns++;
 					}
 					if(forkAngle >= softLeftMax && forkAngle < leftMax) {
@@ -67,6 +67,7 @@ public class Pathfinder
 				if(leftTurns == 0) {
 					directions += "take a left turn,\nThen ";
 				} else {
+					leftTurns++;
 					directions += "take the " + leftTurns + "rd Left,\n Then";
 					leftTurns = 0;
 				}
@@ -103,7 +104,7 @@ public class Pathfinder
 		B.connect(J);
 		C.connect(I);
 
-		Node[] path = {A, B, C, D, new Node (2, 4)};
+		Node[] path = {A, B, C, D, new Node (0, 4)};
 		System.out.println(getTextDirections(path));
 	}
 }
