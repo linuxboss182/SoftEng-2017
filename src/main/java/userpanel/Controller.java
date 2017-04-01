@@ -72,31 +72,31 @@ public class Controller
 	@FXML
 	private void mapClicked() {
 		//System.out.print("Map Clicked");
-		imageViewMap.setPickOnBounds(true);
+		this.imageViewMap.setPickOnBounds(true);
 
 
-		imageViewMap.setOnMouseClicked(e -> {
+		this.imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("["+e.getX()+", "+e.getY()+"]");
 			//Paint something at that location
-			paintOnLocation(e.getX(), e.getY());
+			this.paintOnLocation(e.getX(), e.getY());
 
 
 		});
 	}
 	public VBox getContentVBox() {
-		return contentVBox;
+		return this.contentVBox;
 	}
 
 	public void paintOnLocation(double x, double y) {
 		//using absolute path for right now, relative path isnt working
 		Image map4 = new Image("/4_thefourthfloor.png");
 
-		imageViewMap.setImage(map4);
+		this.imageViewMap.setImage(map4);
 		Circle circ;
 		circ = new Circle(x,y,10, Color.web("0x0000FF") );
 		//circ.setFill(new ImagePattern(map4, x, y, 0.4, 0.4, true));
 
-		contentAnchor.getChildren().add(circ);
+		this.contentAnchor.getChildren().add(circ);
 		circ.setVisible(true);
 
 	}
