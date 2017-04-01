@@ -81,7 +81,7 @@ public class DatabaseController {
 				}
 				//make the table if it doesn't exist
 				try{
-					initSchema.executeUpdate(schema[i]);.
+					initSchema.executeUpdate(schema[i]);
 				} catch (SQLException e) {
 					System.out.println("Table"+table+"already exists, continuing...");
 				}
