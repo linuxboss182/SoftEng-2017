@@ -2,6 +2,7 @@ package userpanel;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static java.awt.Color.black;
+
 
 public class Controller implements Initializable
 {
@@ -36,7 +37,7 @@ public class Controller implements Initializable
 	@FXML
 	public HBox contentHBox;
 	@FXML
-	public AnchorPane contentAnchor;
+	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
 	private Slider floorSlider;
 
@@ -97,8 +98,7 @@ public class Controller implements Initializable
 
 	public void paintOnLocation(double x, double y) {
 		Circle circ;
-		circ = new Circle(x,y,10, Color.web("0x0000FF") );
-		circ.setFill(new ImagePattern(map4, x, y, 0.4, 0.4, true));
+		circ = new Circle(x,y,5, Color.web("0x0000FF") );
 
 		contentAnchor.getChildren().add(circ);
 		circ.setVisible(true);
