@@ -39,8 +39,12 @@ dependencies {
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
-}
 
+    /* Derby jdbc thing. From here:
+    https://mvnrepository.com/artifact/org.apache.derby/derby
+    */
+    compile group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'
+}
 
 jfx {
     // minimal requirement for jfxJar-task
@@ -63,3 +67,11 @@ sourceSets {
     }
 }
 
+// Use main class for jar
+jar {
+    manifest.attributes("Main-Class": "main.ApplicationController")
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+}
