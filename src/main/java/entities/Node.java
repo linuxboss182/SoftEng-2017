@@ -32,12 +32,21 @@ public class Node
 		this.adjacencies = new HashSet<Node>();
 	}
 
-	public int getX() {
+	public double getX() {
 		return this.x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return this.y;
+	}
+
+	public Node[] getAdjacencies() {
+		Object[] objs = adjacencies.toArray();
+		Node[] nodes = new Node[objs.length];
+		for(int i = 0; i < nodes.length; i++) {
+			nodes[i] = (Node) objs[i];
+		}
+		return nodes;
 	}
 
 	/** Set node coordinates */
@@ -49,7 +58,7 @@ public class Node
 	/**
 	 * Get a copy of this node's adjacencies.
 	 */
-	public Set<Node> getNeighbors() {
+	public HashSet<Node> getNeighbors() {
 		return new HashSet<>(this.adjacencies);
 	}
 
@@ -118,43 +127,37 @@ public class Node
 	 */
 	// TODO: Determine which way is positive (answer: whichever makes the math easier)
 	public double angle(Node A, Node B) {
-		 double AtoThis = A.angleTo(this);
-		 double thisToB = this.angleTo(B);
-		 double diff = thisToB - AtoThis;
-		 return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
+		double AtoThis = A.angleTo(this);
+		double thisToB = this.angleTo(B);
+		double diff = thisToB - AtoThis;
+		return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
 	}
 
 
-	/**
-	 * Calculate the angle between the two points.
-	 *
-	 * Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then
-	 * the expected value should be 45 (degrees)
-	 *
-	 * @param n The other node.
-	 *
-	 * @return the angle between the nodes
+	/**Node.angleTo(Node n): calculates the angle between the two points.
+	 Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then the expected value should be 45 (degrees)
+	 takes in a Node and returns a double
 	 **/
 	private double angleTo(Node n) {
-		if (n.y > this.y && n.x > this.x) {
-			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (n.y > this.y && this.x > n.x) {
-			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (this.y > n.y && this.x > n.x) {
-			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (this.y > n.y && n.x > this.x) {
-			return 360 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (n.y > this.y && n.x == this.x) {
+		double x2 = n.getX();
+		double y2 = n.getY();
+		if (y2 > y && x2 > x) {
+			return (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
+		} else if (y2 > y && x > x2) {
+			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
+		} else if (y > y2 && x > x2) {
+			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
+		} else if (y > y2 && x2 > x) {
+			return 360 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
+		} else if (y2 > y && x2 == x) {
 			return 90;
-		} else if (n.y == this.y && this.x > n.x) {
+		} else if (y2 == y && x > x2) {
 			return 180;
-		} else if (this.y > n.y && n.x == this.x) {
+		} else if (y > y2 && x2 == x) {
 			return 270;
-		} else if (this.y == n.y && n.x > this.x) {
+		} else if (y == y2 && x2 > x) {
 			return 0;
-		} else {
-			return Double.NaN;
-		}
+		} else return Double.NaN;
 	}
 
 }

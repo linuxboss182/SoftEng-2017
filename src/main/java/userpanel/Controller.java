@@ -41,12 +41,12 @@ public class Controller
 
 	@FXML
 	private void logAsAdminClicked() throws IOException{
-
-		Parent login_prompt;
-		login_prompt = FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
-		Scene login_prompt_scene = new Scene(login_prompt);
-		app_stage.setScene(login_prompt_scene);
-		app_stage.show();
+// TODO BROKEN
+//		Parent login_prompt;
+//		login_prompt = FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
+//		Scene login_prompt_scene = new Scene(login_prompt);
+//		app_stage.setScene(login_prompt_scene);
+//		app_stage.show();
 
 	}
 
