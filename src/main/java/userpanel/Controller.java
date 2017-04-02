@@ -54,7 +54,7 @@ public class Controller implements Initializable
 
 	@FXML
 	private void logAsAdminClicked() throws IOException, InvocationTargetException {
-		Parent loginPrompt = (AnchorPane)FXMLLoader.load(getClass().getResource("LoginPrompt.fxml"));
+		Parent loginPrompt = (AnchorPane)FXMLLoader.load(getClass().getResource("/LoginPrompt.fxml"));
 		System.out.print("here");
 		Scene loginPromptScene = new Scene(loginPrompt);
 		Stage loginPromptStage = new Stage();
