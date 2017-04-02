@@ -24,9 +24,11 @@ public class DirectoryTester
 		Directory d = new Directory(); //Create a new directory
 		Node n = new Node(20, 30); //Create a new node
 		d.addNode(n); //Add the node
-		Assert.assertEquals(d.getNodeList().get(0), n); //Make sure the node has been added
+		Assert.assertEquals(d.getNodeList().get(0), n); //Make sure the node has been
+		// added
 		d.removeNode(n); //Remove the node
-		Assert.assertTrue(d.getNodeList().size() == 0); //Check to see if the Nodelist is now empty
+		Assert.assertTrue(d.getNodeList().size() == 0); //Check to see if the Nodelist
+		// is now empty
 	}
 
 }
