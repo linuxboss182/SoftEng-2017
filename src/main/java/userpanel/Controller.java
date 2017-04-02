@@ -64,22 +64,8 @@ public class Controller implements Initializable
 		loginPromptStage.showAndWait();
 
 
-		//primaryStage.setScene(login_prompt_scene);
-		//primaryStage.show();
-
 	}
 
-	//this would be called with canLogin
-//	private void loginSuccessful() throws Exception{
-//
-//		Parent admin_UI_parent = FXMLLoader.load(getClass().getResource("AdminUI.fxml"));
-//		Scene admin_UI_scene = new Scene(admin_UI_parent);
-//		Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//		app_stage.setScene(admin_UI_scene);
-//		app_stage.show();
-//
-//
-//	}
 
 //	@FXML
 //	private void changeFloor()throws Exception{

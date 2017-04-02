@@ -1,5 +1,6 @@
 package adminpanel;
 
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -62,6 +63,7 @@ public class EditorController implements Initializable
 
 		imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
+
 			//Paint something at that location
 			paintOnLocation(e.getX(), e.getY());
 
@@ -76,6 +78,13 @@ public class EditorController implements Initializable
 
 		contentPane.getChildren().add(circ);
 		circ.setVisible(true);
+		Button place = new Button();
+		place.setLayoutX(x);
+		place.setLayoutY(y);
+		place.setVisible(true);
+		System.out.println("Button added");
+
+
 
 	}
 
