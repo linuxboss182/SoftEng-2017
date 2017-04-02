@@ -7,12 +7,11 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="205.0" prefWidth="548.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="adminpanel.LoginController">
    <children>
-      <TextField layoutX="200.0" layoutY="78.0" promptText="Enter Username" />
+      <TextField fx:id="usernameField" layoutX="200.0" layoutY="78.0" promptText="Enter Username" />
       <Region layoutX="200.0" layoutY="104.0" prefHeight="25.0" prefWidth="149.0" />
-      <TextField layoutX="200.0" layoutY="117.0" promptText="Enter Password" />
       <Text layoutX="135.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
       <Text layoutX="137.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-      <Button layoutX="251.0" layoutY="160.0" mnemonicParsing="false" text="Login" onMouseClicked="#loginClicked"/>
+      <Button fx:id="loginBtn" layoutX="251.0" layoutY="160.0" mnemonicParsing="false" onMouseClicked="#loginClicked" text="Login" />
       <Text layoutX="229.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
          <font>
             <Font name="Tahoma" size="38.0" />
@@ -21,8 +20,9 @@
       <ToolBar layoutY="-40.0" prefHeight="40.0" prefWidth="548.0">
         <items>
             <Region prefHeight="30.0" prefWidth="471.0" />
-          <Button mnemonicParsing="false" text="Cancel" />
+          <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
         </items>
       </ToolBar>
+      <PasswordField fx:id="passwordField" layoutX="200.0" layoutY="117.0" promptText="Enter Password" />
    </children>
 </AnchorPane>
