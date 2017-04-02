@@ -30,6 +30,7 @@ import org.junit.Assert;
 
 public class NodeTester {
 
+    /* These two tests be needed later.
     @Test
     public void testGetX() {
         Node n = new Node(20, 30);
@@ -41,6 +42,7 @@ public class NodeTester {
         Node n = new Node(20, 30);
         Assert.assertTrue(n.getY() == 30);
     }
+    */
 
     @Test
     public void testAngleZero() {
