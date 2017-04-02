@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -48,13 +47,13 @@ public class Controller implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Add map
-		map4 = new Image("/4_thefourthfloor.png");
-		imageViewMap.setImage(map4);
+		this.map4 = new Image("/4_thefourthfloor.png");
+		this.imageViewMap.setImage(this.map4);
 	}
 
 	@FXML
 	private void logAsAdminClicked() throws IOException, InvocationTargetException {
-		Parent loginPrompt = (AnchorPane)FXMLLoader.load(getClass().getResource("/LoginPrompt.fxml"));
+		Parent loginPrompt = (AnchorPane)FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		System.out.print("here");
 		Scene loginPromptScene = new Scene(loginPrompt);
 		Stage loginPromptStage = new Stage();
@@ -77,15 +76,13 @@ public class Controller implements Initializable
 	@FXML
 	private void mapClicked() {
 		//System.out.print("Map Clicked");
-		imageViewMap.setPickOnBounds(true);
+		this.imageViewMap.setPickOnBounds(true);
 
 
-		imageViewMap.setOnMouseClicked(e -> {
+		this.imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("["+e.getX()+", "+e.getY()+"]");
 			//Paint something at that location
-			paintOnLocation(e.getX(), e.getY());
-
-
+			this.paintOnLocation(e.getX(), e.getY());
 		});
 	}
 
@@ -94,9 +91,8 @@ public class Controller implements Initializable
 		Circle circ;
 		circ = new Circle(x,y,5, Color.web("0x0000FF") );
 
-		contentAnchor.getChildren().add(circ);
+		this.contentAnchor.getChildren().add(circ);
 		circ.setVisible(true);
-
 	}
 
 
