@@ -12,7 +12,7 @@
       <TextField layoutX="200.0" layoutY="117.0" promptText="Enter Password" />
       <Text layoutX="135.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
       <Text layoutX="137.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-      <Button layoutX="251.0" layoutY="160.0" mnemonicParsing="false" text="Login" />
+      <Button layoutX="251.0" layoutY="160.0" mnemonicParsing="false" text="Login" onMouseClicked="#loginClicked"/>
       <Text layoutX="229.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
          <font>
             <Font name="Tahoma" size="38.0" />
