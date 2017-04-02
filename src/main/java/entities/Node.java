@@ -6,13 +6,9 @@ import java.util.Set;
 
 /* DEV NOTES
 This should inherit from javafx.geometry.Point2D.
-getX and getY should eventually be replaced with getCoordinates or
-something similar; we should never need to get just one of the two.
 
 Todo items in this file: (not all TODOs in this file)
  */
-//TODO: implement Node.distance()
-//TODO: implement Node.angle()
 //TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
 //TODO: clean up Node.angleTo()
 
@@ -29,15 +25,7 @@ public class Node
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.adjacencies = new HashSet<Node>();
-	}
-
-	public double getX() {
-		return this.x;
-	}
-
-	public double getY() {
-		return this.y;
+		this.adjacencies = new HashSet<>();
 	}
 
 	public Node[] getAdjacencies() {
@@ -58,7 +46,7 @@ public class Node
 	/**
 	 * Get a copy of this node's adjacencies.
 	 */
-	public HashSet<Node> getNeighbors() {
+	public Set<Node> getNeighbors() {
 		return new HashSet<>(this.adjacencies);
 	}
 
@@ -97,7 +85,7 @@ public class Node
 	 * and empty this node's adjacencies
 	 */
 	public void disconnectAll() { // void only because HashSet.clear() is void-typed
-		this.adjacencies.stream().forEach(node -> node.adjacencies.remove(this));
+		this.adjacencies.forEach(node -> node.adjacencies.remove(this));
 		this.adjacencies.clear();
 	}
 
@@ -134,30 +122,36 @@ public class Node
 	}
 
 
-	/**Node.angleTo(Node n): calculates the angle between the two points.
-	 Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then the expected value should be 45 (degrees)
-	 takes in a Node and returns a double
+	/**
+	 * Calculate the angle between the two points.
+	 *
+	 * Right = 0. If (Node(x = 0, y = 0)).angleTo((Node(x = 4,y = 4))) gets called then
+	 * the expected value should be 45 (degrees)
+	 *
+	 * @param n The other node.
+	 *
+	 * @return the angle between the nodes
 	 **/
 	private double angleTo(Node n) {
-		double x2 = n.getX();
-		double y2 = n.getY();
-		if (y2 > y && x2 > x) {
-			return (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x > x2) {
-			return 180 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y > y2 && x2 > x) {
-			return 360 + (Math.atan((y2 - y)/(x2 - x))*180)/Math.PI;
-		} else if (y2 > y && x2 == x) {
+		if (n.y > this.y && n.x > this.x) {
+			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (n.y > this.y && this.x > n.x) {
+			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (this.y > n.y && this.x > n.x) {
+			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (this.y > n.y && n.x > this.x) {
+			return 360 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
+		} else if (n.y > this.y && n.x == this.x) {
 			return 90;
-		} else if (y2 == y && x > x2) {
+		} else if (n.y == this.y && this.x > n.x) {
 			return 180;
-		} else if (y > y2 && x2 == x) {
+		} else if (this.y > n.y && n.x == this.x) {
 			return 270;
-		} else if (y == y2 && x2 > x) {
+		} else if (this.y == n.y && n.x > this.x) {
 			return 0;
-		} else return Double.NaN;
+		} else {
+			return Double.NaN;
+		}
 	}
 
 }
