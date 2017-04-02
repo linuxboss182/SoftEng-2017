@@ -22,7 +22,7 @@
 	<bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button fx:id="logoutBtnClicked" mnemonicParsing="false" text="Logout" />
+				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
 				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
@@ -93,15 +93,15 @@
             <Label text="Room Description" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="X Position" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="Y Position" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField GridPane.columnIndex="2" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Button mnemonicParsing="false" text="Add Room" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Button mnemonicParsing="false" text="Modify Room" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Button mnemonicParsing="false" text="Delete Room" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <Button mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextField GridPane.columnIndex="2" fx:id="nameField"/>
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="roomNumberField"/>
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" fx:id="descriptField"/>
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="XcoordField"/>
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="4" fx:id="YcoordField"/>
+            <Button mnemonicParsing="false" text="Add Room" GridPane.columnIndex="1" GridPane.rowIndex="5" fx:id="addRoomBtn"/>
+            <Button mnemonicParsing="false" text="Modify Room" GridPane.columnIndex="2" GridPane.rowIndex="5" fx:id="modifyRoomBtn"/>
+            <Button mnemonicParsing="false" text="Delete Room" GridPane.columnIndex="1" GridPane.rowIndex="6" fx:id="deleteRoomBtn"/>
+            <Button mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="7" fx:id="cancelBtn"/>
          </children>
       </GridPane>
    </left>

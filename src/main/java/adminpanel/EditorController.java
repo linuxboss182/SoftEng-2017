@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,6 +32,15 @@ public class EditorController implements Initializable
 	private ImageView imageViewMap;
 	@FXML
 	private Pane contentPane;
+	@FXML
+	private TextField roomNumberField;
+	@FXML
+	private Button modifyRoomBtn;
+	@FXML
+	private Button cancelBtn;
+	@FXML
+	private Button deleteRoomBtn;
+
 
 	Image map4;
 	@Override
