@@ -1,6 +1,7 @@
-import entities.Node;
 import org.junit.Test;
 import org.junit.Assert;
+
+import entities.Node;
 /**
  * This is a class to test the Node class.
  * It is more of an example than a necessity.
@@ -28,7 +29,8 @@ import org.junit.Assert;
  * External Libraries: Gradle:junitLjunit:4.1/junit-4.12.jar/org.junit/Assert.java
  */
 
-public class NodeTester {
+public class NodeTester
+{
 
     /* These two tests be needed later.
     @Test
@@ -116,7 +118,7 @@ public class NodeTester {
     public void testAngleNoMove() {
         Node a = new Node(0,0);
         double delta = 0.001;
-        Assert.assertEquals((double) Double.NaN, a.angle(a, a), delta);
+        Assert.assertEquals(Double.NaN, a.angle(a, a), delta);
     }
     // I think it's safe to say that Node.angle works
     // The logic is sound and the code has been fixed for the odd cases
