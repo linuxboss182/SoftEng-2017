@@ -37,9 +37,9 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Pane prefHeight="479.0" prefWidth="825.0">
+                  <Pane fx:id="contentPane" prefHeight="479.0" prefWidth="825.0">
                      <children>
-                        <ImageView fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageViewMap" fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" onMouseClicked="#mapClicked" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
