@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,8 +22,10 @@ import javafx.scene.image.Image;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
-
+import entities.Node;
 
 
 public class Controller implements Initializable
@@ -43,17 +44,32 @@ public class Controller implements Initializable
 	private Slider floorSlider;
 
 	Image map4;
+	entities.Node clickNode;
+	ArrayList<Node> alon = new ArrayList<Node>();
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//Simulate populating the nodes list from database with random nodes
+		for (int i = 0; i < 10; i++) {
+
+			Random r = new Random();
+			double randX = 0.0 + r.nextDouble() * 750.0;
+			double randY = 0.0 + r.nextDouble() * 450.0;
+			Node newNode = new Node(randX, randY);
+			this.alon.add(newNode);
+		}
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
+		//display nodes
+		this.displayNodes(this.alon);
 	}
 
 	@FXML
-	private void logAsAdminClicked() throws IOException, InvocationTargetException {
-		Parent loginPrompt = (AnchorPane)FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+	private void logAsAdminClicked()
+			throws IOException, InvocationTargetException {
+		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		System.out.print("here");
 		Scene loginPromptScene = new Scene(loginPrompt);
 		Stage loginPromptStage = new Stage();
@@ -80,7 +96,7 @@ public class Controller implements Initializable
 
 
 		this.imageViewMap.setOnMouseClicked(e -> {
-			System.out.println("["+e.getX()+", "+e.getY()+"]");
+			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
 			//Paint something at that location
 			this.paintOnLocation(e.getX(), e.getY());
 		});
@@ -89,11 +105,24 @@ public class Controller implements Initializable
 
 	public void paintOnLocation(double x, double y) {
 		Circle circ;
-		circ = new Circle(x,y,5, Color.web("0x0000FF") );
+		circ = new Circle(x, y, 5, Color.web("0x0000FF"));
 
 		this.contentAnchor.getChildren().add(circ);
 		circ.setVisible(true);
 	}
 
+	public void displayNodes(ArrayList<entities.Node> alon) {
 
+		for (int i = 0; i < alon.size(); i++) {
+			Circle circ;
+			double nodeX = alon.get(i).getX();
+			double nodeY = alon.get(i).getY();
+			;
+			circ = new Circle(nodeX, nodeY, 5, Color.web("0x0000FF"));
+			this.contentAnchor.getChildren().add(circ);
+			circ.setVisible(true);
+		}
+
+
+	}
 }

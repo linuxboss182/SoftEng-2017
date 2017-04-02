@@ -10,9 +10,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import entities.Node;
 
 import javax.xml.soap.Text;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class EditorController implements Initializable
@@ -44,11 +47,25 @@ public class EditorController implements Initializable
 
 
 	Image map4;
+	Node clickNode;
+	ArrayList<Node> alon = new ArrayList<Node>();
+	Node n;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//Simulate populating the nodes list from database with random nodes
+		for (int i = 0; i < 10; i++) {
+
+			Random r = new Random();
+			double randX = 0.0 + r.nextDouble() * 750.0;
+			double randY = 0.0 + r.nextDouble() * 450.0;
+			Node newNode = new Node(randX, randY);
+			this.alon.add(newNode);
+		}
+
 		//Add map
-		map4 = new Image("/4_thefourthfloor.png");
-		imageViewMap.setImage(map4);
+		this.map4 = new Image("/4_thefourthfloor.png");
+		this.imageViewMap.setImage(this.map4);
+		this.displayNodes(this.alon);
 	}
 
 	@FXML
@@ -58,32 +75,45 @@ public class EditorController implements Initializable
 	@FXML
 	private void mapClicked() {
 		//System.out.print("Map Clicked");
-		imageViewMap.setPickOnBounds(true);
+		this.imageViewMap.setPickOnBounds(true);
 
 
-		imageViewMap.setOnMouseClicked(e -> {
+		this.imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
-
+			//Create node on click
+			this.clickNode = new Node(e.getX(), e.getY());
 			//Paint something at that location
-			paintOnLocation(e.getX(), e.getY());
+			this.paintOnLocation(this.clickNode);
 
 		});
 	}
 
 
 
-	public void paintOnLocation(double x, double y) {
+	public void paintOnLocation(Node n) {
 		Circle circ;
-		circ = new Circle(x,y,5, Color.web("0x0000FF") );
+		circ = new Circle(n.getX(), n.getY(), 5, Color.web("0x0000FF") );
 
-		contentPane.getChildren().add(circ);
+		this.contentPane.getChildren().add(circ);
 		circ.setVisible(true);
-		Button place = new Button();
-		place.setLayoutX(x);
-		place.setLayoutY(y);
-		place.setVisible(true);
-		System.out.println("Button added");
 
+
+
+
+
+	}
+
+	public void displayNodes(ArrayList<entities.Node> alon) {
+
+		for (int i = 0; i < alon.size(); i++) {
+			Circle circ;
+			double nodeX = alon.get(i).getX();
+			double nodeY = alon.get(i).getY();
+			;
+			circ = new Circle(nodeX, nodeY, 5, Color.web("0x0000FF"));
+			this.contentPane.getChildren().add(circ);
+			circ.setVisible(true);
+		}
 
 
 	}
