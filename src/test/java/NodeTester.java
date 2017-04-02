@@ -32,26 +32,91 @@ public class NodeTester {
 
     @Test
     public void testGetX() {
-        Node n = new Node(20, 30, "Forty", "Fifty");
+        Node n = new Node(20, 30);
         Assert.assertTrue(n.getX() == 20);
     }
 
     @Test
     public void testGetY() {
-        Node n = new Node(20, 30, "Forty", "Fifty");
+        Node n = new Node(20, 30);
         Assert.assertTrue(n.getY() == 30);
     }
 
     @Test
-    public void testGetName() {
-        Node n = new Node(20, 30, "Forty", "Fifty");
-        Assert.assertTrue(n.getName().equals("Forty"));
+    public void testAngleZero() {
+        Node a = new Node(0, 0);
+        Node b = new Node(0, 1);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 0 , b.angle(a, c), delta);
     }
 
     @Test
-    public void testGetDesc() {
-        Node n = new Node(20, 30, "Forty", "Fifty");
-        Assert.assertTrue(n.getDesc().equals("Fifty"));
+    public void testAngleOneEighty() {
+        Node a = new Node(0, 0);
+        Node b = new Node(1, 0);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 180 , b.angle(a, c), delta);
     }
+
+    @Test
+    public void testAngleNinety() {
+        Node a = new Node(0, 0);
+        Node b = new Node(0, 1);
+        Node c = new Node(0, 2);
+        double delta = 0.001;
+        Assert.assertEquals((double) 90 , b.angle(a, c), delta);
+    }
+
+    @Test
+    public void testAngleTwoSeventy() {
+        Node a = new Node(0, 0);
+        Node b = new Node(0, 1);
+        Node c = new Node(0, 0);
+        double delta = 0.001;
+        Assert.assertEquals((double) 270 , b.angle(a, c), delta);
+    }
+
+    @Test
+    public void testAngleSlightRight() {
+        Node a = new Node(0, 0);
+        Node b = new Node(0, 1);
+        Node c = new Node(1, 2);
+        double delta = 0.001;
+        Assert.assertEquals((double) 45 , b.angle(a, c), delta);
+    }
+    @Test
+    public void testAngleOddCase() {
+        // fixed the code from this one
+        // turns out java does modulo operations before addition
+        // sooo a + 450 % 360 is equivalent to a + 90;
+        Node a = new Node(0, 0);
+        Node b = new Node(1, -1);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 225, b.angle(a, c), delta);
+    }
+
+    @Test
+    public void testAngleOppositeOddCase() {
+        // fixed the code from this one
+        // turns out java does modulo operations before addition
+        // sooo a + 450 % 360 is equivalent to a + 90;
+        Node a = new Node(0, 0);
+        Node b = new Node(1, -1);
+        Node c = new Node(1, 1);
+        double delta = 0.001;
+        Assert.assertEquals((double) 315, c.angle(a, b), delta);
+    }
+
+    @Test
+    public void testAngleNoMove() {
+        Node a = new Node(0,0);
+        double delta = 0.001;
+        Assert.assertEquals((double) Double.NaN, a.angle(a, a), delta);
+    }
+    // I think it's safe to say that Node.angle works
+    // The logic is sound and the code has been fixed for the odd cases
 
 }
