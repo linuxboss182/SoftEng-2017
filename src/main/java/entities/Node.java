@@ -10,7 +10,7 @@ This should inherit from javafx.geometry.Point2D.
 Todo items in this file: (not all TODOs in this file)
  */
 //TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
-//TODO: clean up Node.angleTo()
+//TODO: clean up Node.angleTo() (reimplement as adjustment for Point2D.angle())
 
 /**
  * Represents a node in the graph, and its adjacencies.
@@ -28,14 +28,6 @@ public class Node
 		this.adjacencies = new HashSet<>();
 	}
 
-	public Node[] getAdjacencies() {
-		Object[] objs = adjacencies.toArray();
-		Node[] nodes = new Node[objs.length];
-		for(int i = 0; i < nodes.length; i++) {
-			nodes[i] = (Node) objs[i];
-		}
-		return nodes;
-	}
 
 	/** Set node coordinates */
 	public void moveTo(double x, double y) {
@@ -49,6 +41,22 @@ public class Node
 	public Set<Node> getNeighbors() {
 		return new HashSet<>(this.adjacencies);
 	}
+
+	/**
+	 * Get this node's neighbors as an array.
+	 *
+	 * @deprecated Use Node.getNeighbors() instead.
+	 */
+	@Deprecated
+	public Node[] getAdjacencies() {
+		Object[] objs = this.adjacencies.toArray();
+		Node[] nodes = new Node[objs.length];
+		for(int i = 0; i < nodes.length; i++) {
+			nodes[i] = (Node) objs[i];
+		}
+		return nodes;
+	}
+
 
 	/**
 	 * Create an edge between this and the given node.
