@@ -1,14 +1,95 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="AmbiguousFieldAccess" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="AmbiguousMethodCall" enabled="false" level="Style Warning" enabled_by_default="false" />
+    <inspection_tool class="AssertMessageNotString" enabled="true" level="Style Warning" enabled_by_default="true" />
+    <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="Notice" enabled_by_default="true">
+      <option name="m_checkForeachParameters" value="false" />
+    </inspection_tool>
+    <inspection_tool class="AssignmentToNull" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AssignmentUsedAsCondition" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="BreakStatementWithLabel" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="CallToStringConcatCanBeReplacedByOperator" enabled="true" level="Style Warning" enabled_by_default="true" />
+    <inspection_tool class="CastToConcreteClass" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="ChainedEquality" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="ClassNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="ClassReferencesSubclass" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConfusingOctalEscape" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="ConstantNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="onlyCheckImmutables" value="false" />
+      <option name="m_regex" value="[A-Z][A-Z_\d]*" />
+      <option name="m_minLength" value="5" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="ContinueStatementWithLabel" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="ControlFlowStatementWithoutBraces" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="EqualsCalledOnEnumConstant" enabled="false" level="Style Warning" enabled_by_default="false" />
+    <inspection_tool class="ExtendsObject" enabled="false" level="Style Warning" enabled_by_default="false" />
+    <inspection_tool class="FallthruInSwitchStatement" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="IncrementDecrementUsedAsExpression" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="InstanceMethodNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="InstanceVariableNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="0" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="InstanceofInterfaces" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="InstanceofThis" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="InterfaceNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="8" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="LabeledStatement" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="ListIndexOfReplaceableByContains" enabled="false" level="Style Warning" enabled_by_default="false" />
+    <inspection_tool class="LiteralAsArgToStringEquals" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="LocalVariableNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_ignoreForLoopParameters" value="false" />
+      <option name="m_ignoreCatchParameters" value="false" />
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="1" />
+      <option name="m_maxLength" value="20" />
+    </inspection_tool>
     <inspection_tool class="LoggerInitializedWithForeignClass" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="loggerClassName" value="org.apache.log4j.Logger,org.slf4j.LoggerFactory,org.apache.commons.logging.LogFactory,java.util.logging.Logger" />
       <option name="loggerFactoryMethodName" value="getLogger,getLogger,getLog,getLogger" />
     </inspection_tool>
-    <inspection_tool class="SpellCheckingInspection" enabled="true" level="INFORMATION" enabled_by_default="true">
-      <option name="processCode" value="true" />
-      <option name="processLiterals" value="true" />
-      <option name="processComments" value="true" />
+    <inspection_tool class="NestedAssignment" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="OverlyStrongTypeCast" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoreInMatchingInstanceof" value="false" />
     </inspection_tool>
+    <inspection_tool class="SimplifiableAnnotation" enabled="true" level="Style Warning" enabled_by_default="true" />
+    <inspection_tool class="StandardVariableNames" enabled="false" level="Notice" enabled_by_default="false" />
+    <inspection_tool class="SystemOutErr" enabled="false" level="Debugging" enabled_by_default="false" />
+    <inspection_tool class="ThrowablePrintStackTrace" enabled="false" level="Debugging" enabled_by_default="false" />
+    <inspection_tool class="TypeParameterNamingConvention" enabled="false" level="Style Warning" enabled_by_default="false">
+      <option name="m_regex" value="[A-Z]" />
+      <option name="m_minLength" value="1" />
+      <option name="m_maxLength" value="1" />
+    </inspection_tool>
+    <inspection_tool class="UnclearBinaryExpression" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="UnnecessaryParentheses" enabled="true" level="INFORMATION" enabled_by_default="true">
+      <option name="ignoreClarifyingParentheses" value="true" />
+      <option name="ignoreParenthesesOnConditionals" value="true" />
+      <option name="ignoreParenthesesOnLambdaParameter" value="false" />
+    </inspection_tool>
+    <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="Really Annoying" enabled_by_default="true" />
+    <inspection_tool class="UnqualifiedMethodAccess" enabled="true" level="Really Annoying" enabled_by_default="true" />
+    <inspection_tool class="UnqualifiedStaticUsage" enabled="true" level="Style Warning" enabled_by_default="true">
+      <option name="m_ignoreStaticFieldAccesses" value="false" />
+      <option name="m_ignoreStaticMethodCalls" value="false" />
+      <option name="m_ignoreStaticAccessFromStaticContext" value="false" />
+    </inspection_tool>
+    <inspection_tool class="UpperCaseFieldNameNotConstant" enabled="false" level="Style Warning" enabled_by_default="false" />
   </profile>
 </component>
