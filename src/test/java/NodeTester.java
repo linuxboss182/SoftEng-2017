@@ -1,6 +1,10 @@
 import org.junit.Test;
 import org.junit.Assert;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
+
 import entities.Node;
 /**
  * This is a class to test the Node class.
@@ -45,6 +49,37 @@ public class NodeTester
         Assert.assertTrue(n.getY() == 30);
     }
     */
+
+	@Test
+	public void testGetNeighborsNone() {
+		Node a = new Node(0, 0);
+		Set<Node> result = a.getNeighbors();
+		Set<Node> expect = new HashSet<>();
+		Assert.assertEquals(result, expect);
+	}
+
+	@Test
+	public void testGetNeighborsOne() {
+		Node a = new Node(0, 0);
+		Node b = new Node(0, 0);
+		a.connect(b);
+		Set<Node> resultA = a.getNeighbors();
+		Set<Node> resultB = b.getNeighbors();
+		Set<Node> expectA = new HashSet<>();
+		Set<Node> expectB = new HashSet<>();
+		expectA.add(b);
+		expectB.add(a);
+		Assert.assertEquals(resultA, expectA);
+		Assert.assertEquals(resultB, expectB);
+	}
+
+	@Test
+	public void testGetNeighborsMany() {
+		SampleGraph G = new SampleGraph();
+		Set<Node> result = G.a.getNeighbors();
+		Set<Node> expect = new HashSet<>(Arrays.asList(G.b, G.g, G.d, G.c));
+		Assert.assertEquals(result, expect);
+	}
 
     @Test
     public void testAngleZero() {
@@ -123,4 +158,42 @@ public class NodeTester
     // I think it's safe to say that Node.angle works
     // The logic is sound and the code has been fixed for the odd cases
 
+}
+
+/**
+ * This class creates a sample graph for testing.
+ */
+// Feel free to modify the coordinates; juts leave the edges in place.
+class SampleGraph
+{
+	Node a = new Node(0, 0);
+	Node b = new Node(10, 0);
+	Node c = new Node(0, 24);
+	Node d = new Node(10, 24);
+	Node e = new Node(28, 0);
+	Node f = new Node(55, 0);
+	Node g = new Node(-15, 0);
+	/* (All lines have length 1)
+	   -22     0     10    28     55
+		g------a------b-----e------f
+			   |\    /|
+			   | \  / |
+			   |  \/  |
+			   |  /\  |
+			   | /  \ |
+			   |/    \|
+			24 c      d
+	d is at integer distance from all other edges
+	 a=26, b=24, c=10, e=30, f=51, g=40
+	 */
+	public SampleGraph() {
+		this.a.connect(this.b);
+		this.a.connect(this.c);
+		this.b.connect(this.a); // no duplicates should occur
+		this.b.connect(this.c);
+		this.b.connect(this.d);
+		this.a.connect(this.g);
+		this.f.connect(this.e);
+		this.b.connect(this.e);
+	}
 }
