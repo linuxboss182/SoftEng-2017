@@ -113,14 +113,51 @@ public class EditorController implements Initializable
 	}
 
 	@FXML
-	private void addRoomBtnClicked() {
+	public void addRoomBtnClicked() {
+		this.addNode(this.readX(), this.readY());
 	}
 
+	@FXML
+	public void modifyRoomBtnClicked() {
+		this.updateSelectedNode(this.readX(), this.readY());
+	}
+
+	@FXML
+	public void deleteRoomBtnClicked() {
+		this.deleteSelectedNode();
+	}
+
+	private double readX() {
+		return Double.parseDouble(this.xCoordField.getText());
+	}
+
+	private double readY() {
+		return Double.parseDouble(this.yCoordField.getText());
+	}
 
 	private void addNode(double x, double y) {
 		Node newNode = new Node(x, y);
 		this.alon.add(newNode);
 		this.paintOnLocation(newNode);
+	}
+
+	private void updateSelectedNode(double x, double y) {
+		this.selectedNode.moveTo(x, y);
+		this.selectedCircle.setCenterX(x);
+		this.selectedCircle.setCenterY(y);
+
+	}
+
+	private void deleteSelectedNode() {
+		this.selectedNode.disconnectAll();
+		this.alon.remove(this.selectedNode);
+		this.selectedNode = null;
+		// now garbage collector has to do its work
+
+		this.contentPane.getChildren().remove(this.selectedCircle);
+		this.selectedCircle = null;
+
+		this.redrawLines();
 	}
 
 	public void paintOnLocation(Node n) {
@@ -207,8 +244,11 @@ public class EditorController implements Initializable
 	}
 
 	public void onCircleClick(MouseEvent e, Node n) {
-		// check if you double click
 
+		// update text fields
+		this.setFields(n);
+
+		// check if you double click
 		// if you double click, then you are selecting a node
 		if(e.getClickCount() == 2 && this.primaryPressed) {
 			if(this.selectedCircle != null) this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
@@ -238,10 +278,8 @@ public class EditorController implements Initializable
 	public void onCircleDrag(MouseEvent e, Node n) {
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 			if(this.primaryPressed) {
-				this.selectedNode.moveTo(e.getX(), e.getY());
 				this.selectedCircle = (Circle) e.getSource();
-				this.selectedCircle.setCenterX(e.getX());
-				this.selectedCircle.setCenterY(e.getY());
+				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode);
 				this.redrawLines();
 			} else if(this.secondaryPressed) {
@@ -259,15 +297,7 @@ public class EditorController implements Initializable
 		// if the releasedX or Y is negative we want to remove the node
 
 		if(this.releasedX < 0 || this.releasedY < 0) {
-			this.selectedNode.disconnectAll();
-			this.alon.remove(this.selectedNode);
-			this.selectedNode = null;
-			// now garbage collector has to do its work
-
-			this.contentPane.getChildren().remove(this.selectedCircle);
-			this.selectedCircle = null;
-
-			this.redrawLines();
+			deleteSelectedNode();
 		}
 	}
 }

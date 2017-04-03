@@ -98,9 +98,9 @@
             <TextField fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xCoordField" />
             <TextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Button fx:id="addRoomBtn" mnemonicParsing="false" text="Add Room" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Button fx:id="modifyRoomBtn" mnemonicParsing="false" text="Modify Room" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Button fx:id="deleteRoomBtn" mnemonicParsing="false" text="Delete Room" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Button fx:id="addRoomBtn" mnemonicParsing="false" text="Add Room" GridPane.columnIndex="1" GridPane.rowIndex="5" onMouseClicked="#addRoomBtnClicked"/>
+            <Button fx:id="modifyRoomBtn" mnemonicParsing="false" text="Modify Room" GridPane.columnIndex="2" GridPane.rowIndex="5" onMouseClicked="#modifyRoomBtnClicked"/>
+            <Button fx:id="deleteRoomBtn" mnemonicParsing="false" text="Delete Room" GridPane.columnIndex="1" GridPane.rowIndex="6" onMouseClicked="#deleteRoomBtnClicked"/>
             <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>
       </GridPane>
