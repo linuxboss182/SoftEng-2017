@@ -19,7 +19,7 @@ public class PathfinderTester
 	 *   o      n3
 	 *   Correct path is to go through the center
 	 */
-	/*@Test
+	@Test
 	public void pathfindTester() {
 		Node origin = new Node(0, 0); //Create a new node
 		Node dest = new Node(10, 10); //Create a new node
@@ -36,10 +36,32 @@ public class PathfinderTester
 		dest.connect(n2);
 		dest.connect(n3);
 
-		List<Node> shortestDist = new ArrayList<Node>();
+		List<Node> shortestDist = new ArrayList<>();
 		shortestDist.add(origin);
 		shortestDist.add(n1);
 		shortestDist.add(dest);
-		Assert.assertEquals(findPath(origin, dest), shortestDist); //Make sure the node has been
-	}*/
+		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist); //Make sure the node has been
+	}
+
+	/*
+	Test a scenario where the destination node is unreachable (no adjacent nodes)
+	Should return an empty list
+	 */
+	@Test
+	public void unreachableNodeTest() {
+		Node origin = new Node(0, 0); //Create a new node
+		Node dest = new Node(10, 10); //Create a new node
+		//Create the nodes
+		Node n1 = new Node (5, 5);
+		Node n2 = new Node (10, 0);
+		Node n3 = new Node (0, 10);
+
+		//Link Adjacencies
+		origin.connect(n1);
+		origin.connect(n2);
+		origin.connect(n3);
+
+		List<Node> shortestDist = new ArrayList<>(); //The empty list
+		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist);
+	}
 }
