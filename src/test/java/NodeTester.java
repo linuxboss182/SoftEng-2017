@@ -191,6 +191,7 @@ class SampleGraph
 		this.a.connect(this.c);
 		this.b.connect(this.a); // no duplicates should occur
 		this.b.connect(this.c);
+		this.a.connect(this.d);
 		this.b.connect(this.d);
 		this.a.connect(this.g);
 		this.f.connect(this.e);
