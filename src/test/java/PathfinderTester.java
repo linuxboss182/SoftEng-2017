@@ -1,6 +1,6 @@
 import entities.Node;
 import entities.Directory;
-import algorithms.Pathfinder;
+import main.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
 import java.util.List;
