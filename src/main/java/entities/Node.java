@@ -42,21 +42,6 @@ public class Node
 		return new HashSet<>(this.adjacencies);
 	}
 
-	/**
-	 * Get this node's neighbors as an array.
-	 *
-	 * @deprecated Use Node.getNeighbors() instead.
-	 */
-	@Deprecated
-	public Node[] getAdjacencies() {
-		Object[] objs = this.adjacencies.toArray();
-		Node[] nodes = new Node[objs.length];
-		for(int i = 0; i < nodes.length; i++) {
-			nodes[i] = (Node) objs[i];
-		}
-		return nodes;
-	}
-
 
 	/**
 	 * Create an edge between this and the given node.

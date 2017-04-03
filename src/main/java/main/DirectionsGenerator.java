@@ -1,7 +1,7 @@
 package main;
 
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
 import entities.Node;
 
@@ -78,9 +78,9 @@ public class DirectionsGenerator
 				// Straight (NO TURN!!!)
 				directions += "continue straight,\nThen ";
 				// Figure out if there is a left or right turn available as well, then increment the counters
-				Node[] forks = path[i].getAdjacencies();
-				for (int j = 0; j < forks.length; j++) {
-					int forkAngle = (int)path[i].angle(path[i - 1], forks[j]);
+				Set<Node> forks = path[i].getNeighbors();
+				for (Node fork : forks) {
+					int forkAngle = (int) path[i].angle(path[i - 1], fork);
 
 					// Only checks for normal right and left turns (not including soft
 					// or hard variants)
