@@ -1,15 +1,47 @@
 package main;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import entities.Node;
+
+//TODO: Clean up getTextDirections (see notes)
+/*
+Notes:
+
+fromPath should probably return a List<String>, which can be displayed as desired.
+
+getTextDirections could use some dramatic cleanup; if IntelliJ says it is too complex to
+  analyze, it's probably too complex
+
+The actual directions "left", "right", etc. should probably be an Enum.
+
+ */
 
 public class DirectionsGenerator
 {
 
-
-	/**A method to translate a series of nodes into text directions
+	/**
+	 * Generate text directions based on the given path.
 	 *
+	 * @param path A list of nodes representing the path.
+	 *
+	 * @return Directions for the path, as a string.
 	 */
-	public static String getTextDirections(Node[] path) {
+	public static String fromPath(List<Node> path) {
+		Node[] asArray = new Node[path.size()];
+		int i = 0;
+		for (Node n : path) {
+			asArray[i] = n;
+			i++;
+		}
+		return DirectionsGenerator.getTextDirections(asArray);
+	}
+
+	/**
+	 * A method to translate a series of nodes into text directions
+	 */
+	private static String getTextDirections(Node[] path) {
 		int rightMin1 = 345;
 		int rightMax1 = 360;
 		int rightMin2 = 0;
@@ -25,59 +57,62 @@ public class DirectionsGenerator
 
 		String directions = "First, ";
 		int leftTurns = 0, rightTurns = 0;
-		for(int i = 1; i < path.length - 1; i++) {
+		for (int i = 1; i < path.length - 1; i++) {
 			double turnAngle = path[i].angle(path[i-1], path[i+1]);
 
 			// Determine the direction of the turn through a bunch of if statements
-			if((turnAngle >= rightMin1 && turnAngle < rightMax1) || (turnAngle >= rightMin2 && turnAngle < rightMax2)) {
+			if ((turnAngle >= rightMin1 && turnAngle < rightMax1) ||
+					(turnAngle >= rightMin2 && turnAngle < rightMax2)) {
 				// Right Turn
-				if(rightTurns == 0) {
+				if (rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
 				} else {
 					rightTurns++;
 					directions += "take the " + rightTurns + "rd Right,\n Then";
 					rightTurns = 0;
 				}
-			} else if(turnAngle >= rightMax2 && turnAngle < softRightMax) {
+			} else if (turnAngle >= rightMax2 && turnAngle < softRightMax) {
 				// Soft Right Turn
 				directions += "take a soft right turn,\nThen ";
-			} else if(turnAngle >= softRightMax && turnAngle < straightMax) {
+			} else if (turnAngle >= softRightMax && turnAngle < straightMax) {
 				// Straight (NO TURN!!!)
 				directions += "continue straight,\nThen ";
 				// Figure out if there is a left or right turn available as well, then increment the counters
 				Node[] forks = path[i].getAdjacencies();
-				for(int j = 0; j < forks.length; j++) {
-					int forkAngle = (int)path[i].angle(path[i-1], forks[j]);
+				for (int j = 0; j < forks.length; j++) {
+					int forkAngle = (int)path[i].angle(path[i - 1], forks[j]);
 
-					// Only checks for normal right and left turns (not including soft or hard variants)
-					if((forkAngle >= rightMin1 && forkAngle < rightMax1) || (forkAngle >= rightMin2 && forkAngle < rightMax2)) {
+					// Only checks for normal right and left turns (not including soft
+					// or hard variants)
+					if ((forkAngle >= rightMin1 && forkAngle < rightMax1) || (
+							forkAngle >= rightMin2 && forkAngle < rightMax2)) {
 						rightTurns++;
 					}
-					if(forkAngle >= softLeftMax && forkAngle < leftMax) {
+					if (forkAngle >= softLeftMax && forkAngle < leftMax) {
 						leftTurns++;
 					}
 				}
 
 
-			} else if(turnAngle >= straightMax && turnAngle < softLeftMax) {
+			} else if (turnAngle >= straightMax && turnAngle < softLeftMax) {
 				// Soft Left Turn
 				directions += "take a soft left turn\nThen ";
-			} else if(turnAngle >= softLeftMax && turnAngle < leftMax) {
+			} else if (turnAngle >= softLeftMax && turnAngle < leftMax) {
 				// Left Turn
-				if(leftTurns == 0) {
+				if (leftTurns == 0) {
 					directions += "take a left turn,\nThen ";
 				} else {
 					leftTurns++;
 					directions += "take the " + leftTurns + "rd Left,\n Then";
 					leftTurns = 0;
 				}
-			} else if(turnAngle >= leftMax && turnAngle < hardLeftMax) {
+			} else if (turnAngle >= leftMax && turnAngle < hardLeftMax) {
 				// Hard Left Turn
 				directions += "take a hard left turn\nThen ";
-			} else if(turnAngle >= hardLeftMax && turnAngle < backWardsMax) {
+			} else if (turnAngle >= hardLeftMax && turnAngle < backWardsMax) {
 				// Turn Around
 				directions += "turn around\nThen ";
-			} else if(turnAngle >= backWardsMax && turnAngle < hardRightMax) {
+			} else if (turnAngle >= backWardsMax && turnAngle < hardRightMax) {
 				// Hard Right Turn
 				directions += "take a hard right turn\nThen ";
 			}
@@ -86,6 +121,7 @@ public class DirectionsGenerator
 		return directions;
 	}
 
+	/*
 	public static void main(String[] args) {
 
 		Node A = new Node(1,1);
@@ -107,4 +143,5 @@ public class DirectionsGenerator
 		Node[] path = {A, B, C, D, new Node (0, 4)};
 		System.out.println(getTextDirections(path));
 	}
+	*/
 }
