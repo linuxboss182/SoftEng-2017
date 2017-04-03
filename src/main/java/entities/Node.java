@@ -79,6 +79,21 @@ public class Node
 		return this.neighbors.remove(n);
 	}
 
+	/** TODO: Write a tester for this
+	 * Determines whether this node is connected to Node n
+	 * @param n The node we are checking for a connection to
+	 * @return true: if they are connected. false: otherwise
+	 */
+	public boolean areConnected(Node n) {
+		Node[] adjacents = this.getAdjacencies();
+		for(int i = 0; i < adjacents.length; i++) {
+			if(adjacents[i].equals(n)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Remove any edges between this and other nodes
 	 *
@@ -154,4 +169,9 @@ public class Node
 			return Double.NaN;
 		}
 	}
+
+	public String toString() {
+		return ("(" + x + ", " + y + ")");
+	}
+
 }

@@ -47,6 +47,7 @@ public class EditorController implements Initializable
 	@FXML
 	private Button deleteRoomBtn;
 
+	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
 	Image map4;
 	Node clickNode;
@@ -98,10 +99,11 @@ public class EditorController implements Initializable
 			this.selectedCircle = null;
 		});
 
-		this.imageViewMap.setOnMouseDragged(e->{
-			System.out.println("Mouse Dragged"+e.toString());
-
-		});
+		// this could be helpful for selecting a large area
+//		this.imageViewMap.setOnMouseDragged(e->{
+//
+//
+//		});
 	}
 
 	@FXML
@@ -109,6 +111,11 @@ public class EditorController implements Initializable
 	}
 
 
+	private void addNode(double x, double y) {
+		Node newNode = new Node(x, y);
+		this.alon.add(newNode);
+		this.paintOnLocation(newNode);
+	}
 
 	public void paintOnLocation(Node n) {
 		Circle circ;
@@ -117,6 +124,19 @@ public class EditorController implements Initializable
 		this.contentPane.getChildren().add(circ);
 		circ.setVisible(true);
 
+		circ.setOnMouseClicked((MouseEvent e) ->{
+			EditorController.this.onCircleClick(e, n);
+		});
+
+		circ.setOnMouseDragged(e->{
+			EditorController.this.onCircleDrag(e, n);
+		});
+
+		// Working as intended
+		circ.setOnMousePressed(e->{
+			this.primaryPressed = e.isPrimaryButtonDown();
+			this.secondaryPressed = e.isSecondaryButtonDown();
+		});
 
 
 
@@ -124,37 +144,9 @@ public class EditorController implements Initializable
 	}
 
 	public void displayNodes(ArrayList<entities.Node> alon) {
-
 		for (int i = 0; i < alon.size(); i++) {
-			Circle circ;
-			double nodeX = alon.get(i).getX();
-			double nodeY = alon.get(i).getY();
-
-			circ = new Circle(nodeX, nodeY, 5, this.DEFAULT_CIRCLE_COLOR);
-			this.contentPane.getChildren().add(circ);
-			circ.setVisible(true);
-
-			// needs to be final to work
-			final int tempIndex = i;
-			circ.setOnMouseClicked((MouseEvent e) ->{
-				System.out.println(e.isPrimaryButtonDown());
-				System.out.println(e.toString());
-				EditorController.this.onCircleClick(e, alon.get(tempIndex));
-			});
-
-			circ.setOnMouseDragged(e->{
-				EditorController.this.onCircleDrag(e, alon.get(tempIndex));
-			});
-
-			// Working as intended
-			circ.setOnMousePressed(e->{
-				this.primaryPressed = e.isPrimaryButtonDown();
-				this.secondaryPressed = e.isSecondaryButtonDown();
-			});
-
+			this.paintOnLocation((alon.get(i)));
 		}
-
-
 	}
 
 
@@ -180,17 +172,37 @@ public class EditorController implements Initializable
 			this.selectedCircle = (Circle) e.getSource();
 			this.selectedNode = n;
 			this.selectedCircle.setFill(this.SELECTED_CIRCLE_COLOR);
+		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
+			// ^ checks if there has been a node selected,
+			// checks if the node selected is not the node we are clicking on
+			// and checks if the button pressed is the right mouse button (secondary)
+
+			// finally check if they are connected or not
+			// if they are connected, remove the connection
+			// if they are not connected, add a connection
+			if(this.selectedNode.areConnected(n)) {
+				this.selectedNode.disconnect(n);
+				System.out.println("Disconnecting " + this.selectedNode + " and " + n);
+			} else {
+				System.out.println("Connecting " + this.selectedNode + " and " + n);
+				this.selectedNode.connect(n);
+			}
 		}
 	}
 
 	// This is going to allow us to drag a node!!!
 	public void onCircleDrag(MouseEvent e, Node n) {
-		if(this.selectedNode != null && this.selectedNode.equals(n) && this.primaryPressed) {
-			this.selectedNode.moveTo(e.getX(), e.getY());
-			this.selectedCircle = (Circle) e.getSource();
-			this.selectedCircle.setCenterX(e.getX());
-			this.selectedCircle.setCenterY(e.getY());
-			this.setFields(this.selectedNode);
+		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+			if(this.primaryPressed) {
+				this.selectedNode.moveTo(e.getX(), e.getY());
+				this.selectedCircle = (Circle) e.getSource();
+				this.selectedCircle.setCenterX(e.getX());
+				this.selectedCircle.setCenterY(e.getY());
+				this.setFields(this.selectedNode);
+			} else if(this.secondaryPressed) {
+				// right click drag on the selected node
+			}
+
 		}
 
 	}
