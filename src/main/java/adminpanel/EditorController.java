@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -50,7 +51,12 @@ public class EditorController implements Initializable
 	Image map4;
 	Node clickNode;
 	ArrayList<Node> alon = new ArrayList<Node>();
-	Node n;
+	private Node selectedNode; // you select a node by double clicking
+	private Circle selectedCircle; // This and the selectedNode should be set at the same time
+
+	private static final Color DEFAULT_CIRCLE_COLOR = Color.web("0x0000FF");
+	private static final Color SELECTED_CIRCLE_COLOR = Color.BLACK;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Simulate populating the nodes list from database with random nodes
@@ -88,14 +94,25 @@ public class EditorController implements Initializable
 			//update the text boxes
 			this.setFields(this.clickNode);
 
+
+			// reset selected circle and node
+			this.selectedNode = null;
+			this.selectedCircle.setFill(Color.web("0x0000FF"));
 		});
+
+		this.imageViewMap.setOnMouseDragged(e->{
+			System.out.println("Mouse Dragged"+e.toString());
+
+		});
+
+
 	}
 
 
 
 	public void paintOnLocation(Node n) {
 		Circle circ;
-		circ = new Circle(n.getX(), n.getY(), 5, Color.web("0x0000FF") );
+		circ = new Circle(n.getX(), n.getY(), 5,this.DEFAULT_CIRCLE_COLOR );
 
 		this.contentPane.getChildren().add(circ);
 		circ.setVisible(true);
@@ -112,10 +129,20 @@ public class EditorController implements Initializable
 			Circle circ;
 			double nodeX = alon.get(i).getX();
 			double nodeY = alon.get(i).getY();
-			;
-			circ = new Circle(nodeX, nodeY, 5, Color.web("0x0000FF"));
+
+			circ = new Circle(nodeX, nodeY, 5, this.DEFAULT_CIRCLE_COLOR);
 			this.contentPane.getChildren().add(circ);
 			circ.setVisible(true);
+
+			// needs to be final to work
+			final int tempIndex = i;
+			circ.setOnMouseClicked((MouseEvent e) ->{
+				EditorController.this.onCircleClick(e, alon.get(tempIndex));
+			});
+
+			circ.setOnMouseDragged(e->{
+				EditorController.this.onCircleDrag(e, alon.get(tempIndex));
+			});
 		}
 
 
@@ -134,8 +161,28 @@ public class EditorController implements Initializable
 		this.yCoordField.setText(yVal);
 	}
 
-	public void onCircleClick(ActionEvent e, Node n) {
+	public void onCircleClick(MouseEvent e, Node n) {
+		// check if you double click
 
+		// if you double click, then you are selecting a node
+		if(e.getClickCount() == 2) {
+			if(this.selectedCircle != null) this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
+
+			this.selectedCircle = (Circle) e.getSource();
+			this.selectedNode = n;
+			this.selectedCircle.setFill(this.SELECTED_CIRCLE_COLOR);
+		}
+	}
+
+	// This is going to allow us to drag a node!!!
+	public void onCircleDrag(MouseEvent e, Node n) {
+		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+			this.selectedNode.moveTo(e.getX(), e.getY());
+			this.selectedCircle = (Circle) e.getSource();
+			this.selectedCircle.setCenterX(e.getX());
+			this.selectedCircle.setCenterY(e.getY());
+			this.setFields(this.selectedNode);
+		}
 
 	}
 }

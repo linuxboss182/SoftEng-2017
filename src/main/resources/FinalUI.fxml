@@ -47,7 +47,7 @@
 			<items>
 				<Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefWidth="200.0" text="Get Directions" textAlignment="CENTER" />
+				<Button fx:id="getDirectionsBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefWidth="200.0" text="Get Directions" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
 			</items>
@@ -75,8 +75,8 @@
 								<Font size="19.0" />
 							</font>
 						</Label>
-						<RadioButton layoutX="35.0" layoutY="50.0" mnemonicParsing="false" text="Elevator" />
-						<RadioButton layoutX="35.0" layoutY="77.0" mnemonicParsing="false" text="Stairs" />
+						<RadioButton fx:id="elevatorRadio" layoutX="35.0" layoutY="50.0" mnemonicParsing="false" text="Elevator" />
+						<RadioButton fx:id="stairRadio" layoutX="35.0" layoutY="77.0" mnemonicParsing="false" text="Stairs" />
 						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
 							<font>
 								<Font size="19.0" />
