@@ -2,7 +2,7 @@ package main;
 
 import entities.Node;
 
-public class Pathfinder
+public class DirectionsGenerator
 {
 
 
