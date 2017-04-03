@@ -1,110 +1,119 @@
 package main;
 
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
+
 import entities.Node;
 
+//TODO: Add documentation
+
+/**
+ * Controller class wrapping pathfinding algorithms.
+ * (Currently contains algorithms.)
+ */
 public class Pathfinder
 {
+	private Node start;
+	private Node destination;
 
-
-	/**A method to translate a series of nodes into text directions
-	 *
-	 */
-	public static String getTextDirections(Node[] path) {
-		int rightMin1 = 345;
-		int rightMax1 = 360;
-		int rightMin2 = 0;
-		int rightMax2 = 15;
-
-		int softRightMax = 75;
-		int straightMax = 105;
-		int softLeftMax = 165;
-		int leftMax = 195;
-		int hardLeftMax = 265;
-		int backWardsMax = 275;
-		int hardRightMax = 345;
-
-		String directions = "First, ";
-		int leftTurns = 0, rightTurns = 0;
-		for(int i = 1; i < path.length - 1; i++) {
-			double turnAngle = path[i].angle(path[i-1], path[i+1]);
-
-			// Determine the direction of the turn through a bunch of if statements
-			if((turnAngle >= rightMin1 && turnAngle < rightMax1) || (turnAngle >= rightMin2 && turnAngle < rightMax2)) {
-				// Right Turn
-				if(rightTurns == 0) {
-					directions += "take a right turn,\nThen ";
-				} else {
-					rightTurns++;
-					directions += "take the " + rightTurns + "rd Right,\n Then";
-					rightTurns = 0;
-				}
-			} else if(turnAngle >= rightMax2 && turnAngle < softRightMax) {
-				// Soft Right Turn
-				directions += "take a soft right turn,\nThen ";
-			} else if(turnAngle >= softRightMax && turnAngle < straightMax) {
-				// Straight (NO TURN!!!)
-				directions += "continue straight,\nThen ";
-				// Figure out if there is a left or right turn available as well, then increment the counters
-				Node[] forks = path[i].getAdjacencies();
-				for(int j = 0; j < forks.length; j++) {
-					int forkAngle = (int)path[i].angle(path[i-1], forks[j]);
-
-					// Only checks for normal right and left turns (not including soft or hard variants)
-					if((forkAngle >= rightMin1 && forkAngle < rightMax1) || (forkAngle >= rightMin2 && forkAngle < rightMax2)) {
-						rightTurns++;
-					}
-					if(forkAngle >= softLeftMax && forkAngle < leftMax) {
-						leftTurns++;
-					}
-				}
-
-
-			} else if(turnAngle >= straightMax && turnAngle < softLeftMax) {
-				// Soft Left Turn
-				directions += "take a soft left turn\nThen ";
-			} else if(turnAngle >= softLeftMax && turnAngle < leftMax) {
-				// Left Turn
-				if(leftTurns == 0) {
-					directions += "take a left turn,\nThen ";
-				} else {
-					leftTurns++;
-					directions += "take the " + leftTurns + "rd Left,\n Then";
-					leftTurns = 0;
-				}
-			} else if(turnAngle >= leftMax && turnAngle < hardLeftMax) {
-				// Hard Left Turn
-				directions += "take a hard left turn\nThen ";
-			} else if(turnAngle >= hardLeftMax && turnAngle < backWardsMax) {
-				// Turn Around
-				directions += "turn around\nThen ";
-			} else if(turnAngle >= backWardsMax && turnAngle < hardRightMax) {
-				// Hard Right Turn
-				directions += "take a hard right turn\nThen ";
-			}
-		}
-		directions += "you are at your destination.";
-		return directions;
+	public void setOrigin(Node start) {
+		this.start = start;
 	}
 
-	public static void main(String[] args) {
+	public void setDestination(Node destination) {
+		this.destination = destination;
+	}
 
-		Node A = new Node(1,1);
-		Node B = new Node(1,2);
-		Node C = new Node(1, 3);
-		Node D = new Node(1, 4);
+	public List<Node> findPath() {
+		return Pathfinder.findPath(this.start, this.destination);
+	}
 
-		Node E = new Node(2, 2);
-		Node F = new Node(2, 3);
+	public List<Node> findPath(Node destination) {
+		return Pathfinder.findPath(this.start, destination);
+	}
 
-		Node I = new Node(0, 3);
-		Node J = new Node(0, 2);
+	/**
+	 * Find a shortest path between two nodes
+	 *
+	 * @param start The node the path should end at.
+	 * @param dest  The node the path should end at.
+	 *
+	 * @return A list of the nodes traversed in the path, in order, or an empty list if
+	 *         no path is found
+	 */
+	public static List<Node> findPath(Node start, Node dest) {
+		Double inf = Double.POSITIVE_INFINITY;
+		// list of Nodes that have already been visited
+		Set<Node> visitedNodes = new HashSet<>();
 
-		B.connect(E);
-		C.connect(F);
-		B.connect(J);
-		C.connect(I);
+		// list of Nodes that have been found but not examined
+		Set<Node> seenNodes = new HashSet<>();
+		seenNodes.add(start);
 
-		Node[] path = {A, B, C, D, new Node (0, 4)};
-		System.out.println(getTextDirections(path));
+		// map that allows for backtracing of the path so it can be reconstructed
+		Map<Node, Node> pathHistory = new HashMap<>();
+
+		// map that holds the distance from a Node to the start Node
+		Map<Node, Double> distFromStart = new HashMap<>();
+		distFromStart.put(start, 0.0);
+
+		// map that holds the guessed total distance from a Node to the destination
+		Map<Node, Double> bestGuess = new HashMap<>();
+		bestGuess.put(start, start.distance(dest));
+
+		Node current = null;
+
+		/* Main loop for algorithm */
+		while (! seenNodes.isEmpty()) {
+			// set current to a shortest distance Node in seenNodes list
+			for (Node n : seenNodes) {
+				if ((current == null) ||
+						(bestGuess.getOrDefault(n, inf) <= bestGuess.getOrDefault(current, inf))) {
+					current = n;
+				}
+			}
+
+			if (current == dest) {
+				return Pathfinder.makePath(pathHistory, current);
+			}
+
+			seenNodes.remove(current); // don't look at this node again later
+			visitedNodes.add(current); // don't try to make paths to this node later
+
+			// look at each neighbor of the current node
+			for(Node neighbor : current.getNeighbors()){
+				if (visitedNodes.contains(neighbor)) {
+					continue; // skip already-visited neighbors
+				}
+
+				// get distance from the start to the neighbor.
+				double guessDist = distFromStart.get(current) + current.distance(neighbor);
+
+				seenNodes.add(neighbor); // make sure the neighbor is marked as seen
+
+				// if the guess for the current neighbor is better than it was, use it
+				if (guessDist < bestGuess.getOrDefault(neighbor, inf)) {
+					pathHistory.put(neighbor, current); // "got to neighbor from current"
+					distFromStart.put(neighbor, guessDist);
+					bestGuess.put(neighbor, guessDist + neighbor.distance(dest));
+				}
+			}
+		}
+		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
+	}
+
+	private static List<Node> makePath(Map<Node, Node> pathHistory,Node current){
+		List<Node> finalPath = new LinkedList<>();
+		finalPath.add(current);
+		while (pathHistory.containsKey(current)) {
+			current = pathHistory.get(current);
+			finalPath.add(0, current);
+		}
+		return finalPath;
 	}
 }
