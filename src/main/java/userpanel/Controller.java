@@ -73,6 +73,15 @@ public class Controller implements Initializable
 		//this.elevatorRadio.focusedProperty(true);
 		//display nodes
 		this.displayNodes(this.alon);
+
+		this.imageViewMap.setPickOnBounds(true);
+
+
+		this.imageViewMap.setOnMouseClicked(e -> {
+			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
+			//Paint something at that location
+			this.paintOnLocation(e.getX(), e.getY(), this.alon);
+		});
 	}
 
 	@FXML
@@ -98,18 +107,6 @@ public class Controller implements Initializable
 //		imageViewMap.setImage()
 //	}
 
-	@FXML
-	private void mapClicked() {
-		//System.out.print("Map Clicked");
-		this.imageViewMap.setPickOnBounds(true);
-
-
-		this.imageViewMap.setOnMouseClicked(e -> {
-			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
-			//Paint something at that location
-			this.paintOnLocation(e.getX(), e.getY(), this.alon);
-		});
-	}
 
 
 	public void paintOnLocation(double x, double y, ArrayList<entities.Node> alon ) {

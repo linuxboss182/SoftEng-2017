@@ -54,6 +54,11 @@ public class EditorController implements Initializable
 	private Node selectedNode; // you select a node by double clicking
 	private Circle selectedCircle; // This and the selectedNode should be set at the same time
 
+	// Primary is left click and secondary is right click
+	// these keep track of which button was pressed last on the mouse
+	private boolean primaryPressed;
+	private boolean secondaryPressed;
+
 	private static final Color DEFAULT_CIRCLE_COLOR = Color.web("0x0000FF");
 	private static final Color SELECTED_CIRCLE_COLOR = Color.BLACK;
 
@@ -73,20 +78,11 @@ public class EditorController implements Initializable
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
 		this.displayNodes(this.alon);
-	}
 
-	@FXML
-	private void addRoomBtnClicked() {
-	}
-
-	@FXML
-	private void mapClicked() {
-		//System.out.print("Map Clicked");
 		this.imageViewMap.setPickOnBounds(true);
 
 
 		this.imageViewMap.setOnMouseClicked(e -> {
-			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
 			//Create node on click
 			this.clickNode = new Node(e.getX(), e.getY());
 			//Paint something at that location
@@ -97,15 +93,19 @@ public class EditorController implements Initializable
 
 			// reset selected circle and node
 			this.selectedNode = null;
-			this.selectedCircle.setFill(Color.web("0x0000FF"));
+			if(this.selectedCircle != null)
+				this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
+			this.selectedCircle = null;
 		});
 
 		this.imageViewMap.setOnMouseDragged(e->{
 			System.out.println("Mouse Dragged"+e.toString());
 
 		});
+	}
 
-
+	@FXML
+	private void addRoomBtnClicked() {
 	}
 
 
@@ -137,12 +137,21 @@ public class EditorController implements Initializable
 			// needs to be final to work
 			final int tempIndex = i;
 			circ.setOnMouseClicked((MouseEvent e) ->{
+				System.out.println(e.isPrimaryButtonDown());
+				System.out.println(e.toString());
 				EditorController.this.onCircleClick(e, alon.get(tempIndex));
 			});
 
 			circ.setOnMouseDragged(e->{
 				EditorController.this.onCircleDrag(e, alon.get(tempIndex));
 			});
+
+			// Working as intended
+			circ.setOnMousePressed(e->{
+				this.primaryPressed = e.isPrimaryButtonDown();
+				this.secondaryPressed = e.isSecondaryButtonDown();
+			});
+
 		}
 
 
@@ -165,7 +174,7 @@ public class EditorController implements Initializable
 		// check if you double click
 
 		// if you double click, then you are selecting a node
-		if(e.getClickCount() == 2) {
+		if(e.getClickCount() == 2 && this.primaryPressed) {
 			if(this.selectedCircle != null) this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
 
 			this.selectedCircle = (Circle) e.getSource();
@@ -176,7 +185,7 @@ public class EditorController implements Initializable
 
 	// This is going to allow us to drag a node!!!
 	public void onCircleDrag(MouseEvent e, Node n) {
-		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+		if(this.selectedNode != null && this.selectedNode.equals(n) && this.primaryPressed) {
 			this.selectedNode.moveTo(e.getX(), e.getY());
 			this.selectedCircle = (Circle) e.getSource();
 			this.selectedCircle.setCenterX(e.getX());
