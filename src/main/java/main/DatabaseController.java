@@ -103,32 +103,6 @@ public class DatabaseController {
 		return true;
 	}
 
-	//populates the database with initial data specified in the stored proc
-	//database must have schema before running this
-	//returns true if success, false if error
-	public boolean initData(){
-		boolean result;
-		String[] data = StoredProcedures.getInitialData();
-		String insertion = "";
-		try {
-			Statement insert = this.db_connection.createStatement();
-			for  (String s : data) {
-				insertion = s;
-				insert.addBatch(s);
-			}
-			insert.executeBatch();
-			this.db_connection.commit();
-			System.out.println("Success!");
-			insert.close();
-		} catch (SQLException e) {
-			System.out.println("SQL error while inserting sample data.");
-			System.out.println("Failed on this insertion: " + insertion);
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
 	//close the connection to the database
 	//returns true if success, false if failure
 	public boolean close() {
@@ -142,6 +116,7 @@ public class DatabaseController {
 		}
 	}
 
+	//A test call to the database
 	public void exampleQueries() {
 		try {
 			Statement statement = this.db_connection.createStatement();
@@ -165,7 +140,33 @@ public class DatabaseController {
 			System.out.println("Query failed");
 			e.printStackTrace();
 		}
-
 	}
+
+	//This code is broken, the batch executes in reverse order. Unneeded at this time, was use for testing.
+//	//populates the database with initial data specified in the stored proc
+//	//database must have schema before running this
+//	//returns true if success, false if error
+//	public boolean initData(){
+//		boolean result;
+//		String[] data = StoredProcedures.getInitialData();
+//		String insertion = "";
+//		try {
+//			Statement insert = this.db_connection.createStatement();
+//			for  (String s : data) {
+//				insertion = s;
+//				insert.addBatch(s);
+//			}
+//			insert.executeBatch();
+//			this.db_connection.commit();
+//			System.out.println("Success!");
+//			insert.close();
+//		} catch (SQLException e) {
+//			System.out.println("SQL error while inserting sample data.");
+//			System.out.println("Failed on this insertion: " + insertion);
+//			e.printStackTrace();
+//			return false;
+//		}
+//		return true;
+//	}
 
 }
