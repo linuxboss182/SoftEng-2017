@@ -66,10 +66,12 @@ public class Pathfinder
 		Map<Node, Double> bestGuess = new HashMap<>();
 		bestGuess.put(start, start.distance(dest));
 
-		Node current = null;
+		Node current;
 
 		/* Main loop for algorithm */
 		while (! seenNodes.isEmpty()) {
+			current = null; // otherwise last iteration's current will cause problems
+
 			// set current to a shortest distance Node in seenNodes list
 			for (Node n : seenNodes) {
 				if ((current == null) ||
