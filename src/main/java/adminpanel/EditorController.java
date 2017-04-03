@@ -1,6 +1,7 @@
 package adminpanel;
 
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -84,6 +85,8 @@ public class EditorController implements Initializable
 			this.clickNode = new Node(e.getX(), e.getY());
 			//Paint something at that location
 			this.paintOnLocation(this.clickNode);
+			//update the text boxes
+			this.setFields(this.clickNode);
 
 		});
 	}
@@ -121,5 +124,18 @@ public class EditorController implements Initializable
 
 	@FXML
 	private void logoutBtnClicked() {
+
+	}
+
+	public void setFields(Node n) {
+		String xVal = Double.toString(n.getX());
+		String yVal = Double.toString(n.getY());
+		this.xCoordField.setText(xVal);
+		this.yCoordField.setText(yVal);
+	}
+
+	public void onCircleClick(ActionEvent e, Node n) {
+
+
 	}
 }
