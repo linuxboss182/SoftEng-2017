@@ -20,12 +20,12 @@ public class Node
 {
 	private double x;
 	private double y;
-	private HashSet<Node> adjacencies;
+	private HashSet<Node> neighbors;
 
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.adjacencies = new HashSet<>();
+		this.neighbors = new HashSet<>();
 	}
 
 
@@ -36,50 +36,50 @@ public class Node
 	}
 
 	/**
-	 * Get a copy of this node's adjacencies.
+	 * Get a copy of this node's neighbor set.
 	 */
 	public Set<Node> getNeighbors() {
-		return new HashSet<>(this.adjacencies);
+		return new HashSet<>(this.neighbors);
 	}
 
 
 	/**
 	 * Create an edge between this and the given node.
 	 *
-	 * Adds the given node to this node's adjacencies, and vice versa.
+	 * Adds the given node to this node's neighbor set, and vice versa.
 	 *
 	 * @param n The node to connect to this node
 	 *
 	 * @return false if the edge already existed
 	 */
 	public boolean connect(Node n) {
-		n.adjacencies.add(this);
-		return this.adjacencies.add(n);
+		n.neighbors.add(this);
+		return this.neighbors.add(n);
 	}
 
 	/**
 	 * Remove the edge between this and the given node.
 	 *
-	 * Removes the given node from this node's adjacencies, and vice versa.
+	 * Removes the given node from this node's neighbor set, and vice versa.
 	 *
 	 * @param n The node to disconnect from this node
 	 *
 	 * @return false if the nodes were not connected
 	 */
 	public boolean disconnect(Node n) {
-		n.adjacencies.remove(this);
-		return this.adjacencies.remove(n);
+		n.neighbors.remove(this);
+		return this.neighbors.remove(n);
 	}
 
 	/**
 	 * Remove any edges between this and other nodes
 	 *
-	 * Remove this node from the adjacencies of all nodes adjacent to it,
-	 * and empty this node's adjacencies
+	 * Remove this node from the neighbor set of all nodes adjacent to it,
+	 * and empty this node's neighbor set
 	 */
 	public void disconnectAll() { // void only because HashSet.clear() is void-typed
-		this.adjacencies.forEach(node -> node.adjacencies.remove(this));
-		this.adjacencies.clear();
+		this.neighbors.forEach(node -> node.neighbors.remove(this));
+		this.neighbors.clear();
 	}
 
 	/**
