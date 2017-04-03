@@ -32,6 +32,11 @@ public class Directory
 	}
 
 	/**
+	 * Returns the list of nodes in the directory
+	 */
+	public ArrayList<Node> getNodeList() { return this.rooms;}
+
+	/**
 	 * Adds a node to the list
 	 *
 	 * @param node The node that is being added to the list
