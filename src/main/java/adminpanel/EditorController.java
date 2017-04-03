@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
+import javafx.scene.shape.Line;
 
 import javax.xml.soap.Text;
 import java.net.URL;
@@ -52,6 +53,8 @@ public class EditorController implements Initializable
 	Image map4;
 	Node clickNode;
 	ArrayList<Node> alon = new ArrayList<Node>();
+	ArrayList<Line> lines = new ArrayList<Line>();
+
 	private Node selectedNode; // you select a node by double clicking
 	private Circle selectedCircle; // This and the selectedNode should be set at the same time
 
@@ -59,6 +62,9 @@ public class EditorController implements Initializable
 	// these keep track of which button was pressed last on the mouse
 	private boolean primaryPressed;
 	private boolean secondaryPressed;
+
+	private double releasedX;
+	private double releasedY;
 
 	private static final Color DEFAULT_CIRCLE_COLOR = Color.web("0x0000FF");
 	private static final Color SELECTED_CIRCLE_COLOR = Color.BLACK;
@@ -139,8 +145,46 @@ public class EditorController implements Initializable
 		});
 
 
+		circ.setOnMouseReleased(e->{
+			EditorController.this.onCircleReleased(e, n);
+		});
 
 
+	}
+
+	public void redrawLines() {
+		// clear arraylist
+		for(int i = 0; i < this.lines.size(); i++) {
+			this.contentPane.getChildren().remove(this.lines.get(i));
+		}
+		this.lines.clear();
+		// repopulate arraylist
+		// then draw the lines
+		this.fillDrawLines();
+	}
+
+	private void fillDrawLines() {
+		for(int node = 0; node < this.alon.size(); node++) {
+			Node current = this.alon.get(node);
+			Node[] adjacents = current.getAdjacencies();
+			for(int connection = 0; connection < adjacents.length; connection++) {
+				Node connected = adjacents[connection];
+				double startX = current.getX();
+				double startY = current.getY();
+				double endX = connected.getX();
+				double endY = connected.getY();
+				Line line = new Line();
+				line.setStartX(startX);
+				line.setStartY(startY);
+				line.setEndX(endX);
+				line.setEndY(endY);
+
+				this.lines.add(line);
+
+				this.contentPane.getChildren().add(line);
+				line.setVisible(true);
+			}
+		}
 	}
 
 	public void displayNodes(ArrayList<entities.Node> alon) {
@@ -182,10 +226,10 @@ public class EditorController implements Initializable
 			// if they are not connected, add a connection
 			if(this.selectedNode.areConnected(n)) {
 				this.selectedNode.disconnect(n);
-				System.out.println("Disconnecting " + this.selectedNode + " and " + n);
+				this.redrawLines();
 			} else {
-				System.out.println("Connecting " + this.selectedNode + " and " + n);
 				this.selectedNode.connect(n);
+				this.redrawLines();
 			}
 		}
 	}
@@ -199,11 +243,31 @@ public class EditorController implements Initializable
 				this.selectedCircle.setCenterX(e.getX());
 				this.selectedCircle.setCenterY(e.getY());
 				this.setFields(this.selectedNode);
+				this.redrawLines();
 			} else if(this.secondaryPressed) {
 				// right click drag on the selected node
 			}
 
 		}
 
+	}
+
+	public void onCircleReleased(MouseEvent e, Node n) {
+		this.releasedX = e.getX();
+		this.releasedY = e.getY();
+
+		// if the releasedX or Y is negative we want to remove the node
+
+		if(this.releasedX < 0 || this.releasedY < 0) {
+			this.selectedNode.disconnectAll();
+			this.alon.remove(this.selectedNode);
+			this.selectedNode = null;
+			// now garbage collector has to do its work
+
+			this.contentPane.getChildren().remove(this.selectedCircle);
+			this.selectedCircle = null;
+
+			this.redrawLines();
+		}
 	}
 }
