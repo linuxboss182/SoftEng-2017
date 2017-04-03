@@ -62,7 +62,8 @@ public class DatabaseController {
 		for(int i=0;i<schema.length;i++){
 			Pattern matchTable = Pattern.compile("\\bCREATE\\b\\s\\bTABLE\\b\\s(\\w*)");
 			Matcher matcher = matchTable.matcher(schema[i]);
-			if(matcher.matches() == true){
+			boolean found = false;
+			while(matcher.find() && found == false){
 				//we're making a table
 				String table = matcher.group(1); //group zero = entire expression
 				//drop the table if it exists
@@ -83,7 +84,7 @@ public class DatabaseController {
 				try{
 					initSchema.executeUpdate(schema[i]);
 				} catch (SQLException e) {
-					System.out.println("Table"+table+"already exists, continuing...");
+					System.out.println("Table"+table+" already exists, continuing...");
 				}
 				//commit changes to the database
 				//close connection via statement
@@ -95,8 +96,10 @@ public class DatabaseController {
 					e.printStackTrace();
 					return false;
 				}
+				found = true;
 			}
 		}
+		//stop once we find the first match(assume one create statement per string)
 		return true;
 	}
 
@@ -115,6 +118,7 @@ public class DatabaseController {
 			}
 			insert.executeBatch();
 			this.db_connection.commit();
+			System.out.println("Success!");
 			insert.close();
 		} catch (SQLException e) {
 			System.out.println("SQL error while inserting sample data.");
