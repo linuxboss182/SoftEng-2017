@@ -9,12 +9,10 @@ public class ApplicationController
 		DatabaseController dbc = new DatabaseController();
 		dbc.initDB();
 		dbc.initSchema();
-		dbc.initData();
-		dbc.exampleQueries();
-		dbc.close();
 
 		Application.launch(userpanel.Window.class, args);
 
+		dbc.close();
 	}
 }
 
