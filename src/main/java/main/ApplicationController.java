@@ -10,6 +10,7 @@ public class ApplicationController
 
 	public static void main(String[] args) {
 		ApplicationController.dbc = new DatabaseController();
+
 		try {
 			ApplicationController.dbc.init();
 		} catch (DatabaseException e) {

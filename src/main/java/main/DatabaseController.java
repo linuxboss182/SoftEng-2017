@@ -48,7 +48,7 @@ public class DatabaseController
 		}
 
 		if (warning == null) { //if null, DB exists
-			flag = this.initSchema();
+			flag = this.reInitSchema();
 			if (! flag) {
 				throw new DatabaseException("Failed to initialize database schema");
 			}
@@ -92,7 +92,15 @@ public class DatabaseController
 
 	//initializes the database empty with the desired schema
 	//returns true if success, false if error
-	private boolean initSchema() {
+
+	/**
+	 * Initialize the database schema
+	 *
+	 * Deletes and recreates all tables in the database
+	 *
+	 * @return true if successful
+	 */
+	private boolean reInitSchema() {
 		boolean result;
 		Statement initSchema = null;
 		try {
@@ -165,7 +173,7 @@ public class DatabaseController
 
 	//adds a node to the database
 	//returns true if success, false if failure
-	public boolean addNode(Node node, int id){
+	private boolean addNode(Node node, int id){
 		try {
 			Statement insert = this.db_connection.createStatement();
 			//do some sort of autoincrement
@@ -179,7 +187,7 @@ public class DatabaseController
 
 	//attempts to retrieve a node at a given id
 	//returns null if failure
-	public Node getNodeAtID(int id){
+	private Node getNodeAtID(int id){
 		try{
 			Statement query = this.db_connection.createStatement();
 			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodeID(id));
