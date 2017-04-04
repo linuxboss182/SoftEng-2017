@@ -1,5 +1,6 @@
 package userpanel;
 
+import adminpanel.EditorController;
 import entities.Directory;
 import entities.Room;
 import javafx.beans.property.ListProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -25,6 +27,7 @@ import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
@@ -72,8 +75,18 @@ public class Controller extends Window implements Initializable
 	private ArrayList<Room> roomList = new ArrayList<>();
 	protected ListProperty<String> listProperty = new SimpleListProperty<>();
 	private Directory directory;
-	private Node nodeKiosk;
+	private Room kiosk;
 	private Node destNode;
+
+	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
+	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
+	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
+	private static final Color KIOSK_COLOR = Color.RED;
+
+	private static final double RECTANGLE_WIDTH = 7;
+	private static final double RECTANGLE_HEIGHT = 7;
+	private static final double CIRCLE_RADIUS = 5;
+	private static final String KIOSK_NAME = "You Are Here";
 
 
 
@@ -82,11 +95,12 @@ public class Controller extends Window implements Initializable
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = main.ApplicationController.dbc.getDirectory();
 
+
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
 		//this.imageViewMap.fitWidthProperty().bind(this.primaryStage.widthProperty());
-		this.displayNodes();
+
 
 		//set elevator to clicked
 		//this.elevatorRadio.focusedProperty(true);
@@ -113,16 +127,29 @@ public class Controller extends Window implements Initializable
 		// this.roomList.add(r2);
 		// this.roomList.add(r3);
 		// this.populateListView(this.roomList);
-
-		//Create node for Kiosk at start
-		this.nodeKiosk = new Node(353.5, 122.5);
-		//Paint
-		Circle kiosk;
-		kiosk = new Circle(353.5, 122.5, 5, Color.RED);
-		this.contentAnchor.getChildren().add(kiosk);
-		kiosk.setVisible(true);
+		//make kiosk
+		this.kiosk = new Room(353.5, 122.5);
+		this.kiosk.setName(KIOSK_NAME);
+		this.directory.addRoom(this.kiosk);
+		this.paintRoomOnLocation(this.kiosk);
+		this.displayNodes();
 
 
+
+
+	}
+
+	public void paintRoomOnLocation(Room r) {
+		Rectangle rect;
+		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		if (r.getName().equals(KIOSK_NAME)) {
+			rect.setFill(KIOSK_COLOR);
+		} else {
+			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+		}
+
+		this.contentAnchor.getChildren().add(rect);
+		rect.setVisible(true);
 
 	}
 
@@ -192,11 +219,14 @@ public class Controller extends Window implements Initializable
 	}
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		//add kiosk to start of list
+		directionNodes.add(0, this.kiosk);
+
 		double destX = directionNodes.get(directionNodes.size() - 1).getX();
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
 
 		this.destNode = new Node(destX, destY);
-		main.Pathfinder.findPath(this.nodeKiosk, this.destNode);
+		main.Pathfinder.findPath(this.kiosk, this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();

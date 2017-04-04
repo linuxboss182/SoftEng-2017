@@ -63,7 +63,7 @@ public class EditorController implements Initializable
 	private Image map4;
 	private ArrayList<Line> lines = new ArrayList<Line>();
 	private Directory directory;
-	private Node nodeKiosk;
+	private Room kiosk;
 
 	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
 
@@ -81,16 +81,21 @@ public class EditorController implements Initializable
 	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
 	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
 	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
+	private static final Color KIOSK_COLOR = Color.RED;
 
 	private static final double RECTANGLE_WIDTH = 7;
 	private static final double RECTANGLE_HEIGHT = 7;
 	private static final double CIRCLE_RADIUS = 5;
+	private static final String KIOSK_NAME = "You Are Here";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = main.ApplicationController.dbc.getDirectory();
-
+		//make kiosk
+		this.kiosk = new Room(353.5, 122.5);
+		this.kiosk.setName(KIOSK_NAME);
+		this.directory.addRoom(this.kiosk);
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
@@ -115,12 +120,7 @@ public class EditorController implements Initializable
 		});
 
 		//Create node for Kiosk at start
-		this.nodeKiosk = new Node(353.5, 122.5);
-		//Paint
-		Circle kiosk;
-		kiosk = new Circle(353.5, 122.5, 5, Color.RED);
-		this.contentPane.getChildren().add(kiosk);
-		kiosk.setVisible(true);
+
 
 		// this could be helpful for selecting a large area
 //		this.imageViewMap.setOnMouseDragged(e->{
@@ -239,7 +239,12 @@ public class EditorController implements Initializable
 	public void paintRoomOnLocation(Room r) {
 		Rectangle rect;
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-		rect.setFill(this.DEFAULT_SHAPE_COLOR);
+		if (r.getName().equals(KIOSK_NAME)) {
+			rect.setFill(KIOSK_COLOR);
+		} else {
+			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+		}
+
 		this.contentPane.getChildren().add(rect);
 		rect.setVisible(true);
 
