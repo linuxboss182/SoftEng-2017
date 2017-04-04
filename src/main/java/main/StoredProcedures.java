@@ -12,18 +12,19 @@ public class StoredProcedures
 					+"node1 integer references Nodes(nodeID) NOT NULL"
 					+" , node2 integer references Nodes(nodeID) NOT NULL)",
 			"CREATE TABLE Rooms ("
-					+"roomName        varchar(200) PRIMARY KEY"
+					+"roomName        varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
-					+" , nodeID          integer references Nodes(nodeID))",
+					+" , nodeID          integer references Nodes(nodeID))"
+					+" , constraint Rooms_pk PRIMARY KEY (nodeID)",
 			"CREATE TABLE Employees ("
 					+"employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
 					+" , employeeSurname   varchar(100)"
 					+" , employeeTitle     varchar(100))",
 			"CREATE TABLE EmployeeRooms ("
-					+"roomName   varchar(200) references Rooms(roomName)"
+					+"nodeID   varchar(200) references Rooms(roomName)"
 					+" , employeeID integer references Employees(employeeID)"
-					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomName, employeeID))"
+					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
 	};
 	//initial data that will be in the database upon construction
 	private static final String[] initialData = {
@@ -132,9 +133,10 @@ public class StoredProcedures
 		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+nodeID+", "+nodeX+", "+nodeY+")";
 	}
 
-	public static String procInsertRoom(String roomName, String roomDescription, int nodeID){
+	public static String procInsertRoom(int nodeID, String roomName, String roomDescription){
 		//query needs work
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+nodeID+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName
+				+","+roomDescription+","+nodeID+")";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
@@ -142,14 +144,16 @@ public class StoredProcedures
 		return "INSERT INTO Edges (node1, node2) VALUES("+node1+","+node2+")";
 	}
 
-	public static String procInsertEmployee(int employeeID, String givenName, String surname, String employeeTitle){
+	public static String procInsertEmployee(int employeeID, String givenName,
+	                                        String surname, String employeeTitle){
 		//query needs work
-		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
+		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) "
+				+ "VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
 	}
 
-	public static String procInsertEmployeeRoom(int employeeID, String roomName){
+	public static String procInsertEmployeeRoom(int employeeID, int nodeID){
 		//query needs work
-		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+employeeID+","+roomName+")";
+		return "INSERT INTO EmployeeRooms(employeeID,nodeID) VALUES("+employeeID+","+nodeID+")";
 	}
 
 
@@ -200,9 +204,9 @@ public class StoredProcedures
 		return "SELECT * FROM EmployeeRooms";
 	}
 
-	public static String procRetrieveEmployeeRoom(int id, String name){
+	public static String procRetrieveEmployeeRoom(int employeeID, String nodeID){
 		//query needs work
-		return "SELECT * FROM EmployeeRooms WHERE employeeID='"+id+"' AND roomName = '"+name+"'";
+		return "SELECT * FROM EmployeeRooms WHERE employeeID='"+employeeID+"' AND nodeID = '"+nodeID+"'";
 	}
 
 	public static String procRetrieveNodesAndRooms(){
