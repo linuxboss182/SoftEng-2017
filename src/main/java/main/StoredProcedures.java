@@ -147,9 +147,9 @@ public class StoredProcedures
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
 	}
 
-	public static String procInsertEmployeeRoom(int epmloyeeID, String roomName){
+	public static String procInsertEmployeeRoom(int employeeID, String roomName){
 		//query needs work
-		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+epmloyeeID+","+roomName+")";
+		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+employeeID+","+roomName+")";
 	}
 
 
