@@ -208,7 +208,7 @@ public class EditorController implements Initializable
 	private void fillDrawLines() {
 		for(int node = 0; node < this.alon.size(); node++) {
 			Node current = this.alon.get(node);
-			Node[] adjacents = current.getAdjacencies();
+			Node[] adjacents = current.getNeighbors().toArray(new Node[current.getNeighbors().size()]);
 			for(int connection = 0; connection < adjacents.length; connection++) {
 				Node connected = adjacents[connection];
 				double startX = current.getX();
