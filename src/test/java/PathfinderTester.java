@@ -14,9 +14,11 @@ public class PathfinderTester
 {
 	/* Does a simple test on the pathfinder algorithm
 	 * Nodes are organized in a square as shown below
-	 *   n2     d
-	 *      n1
-	 *   o      n3
+	 *   n2-----d
+	 *   |    / |
+	 *   |  n1  |
+	 *   | /    |
+	 *   o------n3
 	 *   Correct path is to go through the center
 	 */
 	@Test
