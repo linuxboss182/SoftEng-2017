@@ -12,15 +12,30 @@ import entities.Room;
 public class DatabaseController
 {
 
+
 	private Connection db_connection;
 	private String connection_string;
 
-	public DatabaseController(){
-		this.connection_string = "jdbc:derby:DB;create=true";
-	}
+	private boolean dbAlreadyExists = false;
 
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
+		this.dbAlreadyExists = this.checkDBExists();
+	}
+
+	public DatabaseController(){
+		this("jdbc:derby:DB;create=true");
+	}
+
+	/** true if the database already exists */
+	private boolean checkDBExists() {
+		try {
+			SQLWarning check = this.db_connection.getWarnings();
+			return (check != null);
+		} catch (SQLException e) {
+			System.out.println("Failed to get JDBC warnings.");
+			return false;
+		}
 	}
 
 	//initialize the database
@@ -50,6 +65,9 @@ public class DatabaseController
 	//initializes the database empty with the desired schema
 	//returns true if success, false if error
 	public boolean initSchema() {
+		if (this.dbAlreadyExists) {
+			return true;
+		}
 		boolean result;
 		Statement initSchema = null;
 		try {
@@ -118,6 +136,7 @@ public class DatabaseController
 		 	return false;
 		}
 	}
+
 
 	//adds a node to the database
 	//returns true if success, false if failure
@@ -193,6 +212,10 @@ public class DatabaseController
 		} catch (SQLException e){
 			return false;
 		}
+	}
+
+	public boolean destructiveSaveDirectory(Directory dir) {
+		return false;
 	}
 
 	//A test call to the database
