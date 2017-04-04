@@ -20,6 +20,13 @@ public class Directory
 	private HashSet<Room> rooms;
 	private HashSet<Professional> professionals;
 
+	/*
+	addNode, addRoom
+	removeNode, removeRoom
+	addProf, removeProf
+
+	getProfessionals, getRooms, getNodes
+	 */
 
 	/* Constructors */
 
@@ -37,18 +44,18 @@ public class Directory
 	public void getRoomData(Object n) {
 	}
 
-	/**
-	 * Returns the list of nodes in the directory
-	 */
-	public Set<Node> getNodeSet() {
-		return this.nodes;
+	public Set<Node> getNodes() {
+		return new HashSet<>(this.nodes);
 	}
 
-	/**
-	 * Adds a node to the list
-	 *
-	 * @param node The node that is being added to the list
-	 */
+	public Set<Node> getRooms() {
+		return new HashSet<>(this.rooms);
+	}
+
+	public Set<Professional> getProfessionals() {
+		return new HashSet<>(this.professionals);
+	}
+
 	public void addNode(Node node) {
 		this.nodes.add(node);
 	}
@@ -57,19 +64,20 @@ public class Directory
 		this.rooms.add(room);
 	}
 
-	/**
-	 * Removes a node from the list
-	 *
-	 * @param node The reference to the node that is being removed. This must be the same reference as the one in the list
-	 *
-	 * @return true if the node has successfully been removed, false otherwise
-	 */
+	public void addProfessional(Professional professional) {
+		this.professionals.add(professional);
+	}
+
 	public boolean removeNode(Node node) {
 		return this.nodes.remove(node);
 	}
 
 	public boolean removeRoom(Room room) {
 		return this.rooms.remove(room);
+	}
+
+	public boolean removeProfessional(Professional professional) {
+		return this.professionals.remove(professional);
 	}
 
 	// TODO: Write this method properly
