@@ -66,4 +66,9 @@ public class Directory
 		return 4;
 	}
 
+	public void addRoom(Node room){
+		this.rooms.add(room);
+		this.addNode(room);
+	}
+
 }
