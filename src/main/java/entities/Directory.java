@@ -1,7 +1,8 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
 
 // TODO: Improve documentation
 
@@ -15,14 +16,15 @@ public class Directory
 
 	/* Attributes */
 
-	private List<Node> rooms;
+	private HashSet<Node> nodes;
+	private HashSet<Node> rooms;
 
 
 	/* Constructors */
 
 	// A barren constructor for Directory, currently doesn't do anything differently than normal
 	public Directory() {
-		this.rooms = new ArrayList<>();
+		this.rooms = new HashSet<>();
 	}
 
 
@@ -35,8 +37,8 @@ public class Directory
 	/**
 	 * Returns the list of nodes in the directory
 	 */
-	public List<Node> getNodeList() {
-		return this.rooms;
+	public Set<Node> getNodeSet() {
+		return this.nodes;
 	}
 
 	/**
