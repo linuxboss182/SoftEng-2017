@@ -2,6 +2,7 @@ package adminpanel;
 
 
 import entities.Directory;
+import entities.Room;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import main.DatabaseController;
 
 import javax.xml.soap.Text;
@@ -49,6 +52,9 @@ public class EditorController implements Initializable
 	private Button cancelBtn;
 	@FXML
 	private Button deleteRoomBtn;
+	@FXML
+	private Button confirmBtn;
+
 
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
@@ -60,7 +66,7 @@ public class EditorController implements Initializable
 	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
 
 	private Node selectedNode; // you select a node by double clicking
-	private Circle selectedCircle; // This and the selectedNode should be set at the same time
+	private Shape selectedShape; // This and the selectedNode should be set at the same time
 
 	// Primary is left click and secondary is right click
 	// these keep track of which button was pressed last on the mouse
@@ -70,9 +76,13 @@ public class EditorController implements Initializable
 	private double releasedX;
 	private double releasedY;
 
-	private static final Color DEFAULT_CIRCLE_COLOR = Color.web("0x0000FF");
-	private static final Color SELECTED_CIRCLE_COLOR = Color.BLACK;
+	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
+	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
 	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
+
+	private static final double RECTANGLE_WIDTH = 5;
+	private static final double RECTANGLE_HEIGHT = 5;
+	private static final double CIRCLE_RADIUS = 5;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -96,9 +106,9 @@ public class EditorController implements Initializable
 
 			// reset selected circle and node
 			this.selectedNode = null;
-			if(this.selectedCircle != null)
-				this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
-			this.selectedCircle = null;
+			if(this.selectedShape != null)
+				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+			this.selectedShape = null;
 		});
 
 		// this could be helpful for selecting a large area
@@ -109,8 +119,13 @@ public class EditorController implements Initializable
 	}
 
 	@FXML
+	public void confirmBtnPressed() {
+		System.out.println("Pressed Confirm");
+	}
+
+	@FXML
 	public void addRoomBtnClicked() {
-		this.addNode(this.readX(), this.readY());
+		this.addRoom(this.readX(), this.readY(), "name", "description");
 	}
 
 	@FXML
@@ -134,17 +149,31 @@ public class EditorController implements Initializable
 	private void addNode(double x, double y) {
 		Node newNode = new Node(x, y);
 		this.directory.addNode(newNode);
-		this.paintOnLocation(newNode);
+		this.paintNodeOnLocation(newNode);
+	}
 
-		System.out.println(this.directory.getNodes().size());
-
+	private void addRoom(double x, double y, String name, String description) {
+		Room newRoom = new Room(x, y, name, description);
+		this.directory.addRoom(newRoom);
+		this.paintRoomOnLocation(newRoom);
 	}
 
 	private void updateSelectedNode(double x, double y) {
 		this.selectedNode.moveTo(x, y);
-		this.selectedCircle.setCenterX(x);
-		this.selectedCircle.setCenterY(y);
+		// TODO: This might be bad coding practice, but it helps me generalize other code
 
+		Circle selectedCircle = (Circle) this.selectedShape;
+		selectedCircle.setCenterX(x);
+		selectedCircle.setCenterY(y);
+	}
+
+	private void updateSelectedRoom(double x, double y, String name, String description) {
+		this.selectedNode.moveTo(x, y);
+		((Room) this.selectedNode).setName(name);
+		((Room) this.selectedNode).setDescription(description);
+		Rectangle selectedRectangle = (Rectangle) this.selectedShape;
+		selectedRectangle.setX(x);
+		selectedRectangle.setY(y);
 	}
 
 	private void deleteSelectedNode() {
@@ -153,17 +182,16 @@ public class EditorController implements Initializable
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
-		this.contentPane.getChildren().remove(this.selectedCircle);
-		this.selectedCircle = null;
+		this.contentPane.getChildren().remove(this.selectedShape);
+		this.selectedShape = null;
 
 		this.redrawLines();
 
-		System.out.println(this.directory.getNodes().size());
 	}
 
-	public void paintOnLocation(Node n) {
+	public void paintNodeOnLocation(Node n) {
 		Circle circ;
-		circ = new Circle(n.getX(), n.getY(), 5,this.DEFAULT_CIRCLE_COLOR );
+		circ = new Circle(n.getX(), n.getY(), this.CIRCLE_RADIUS,this.DEFAULT_SHAPE_COLOR);
 
 		this.contentPane.getChildren().add(circ);
 		circ.setVisible(true);
@@ -186,8 +214,33 @@ public class EditorController implements Initializable
 		circ.setOnMouseReleased(e->{
 			EditorController.this.onCircleReleased(e, n);
 		});
+	}
+
+	public void paintRoomOnLocation(Room r) {
+		Rectangle rect;
+		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+
+		this.contentPane.getChildren().add(rect);
+		rect.setVisible(true);
+
+		rect.setOnMouseClicked((MouseEvent e) ->{
+			EditorController.this.onRectangleClick(e, r);
+		});
+
+		rect.setOnMouseDragged(e->{
+			EditorController.this.onRectangleDrag(e, r);
+		});
+
+		// Working as intended
+		rect.setOnMousePressed(e->{
+			this.primaryPressed = e.isPrimaryButtonDown();
+			this.secondaryPressed = e.isSecondaryButtonDown();
+		});
 
 
+		rect.setOnMouseReleased(e->{
+			EditorController.this.onRectangleReleased(e, r);
+		});
 	}
 
 	public void redrawLines() {
@@ -226,7 +279,7 @@ public class EditorController implements Initializable
 	}
 
 	public void displayNodes() {
-		this.directory.getNodes().forEach(node -> this.paintOnLocation(node));
+		this.directory.getNodes().forEach(node -> this.paintNodeOnLocation(node));
 	}
 
 
@@ -250,11 +303,13 @@ public class EditorController implements Initializable
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-			if(this.selectedCircle != null) this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
+			if(this.selectedShape != null) {
+				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+			}
 
-			this.selectedCircle = (Circle) e.getSource();
+			this.selectedShape = (Circle) e.getSource();
 			this.selectedNode = n;
-			this.selectedCircle.setFill(this.SELECTED_CIRCLE_COLOR);
+			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
 		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
 			// ^ checks if there has been a node selected,
 			// checks if the node selected is not the node we are clicking on
@@ -277,7 +332,7 @@ public class EditorController implements Initializable
 	public void onCircleDrag(MouseEvent e, Node n) {
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 			if(this.primaryPressed) {
-				this.selectedCircle = (Circle) e.getSource();
+				this.selectedShape = (Circle) e.getSource();
 				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode);
 				this.redrawLines();
@@ -299,4 +354,64 @@ public class EditorController implements Initializable
 			this.deleteSelectedNode();
 		}
 	}
+
+	public void onRectangleClick(MouseEvent e, Room r) {
+
+		// update text fields
+		this.setFields(r);
+
+		// check if you single click
+		// so, then you are selecting a node
+		if(e.getClickCount() == 1 && this.primaryPressed) {
+			if(this.selectedShape != null) {
+				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+			}
+
+			this.selectedShape = (Rectangle) e.getSource();
+			this.selectedNode = r;
+			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
+		} else if(this.selectedNode != null && !this.selectedNode.equals(r) && this.secondaryPressed) {
+			// ^ checks if there has been a node selected,
+			// checks if the node selected is not the node we are clicking on
+			// and checks if the button pressed is the right mouse button (secondary)
+
+			// finally check if they are connected or not
+			// if they are connected, remove the connection
+			// if they are not connected, add a connection
+			if(this.selectedNode.areConnected(r)) {
+				this.selectedNode.disconnect(r);
+				this.redrawLines();
+			} else {
+				this.selectedNode.connect(r);
+				this.redrawLines();
+			}
+		}
+	}
+
+	public void onRectangleDrag(MouseEvent e, Room r) {
+		if(this.selectedNode != null && this.selectedNode.equals(r)) {
+			if(this.primaryPressed) {
+				this.selectedShape = (Rectangle) e.getSource();
+				this.updateSelectedRoom(e.getX()-this.RECTANGLE_WIDTH/2, e.getY()-this.RECTANGLE_HEIGHT/2, r.getName(), r.getDescription());
+				this.setFields(this.selectedNode);
+				this.redrawLines();
+			} else if(this.secondaryPressed) {
+				// right click drag on the selected node
+			}
+
+		}
+
+	}
+
+	public void onRectangleReleased(MouseEvent e, Room r) {
+		this.releasedX = e.getX();
+		this.releasedY = e.getY();
+
+		// if the releasedX or Y is negative we want to remove the node
+
+		if(this.releasedX < 0 || this.releasedY < 0) {
+			this.deleteSelectedNode();
+		}
+	}
+
 }
