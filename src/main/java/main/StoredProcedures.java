@@ -1,15 +1,13 @@
 package main;
 
-/**
- * Created by Kenneth on 3/30/17.
- */
-public class StoredProcedures {
+public class StoredProcedures
+{
 	//initial schema to setup the database
 	//Define tables here in the order they should be created:
 
 	private static final String[] schema = {
 			"CREATE TABLE Nodes ("
-					+ "nodeID integer PRIMARY KEY , nodeX  integer , nodeY  integer)",
+					+ "nodeID integer PRIMARY KEY , nodeX  DOUBLE PRECISION , nodeY  DOUBLE PRECISION)",
 			"CREATE TABLE Edges ("
 					+"node1 integer references Nodes(nodeID) NOT NULL"
 					+" , node2 integer references Nodes(nodeID) NOT NULL)",
@@ -142,4 +140,63 @@ public class StoredProcedures {
 		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+id+", "+nodeX+", "+nodeY+")";
 	}
 
+	public static String procRetrieveRooms(){
+		//query needs work
+		return "SELECT * FROM Rooms";
+	}
+
+	public static String procRetrieveRoomName(String roomName){
+		//query needs work
+		return "SELECT * FROM Nodes WHERE roomName ='"+roomName+"'";
+	}
+
+	public static String procIncertRoom(String roomName, String roomDescription, int id){
+		//query needs work
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+id+")";
+	}
+
+	public static String procRetrieveEdges(){
+		//query needs work
+		return "SELECT * FROM Edges";
+	}
+
+	public static String procRetrieveEdge(int node1,int node2){
+		//query needs work
+		return "SELECT * FROM Nodes WHERE node1 ='"+node1+"' AND node2 = '"+node2+"'";
+	}
+
+	public static String procInsertRoom(int node1, int node2){
+		//query needs work
+		return "INSERT INTO Rooms (node1, node2) VALUES("+node1+","+node2+")";
+	}
+
+	public static String procRetrieveEmployees(){
+		//query needs work
+		return "SELECT * FROM Employees";
+	}
+
+	public static String procRetrieveEmployeeID(int id){
+		//query needs work
+		return "SELECT * FROM Employee WHERE employeeID='"+id+"'";
+	}
+
+	public static String procIncertEmployee(int id, String GN, String SN, String Title){
+		//query needs work
+		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+id+","+GN+","+SN+","+Title+")";
+	}
+
+	public static String procRetrieveEmployeeRooms(){
+		//query needs work
+		return "SELECT * FROM EmployeeRooms";
+	}
+
+	public static String procRetrieveNameID(int id, String name){
+		//query needs work
+		return "SELECT * FROM Employee WHERE employeeID='"+id+"' AND roomName = '"+name+"'";
+	}
+
+	public static String procInsertNameID(int id, String name){
+		//query needs work
+		return "INSERT INTO Employees(employeeID,roomName) VALUES("+id+","+name+")";
+	}
 }

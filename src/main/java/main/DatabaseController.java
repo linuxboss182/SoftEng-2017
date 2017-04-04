@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import entities.Directory;
 import entities.Node;
 
 public class DatabaseController
@@ -168,6 +169,14 @@ public class DatabaseController
 			e.printStackTrace();
 		}
 	}
+
+//	public void saveDirectoryToDatabase(Directory dir) {
+//		Statement query = this.db_connection.createStatement();
+//
+//		query.;
+//
+//		query.close();
+//	}
 
 	//This code is broken, the batch executes in reverse order. Unneeded at this time, was use for testing.
 //	//populates the database with initial data specified in the stored proc
