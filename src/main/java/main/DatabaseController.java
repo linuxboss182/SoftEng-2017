@@ -151,8 +151,8 @@ public class DatabaseController
 
 	//returns all nodes(including rooms) as a directory
 	public boolean getNodes(Directory directory){
-		HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
-		HashMap<Integer, Node> rooms = new HashMap<Integer, Node>();
+		HashMap<Integer, Node> nodes = new HashMap<>();
+		HashMap<Integer, Room> rooms = new HashMap<>();
 		try{
 			Statement query = this.db_connection.createStatement();
 			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodes());
@@ -178,7 +178,7 @@ public class DatabaseController
 			for(Node n: nodes.values()){
 				directory.addNode(n);
 			}
-			for(Node n: rooms.values()){
+			for(Room n: rooms.values()){
 				directory.addRoom(n);
 			}
 			result.close();
