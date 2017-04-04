@@ -234,7 +234,8 @@ public class DatabaseController
 					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
 				}
 			}
-
+			//reset the result set so we can iterate through again and add adjacent nodes
+			//hashmaps MUST have populated nodes before running this
 			resultNodes.first();
 			while(resultNodes.next()){
 				while(resultEdges.next()){
