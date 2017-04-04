@@ -51,6 +51,34 @@ public class NodeTester
 	*/
 
 	@Test
+    public void testDistanceSame(){
+	    Node a = new Node(0, 0);
+	    Node b = new Node(0, 0);
+	    double result = a.distance(b);
+	    double expected = 0.0;
+	    Assert.assertTrue(result == expected);
+    }
+
+    @Test
+    public void testDistance1(){
+        Node a = new Node(5, 10);
+        Node b = new Node(11, 18);
+        double result = a.distance(b);
+        double expected = 10;
+        Assert.assertTrue(result == expected);
+
+    }
+
+    @Test
+    public void testDistanceOnlyY(){
+    	Node a = new Node(10, 15);
+    	Node b = new Node(10, 60);
+    	double result = a.distance(b);
+    	double expected = 45;
+    	Assert.assertTrue(result == expected);
+    }
+
+	@Test
 	public void testGetNeighborsNone() {
 		Node a = new Node(0, 0);
 		Set<Node> result = a.getNeighbors();
