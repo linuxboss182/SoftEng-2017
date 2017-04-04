@@ -48,7 +48,7 @@ public class Directory
 		return new HashSet<>(this.nodes);
 	}
 
-	public Set<Node> getRooms() {
+	public Set<Room> getRooms() {
 		return new HashSet<>(this.rooms);
 	}
 
