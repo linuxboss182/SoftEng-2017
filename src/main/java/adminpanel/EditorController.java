@@ -378,14 +378,9 @@ public class EditorController implements Initializable
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
-			System.out.println("Clicked on a rectangle " + this.selectedNode.areConnected(n));
-			if(this.selectedNode.areConnected(n)) {
-				this.selectedNode.disconnect(n);
-				this.redrawLines();
-			} else {
-				this.selectedNode.connect(n);
-				this.redrawLines();
-			}
+			System.out.println("Clicked on a rectangle " + this.selectedNode.getNeighbors().contains(n));
+			this.selectedNode.connectOrDisconnect(n);
+			this.redrawLines();
 		}
 	}
 
