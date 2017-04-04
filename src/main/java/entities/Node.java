@@ -79,7 +79,7 @@ public class Node
 		return this.neighbors.remove(n);
 	}
 
-	/** TODO: Write a tester for this
+	/**
 	 * Determines whether this node is connected to Node n
 	 * @param n The node we are checking for a connection to
 	 * @return true: if they are connected. false: otherwise
@@ -143,9 +143,9 @@ public class Node
 	 * @return the angle between the nodes
 	 **/
 	private double angleTo(Node n) {
-		if (n.y > this.y && n.x > this.x) {
+		if ((n.y > this.y) && (n.x > this.x)) {
 			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (n.y > this.y && this.x > n.x) {
+		} else if ((n.y > this.y) && (this.x > n.x)) {
 			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
 		} else if (this.y > n.y && this.x > n.x) {
 			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
