@@ -55,6 +55,8 @@ public class EditorController implements Initializable
 	ArrayList<Node> alon = new ArrayList<Node>();
 	ArrayList<Line> lines = new ArrayList<Line>();
 
+	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
+
 	private Node selectedNode; // you select a node by double clicking
 	private Circle selectedCircle; // This and the selectedNode should be set at the same time
 
@@ -90,12 +92,15 @@ public class EditorController implements Initializable
 
 
 		this.imageViewMap.setOnMouseClicked(e -> {
-			//Create node on click
-			this.clickNode = new Node(e.getX(), e.getY());
+			//Create node on double click
+			if(e.getClickCount() == 2) {
+				this.clickNode = new Node(e.getX(), e.getY());
+				this.alon.add(this.clickNode);
+				this.paintOnLocation(this.clickNode);
+				this.setFields(this.clickNode);
+			}
 			//Paint something at that location
-			this.paintOnLocation(this.clickNode);
 			//update the text boxes
-			this.setFields(this.clickNode);
 
 
 			// reset selected circle and node
@@ -248,9 +253,9 @@ public class EditorController implements Initializable
 		// update text fields
 		this.setFields(n);
 
-		// check if you double click
-		// if you double click, then you are selecting a node
-		if(e.getClickCount() == 2 && this.primaryPressed) {
+		// check if you single click
+		// so, then you are selecting a node
+		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedCircle != null) this.selectedCircle.setFill(this.DEFAULT_CIRCLE_COLOR);
 
 			this.selectedCircle = (Circle) e.getSource();
