@@ -29,6 +29,14 @@ public class Node
 	}
 
 
+	public double getX() {
+		return this.x;
+	}
+
+	public double getY() {
+		return this.y;
+	}
+
 	/** Set node coordinates */
 	public void moveTo(double x, double y) {
 		this.x = x;
@@ -146,9 +154,4 @@ public class Node
 			return Double.NaN;
 		}
 	}
-
-	public double getX(){ return this.x;}
-
-	public double getY(){return this.y;}
-
 }
