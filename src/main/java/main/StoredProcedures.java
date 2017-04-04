@@ -8,7 +8,7 @@ public class StoredProcedures
 	//initial schema to setup the database
 	//Define tables here in the order they should be created:
 
-	private static final String[] schema = {
+	private static final List<String> schema = Arrays.asList(
 			"CREATE TABLE Nodes ("
 					+ "nodeID integer PRIMARY KEY , nodeX  DOUBLE PRECISION , nodeY  DOUBLE PRECISION)",
 			"CREATE TABLE Edges ("
@@ -17,8 +17,8 @@ public class StoredProcedures
 			"CREATE TABLE Rooms ("
 					+"roomName        varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
-					+" , nodeID          integer references Nodes(nodeID))"
-					+" , constraint Rooms_pk PRIMARY KEY (nodeID)",
+					+" , nodeID          integer references Nodes(nodeID)"
+					+" , constraint Rooms_pk PRIMARY KEY (nodeID))",
 			"CREATE TABLE Employees ("
 					+"employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
@@ -28,7 +28,7 @@ public class StoredProcedures
 					+"nodeID   varchar(200) references Rooms(roomName)"
 					+" , employeeID integer references Employees(employeeID)"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
-	};
+	);
 
 	private static final List<String> drops = Arrays.asList(
 			"DROP TABLE EmployeeRooms",
@@ -127,7 +127,7 @@ public class StoredProcedures
 	};
 
 
-	public static String[] getSchema() {
+	public static List<String> getSchema() {
 		return StoredProcedures.schema;
 	}
 
