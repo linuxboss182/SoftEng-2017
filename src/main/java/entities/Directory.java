@@ -1,6 +1,8 @@
 package entities;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
 
 // TODO: Improve documentation
 
@@ -14,14 +16,18 @@ public class Directory
 
 	/* Attributes */
 
-	private ArrayList<Node> rooms;
+	private HashSet<Node> nodes;
+	private HashSet<Room> rooms;
+	private HashSet<Professional> professionals;
 
 
 	/* Constructors */
 
 	// A barren constructor for Directory, currently doesn't do anything differently than normal
 	public Directory() {
-		this.rooms = new ArrayList<>();
+		this.nodes = new HashSet<>();
+		this.rooms = new HashSet<>();
+		this.professionals = new HashSet<>();
 	}
 
 
@@ -34,7 +40,9 @@ public class Directory
 	/**
 	 * Returns the list of nodes in the directory
 	 */
-	public ArrayList<Node> getNodeList() { return this.rooms;}
+	public Set<Node> getNodeSet() {
+		return this.nodes;
+	}
 
 	/**
 	 * Adds a node to the list
@@ -42,7 +50,11 @@ public class Directory
 	 * @param node The node that is being added to the list
 	 */
 	public void addNode(Node node) {
-		this.rooms.add(node);
+		this.nodes.add(node);
+	}
+
+	public void addRoom(Room room) {
+		this.rooms.add(room);
 	}
 
 	/**
@@ -53,13 +65,16 @@ public class Directory
 	 * @return true if the node has successfully been removed, false otherwise
 	 */
 	public boolean removeNode(Node node) {
-		return this.rooms.remove(node);
+		return this.nodes.remove(node);
+	}
+
+	public boolean removeRoom(Room room) {
+		return this.rooms.remove(room);
 	}
 
 	// TODO: Write this method properly
 	private int getHeight() {
 		return 4;
 	}
-
 
 }

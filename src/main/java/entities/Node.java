@@ -29,6 +29,14 @@ public class Node
 	}
 
 
+	public double getX() {
+		return this.x;
+	}
+
+	public double getY() {
+		return this.y;
+	}
+
 	/** Set node coordinates */
 	public void moveTo(double x, double y) {
 		this.x = x;
@@ -69,6 +77,15 @@ public class Node
 	public boolean disconnect(Node n) {
 		n.neighbors.remove(this);
 		return this.neighbors.remove(n);
+	}
+
+	/** TODO: Write a tester for this
+	 * Determines whether this node is connected to Node n
+	 * @param n The node we are checking for a connection to
+	 * @return true: if they are connected. false: otherwise
+	 */
+	public boolean areConnected(Node n) {
+		return this.neighbors.contains(n);
 	}
 
 	/**
@@ -145,6 +162,10 @@ public class Node
 		} else {
 			return Double.NaN;
 		}
+	}
+
+	public String toString() {
+		return ("(" + x + ", " + y + ")");
 	}
 
 }

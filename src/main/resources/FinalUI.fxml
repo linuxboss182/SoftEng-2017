@@ -31,37 +31,37 @@
 	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<TextField prefHeight="25.0" prefWidth="195.0" promptText="Enter Room Number or  Name" />
+				<TextField maxWidth="-Infinity" prefHeight="25.0" prefWidth="259.0" promptText="Enter Room Number or  Name" />
 				<Button mnemonicParsing="false" text="Search" />
-			<Region prefHeight="30.0" prefWidth="577.0" />
+			<Region prefHeight="30.0" prefWidth="530.0" />
 			<TextField promptText="Start" />
 			<TextField promptText="Destination" />
 			</items>
 		</ToolBar>
 	</top>
 	<left>
-		<ListView prefHeight="646.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+		<ListView fx:id="directoryList" BorderPane.alignment="CENTER" />
 	</left>
 	<bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
 				<Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefWidth="200.0" text="Get Directions" textAlignment="CENTER" />
+				<Button fx:id="getDirectionsBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefWidth="200.0" text="Get Directions" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
 			</items>
 		</ToolBar>
 	</bottom>
 	<center>
-		<SplitPane dividerPositions="0.7578125" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
+		<SplitPane dividerPositions="0.7671875" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
 			<items>
 				<AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
 					<children>
-						<ImageView fx:id="imageViewMap" fitHeight="501.0" fitWidth="970.0" layoutX="1.0" layoutY="-3.0" onMouseClicked="#mapClicked" pickOnBounds="true" preserveRatio="true" />
+						<ImageView fx:id="imageViewMap" fitHeight="501.0" fitWidth="970.0" pickOnBounds="true" preserveRatio="true" />
 					</children>
 				</AnchorPane>
-				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+				<AnchorPane>
 					<children>
 						<Button layoutX="226.0" layoutY="94.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" />
 						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="216.0" layoutY="66.0" prefHeight="17.0" prefWidth="393.0" text="FLOOR" textAlignment="CENTER">
@@ -75,8 +75,8 @@
 								<Font size="19.0" />
 							</font>
 						</Label>
-						<RadioButton layoutX="35.0" layoutY="50.0" mnemonicParsing="false" text="Elevator" />
-						<RadioButton layoutX="35.0" layoutY="77.0" mnemonicParsing="false" text="Stairs" />
+						<RadioButton fx:id="elevatorRadio" layoutX="35.0" layoutY="50.0" mnemonicParsing="false" text="Elevator" />
+						<RadioButton fx:id="stairRadio" layoutX="35.0" layoutY="77.0" mnemonicParsing="false" text="Stairs" />
 						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
 							<font>
 								<Font size="19.0" />
@@ -99,7 +99,7 @@
 			  <tabs>
 				<Tab text="Starting Room">
 				  <content>
-					<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+					<AnchorPane minHeight="0.0" minWidth="0.0">
 						   <children>
 								  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
 									<ListView prefHeight="168.0" prefWidth="210.0" />
@@ -108,7 +108,7 @@
 											<Font size="15.0" />
 										</font>
 									</Label>
-									<Button layoutX="63.0" layoutY="572.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Done" />
+									<Button fx:id="doneBtn" layoutX="63.0" layoutY="572.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="80.0" text="Done" />
 							  <ImageView fitHeight="150.0" fitWidth="185.0" layoutX="10.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" />
 						   </children>
 						</AnchorPane>
