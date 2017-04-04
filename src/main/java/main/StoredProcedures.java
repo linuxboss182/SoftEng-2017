@@ -1,5 +1,8 @@
 package main;
 
+import java.util.List;
+import java.util.Arrays;
+
 public class StoredProcedures
 {
 	//initial schema to setup the database
@@ -26,6 +29,15 @@ public class StoredProcedures
 					+" , employeeID integer references Employees(employeeID)"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
 	};
+
+	private static final List<String> drops = Arrays.asList(
+			"DROP TABLE EmployeeRooms",
+			"DROP TABLE Employees",
+			"DROP TABLE Rooms",
+			"DROP TABLE Edges",
+			"DROP TABLE Nodes"
+	);
+
 	//initial data that will be in the database upon construction
 	private static final String[] initialData = {
 			"INSERT INTO Nodes (nodeX, nodeY, nodeid) VALUES(3600, 700, 1)",
@@ -117,6 +129,10 @@ public class StoredProcedures
 
 	public static String[] getSchema() {
 		return StoredProcedures.schema;
+	}
+
+	public static List<String> getDrops() {
+		return StoredProcedures.drops;
 	}
 
 	public static String[] getInitialData(){
