@@ -150,7 +150,7 @@ public class StoredProcedures
 		return "SELECT * FROM Nodes WHERE roomName ='"+roomName+"'";
 	}
 
-	public static String procIncertRoom(String roomName, String roomDescription, int id){
+	public static String procInsertRoom(String roomName, String roomDescription, int id){
 		//query needs work
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+id+")";
 	}
@@ -180,7 +180,7 @@ public class StoredProcedures
 		return "SELECT * FROM Employee WHERE employeeID='"+id+"'";
 	}
 
-	public static String procIncertEmployee(int id, String GN, String SN, String Title){
+	public static String procInsertEmployee(int id, String GN, String SN, String Title){
 		//query needs work
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+id+","+GN+","+SN+","+Title+")";
 	}
