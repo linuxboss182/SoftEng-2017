@@ -85,13 +85,7 @@ public class Node
 	 * @return true: if they are connected. false: otherwise
 	 */
 	public boolean areConnected(Node n) {
-		Node[] adjacents = this.getAdjacencies();
-		for(int i = 0; i < adjacents.length; i++) {
-			if(adjacents[i].equals(n)) {
-				return true;
-			}
-		}
-		return false;
+		return this.neighbors.contains(n);
 	}
 
 	/**
