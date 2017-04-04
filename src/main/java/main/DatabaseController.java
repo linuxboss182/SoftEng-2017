@@ -11,20 +11,48 @@ import entities.Room;
 
 public class DatabaseController
 {
-
+	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private Connection db_connection;
 	private String connection_string;
 
-	private boolean dbAlreadyExists = false;
-
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
-		//this.dbAlreadyExists = this.checkDBExists();
 	}
 
 	public DatabaseController(){
 		this("jdbc:derby:DB;create=true");
+	}
+
+	/**
+	 * Attempt to connect to the database
+	 *
+	 * If the database does not exist, it is created and the tables are created.
+	 *
+	 * @throws DatabaseException if the connection fails
+	 */
+	public void init()
+			throws DatabaseException {
+		boolean flag = this.initDB();
+		if (! flag) {
+			throw new DatabaseException("Connection failed");
+		}
+
+		SQLWarning warning;
+		try {
+			// db warning was issued if db existed before init
+			warning = this.db_connection.getWarnings();
+			// if null, no warning = new database
+		} catch (SQLException e) {
+			throw new DatabaseException("Failed to check connecton warnings", e);
+		}
+
+		if (warning == null) { //if null, DB exists
+			flag = this.initSchema();
+			if (! flag) {
+				throw new DatabaseException("Failed to initialize database schema");
+			}
+		}
 	}
 
 	/** true if the database already exists */
@@ -40,10 +68,10 @@ public class DatabaseController
 
 	//initialize the database
 	//returns true if success, false if failure
-	public boolean initDB() {
-		this.db_connection = null;
+	// (do not add db calls after the line indicated below)
+	private boolean initDB() {
 		try {
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+			Class.forName(DatabaseController.driver);
 		} catch(ClassNotFoundException e) {
 			System.out.println("Java DB Driver not found. Add the classpath to your module.");
 			return false;
@@ -51,8 +79,8 @@ public class DatabaseController
 		System.out.println("Stuff works");
 
 		try {
-			// substitute your database name for myDB
 			this.db_connection = DriverManager.getConnection(this.connection_string);
+			// MAKE NO MORE DB CALLS AFTER THIS POINT (they could break this.init())
 		} catch (SQLException e) {
 			System.out.println("Connection failed. Check output console.");
 			e.printStackTrace();
@@ -64,10 +92,7 @@ public class DatabaseController
 
 	//initializes the database empty with the desired schema
 	//returns true if success, false if error
-	public boolean initSchema() {
-		if (this.dbAlreadyExists) {
-			return true;
-		}
+	private boolean initSchema() {
 		boolean result;
 		Statement initSchema = null;
 		try {
