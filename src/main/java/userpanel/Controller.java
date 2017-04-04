@@ -100,13 +100,13 @@ public class Controller implements Initializable
 		});
 
 		//populate listview
-		Room r1 = new Room("Room 101", "Hi");
-		Room r2 = new Room("Room 102", "Hi");
-		Room r3 = new Room("Room 103", "Hi");
-		this.roomList.add(r1);
-		this.roomList.add(r2);
-		this.roomList.add(r3);
-		this.populateListView(this.roomList);
+		// Room r1 = new Room("Room 101", "Hi");
+		// Room r2 = new Room("Room 102", "Hi");
+		// Room r3 = new Room("Room 103", "Hi");
+		// this.roomList.add(r1);
+		// this.roomList.add(r2);
+		// this.roomList.add(r3);
+		// this.populateListView(this.roomList);
 
 	}
 
