@@ -72,6 +72,7 @@ public class EditorController implements Initializable
 
 	private static final Color DEFAULT_CIRCLE_COLOR = Color.web("0x0000FF");
 	private static final Color SELECTED_CIRCLE_COLOR = Color.BLACK;
+	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -81,9 +82,8 @@ public class EditorController implements Initializable
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
-		this.displayNodes(new ArrayList<Node>(this.directory.getNodes()));
+		this.displayNodes(); // draws the nodes from the directory
 		this.imageViewMap.setPickOnBounds(true);
-
 
 		this.imageViewMap.setOnMouseClicked(e -> {
 			//Create node on double click
@@ -135,6 +135,9 @@ public class EditorController implements Initializable
 		Node newNode = new Node(x, y);
 		this.directory.addNode(newNode);
 		this.paintOnLocation(newNode);
+
+		System.out.println(this.directory.getNodes().size());
+
 	}
 
 	private void updateSelectedNode(double x, double y) {
@@ -154,6 +157,8 @@ public class EditorController implements Initializable
 		this.selectedCircle = null;
 
 		this.redrawLines();
+
+		System.out.println(this.directory.getNodes().size());
 	}
 
 	public void paintOnLocation(Node n) {
@@ -197,14 +202,13 @@ public class EditorController implements Initializable
 	}
 
 	private void fillDrawLines() {
-		ArrayList<Node> tempArrayListOfNodes = new ArrayList<>(this.directory.getNodes());
-		for(int node = 0; node < tempArrayListOfNodes.size(); node++) {
-			Node current = tempArrayListOfNodes.get(node);
-			Node[] adjacents = current.getNeighbors().toArray(new Node[current.getNeighbors().size()]);
+
+		this.directory.getNodes().forEach(node -> {
+			Node[] adjacents = node.getNeighbors().toArray(new Node[node.getNeighbors().size()]);
 			for(int connection = 0; connection < adjacents.length; connection++) {
 				Node connected = adjacents[connection];
-				double startX = current.getX();
-				double startY = current.getY();
+				double startX = node.getX();
+				double startY = node.getY();
 				double endX = connected.getX();
 				double endY = connected.getY();
 				Line line = new Line();
@@ -218,13 +222,11 @@ public class EditorController implements Initializable
 				this.contentPane.getChildren().add(line);
 				line.setVisible(true);
 			}
-		}
+		});
 	}
 
-	public void displayNodes(ArrayList<entities.Node> alon) {
-		for (int i = 0; i < alon.size(); i++) {
-			this.paintOnLocation((alon.get(i)));
-		}
+	public void displayNodes() {
+		this.directory.getNodes().forEach(node -> this.paintOnLocation(node));
 	}
 
 
