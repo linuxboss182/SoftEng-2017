@@ -5,8 +5,10 @@ import javafx.application.Application;
 
 public class ApplicationController
 {
+
+	public static DatabaseController dbc;
 	public static void main(String[] args) {
-		DatabaseController dbc = new DatabaseController();
+		dbc = new DatabaseController();
 		dbc.initDB();
 		dbc.initSchema();
 
