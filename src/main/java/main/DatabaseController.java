@@ -149,8 +149,14 @@ public class DatabaseController
 		}
 	}
 
+	public Directory getDirectory() {
+		Directory dir = new Directory();
+		this.populateDirectory(dir);
+		return dir;
+	}
+
 	//returns all nodes(including rooms) as a directory
-	public boolean getNodes(Directory directory){
+	public boolean populateDirectory(Directory directory){
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
 		try{
