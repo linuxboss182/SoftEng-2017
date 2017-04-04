@@ -10,7 +10,7 @@ public class ApplicationController
 		dbc.initDB();
 		dbc.initSchema();
 
-		Application.launch(userpanel.Window.class, args);
+    Application.launch(userpanel.Window.class, args);
 
 		dbc.close();
 	}

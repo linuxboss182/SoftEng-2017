@@ -10,7 +10,7 @@ This should inherit from javafx.geometry.Point2D.
 Todo items in this file: (not all TODOs in this file)
  */
 //TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
-//TODO: clean up Node.angleTo()
+//TODO: clean up Node.angleTo() (reimplement as adjustment for Point2D.angle())
 
 /**
  * Represents a node in the graph, and its adjacencies.
@@ -20,13 +20,14 @@ public class Node
 {
 	private double x;
 	private double y;
-	private HashSet<Node> adjacencies;
+	private HashSet<Node> neighbors;
 
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.adjacencies = new HashSet<>();
+		this.neighbors = new HashSet<>();
 	}
+
 
 	/** Set node coordinates */
 	public void moveTo(double x, double y) {
@@ -35,49 +36,50 @@ public class Node
 	}
 
 	/**
-	 * Get a copy of this node's adjacencies.
+	 * Get a copy of this node's neighbor set.
 	 */
 	public Set<Node> getNeighbors() {
-		return new HashSet<>(this.adjacencies);
+		return new HashSet<>(this.neighbors);
 	}
+
 
 	/**
 	 * Create an edge between this and the given node.
 	 *
-	 * Adds the given node to this node's adjacencies, and vice versa.
+	 * Adds the given node to this node's neighbor set, and vice versa.
 	 *
 	 * @param n The node to connect to this node
 	 *
 	 * @return false if the edge already existed
 	 */
 	public boolean connect(Node n) {
-		n.adjacencies.add(this);
-		return this.adjacencies.add(n);
+		n.neighbors.add(this);
+		return this.neighbors.add(n);
 	}
 
 	/**
 	 * Remove the edge between this and the given node.
 	 *
-	 * Removes the given node from this node's adjacencies, and vice versa.
+	 * Removes the given node from this node's neighbor set, and vice versa.
 	 *
 	 * @param n The node to disconnect from this node
 	 *
 	 * @return false if the nodes were not connected
 	 */
 	public boolean disconnect(Node n) {
-		n.adjacencies.remove(this);
-		return this.adjacencies.remove(n);
+		n.neighbors.remove(this);
+		return this.neighbors.remove(n);
 	}
 
 	/**
 	 * Remove any edges between this and other nodes
 	 *
-	 * Remove this node from the adjacencies of all nodes adjacent to it,
-	 * and empty this node's adjacencies
+	 * Remove this node from the neighbor set of all nodes adjacent to it,
+	 * and empty this node's neighbor set
 	 */
 	public void disconnectAll() { // void only because HashSet.clear() is void-typed
-		this.adjacencies.forEach(node -> node.adjacencies.remove(this));
-		this.adjacencies.clear();
+		this.neighbors.forEach(node -> node.neighbors.remove(this));
+		this.neighbors.clear();
 	}
 
 	/**
@@ -106,10 +108,10 @@ public class Node
 	 */
 	// TODO: Determine which way is positive (answer: whichever makes the math easier)
 	public double angle(Node A, Node B) {
-		 double AtoThis = A.angleTo(this);
-		 double thisToB = this.angleTo(B);
-		 double diff = thisToB - AtoThis;
-		 return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
+		double AtoThis = A.angleTo(this);
+		double thisToB = this.angleTo(B);
+		double diff = thisToB - AtoThis;
+		return (diff + 450) % 360; // Jo and Ted talked about this in a meeting on Thursday 3/30/2017
 	}
 
 
