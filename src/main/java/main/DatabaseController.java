@@ -3,8 +3,11 @@ package main;
 import java.sql.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.HashMap;
 
+import entities.Directory;
 import entities.Node;
+import entities.Room;
 
 public class DatabaseController
 {
@@ -123,6 +126,7 @@ public class DatabaseController
 			Statement insert = this.db_connection.createStatement();
 			//do some sort of autoincrement
 			insert.execute(StoredProcedures.procInsertNode(id, node.getX(),node.getY()));
+			insert.close();
 			return true;
 		} catch (SQLException e) {
 			return false;
@@ -137,9 +141,51 @@ public class DatabaseController
 			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodeID(id));
 			//figure out adjacencies
 			Node node = new Node(result.getDouble("nodeX"), result.getDouble("nodeY"));
+			result.close();
+			query.close();
 			return node;
 		} catch (SQLException e){
 			return null;
+		}
+	}
+
+	//returns all nodes(including rooms) as a directory
+	public boolean getNodes(Directory directory){
+		HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
+		HashMap<Integer, Node> rooms = new HashMap<Integer, Node>();
+		try{
+			Statement query = this.db_connection.createStatement();
+			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodes());
+			//populate hash maps
+			while(result.next()){
+				if(result.getString("roomName") == null){
+					//node, not room
+					Node node = new Node(result.getDouble("nodeX"),
+										 result.getDouble("nodeY"));
+
+					nodes.put(result.getInt("nodeID"), node);
+				} else {
+					//room, not node
+					Room room = new Room(result.getDouble("nodeX"),
+										 result.getDouble("nodeY"),
+										 result.getString("roomName"),
+										 result.getString("roomDescription"));
+
+					rooms.put(result.getInt("nodeID"),room); //image where?
+				}
+			}
+			//populate directory
+			for(Node n: nodes.values()){
+				directory.addNode(n);
+			}
+			for(Node n: rooms.values()){
+				directory.addRoom(n);
+			}
+			result.close();
+			query.close();
+			return true;
+		} catch (SQLException e){
+			return false;
 		}
 	}
 
