@@ -1,12 +1,14 @@
 package main;
 
 import java.sql.*;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.HashMap;
 
 import entities.Directory;
 import entities.Node;
+import entities.Professional;
 import entities.Room;
 
 public class DatabaseController
@@ -100,6 +102,7 @@ public class DatabaseController
 	 *
 	 * @return true if successful
 	 */
+	// TODO: Refactor so reInitSchema throws SQLException to be handled elsewhere in the class
 	private boolean reInitSchema() {
 		boolean result;
 		Statement initSchema = null;
@@ -208,12 +211,13 @@ public class DatabaseController
 	}
 
 	//returns all nodes(including rooms) as a directory
-	public boolean populateDirectory(Directory directory){
+	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
 		try{
 			Statement query = this.db_connection.createStatement();
-			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodes());
+			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+
 			//populate hash maps
 			while(result.next()){
 				if(result.getString("roomName") == null){
@@ -239,6 +243,7 @@ public class DatabaseController
 			for(Room n: rooms.values()){
 				directory.addRoom(n);
 			}
+
 			result.close();
 			query.close();
 			return true;
@@ -247,8 +252,75 @@ public class DatabaseController
 		}
 	}
 
-	public boolean destructiveSaveDirectory(Directory dir) {
-		return false;
+	/**
+	 * Replace the database with the contents of the given directory
+	 *
+	 * The previous contents of the database will be lost.
+	 *
+	 * If this function fails, the database may be corrupted.
+	 *
+	 * @param dir The directory to write to the database
+	 *
+	 * @throws DatabaseException If an error occurs when dealing with the database.
+	 */
+	// TODO: manually create a backup of the database before destroying it
+	// (i.e. copy the db directory, then operate, and remove it if successful)
+	public void destructiveSaveDirectory(Directory dir)
+			throws DatabaseException {
+		try {
+			this.reInitSchema(); // drop tables, then recreate tables
+			this.saveDirectory(dir); // insert directory info into tables
+		} catch (SQLException e) {
+			throw new DatabaseException("Failed to update database; database may be corrupt", e);
+		}
+	}
+
+	/**
+	 * Attempt to save a directory to the database
+	 *
+	 * @throws SQLException if any of the insertions trigger a SQLException
+	 */
+	private void saveDirectory(Directory dir)
+			throws SQLException {
+		Statement db = this.db_connection.createStatement();
+		String query;
+
+		for (Node n : dir.getNodes()) {
+			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
+			db.executeUpdate(query);
+		}
+
+		for (Room r : dir.getRooms()) {
+			query = StoredProcedures.procInsertRoom(r.hashCode(), r.getName(), r.getDescription());
+			db.executeUpdate(query);
+			query = StoredProcedures.procInsertNode(r.hashCode(), r.getX(), r.getY());
+			db.executeUpdate(query);
+		}
+
+		for (Professional p : dir.getProfessionals()) {
+			query = StoredProcedures.procInsertEmployee(
+					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
+			db.executeUpdate(query);
+
+			for (Room r : p.getLocations()) {
+				query = StoredProcedures.procInsertEmployeeRoom(p.hashCode(), r.hashCode());
+				db.executeUpdate(query);
+			}
+		}
+
+		for (Node n : dir.getNodes()) {
+			for (Node m : n.getNeighbors()) {
+				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
+				db.executeUpdate(query);
+			}
+		}
+
+		for (Room n : dir.getRooms()) {
+			for (Node m : n.getNeighbors()) {
+				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
+				db.executeUpdate(query);
+			}
+		}
 	}
 
 	//A test call to the database
