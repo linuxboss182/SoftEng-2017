@@ -35,6 +35,7 @@ public class DatabaseController
 	 */
 	public void init()
 			throws DatabaseException {
+		System.err.println("DBC.init");
 		boolean flag = this.initDB();
 		if (! flag) {
 			throw new DatabaseException("Connection failed");
@@ -72,6 +73,7 @@ public class DatabaseController
 	//returns true if success, false if failure
 	// (do not add db calls after the line indicated below)
 	private boolean initDB() {
+		System.err.println("DBC.initDB");
 		try {
 			Class.forName(DatabaseController.driver);
 		} catch(ClassNotFoundException e) {
@@ -104,6 +106,7 @@ public class DatabaseController
 	 */
 	// TODO: Refactor so reInitSchema throws SQLException to be handled elsewhere in the class
 	private boolean reInitSchema() {
+		System.err.println("DBC.reInitSchema");
 		boolean result;
 		Statement initSchema = null;
 		try {
@@ -124,6 +127,17 @@ public class DatabaseController
 			}
 		}
 
+		for (String table : StoredProcedures.getSchema()) {
+			//drop the table if it exists
+			try {
+				initSchema.executeUpdate(table);
+			} catch (SQLException e) {
+				System.err.println("Failed statement: " + table);
+				System.err.println(e.getMessage());
+			}
+		}
+
+		/*
 		String[] schema = StoredProcedures.getSchema();
 		//find our tables in the schema
 		for (int i=0; i < schema.length; i++) {
@@ -142,16 +156,18 @@ public class DatabaseController
 					System.err.println(e.getMessage());
 				}
 
-				//close connection via statement
-				try {
-					initSchema.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return false;
-				}
 				found = true;
 			}
 		}
+		*/
+		//close connection via statement
+		try {
+			initSchema.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 		//stop once we find the first match(assume one create statement per string)
 		return true;
 	}
