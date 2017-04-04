@@ -73,7 +73,7 @@ class SampleGraph
 			new Node(13, 18),
 			new Node(14, 12),
 			new Node(14, 18.5)
-		}
+		};
 
 		Node[] n = this.nodes;
 		n[1].connect(n[3]);
@@ -94,7 +94,7 @@ class SampleGraph
 		n[10].connect(n[11]);
 		n[11].connect(n[12]);
 		n[13].connect(n[15]);
-		n[14].connect(n[15]);
+		n[14].connect(n[16]);
 		n[16].connect(n[17]);
 		n[17].connect(n[19]);
 		n[17].connect(n[23]);
