@@ -58,7 +58,7 @@
 			<items>
 				<AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
 					<children>
-						<ImageView fx:id="imageViewMap" fitHeight="501.0" fitWidth="970.0" pickOnBounds="true" preserveRatio="true" />
+						<ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
 					</children>
 				</AnchorPane>
 				<AnchorPane>
@@ -110,6 +110,7 @@
 									</Label>
 									<Button fx:id="doneBtn" layoutX="63.0" layoutY="572.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="80.0" text="Done" />
 							  <ImageView fitHeight="150.0" fitWidth="185.0" layoutX="10.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" />
+                              <TextFlow fx:id="directionsTextField" layoutX="3.0" layoutY="197.0" prefHeight="369.0" prefWidth="200.0" />
 						   </children>
 						</AnchorPane>
 				  </content>

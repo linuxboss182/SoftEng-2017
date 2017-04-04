@@ -25,6 +25,8 @@ import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import java.io.IOException;
@@ -37,7 +39,7 @@ import entities.Node;
 import main.DatabaseController;
 
 
-public class Controller implements Initializable
+public class Controller extends Window implements Initializable
 {
 	@FXML
 	private Button logAsAdmin;
@@ -59,15 +61,20 @@ public class Controller implements Initializable
 	private Button doneBtn;
 	@FXML
 	private ListView directoryList;
+	@FXML
+	private TextFlow directionsTextField;
 
 
-	Image map4;
-	entities.Node clickNode;
-	ArrayList<Node> directionNodes = new ArrayList<Node>();
-	ArrayList<Node> alon = new ArrayList<Node>();
-	ArrayList<Room> roomList = new ArrayList<>();
+	private Image map4;
+	private Node clickNode;
+	private ArrayList<Node> directionNodes = new ArrayList<Node>();
+	private ArrayList<Node> alon = new ArrayList<>();
+	private ArrayList<Room> roomList = new ArrayList<>();
 	protected ListProperty<String> listProperty = new SimpleListProperty<>();
-	Directory directory;
+	private Directory directory;
+	private Node nodeKiosk;
+	private Node destNode;
+
 
 
 	@Override
@@ -78,6 +85,7 @@ public class Controller implements Initializable
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
+		//this.imageViewMap.fitWidthProperty().bind(this.primaryStage.widthProperty());
 		this.displayNodes();
 
 		//set elevator to clicked
@@ -105,6 +113,16 @@ public class Controller implements Initializable
 		// this.roomList.add(r2);
 		// this.roomList.add(r3);
 		// this.populateListView(this.roomList);
+
+		//Create node for Kiosk at start
+		this.nodeKiosk = new Node(353.5, 122.5);
+		//Paint
+		Circle kiosk;
+		kiosk = new Circle(353.5, 122.5, 5, Color.RED);
+		this.contentAnchor.getChildren().add(kiosk);
+		kiosk.setVisible(true);
+
+
 
 	}
 
@@ -142,6 +160,7 @@ public class Controller implements Initializable
 		circ.setVisible(true);
 	}
 
+
 	public void displayNodes() {
 		this.directory.getNodes().forEach(node -> {
 			Circle circ;
@@ -159,6 +178,12 @@ public class Controller implements Initializable
 	public void getDirectionsClicked() {
 
 		this.paintPath(this.directionNodes);
+		Text t1 = new Text("hey");
+		Text t2 = new Text("heyyyyy");
+		this.directionsTextField.getChildren().add(t1);
+		this.directionsTextField.getChildren().add(t2);
+
+
 	}
 
 	@FXML
@@ -167,6 +192,11 @@ public class Controller implements Initializable
 	}
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		double destX = directionNodes.get(directionNodes.size() - 1).getX();
+		double destY = directionNodes.get(directionNodes.size() - 1).getY();
+
+		this.destNode = new Node(destX, destY);
+		main.Pathfinder.findPath(this.nodeKiosk, this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
