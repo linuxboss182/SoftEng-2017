@@ -24,7 +24,7 @@
 			<items>
 				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
+				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" fx:id="confirmBtn" onMouseClicked="#confirmBtnPressed"/>
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 			</items>
 		</ToolBar>
