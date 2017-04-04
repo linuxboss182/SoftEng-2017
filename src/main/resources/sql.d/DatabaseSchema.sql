@@ -37,8 +37,8 @@ Style convention for queries:
 
 CREATE TABLE Nodes (
     nodeID integer PRIMARY KEY
-  , nodeX  integer
-  , nodeY  integer
+  , nodeX  double precision
+  , nodeY  double precision
 );
 
 CREATE TABLE Edges (
