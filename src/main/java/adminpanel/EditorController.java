@@ -80,8 +80,8 @@ public class EditorController implements Initializable
 	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
 	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 
-	private static final double RECTANGLE_WIDTH = 5;
-	private static final double RECTANGLE_HEIGHT = 5;
+	private static final double RECTANGLE_WIDTH = 7;
+	private static final double RECTANGLE_HEIGHT = 7;
 	private static final double CIRCLE_RADIUS = 5;
 
 	@Override
@@ -93,16 +93,17 @@ public class EditorController implements Initializable
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
 		this.displayNodes(); // draws the nodes from the directory
+		this.displayRooms();
 		this.imageViewMap.setPickOnBounds(true);
 
 		this.imageViewMap.setOnMouseClicked(e -> {
+			this.setFields(e.getX(), e.getY());
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				this.addNode(e.getX(), e.getY());
 			}
 			//Paint something at that location
 			//update the text boxes
-
 
 			// reset selected circle and node
 			this.selectedNode = null;
@@ -153,7 +154,7 @@ public class EditorController implements Initializable
 	}
 
 	private void addRoom(double x, double y, String name, String description) {
-		Room newRoom = new Room(x, y, name, description);
+		Room newRoom = new Room(x-this.RECTANGLE_WIDTH/2, y-this.RECTANGLE_HEIGHT/2, name, description);
 		this.directory.addRoom(newRoom);
 		this.paintRoomOnLocation(newRoom);
 	}
@@ -177,6 +178,9 @@ public class EditorController implements Initializable
 	}
 
 	private void deleteSelectedNode() {
+		if(this.selectedNode == null) return;
+
+
 		this.selectedNode.disconnectAll();
 		this.directory.removeNode(this.selectedNode);
 		this.selectedNode = null;
@@ -197,7 +201,7 @@ public class EditorController implements Initializable
 		circ.setVisible(true);
 
 		circ.setOnMouseClicked((MouseEvent e) ->{
-			EditorController.this.onCircleClick(e, n);
+			EditorController.this.onShapeClick(e, n);
 		});
 
 		circ.setOnMouseDragged(e->{
@@ -212,19 +216,19 @@ public class EditorController implements Initializable
 
 
 		circ.setOnMouseReleased(e->{
-			EditorController.this.onCircleReleased(e, n);
+			EditorController.this.onShapeReleased(e, n);
 		});
 	}
 
 	public void paintRoomOnLocation(Room r) {
 		Rectangle rect;
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-
+		rect.setFill(this.DEFAULT_SHAPE_COLOR);
 		this.contentPane.getChildren().add(rect);
 		rect.setVisible(true);
 
 		rect.setOnMouseClicked((MouseEvent e) ->{
-			EditorController.this.onRectangleClick(e, r);
+			EditorController.this.onShapeClick(e, r);
 		});
 
 		rect.setOnMouseDragged(e->{
@@ -239,7 +243,7 @@ public class EditorController implements Initializable
 
 
 		rect.setOnMouseReleased(e->{
-			EditorController.this.onRectangleReleased(e, r);
+			EditorController.this.onShapeReleased(e, r);
 		});
 	}
 
@@ -267,8 +271,40 @@ public class EditorController implements Initializable
 				Line line = new Line();
 				line.setStartX(startX);
 				line.setStartY(startY);
-				line.setEndX(endX);
-				line.setEndY(endY);
+				if(connected instanceof Room) {
+					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
+					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
+				} else {
+					line.setEndX(endX);
+					line.setEndY(endY);
+				}
+
+
+				this.lines.add(line);
+
+				this.contentPane.getChildren().add(line);
+				line.setVisible(true);
+			}
+		});
+
+		this.directory.getRooms().forEach(node -> {
+			Node[] adjacents = node.getNeighbors().toArray(new Node[node.getNeighbors().size()]);
+			for(int connection = 0; connection < adjacents.length; connection++) {
+				Node connected = adjacents[connection];
+				double startX = node.getX();
+				double startY = node.getY();
+				double endX = connected.getX();
+				double endY = connected.getY();
+				Line line = new Line();
+				line.setStartX(startX + this.RECTANGLE_WIDTH/2);
+				line.setStartY(startY + this.RECTANGLE_HEIGHT/2);
+				if(connected instanceof Room) {
+					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
+					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
+				} else {
+					line.setEndX(endX);
+					line.setEndY(endY);
+				}
 
 				this.lines.add(line);
 
@@ -282,32 +318,35 @@ public class EditorController implements Initializable
 		this.directory.getNodes().forEach(node -> this.paintNodeOnLocation(node));
 	}
 
+	public void displayRooms() {
+		this.directory.getRooms().forEach(room -> this.paintRoomOnLocation(room));
+	}
+
 
 	@FXML
 	private void logoutBtnClicked() {
 
 	}
 
-	public void setFields(Node n) {
-		String xVal = Double.toString(n.getX());
-		String yVal = Double.toString(n.getY());
-		this.xCoordField.setText(xVal);
-		this.yCoordField.setText(yVal);
+	public void setFields(double x, double y) {
+		this.xCoordField.setText(x+"");
+		this.yCoordField.setText(y+"");
 	}
 
-	public void onCircleClick(MouseEvent e, Node n) {
+	public void onShapeClick(MouseEvent e, Node n) {
 
 		// update text fields
-		this.setFields(n);
+		this.setFields(n.getX(), n.getY());
 
 		// check if you single click
 		// so, then you are selecting a node
+		System.out.println("Clicked on a rectangle " + (this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) + " " + this.primaryPressed);
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedShape != null) {
 				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 			}
 
-			this.selectedShape = (Circle) e.getSource();
+			this.selectedShape = (Shape) e.getSource();
 			this.selectedNode = n;
 			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
 		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
@@ -318,6 +357,7 @@ public class EditorController implements Initializable
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
+			System.out.println("Clicked on a rectangle " + this.selectedNode.areConnected(n));
 			if(this.selectedNode.areConnected(n)) {
 				this.selectedNode.disconnect(n);
 				this.redrawLines();
@@ -332,9 +372,9 @@ public class EditorController implements Initializable
 	public void onCircleDrag(MouseEvent e, Node n) {
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 			if(this.primaryPressed) {
-				this.selectedShape = (Circle) e.getSource();
+				this.selectedShape = (Shape) e.getSource();
 				this.updateSelectedNode(e.getX(), e.getY());
-				this.setFields(this.selectedNode);
+				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
 			} else if(this.secondaryPressed) {
 				// right click drag on the selected node
@@ -344,7 +384,7 @@ public class EditorController implements Initializable
 
 	}
 
-	public void onCircleReleased(MouseEvent e, Node n) {
+	public void onShapeReleased(MouseEvent e, Node n) {
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
@@ -355,45 +395,13 @@ public class EditorController implements Initializable
 		}
 	}
 
-	public void onRectangleClick(MouseEvent e, Room r) {
-
-		// update text fields
-		this.setFields(r);
-
-		// check if you single click
-		// so, then you are selecting a node
-		if(e.getClickCount() == 1 && this.primaryPressed) {
-			if(this.selectedShape != null) {
-				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
-			}
-
-			this.selectedShape = (Rectangle) e.getSource();
-			this.selectedNode = r;
-			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
-		} else if(this.selectedNode != null && !this.selectedNode.equals(r) && this.secondaryPressed) {
-			// ^ checks if there has been a node selected,
-			// checks if the node selected is not the node we are clicking on
-			// and checks if the button pressed is the right mouse button (secondary)
-
-			// finally check if they are connected or not
-			// if they are connected, remove the connection
-			// if they are not connected, add a connection
-			if(this.selectedNode.areConnected(r)) {
-				this.selectedNode.disconnect(r);
-				this.redrawLines();
-			} else {
-				this.selectedNode.connect(r);
-				this.redrawLines();
-			}
-		}
-	}
 
 	public void onRectangleDrag(MouseEvent e, Room r) {
 		if(this.selectedNode != null && this.selectedNode.equals(r)) {
 			if(this.primaryPressed) {
 				this.selectedShape = (Rectangle) e.getSource();
 				this.updateSelectedRoom(e.getX()-this.RECTANGLE_WIDTH/2, e.getY()-this.RECTANGLE_HEIGHT/2, r.getName(), r.getDescription());
-				this.setFields(this.selectedNode);
+				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
 			} else if(this.secondaryPressed) {
 				// right click drag on the selected node
@@ -403,15 +411,5 @@ public class EditorController implements Initializable
 
 	}
 
-	public void onRectangleReleased(MouseEvent e, Room r) {
-		this.releasedX = e.getX();
-		this.releasedY = e.getY();
-
-		// if the releasedX or Y is negative we want to remove the node
-
-		if(this.releasedX < 0 || this.releasedY < 0) {
-			this.deleteSelectedNode();
-		}
-	}
 
 }
