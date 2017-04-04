@@ -124,4 +124,22 @@ public class StoredProcedures {
 		return initialData;
 	}
 
+	//Stored procedures below this line
+	//format: procOperationDataQualifier
+
+	public static String procRetrieveNodes(){
+		//query needs work
+		return "SELECT * FROM Nodes";
+	}
+
+	public static String procRetrieveNodeID(int id){
+		//query needs work
+		return "SELECT * FROM Nodes WHERE nodeID='"+id+"'";
+	}
+
+	public static String procInsertNode(int id, double nodeX, double nodeY){
+		//query needs work
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+id+", "+nodeX+", "+nodeY+")";
+	}
+
 }

@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import entities.Node;
+
 public class DatabaseController
 {
 
@@ -111,6 +113,33 @@ public class DatabaseController
 			System.out.println("Failed to close connection");
 			e.printStackTrace();
 		 	return false;
+		}
+	}
+
+	//adds a node to the database
+	//returns true if success, false if failure
+	public boolean addNode(Node node, int id){
+		try {
+			Statement insert = this.db_connection.createStatement();
+			//do some sort of autoincrement
+			insert.execute(StoredProcedures.procInsertNode(id, node.getX(),node.getY()));
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
+	//attempts to retrieve a node at a given id
+	//returns null if failure
+	public Node getNodeAtID(int id){
+		try{
+			Statement query = this.db_connection.createStatement();
+			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodeID(id));
+			//figure out adjacencies
+			Node node = new Node(result.getDouble("nodeX"), result.getDouble("nodeY"));
+			return node;
+		} catch (SQLException e){
+			return null;
 		}
 	}
 
