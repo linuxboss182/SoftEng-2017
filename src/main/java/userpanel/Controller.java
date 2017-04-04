@@ -80,7 +80,7 @@ public class Controller implements Initializable
 		this.imageViewMap.setOnMouseClicked(e -> {
 			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
 			//Paint something at that location
-			this.paintOnLocation(e.getX(), e.getY(), this.alon);
+			this.paintOnLocation(e.getX(), e.getY());
 		});
 	}
 
@@ -109,13 +109,13 @@ public class Controller implements Initializable
 
 
 
-	public void paintOnLocation(double x, double y, ArrayList<entities.Node> alon ) {
+	public void paintOnLocation(double x, double y) {
 		Circle circ;
 		circ = new Circle(x, y, 5, Color.web("0x0000FF"));
 
 		this.contentAnchor.getChildren().add(circ);
 		//clickNode.setX
-		alon.add(this.clickNode);
+		this.alon.add(this.clickNode);
 		circ.setVisible(true);
 	}
 
@@ -141,9 +141,13 @@ public class Controller implements Initializable
 	public void paintPath(ArrayList<entities.Node> alon) {
 		for (int i = 0; i < alon.size() - 1; i++) {
 			double nodeX1 = alon.get(i).getX();
+			System.out.println("X1: " + nodeX1);
 			double nodeY1 = alon.get(i).getY();
+			System.out.println("Y1: " + nodeY1);
 			double nodeX2 = alon.get(i+1).getX();
+			System.out.println("X2: " + nodeX2);
 			double nodeY2 = alon.get(i+1).getY();
+			System.out.println("Y2: " + nodeY2);
 			final Line line = new Line();
 			line.setStartX(nodeX1);
 			line.setStartY(nodeY1);

@@ -297,7 +297,7 @@ public class EditorController implements Initializable
 		// if the releasedX or Y is negative we want to remove the node
 
 		if(this.releasedX < 0 || this.releasedY < 0) {
-			deleteSelectedNode();
+			this.deleteSelectedNode();
 		}
 	}
 }
