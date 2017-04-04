@@ -63,7 +63,7 @@ public class DatabaseController
 			SQLWarning check = this.db_connection.getWarnings();
 			return (check != null);
 		} catch (SQLException e) {
-			System.out.println("Failed to get JDBC warnings.");
+			System.err.println("Failed to get JDBC warnings.");
 			return false;
 		}
 	}
@@ -75,7 +75,7 @@ public class DatabaseController
 		try {
 			Class.forName(DatabaseController.driver);
 		} catch(ClassNotFoundException e) {
-			System.out.println("Java DB Driver not found. Add the classpath to your module.");
+			System.err.println("Java DB Driver not found. Add the classpath to your module.");
 			return false;
 		}
 		System.out.println("Stuff works");
@@ -84,7 +84,7 @@ public class DatabaseController
 			this.db_connection = DriverManager.getConnection(this.connection_string);
 			// MAKE NO MORE DB CALLS AFTER THIS POINT (they could break this.init())
 		} catch (SQLException e) {
-			System.out.println("Connection failed. Check output console.");
+			System.err.println("Connection failed. Check output console.");
 			e.printStackTrace();
 			return false;
 		}
@@ -109,11 +109,21 @@ public class DatabaseController
 		try {
 			initSchema = this.db_connection.createStatement();
 		} catch (SQLException e) {
-			//something's really bad if we get here
-			//like "we don't have a database" bad
+			//something's really bad if we get here. like "we don't have a database" bad
 			e.printStackTrace();
 			return false;
 		}
+
+		for (String dropStatement : StoredProcedures.getDrops()) {
+			//drop the table if it exists
+			try {
+				initSchema.executeUpdate(dropStatement);
+			} catch (SQLException e) {
+				System.err.println("Failed statement: " + dropStatement);
+				System.err.println(e.getMessage());
+			}
+		}
+
 		String[] schema = StoredProcedures.getSchema();
 		//find our tables in the schema
 		for (int i=0; i < schema.length; i++) {
@@ -123,33 +133,19 @@ public class DatabaseController
 			while (matcher.find() && found == false) {
 				//we're making a table
 				String table = matcher.group(1); //group zero = entire expression
-				//drop the table if it exists
-				try {
-					initSchema.executeUpdate("DROP TABLE " + table);
-				} catch (SQLException e) {
-					System.out.println("Table " + table + " does not exist, continuing...");
-				}
-				//commit changes to the database
-				try {
-					this.db_connection.commit();
-				} catch (SQLException e) {
-					//fail if we can't commit changes
-					e.printStackTrace();
-					return false;
-				}
+
 				//make the table if it doesn't exist
 				try {
 					initSchema.executeUpdate(schema[i]);
 				} catch (SQLException e) {
-					System.out.println("Table" + table + " already exists, continuing...");
+					System.err.println("Failed to create table " + table + ". Continuing...");
+					System.err.println(e.getMessage());
 				}
-				//commit changes to the database
+
 				//close connection via statement
 				try {
-					this.db_connection.commit();
 					initSchema.close();
 				} catch (SQLException e) {
-					//fail if we can't commit changes
 					e.printStackTrace();
 					return false;
 				}
@@ -167,7 +163,7 @@ public class DatabaseController
 			this.db_connection.close();
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Failed to close connection");
+			System.err.println("Failed to close connection");
 			e.printStackTrace();
 		 	return false;
 		}
@@ -344,7 +340,7 @@ public class DatabaseController
 			results.close();
 			statement.close();
 		} catch (SQLException e) {
-			System.out.println("Query failed");
+			System.err.println("Query failed");
 			e.printStackTrace();
 		}
 	}
@@ -376,8 +372,8 @@ public class DatabaseController
 //			System.out.println("Success!");
 //			insert.close();
 //		} catch (SQLException e) {
-//			System.out.println("SQL error while inserting sample data.");
-//			System.out.println("Failed on this insertion: " + insertion);
+//			System.err.println("SQL error while inserting sample data.");
+//			System.err.println("Failed on this insertion: " + insertion);
 //			e.printStackTrace();
 //			return false;
 //		}
