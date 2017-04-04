@@ -59,10 +59,10 @@ public class EditorController implements Initializable
 
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
-	Image map4;
-	Node clickNode;
-	ArrayList<Line> lines = new ArrayList<Line>();
-	Directory directory;
+	private Image map4;
+	private ArrayList<Line> lines = new ArrayList<Line>();
+	private Directory directory;
+	private Node nodeKiosk;
 
 	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
 
@@ -112,6 +112,14 @@ public class EditorController implements Initializable
 				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 			this.selectedShape = null;
 		});
+
+		//Create node for Kiosk at start
+		this.nodeKiosk = new Node(353.5, 122.5);
+		//Paint
+		Circle kiosk;
+		kiosk = new Circle(353.5, 122.5, 5, Color.RED);
+		this.contentPane.getChildren().add(kiosk);
+		kiosk.setVisible(true);
 
 		// this could be helpful for selecting a large area
 //		this.imageViewMap.setOnMouseDragged(e->{

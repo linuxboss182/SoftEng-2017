@@ -24,7 +24,7 @@
 			<items>
 				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" fx:id="confirmBtn" onMouseClicked="#confirmBtnPressed"/>
+				<Button fx:id="confirmBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#confirmBtnPressed" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 			</items>
 		</ToolBar>
@@ -39,7 +39,7 @@
                <children>
                   <Pane fx:id="contentPane" prefHeight="479.0" prefWidth="825.0">
                      <children>
-                        <ImageView fx:id="imageViewMap" fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
