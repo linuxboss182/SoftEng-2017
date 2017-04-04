@@ -211,12 +211,13 @@ public class DatabaseController
 	}
 
 	//returns all nodes(including rooms) as a directory
-	public boolean populateDirectory(Directory directory){
+	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
 		try{
 			Statement query = this.db_connection.createStatement();
-			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodes());
+			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+
 			//populate hash maps
 			while(result.next()){
 				if(result.getString("roomName") == null){
@@ -242,6 +243,7 @@ public class DatabaseController
 			for(Room n: rooms.values()){
 				directory.addRoom(n);
 			}
+
 			result.close();
 			query.close();
 			return true;
