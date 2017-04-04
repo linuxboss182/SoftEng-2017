@@ -18,10 +18,12 @@ public class Window
 	public void start(Stage primaryStage) throws Exception {
 		Parent root = (BorderPane)FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
-		primaryStage.setScene(new Scene(root, 1174, 722));
+		Scene user = new Scene(root, 1174, 722);
+		primaryStage.setScene(user);
 		primaryStage.show();
 
 	}
+
 
 
 }
