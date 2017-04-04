@@ -115,11 +115,11 @@ public class StoredProcedures
 
 
 	public static String[] getSchema() {
-		return schema;
+		return StoredProcedures.schema;
 	}
 
 	public static String[] getInitialData(){
-		return initialData;
+		return StoredProcedures.initialData;
 	}
 
 	//Stored procedures below this line
@@ -198,5 +198,9 @@ public class StoredProcedures
 	public static String procInsertNameID(int id, String name){
 		//query needs work
 		return "INSERT INTO Employees(employeeID,roomName) VALUES("+id+","+name+")";
+	}
+
+	public static String procRetrieveNodesAndRooms(){
+		return "SELECT * FROM Nodes LEFT OUTER JOIN Rooms on rooms.NODEID = nodes.NODEID";
 	}
 }
