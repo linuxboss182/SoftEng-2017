@@ -35,7 +35,6 @@ public class DatabaseController
 	 */
 	public void init()
 			throws DatabaseException {
-		System.err.println("DBC.init");
 		boolean flag = this.initDB();
 		if (! flag) {
 			throw new DatabaseException("Connection failed");
@@ -73,14 +72,13 @@ public class DatabaseController
 	//returns true if success, false if failure
 	// (do not add db calls after the line indicated below)
 	private boolean initDB() {
-		System.err.println("DBC.initDB");
 		try {
 			Class.forName(DatabaseController.driver);
 		} catch(ClassNotFoundException e) {
 			System.err.println("Java DB Driver not found. Add the classpath to your module.");
 			return false;
 		}
-		System.out.println("Stuff works");
+		System.out.println("Connected to database");
 
 		try {
 			this.db_connection = DriverManager.getConnection(this.connection_string);
@@ -106,7 +104,6 @@ public class DatabaseController
 	 */
 	// TODO: Refactor so reInitSchema throws SQLException to be handled elsewhere in the class
 	private boolean reInitSchema() {
-		System.err.println("DBC.reInitSchema");
 		boolean result;
 		Statement initSchema = null;
 		try {
