@@ -1,6 +1,7 @@
 package adminpanel;
 
 
+import entities.Directory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
 import javafx.scene.shape.Line;
+import main.DatabaseController;
 
 import javax.xml.soap.Text;
 import java.net.URL;
@@ -52,8 +54,8 @@ public class EditorController implements Initializable
 
 	Image map4;
 	Node clickNode;
-	ArrayList<Node> alon = new ArrayList<Node>();
 	ArrayList<Line> lines = new ArrayList<Line>();
+	Directory directory;
 
 	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
 
@@ -73,31 +75,20 @@ public class EditorController implements Initializable
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//Simulate populating the nodes list from database with random nodes
-		for (int i = 0; i < 10; i++) {
-
-			Random r = new Random();
-			double randX = 0.0 + r.nextDouble() * 750.0;
-			double randY = 0.0 + r.nextDouble() * 450.0;
-			Node newNode = new Node(randX, randY);
-			this.alon.add(newNode);
-		}
+		//Grab the database controller from main and use it to populate our directory
+		this.directory = main.ApplicationController.dbc.getDirectory();
 
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
-		this.displayNodes(this.alon);
-
+		this.displayNodes(new ArrayList<Node>(this.directory.getNodes()));
 		this.imageViewMap.setPickOnBounds(true);
 
 
 		this.imageViewMap.setOnMouseClicked(e -> {
 			//Create node on double click
 			if(e.getClickCount() == 2) {
-				this.clickNode = new Node(e.getX(), e.getY());
-				this.alon.add(this.clickNode);
-				this.paintOnLocation(this.clickNode);
-				this.setFields(this.clickNode);
+				this.addNode(e.getX(), e.getY());
 			}
 			//Paint something at that location
 			//update the text boxes
@@ -142,7 +133,7 @@ public class EditorController implements Initializable
 
 	private void addNode(double x, double y) {
 		Node newNode = new Node(x, y);
-		this.alon.add(newNode);
+		this.directory.addNode(newNode);
 		this.paintOnLocation(newNode);
 	}
 
@@ -155,7 +146,7 @@ public class EditorController implements Initializable
 
 	private void deleteSelectedNode() {
 		this.selectedNode.disconnectAll();
-		this.alon.remove(this.selectedNode);
+		this.directory.removeNode(this.selectedNode);
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
@@ -206,8 +197,9 @@ public class EditorController implements Initializable
 	}
 
 	private void fillDrawLines() {
-		for(int node = 0; node < this.alon.size(); node++) {
-			Node current = this.alon.get(node);
+		ArrayList<Node> tempArrayListOfNodes = new ArrayList<>(this.directory.getNodes());
+		for(int node = 0; node < tempArrayListOfNodes.size(); node++) {
+			Node current = tempArrayListOfNodes.get(node);
 			Node[] adjacents = current.getNeighbors().toArray(new Node[current.getNeighbors().size()]);
 			for(int connection = 0; connection < adjacents.length; connection++) {
 				Node connected = adjacents[connection];
