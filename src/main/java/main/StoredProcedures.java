@@ -137,9 +137,9 @@ public class StoredProcedures
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+id+")";
 	}
 
-	public static String procInsertRoom(int node1, int node2){
+	public static String procInsertEdge(int node1, int node2){
 		//query needs work
-		return "INSERT INTO Rooms (node1, node2) VALUES("+node1+","+node2+")";
+		return "INSERT INTO Edges (node1, node2) VALUES("+node1+","+node2+")";
 	}
 
 	public static String procInsertEmployee(int id, String GN, String SN, String Title){
@@ -147,9 +147,9 @@ public class StoredProcedures
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+id+","+GN+","+SN+","+Title+")";
 	}
 
-	public static String procInsertNameID(int id, String name){
+	public static String procInsertEmployeeRoom(int id, String name){
 		//query needs work
-		return "INSERT INTO Employees(employeeID,roomName) VALUES("+id+","+name+")";
+		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+id+","+name+")";
 	}
 
 
@@ -200,9 +200,9 @@ public class StoredProcedures
 		return "SELECT * FROM EmployeeRooms";
 	}
 
-	public static String procRetrieveNameID(int id, String name){
+	public static String procRetrieveEmployeeRoom(int id, String name){
 		//query needs work
-		return "SELECT * FROM Employee WHERE employeeID='"+id+"' AND roomName = '"+name+"'";
+		return "SELECT * FROM EmployeeRooms WHERE employeeID='"+id+"' AND roomName = '"+name+"'";
 	}
 
 	public static String procRetrieveNodesAndRooms(){
