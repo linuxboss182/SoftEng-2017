@@ -1,5 +1,6 @@
 package userpanel;
 
+import entities.Directory;
 import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
 import entities.Node;
+import main.DatabaseController;
 
 
 public class Controller implements Initializable
@@ -65,22 +67,18 @@ public class Controller implements Initializable
 	ArrayList<Node> alon = new ArrayList<Node>();
 	ArrayList<Room> roomList = new ArrayList<>();
 	protected ListProperty<String> listProperty = new SimpleListProperty<>();
+	Directory directory;
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//Simulate populating the nodes list from database with random nodes
-		for (int i = 0; i < 10; i++) {
+		//Grab the database controller from main and use it to populate our directory
+		this.directory = main.ApplicationController.dbc.getDirectory();
 
-			Random r = new Random();
-			double randX = 0.0 + r.nextDouble() * 750.0;
-			double randY = 0.0 + r.nextDouble() * 450.0;
-			Node newNode = new Node(randX, randY);
-			this.alon.add(newNode);
-		}
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
+		this.displayNodes();
 
 		//set elevator to clicked
 		//this.elevatorRadio.focusedProperty(true);
@@ -95,7 +93,7 @@ public class Controller implements Initializable
 			//Paint something at that location
 			this.clickNode = new Node(e.getX(), e.getY());
 			this.directionNodes.add(this.clickNode);
-			this.displayNodes(this.directionNodes);
+			this.displayNodes();
 			this.paintOnLocation(e.getX(), e.getY());
 		});
 
@@ -125,13 +123,12 @@ public class Controller implements Initializable
 
 	}
 
-	public void populateListView(ArrayList<Room> rooms) {
-		for (int i = 0; i < rooms.size(); i++) {
-			//rooms.get(i);
+	public void populateListView() {
+		this.directory.getRooms().forEach(room -> {
 			this.directoryList.itemsProperty().bind(this.listProperty);
-			this.listProperty.set(FXCollections.observableArrayList(rooms.get(i).name));
-		}
-
+			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
+				}
+		);
 
 	}
 
@@ -145,19 +142,19 @@ public class Controller implements Initializable
 		circ.setVisible(true);
 	}
 
-	public void displayNodes(ArrayList<entities.Node> alon) {
-
-		for (int i = 0; i < alon.size(); i++) {
+	public void displayNodes() {
+		this.directory.getNodes().forEach(node -> {
 			Circle circ;
-			double nodeX = alon.get(i).getX();
-			double nodeY = alon.get(i).getY();
-
+			double nodeX = node.getX();
+			double nodeY = node.getY();
 			circ = new Circle(nodeX, nodeY, 5, Color.web("0x0000FF"));
 			this.contentAnchor.getChildren().add(circ);
 			circ.setVisible(true);
-		}
+				}
+		);
 
 	}
+
 	@FXML
 	public void getDirectionsClicked() {
 
@@ -170,6 +167,7 @@ public class Controller implements Initializable
 	}
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
 			System.out.println("X1: " + nodeX1);
