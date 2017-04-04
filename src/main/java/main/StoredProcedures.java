@@ -127,14 +127,14 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int id, double nodeX, double nodeY){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY){
 		//query needs work
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+id+", "+nodeX+", "+nodeY+")";
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+nodeID+", "+nodeX+", "+nodeY+")";
 	}
 
-	public static String procInsertRoom(String roomName, String roomDescription, int id){
+	public static String procInsertRoom(String roomName, String roomDescription, int nodeID){
 		//query needs work
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+id+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName+","+roomDescription+","+nodeID+")";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
@@ -142,14 +142,14 @@ public class StoredProcedures
 		return "INSERT INTO Edges (node1, node2) VALUES("+node1+","+node2+")";
 	}
 
-	public static String procInsertEmployee(int id, String GN, String SN, String Title){
+	public static String procInsertEmployee(int employeeID, String givenName, String surname, String employeeTitle){
 		//query needs work
-		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+id+","+GN+","+SN+","+Title+")";
+		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
 	}
 
-	public static String procInsertEmployeeRoom(int id, String name){
+	public static String procInsertEmployeeRoom(int epmloyeeID, String roomName){
 		//query needs work
-		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+id+","+name+")";
+		return "INSERT INTO EmployeeRooms(employeeID,roomName) VALUES("+epmloyeeID+","+roomName+")";
 	}
 
 
