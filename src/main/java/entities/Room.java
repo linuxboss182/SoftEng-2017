@@ -11,7 +11,7 @@ public class Room
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
-	public String name;
+	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
 
