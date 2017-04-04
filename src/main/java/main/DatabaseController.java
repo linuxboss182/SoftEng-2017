@@ -20,7 +20,7 @@ public class DatabaseController
 
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
-		this.dbAlreadyExists = this.checkDBExists();
+		//this.dbAlreadyExists = this.checkDBExists();
 	}
 
 	public DatabaseController(){
