@@ -1,13 +1,11 @@
 package main;
+
 import java.sql.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-/**
- * Created by Kenneth on 3/28/17.
- */
-
-public class DatabaseController {
+public class DatabaseController
+{
 
 	private Connection db_connection;
 	private String connection_string;
@@ -16,7 +14,7 @@ public class DatabaseController {
 		this.connection_string = "jdbc:derby:DB;create=true";
 	}
 
-	public DatabaseController(String connection_string){
+	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
 	}
 
@@ -59,21 +57,21 @@ public class DatabaseController {
 		}
 		String[] schema = StoredProcedures.getSchema();
 		//find our tables in the schema
-		for(int i=0;i<schema.length;i++){
+		for (int i=0; i < schema.length; i++) {
 			Pattern matchTable = Pattern.compile("\\bCREATE\\b\\s\\bTABLE\\b\\s(\\w*)");
 			Matcher matcher = matchTable.matcher(schema[i]);
 			boolean found = false;
-			while(matcher.find() && found == false){
+			while (matcher.find() && found == false) {
 				//we're making a table
 				String table = matcher.group(1); //group zero = entire expression
 				//drop the table if it exists
-				try{
-					initSchema.executeUpdate("DROP TABLE "+table);
+				try {
+					initSchema.executeUpdate("DROP TABLE " + table);
 				} catch (SQLException e) {
-					System.out.println("Table "+table+" does not exist, continuing...");
+					System.out.println("Table " + table + " does not exist, continuing...");
 				}
 				//commit changes to the database
-				try{
+				try {
 					this.db_connection.commit();
 				} catch (SQLException e) {
 					//fail if we can't commit changes
@@ -81,14 +79,14 @@ public class DatabaseController {
 					return false;
 				}
 				//make the table if it doesn't exist
-				try{
+				try {
 					initSchema.executeUpdate(schema[i]);
 				} catch (SQLException e) {
-					System.out.println("Table"+table+" already exists, continuing...");
+					System.out.println("Table" + table + " already exists, continuing...");
 				}
 				//commit changes to the database
 				//close connection via statement
-				try{
+				try {
 					this.db_connection.commit();
 					initSchema.close();
 				} catch (SQLException e) {
@@ -112,7 +110,7 @@ public class DatabaseController {
 		} catch (SQLException e) {
 			System.out.println("Failed to close connection");
 			e.printStackTrace();
-			return false;
+		 	return false;
 		}
 	}
 
