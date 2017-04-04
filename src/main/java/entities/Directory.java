@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // TODO: Improve documentation
 
@@ -14,7 +15,7 @@ public class Directory
 
 	/* Attributes */
 
-	private ArrayList<Node> rooms;
+	private List<Node> rooms;
 
 
 	/* Constructors */
@@ -34,7 +35,9 @@ public class Directory
 	/**
 	 * Returns the list of nodes in the directory
 	 */
-	public ArrayList<Node> getNodeList() { return this.rooms;}
+	public List<Node> getNodeList() {
+		return this.rooms;
+	}
 
 	/**
 	 * Adds a node to the list
@@ -60,6 +63,5 @@ public class Directory
 	private int getHeight() {
 		return 4;
 	}
-
 
 }

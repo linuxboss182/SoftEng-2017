@@ -22,7 +22,7 @@ public class DatabaseController
 
 	//initialize the database
 	//returns true if success, false if failure
-	public boolean initDB(){
+	public boolean initDB() {
 		this.db_connection = null;
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -46,7 +46,7 @@ public class DatabaseController
 
 	//initializes the database empty with the desired schema
 	//returns true if success, false if error
-	public boolean initSchema(){
+	public boolean initSchema() {
 		boolean result;
 		Statement initSchema = null;
 		try {
