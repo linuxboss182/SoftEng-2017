@@ -18,7 +18,9 @@ import entities.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import main.ApplicationController;
 import main.DatabaseController;
+import main.DatabaseException;
 
 import javax.xml.soap.Text;
 import java.net.URL;
@@ -120,7 +122,11 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void confirmBtnPressed() {
-		System.out.println("Pressed Confirm");
+		try {
+			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
+		} catch (DatabaseException e) {
+			System.err.println("\n\nDATABASE DAMAGED\n\n");
+		}
 	}
 
 	@FXML
