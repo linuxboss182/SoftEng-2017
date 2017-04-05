@@ -108,6 +108,7 @@ public class EditorController implements Initializable
 		this.kiosk = new Room(353.5, 122.5);
 		this.kiosk.setName(KIOSK_NAME);
 		this.directory.addRoom(this.kiosk);
+
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);

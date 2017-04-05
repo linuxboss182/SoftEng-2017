@@ -138,7 +138,7 @@ public class Controller extends Window implements Initializable
 //		this.directory.addRoom(this.kiosk);
 //		this.paintRoomOnLocation(this.kiosk);
 
-		this.kiosk = new Room(353.5, 122.5);
+		//this.kiosk = new Room(353.5, 122.5);
 
 		this.displayNodes();
 		this.populateListView();
@@ -185,9 +185,9 @@ public class Controller extends Window implements Initializable
 		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
 
 
-		this.directory.getRooms().forEach(room -> {
+	//	this.directory.getRooms().forEach(room -> {
 
-			room.connect(this.kiosk);
+			//room.connect(this.kiosk);
 
 		//		this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
 
@@ -196,7 +196,7 @@ public class Controller extends Window implements Initializable
 
 		//			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
 
-		});
+	//	});
 
 
 
@@ -215,6 +215,9 @@ public class Controller extends Window implements Initializable
 
 				paintPath(new ArrayList<>(ret));
 
+				System.out.println("Kiosk: " + kiosk.getName() + "Ret: " );
+				ret.forEach(Node -> { System.out.print(Node.toString());});
+
 			}
 		});
 
@@ -232,7 +235,7 @@ public class Controller extends Window implements Initializable
 
 
 	public void displayNodes() {
-		this.directory.getNodes().forEach(node -> {
+		this.directory.getRooms().forEach(node -> {
 			Circle circ;
 			double nodeX = node.getX();
 			double nodeY = node.getY();
@@ -269,7 +272,7 @@ public class Controller extends Window implements Initializable
 		});
 
 		//add kiosk to start of list
-		directionNodes.add(0, this.kiosk);
+		//directionNodes.add(0, this.kiosk);
 
 		double destX = directionNodes.get(directionNodes.size() - 1).getX();
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
