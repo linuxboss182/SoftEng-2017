@@ -91,7 +91,8 @@ public class EditorController implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Grab the database controller from main and use it to populate our directory
-		this.directory = main.ApplicationController.dbc.getDirectory();
+		this.directory = ApplicationController.getDirectory();
+
 		//make kiosk
 		this.kiosk = new Room(353.5, 122.5);
 		this.kiosk.setName(KIOSK_NAME);
