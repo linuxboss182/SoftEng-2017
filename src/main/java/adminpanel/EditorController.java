@@ -153,9 +153,19 @@ public class EditorController implements Initializable
 			//update the text boxes
 
 			// reset selected circle and node
+
+
+			if(this.selectedShape != null) {
+				if(this.selectedNode instanceof Room) {
+					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+						this.selectedShape.setFill(this.KIOSK_COLOR);
+					}
+
+				} else {
+					this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				}
+			}
 			this.selectedNode = null;
-			if(this.selectedShape != null)
-				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 			this.selectedShape = null;
 		});
 		//populate box for professionals
@@ -167,9 +177,12 @@ public class EditorController implements Initializable
 		}
 		this.selectChoiceBox();
 
-
-
-
+		this.kiosk = null;
+		for (Room r : this.directory.getRooms()) {
+			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
+				this.kiosk = r;
+			}
+		}
 	}
 
 	public void selectChoiceBox() {
@@ -193,7 +206,7 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedNode == null || !(this.selectedNode instanceof Room)) {
+		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode instanceof Room)) {
 			return;
 		} else {
 			System.out.println(this.selectedProf);
@@ -386,11 +399,12 @@ public class EditorController implements Initializable
 	public void paintRoomOnLocation(Room r) {
 		Rectangle rect;
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-//		if (r.getName().equals(KIOSK_NAME)) {
-//			rect.setFill(KIOSK_COLOR);
-//		} else {
+
+		if (r.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+			rect.setFill(this.KIOSK_COLOR);
+		} else {
 			rect.setFill(this.DEFAULT_SHAPE_COLOR);
-//		}
+		}
 
 		this.contentPane.getChildren().add(rect);
 		rect.setVisible(true);
@@ -513,7 +527,14 @@ public class EditorController implements Initializable
 		System.out.println("Clicked on a rectangle " + (this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) + " " + this.primaryPressed);
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedShape != null) {
-				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				if(this.selectedNode instanceof Room) {
+					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+						this.selectedShape.setFill(this.KIOSK_COLOR);
+					}
+
+				} else {
+					this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				}
 			}
 
 			this.selectedShape = (Shape) e.getSource();
