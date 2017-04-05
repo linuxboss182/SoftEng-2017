@@ -116,14 +116,14 @@ public class Controller extends Window implements Initializable
 		this.imageViewMap.setPickOnBounds(true);
 
 
-		this.imageViewMap.setOnMouseClicked(e -> {
-			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
-			//Paint something at that location
-			this.clickNode = new Node(e.getX(), e.getY());
-			this.directionNodes.add(this.clickNode);
-			this.displayNodes();
-			this.paintOnLocation(e.getX(), e.getY());
-		});
+//		this.imageViewMap.setOnMouseClicked(e -> {
+//			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
+//			//Paint something at that location
+//			this.clickNode = new Node(e.getX(), e.getY());
+//			this.directionNodes.add(this.clickNode);
+//			this.displayNodes();
+//			this.paintOnLocation(e.getX(), e.getY());
+//		});
 
 		//populate listview
 		// Room r1 = new Room("Room 101", "Hi");
@@ -160,7 +160,7 @@ public class Controller extends Window implements Initializable
 //			this.directory.addRoom(this.kiosk);
 //		}
 
-		this.displayNodes();
+		this.displayRooms();
 		this.populateListView();
 	}
 
@@ -180,7 +180,7 @@ public class Controller extends Window implements Initializable
 
 	@FXML
 	private void refreshbtnClicked(){
-		this.displayNodes();
+		this.displayRooms();
 		this.populateListView();
 	}
 
@@ -257,16 +257,17 @@ public class Controller extends Window implements Initializable
 	}
 
 
-	public void displayNodes() {
+	public void displayRooms() {
 		this.contentAnchor.getChildren().removeAll();
 
 		this.directory.getRooms().forEach(node -> {
-			Circle circ;
+			Rectangle rect;
 			double nodeX = node.getX();
 			double nodeY = node.getY();
-			circ = new Circle(nodeX, nodeY, 5, Color.web("0x0000FF"));
-			this.contentAnchor.getChildren().add(circ);
-			circ.setVisible(true);
+			rect = new Rectangle(nodeX - this.RECTANGLE_WIDTH/2, nodeY - this.RECTANGLE_HEIGHT/2, this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+			this.contentAnchor.getChildren().add(rect);
+			rect.setVisible(true);
 				}
 		);
 
