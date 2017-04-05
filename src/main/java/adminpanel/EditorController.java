@@ -2,11 +2,17 @@ package adminpanel;
 
 
 import entities.Directory;
+import entities.Professional;
 import entities.Room;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,6 +31,7 @@ import main.DatabaseException;
 import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -56,6 +63,10 @@ public class EditorController implements Initializable
 	private Button deleteRoomBtn;
 	@FXML
 	private Button confirmBtn;
+	@FXML
+	private ChoiceBox<Professional> proChoiceBox;
+	@FXML
+	private Label proTextLbl;
 
 
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
@@ -91,7 +102,8 @@ public class EditorController implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Grab the database controller from main and use it to populate our directory
-		this.directory = main.ApplicationController.dbc.getDirectory();
+		this.directory = ApplicationController.getDirectory();
+
 		//make kiosk
 		this.kiosk = new Room(353.5, 122.5);
 		this.kiosk.setName(KIOSK_NAME);
@@ -119,15 +131,35 @@ public class EditorController implements Initializable
 			this.selectedShape = null;
 		});
 
-		//Create node for Kiosk at start
+		//Populate the Professionals choice box
+		Professional pro1 = new Professional("Mr.", "Smith", "Bitch");
+		Professional pro2 = new Professional();
 
+		this.directory.addProfessional(pro1);
+		this.directory.addProfessional(pro2);
+		ArrayList<String> proList = new ArrayList<>();
+		for (Professional pro: this.directory.getProfessionals()) {
+			String proListChoice;
+			proListChoice = pro.getSurname() + ", " + pro.getGivenName();
+			proList.add(proListChoice);
 
-		// this could be helpful for selecting a large area
-//		this.imageViewMap.setOnMouseDragged(e->{
-//
-//
-//		});
+		}
+
+		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
+		/*
+		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Node>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Professional> observable, Professional
+					oldValue, Professional newValue) {
+					//proTextLbl.setText(newValue.getSurname());
+			}
+		});
+		*/
+
 	}
+
+
 
 	@FXML
 	public void confirmBtnPressed() {
@@ -378,14 +410,9 @@ public class EditorController implements Initializable
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
-			System.out.println("Clicked on a rectangle " + this.selectedNode.areConnected(n));
-			if(this.selectedNode.areConnected(n)) {
-				this.selectedNode.disconnect(n);
-				this.redrawLines();
-			} else {
-				this.selectedNode.connect(n);
-				this.redrawLines();
-			}
+			System.out.println("Clicked on a rectangle " + this.selectedNode.getNeighbors().contains(n));
+			this.selectedNode.connectOrDisconnect(n);
+			this.redrawLines();
 		}
 	}
 
@@ -431,6 +458,8 @@ public class EditorController implements Initializable
 		}
 
 	}
+
+
 
 
 }

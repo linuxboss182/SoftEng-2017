@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 import entities.Node;
+import main.ApplicationController;
 import main.DatabaseController;
 import main.Pathfinder;
 
@@ -97,7 +98,7 @@ public class Controller extends Window implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Grab the database controller from main and use it to populate our directory
-		this.directory = main.ApplicationController.dbc.getDirectory();
+		this.directory = ApplicationController.getDirectory();
 
 
 		//Add map
@@ -275,13 +276,13 @@ public class Controller extends Window implements Initializable
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
-			System.out.println("X1: " + nodeX1);
+		//	System.out.println("X1: " + nodeX1);
 			double nodeY1 = directionNodes.get(i).getY();
-			System.out.println("Y1: " + nodeY1);
+		//	System.out.println("Y1: " + nodeY1);
 			double nodeX2 = directionNodes.get(i+1).getX();
-			System.out.println("X2: " + nodeX2);
+		//	System.out.println("X2: " + nodeX2);
 			double nodeY2 = directionNodes.get(i+1).getY();
-			System.out.println("Y2: " + nodeY2);
+		//	System.out.println("Y2: " + nodeY2);
 			Line line = new Line();
 			this.lines.add(line);
 			line.setStartX(nodeX1);

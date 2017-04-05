@@ -8,7 +8,7 @@ public class StoredProcedures
 	//initial schema to setup the database
 	//Define tables here in the order they should be created:
 
-	private static final String[] schema = {
+	private static final List<String> schema = Arrays.asList(
 			"CREATE TABLE Nodes ("
 					+ "nodeID integer PRIMARY KEY , nodeX  DOUBLE PRECISION , nodeY  DOUBLE PRECISION)",
 			"CREATE TABLE Edges ("
@@ -17,18 +17,18 @@ public class StoredProcedures
 			"CREATE TABLE Rooms ("
 					+"roomName        varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
-					+" , nodeID          integer references Nodes(nodeID))"
-					+" , constraint Rooms_pk PRIMARY KEY (nodeID)",
+					+" , nodeID          integer references Nodes(nodeID)"
+					+" , constraint Rooms_pk PRIMARY KEY (nodeID))",
 			"CREATE TABLE Employees ("
 					+"employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
 					+" , employeeSurname   varchar(100)"
 					+" , employeeTitle     varchar(100))",
 			"CREATE TABLE EmployeeRooms ("
-					+"nodeID   varchar(200) references Rooms(roomName)"
+					+"nodeID   integer references Rooms(nodeID)"
 					+" , employeeID integer references Employees(employeeID)"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
-	};
+	);
 
 	private static final List<String> drops = Arrays.asList(
 			"DROP TABLE EmployeeRooms",
@@ -127,7 +127,7 @@ public class StoredProcedures
 	};
 
 
-	public static String[] getSchema() {
+	public static List<String> getSchema() {
 		return StoredProcedures.schema;
 	}
 
@@ -151,8 +151,8 @@ public class StoredProcedures
 
 	public static String procInsertRoom(int nodeID, String roomName, String roomDescription){
 		//query needs work
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName
-				+","+roomDescription+","+nodeID+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES('"+roomName
+				+"', '"+roomDescription+"', "+nodeID+")";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
@@ -164,7 +164,7 @@ public class StoredProcedures
 	                                        String surname, String employeeTitle){
 		//query needs work
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) "
-				+ "VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
+				+ "VALUES("+employeeID+", '"+givenName+"', '"+surname+"', '"+employeeTitle+"')";
 	}
 
 	public static String procInsertEmployeeRoom(int employeeID, int nodeID){
