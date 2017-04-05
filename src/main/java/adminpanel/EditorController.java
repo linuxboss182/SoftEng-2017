@@ -115,6 +115,8 @@ public class EditorController implements Initializable
 		this.displayRooms();
 		this.imageViewMap.setPickOnBounds(true);
 
+		this.redrawLines();
+
 		this.imageViewMap.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
