@@ -349,13 +349,31 @@ public class DatabaseController
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
 			db.executeUpdate(query);
 		}
+		System.out.println("nodes saved");
 
-		for (Room r : dir.getRooms()) {
-			query = StoredProcedures.procInsertRoom(r.hashCode(), r.getName(), r.getDescription());
-			db.executeUpdate(query);
+		for (Room r : dir.getRooms()) { // the order of these queries is important
 			query = StoredProcedures.procInsertNode(r.hashCode(), r.getX(), r.getY());
 			db.executeUpdate(query);
+			query = StoredProcedures.procInsertRoom(r.hashCode(), r.getName(), r.getDescription());
+			db.executeUpdate(query);
 		}
+		System.out.println("rooms saved");
+
+		for (Node n : dir.getNodes()) {
+			for (Node m : n.getNeighbors()) {
+				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
+				db.executeUpdate(query);
+			}
+		}
+
+		System.out.println("edges saved");
+		for (Room n : dir.getRooms()) {
+			for (Node m : n.getNeighbors()) {
+				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
+				db.executeUpdate(query);
+			}
+		}
+		System.out.println("room edges saved");
 
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
@@ -368,19 +386,7 @@ public class DatabaseController
 			}
 		}
 
-		for (Node n : dir.getNodes()) {
-			for (Node m : n.getNeighbors()) {
-				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
-				db.executeUpdate(query);
-			}
-		}
-
-		for (Room n : dir.getRooms()) {
-			for (Node m : n.getNeighbors()) {
-				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
-				db.executeUpdate(query);
-			}
-		}
+		System.out.println("professionals saved");
 	}
 
 	//A test call to the database
