@@ -39,7 +39,7 @@
                <children>
                   <Pane fx:id="contentPane" prefHeight="479.0" prefWidth="825.0">
                      <children>
-                        <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageViewMap" fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
@@ -59,12 +59,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
-                        <Button mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Button fx:id="addProBtn" mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="proChoiceBox" prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
+                        <Button fx:id="delProBtn" mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label prefHeight="17.0" prefWidth="447.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
+                        <Label fx:id="proTextLbl" prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
                </children>
