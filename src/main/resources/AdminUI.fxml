@@ -60,13 +60,13 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="addProBtn" mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button fx:id="addProBtn" mnemonicParsing="false" onMouseClicked="#addProfToRoom" text="Add Professional to Room" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <ChoiceBox fx:id="proChoiceBox" prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
-                        <Button fx:id="delProBtn" mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="proTextLbl" prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
+                        <Button fx:id="delProBtn" mnemonicParsing="false" onMouseClicked="#delProfFromRoom" text="Delete Professional from Room" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="Rooms Associated with Professional:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="roomTextLbl" prefHeight="17.0" prefWidth="511.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                         <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="3" />
-                        <Button fx:id="refreshBtn" mnemonicParsing="false" onMouseClicked="#refreshBtnClicked" text="Refresh" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Button fx:id="refreshBtn" mnemonicParsing="false" onMouseClicked="#refreshBtnClicked" text="Refresh" GridPane.columnIndex="4" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>
