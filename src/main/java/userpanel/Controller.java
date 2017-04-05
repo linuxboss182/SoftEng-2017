@@ -44,7 +44,9 @@ import java.util.ResourceBundle;
 import entities.Node;
 import main.ApplicationController;
 import main.DatabaseController;
+import main.DirectionsGenerator;
 import main.Pathfinder;
+import sun.dc.path.PathException;
 
 
 public class Controller extends Window implements Initializable
@@ -284,22 +286,20 @@ public class Controller extends Window implements Initializable
 	public void getDirectionsClicked() {
 
 		this.paintPath(this.directionNodes);
-		Text t1 = new Text("hey");
-		Text t2 = new Text("heyyyyy");
-		this.directionsTextField.getChildren().add(t1);
-		this.directionsTextField.getChildren().add(t2);
 
 
 	}
 
 	@FXML
 	public void doneBtnClicked() {
+		this.directionsTextField.getChildren().removeAll();
 
 	}
 
 	private ArrayList<Line> lines = new ArrayList<Line>();
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {
 			this.contentAnchor.getChildren().remove(line);
 		});
@@ -334,6 +334,10 @@ public class Controller extends Window implements Initializable
 			line.setEndY(nodeY2);
 
 			this.contentAnchor.getChildren().add(line);
+			Text textDirections = new Text();
+			textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
+			//Call text directions
+			this.directionsTextField.getChildren().add(textDirections);
 		}
 	}
 
@@ -344,4 +348,7 @@ public class Controller extends Window implements Initializable
 		}
 
 	}
+
+
+
 }
