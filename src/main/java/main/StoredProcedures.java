@@ -25,7 +25,7 @@ public class StoredProcedures
 					+" , employeeSurname   varchar(100)"
 					+" , employeeTitle     varchar(100))",
 			"CREATE TABLE EmployeeRooms ("
-					+"nodeID   varchar(200) references Rooms(roomName)"
+					+"nodeID   integer references Rooms(nodeID)"
 					+" , employeeID integer references Employees(employeeID)"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
 	};

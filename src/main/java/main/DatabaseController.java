@@ -210,13 +210,18 @@ public class DatabaseController
 	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
+		HashMap<Integer, Room> profRooms = new HashMap<>();
 		HashMap<Integer, Professional> professionals = new HashMap<>();
 		try{
 			//
 			Statement queryNodes = this.db_connection.createStatement();
 			Statement queryEdges = this.db_connection.createStatement();
+			Statement queryProfRooms = this.db_connection.createStatement();
+			Statement queryProfessionals = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
 			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
+			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
+			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
 
 			//populate hash maps
 			while(resultNodes.next()){
@@ -251,18 +256,43 @@ public class DatabaseController
 				}
 			}
 
-			//add to directory
+			//find all them professionals
+			while(resultProfessionals.next()){
+
+				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
+															 resultProfessionals.getString("employeeSurname"),
+															 resultProfessionals.getString("employeeTitle"));
+				//look for any locations we might have
+				while(resultProfRooms.next()){
+					if(resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")){
+						//we have at least one room
+						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
+					}
+				}
+				//add to hashmap
+				professionals.put(resultProfessionals.getInt("employeeID"), professional);
+			}
+
+			//add all to directory
 			for(Node n: nodes.values()){
 				directory.addNode(n);
 			}
 			for(Room r: rooms.values()){
 				directory.addRoom(r);
 			}
+			for(Professional p: professionals.values()){
+				directory.addProfessional(p);
+			}
 
 			resultNodes.close();
 			resultEdges.close();
+			resultProfRooms.close();
+			resultProfessionals.close();
 			queryNodes.close();
 			queryEdges.close();
+			queryProfRooms.close();
+			queryProfessionals.close();
+
 			return true;
 		} catch (SQLException e){
 			return false;
