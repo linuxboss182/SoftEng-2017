@@ -396,7 +396,7 @@ public class DatabaseController
 		System.out.println("rooms saved");
 
 		if (dir.hasKiosk()) {
-			Node n = dir.getKiosk();
+			Room n = dir.getKiosk();
 			query = StoredProcedures.procInsertKiosk(n.hashCode());
 			db.executeUpdate(query);
 		}

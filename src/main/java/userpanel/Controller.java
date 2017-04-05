@@ -140,6 +140,17 @@ public class Controller extends Window implements Initializable
 
 		//this.kiosk = new Room(353.5, 122.5);
 
+//		if (this.directory.hasKiosk()) {
+//			this.kiosk = this.directory.getKiosk();
+//		} else {
+//			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
+//			this.directory.setKiosk(this.kiosk);
+//			this.directory.addRoom(this.kiosk);
+//		}
+
+		this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
+
+
 		this.displayNodes();
 		this.populateListView();
 
@@ -213,7 +224,8 @@ public class Controller extends Window implements Initializable
 
 				ret = Pathfinder.findPath(kiosk, newValue);
 
-				paintPath(new ArrayList<>(ret));
+				System.out.print("Kiosk adj" + kiosk.getNeighbors().toString());
+				//paintPath(new ArrayList<>(ret));
 
 				System.out.println("Kiosk: " + kiosk.getName() + "Ret: " );
 				ret.forEach(Node -> { System.out.print(Node.toString());});
@@ -244,6 +256,13 @@ public class Controller extends Window implements Initializable
 			circ.setVisible(true);
 				}
 		);
+
+		Circle circ;
+		double nodeX = this.kiosk.getX();
+		double nodeY = this.kiosk.getY();
+		circ = new Circle(nodeX, nodeY, 5, Color.RED);
+		this.contentAnchor.getChildren().add(circ);
+		circ.setVisible(true);
 
 	}
 
