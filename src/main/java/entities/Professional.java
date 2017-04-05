@@ -67,4 +67,8 @@ public class Professional
 	public void addLocation(Room room){
 		this.locations.add(room);
 	}
+
+	public void removeLocation(Room r) {
+		this.locations.remove(r);
+	}
 }
