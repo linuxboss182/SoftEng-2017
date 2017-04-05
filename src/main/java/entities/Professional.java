@@ -67,4 +67,8 @@ public class Professional
 	public void addLocation(Room room){
 		this.locations.add(room);
 	}
+
+	public String toString() {
+		return this.getSurname() + ", " + this.getGivenName();
+	}
 }

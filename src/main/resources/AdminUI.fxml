@@ -39,7 +39,7 @@
                <children>
                   <Pane fx:id="contentPane" prefHeight="479.0" prefWidth="825.0">
                      <children>
-                        <ImageView fx:id="imageViewMap" fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
@@ -66,6 +66,7 @@
                         <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="proTextLbl" prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
                         <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="3" />
+                        <Button fx:id="refreshBtn" mnemonicParsing="false" onMouseClicked="#refreshBtnClicked" text="Refresh" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>

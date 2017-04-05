@@ -174,10 +174,14 @@ public class EditorController implements Initializable
 	}
 
 	public void populateChoiceBox() {
+
 		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
 	}
 
-
+	@FXML
+	public void refreshBtnClicked() {
+		this.populateChoiceBox();
+	}
 
 	@FXML
 	public void addCustomProBtnPressed() throws IOException {

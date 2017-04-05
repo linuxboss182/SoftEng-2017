@@ -50,7 +50,7 @@ public class AddProfessionalController implements Initializable
 	public void onAddProBtnClicked() {
 		Professional newPro = new Professional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
 		directory.addProfessional(newPro);
-		this.editorController.populateChoiceBox();
+		//this.editorController.populateChoiceBox();
 
 
 	}
