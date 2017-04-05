@@ -3,6 +3,7 @@ package entities;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Optional;
 
 // TODO: Improve documentation
 
@@ -19,6 +20,7 @@ public class Directory
 	private HashSet<Node> nodes;
 	private HashSet<Room> rooms;
 	private HashSet<Professional> professionals;
+	private Optional<Room> kiosk;
 
 	/*
 	addNode, addRoom
@@ -35,6 +37,7 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.professionals = new HashSet<>();
+		this.kiosk = Optional.empty();
 	}
 
 
@@ -68,6 +71,10 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
+	public void setKiosk(Room k) {
+		this.kiosk = Optional.of(k);
+	}
+
 	public boolean removeNode(Node node) {
 		return this.nodes.remove(node);
 	}
@@ -78,6 +85,23 @@ public class Directory
 
 	public boolean removeProfessional(Professional professional) {
 		return this.professionals.remove(professional);
+	}
+
+
+	/** return whether this directory has a kiosk */
+	public boolean hasKiosk() {
+		return this.kiosk.isPresent();
+	}
+
+	/**
+	 * Get kiosk if present, or null otherwise.
+	 *
+	 * If kiosk is not present, return null
+	 *
+	 * @todo This should return Optional&lt;Room&rt;, not Room.
+	 */
+	public Room getKiosk() {
+		return this.kiosk.orElse(null);
 	}
 
 	// TODO: Write this method properly
