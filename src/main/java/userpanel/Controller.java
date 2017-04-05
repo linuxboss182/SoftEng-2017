@@ -133,10 +133,13 @@ public class Controller extends Window implements Initializable
 		// this.roomList.add(r3);
 		// this.populateListView(this.roomList);
 		//make kiosk
+//		this.kiosk = new Room(353.5, 122.5);
+//		this.kiosk.setName(KIOSK_NAME);
+//		this.directory.addRoom(this.kiosk);
+//		this.paintRoomOnLocation(this.kiosk);
+
 		this.kiosk = new Room(353.5, 122.5);
-		this.kiosk.setName(KIOSK_NAME);
-		this.directory.addRoom(this.kiosk);
-		this.paintRoomOnLocation(this.kiosk);
+
 		this.displayNodes();
 		this.populateListView();
 
