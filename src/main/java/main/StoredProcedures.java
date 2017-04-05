@@ -27,10 +27,12 @@ public class StoredProcedures
 			"CREATE TABLE EmployeeRooms ("
 					+"nodeID   integer references Rooms(nodeID)"
 					+" , employeeID integer references Employees(employeeID)"
-					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))"
+					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))",
+			"CREATE TABLE Kiosk (nodeID integer references Nodes(nodeID) NOT NULL)"
 	);
 
 	private static final List<String> drops = Arrays.asList(
+			"DROP TABLE Kiosk",
 			"DROP TABLE EmployeeRooms",
 			"DROP TABLE Employees",
 			"DROP TABLE Rooms",
@@ -172,8 +174,14 @@ public class StoredProcedures
 		return "INSERT INTO EmployeeRooms(employeeID,nodeID) VALUES("+employeeID+","+nodeID+")";
 	}
 
-
+	public static String procInsertKiosk(int nodeID){
+		return "INSERT INTO Kiosk (nodeID) VALUES (" + nodeID + ")";
+	}
 	/* **** Retrieval procedures **** */
+
+	public static String procRetrieveKiosk(){
+		return "SELECT * FROM Kiosk";
+	}
 
 	public static String procRetrieveNodes(){
 		//query needs work

@@ -51,7 +51,7 @@ public class EditorController implements Initializable
 	@FXML
 	private TextField nameField;
 	@FXML
-	private TextField descriptionField;
+	private TextField descriptField;
 	@FXML
 	private TextField xCoordField;
 	@FXML
@@ -127,6 +127,8 @@ public class EditorController implements Initializable
 		this.displayRooms();
 		this.imageViewMap.setPickOnBounds(true);
 
+		this.redrawLines();
+
 		this.imageViewMap.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
@@ -200,7 +202,13 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void confirmBtnPressed() {
+		this.directory.getRooms().forEach(room -> {
+			System.out.println(room.getName());
+		});
+
 		try {
+
+
 			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
 		} catch (DatabaseException e) {
 			System.err.println("\n\nDATABASE DAMAGED\n\n");
@@ -211,7 +219,7 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void addRoomBtnClicked() {
-		this.addRoom(this.readX(), this.readY(), "name", "description");
+		this.addRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML

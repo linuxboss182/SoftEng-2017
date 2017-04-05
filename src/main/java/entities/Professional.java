@@ -71,4 +71,8 @@ public class Professional
 	public String toString() {
 		return this.getSurname() + ", " + this.getGivenName();
 	}
+
+	public void removeLocation(Room r) {
+		this.locations.remove(r);
+	}
 }

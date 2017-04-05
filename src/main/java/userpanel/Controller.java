@@ -5,6 +5,8 @@ import entities.Directory;
 import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,11 +38,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 import entities.Node;
 import main.ApplicationController;
 import main.DatabaseController;
+import main.Pathfinder;
 
 
 public class Controller extends Window implements Initializable
@@ -64,7 +68,7 @@ public class Controller extends Window implements Initializable
 	@FXML
 	private Button doneBtn;
 	@FXML
-	private ListView directoryList;
+	private ListView<Room> directoryList;
 	@FXML
 	private TextFlow directionsTextField;
 
@@ -74,7 +78,7 @@ public class Controller extends Window implements Initializable
 	private ArrayList<Node> directionNodes = new ArrayList<Node>();
 	private ArrayList<Node> alon = new ArrayList<>();
 	private ArrayList<Room> roomList = new ArrayList<>();
-	protected ListProperty<String> listProperty = new SimpleListProperty<>();
+	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 	private Directory directory;
 	private Room kiosk;
 	private Node destNode;
@@ -129,12 +133,15 @@ public class Controller extends Window implements Initializable
 		// this.roomList.add(r3);
 		// this.populateListView(this.roomList);
 		//make kiosk
-		this.kiosk = new Room(353.5, 122.5);
-		this.kiosk.setName(KIOSK_NAME);
-		this.directory.addRoom(this.kiosk);
-		this.paintRoomOnLocation(this.kiosk);
-		this.displayNodes();
+//		this.kiosk = new Room(353.5, 122.5);
+//		this.kiosk.setName(KIOSK_NAME);
+//		this.directory.addRoom(this.kiosk);
+//		this.paintRoomOnLocation(this.kiosk);
 
+		this.kiosk = new Room(353.5, 122.5);
+
+		this.displayNodes();
+		this.populateListView();
 
 
 
@@ -170,11 +177,46 @@ public class Controller extends Window implements Initializable
 	}
 
 	public void populateListView() {
+		//this.directoryList = new ListView();
+//		this.directory.addRoom(new Room(50,50,"test", "test"));
+//		System.out.println(this.directory.getRooms());
+
+		this.directoryList.itemsProperty().bind(this.listProperty);
+		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
+
+
 		this.directory.getRooms().forEach(room -> {
-			this.directoryList.itemsProperty().bind(this.listProperty);
-			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
-				}
-		);
+
+			room.connect(this.kiosk);
+
+		//		this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
+
+				//this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
+				//	this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms().forEach(room -> {})));
+
+		//			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
+
+		});
+
+
+
+//		listProperty.setOnMouseClicked((MouseEvent e) -> {
+//			EditorController.this.onShapeClick(e, n);
+//		});
+
+		this.directoryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
+			@Override
+			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
+				// Your action here
+				//	System.out.println("Selected item: " + newValue.getName());
+				List<Node> ret;
+
+				ret = Pathfinder.findPath(kiosk, newValue);
+
+				paintPath(new ArrayList<>(ret));
+
+			}
+		});
 
 	}
 
@@ -219,7 +261,13 @@ public class Controller extends Window implements Initializable
 
 	}
 
+	private ArrayList<Line> lines = new ArrayList<Line>();
+
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		this.lines.forEach(line -> {
+			this.contentAnchor.getChildren().remove(line);
+		});
+
 		//add kiosk to start of list
 		directionNodes.add(0, this.kiosk);
 
@@ -238,7 +286,8 @@ public class Controller extends Window implements Initializable
 		//	System.out.println("X2: " + nodeX2);
 			double nodeY2 = directionNodes.get(i+1).getY();
 		//	System.out.println("Y2: " + nodeY2);
-			final Line line = new Line();
+			Line line = new Line();
+			this.lines.add(line);
 			line.setStartX(nodeX1);
 			line.setStartY(nodeY1);
 			line.setEndX(nodeX2);
