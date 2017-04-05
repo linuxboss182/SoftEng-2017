@@ -50,7 +50,8 @@
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.0" minWidth="0.0" prefWidth="0.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="522.0" minWidth="10.0" prefWidth="279.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="453.0" minWidth="10.0" prefWidth="442.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="453.0" minWidth="10.0" prefWidth="188.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="334.0" minWidth="10.0" prefWidth="334.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
@@ -63,8 +64,8 @@
                         <ChoiceBox fx:id="proChoiceBox" prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
                         <Button fx:id="delProBtn" mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label prefHeight="17.0" prefWidth="447.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <Label fx:id="proTextLbl" prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
+                        <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="3" />
                      </children>
                   </GridPane>
                </children>

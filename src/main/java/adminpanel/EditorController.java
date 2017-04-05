@@ -9,7 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -17,6 +20,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -24,11 +29,13 @@ import entities.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DatabaseController;
 import main.DatabaseException;
 
 import javax.xml.soap.Text;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +74,10 @@ public class EditorController implements Initializable
 	private ChoiceBox<Professional> proChoiceBox;
 	@FXML
 	private Label proTextLbl;
+	@FXML
+	private Button addCustomProBtn;
 
+	private AddProfessionalController addProController;
 
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
@@ -98,6 +108,8 @@ public class EditorController implements Initializable
 	private static final double RECTANGLE_HEIGHT = 7;
 	private static final double CIRCLE_RADIUS = 5;
 	private static final String KIOSK_NAME = "You Are Here";
+
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -144,8 +156,10 @@ public class EditorController implements Initializable
 			proList.add(proListChoice);
 
 		}
+		//populate box for professionals
+		this.populateChoiceBox();
 
-		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
+
 		/*
 		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Node>()
 		{
@@ -159,6 +173,25 @@ public class EditorController implements Initializable
 
 	}
 
+	public void populateChoiceBox() {
+		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
+	}
+
+
+
+	@FXML
+	public void addCustomProBtnPressed() throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
+		this.addProController = loader.getController();
+		//this.addProController.setEditorController(this);
+		System.out.print("Onto the AddPro");
+		Scene addProScene = new Scene(loader.load());
+		Stage addProStage = new Stage();
+		addProStage.setScene(addProScene);
+
+		addProStage.showAndWait();
+	}
 
 
 	@FXML
