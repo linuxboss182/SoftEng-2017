@@ -9,7 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -17,6 +20,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -24,11 +29,13 @@ import entities.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DatabaseController;
 import main.DatabaseException;
 
 import javax.xml.soap.Text;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +73,11 @@ public class EditorController implements Initializable
 	@FXML
 	private ChoiceBox<Professional> proChoiceBox;
 	@FXML
-	private Label proTextLbl;
+	private Label roomTextLbl;
+	@FXML
+	private Button addCustomProBtn;
 
+	private AddProfessionalController addProController;
 
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
@@ -98,6 +108,10 @@ public class EditorController implements Initializable
 	private static final double RECTANGLE_HEIGHT = 7;
 	private static final double CIRCLE_RADIUS = 5;
 	private static final String KIOSK_NAME = "You Are Here";
+	private Professional selectedProf;
+	private String roomList;
+
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -133,35 +147,93 @@ public class EditorController implements Initializable
 				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 			this.selectedShape = null;
 		});
+		//populate box for professionals
+		this.populateChoiceBox();
+		this.selectChoiceBox();
 
-		//Populate the Professionals choice box
-		Professional pro1 = new Professional("Mr.", "Smith", "Bitch");
-		Professional pro2 = new Professional();
 
-		this.directory.addProfessional(pro1);
-		this.directory.addProfessional(pro2);
-		ArrayList<String> proList = new ArrayList<>();
-		for (Professional pro: this.directory.getProfessionals()) {
-			String proListChoice;
-			proListChoice = pro.getSurname() + ", " + pro.getGivenName();
-			proList.add(proListChoice);
 
-		}
-
-		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
-		/*
-		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Node>()
-		{
-			@Override
-			public void changed(ObservableValue<? extends Professional> observable, Professional
-					oldValue, Professional newValue) {
-					//proTextLbl.setText(newValue.getSurname());
-			}
-		});
-		*/
 
 	}
 
+	public void selectChoiceBox() {
+
+		ArrayList<Professional> proList = new ArrayList<>();
+		for (Professional pro: this.directory.getProfessionals()) {
+			proList.add(pro);
+
+		}
+
+
+
+		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
+				EditorController.this.selectedProf = proList.get(newValue.intValue() - 1);
+
+			}
+		});
+	}
+
+	@FXML
+	public void addProfToRoom() {
+		if (this.selectedNode == null) {
+			return;
+		} else {
+			this.selectedProf.addLocation((Room)this.selectedNode);
+			this.roomList = "";
+			for (Room r: this.selectedProf.getLocations())
+				this.roomList += r.getName() + ", ";
+			this.roomTextLbl.setText(this.roomList);
+		}
+
+	}
+	@FXML
+	public void delProfFromRoom() {
+		if (this.selectedNode == null) {
+			return;
+		} else {
+			System.out.println(this.selectedProf.getLocations().size());
+			this.selectedProf.getLocations().forEach(room -> {
+				if(room.equals(this.selectedNode)) {
+					this.selectedProf.removeLocation(room);
+				}
+			});
+			System.out.println(this.selectedProf.getLocations().size());
+
+			this.roomList = "";
+			for (Room r: this.selectedProf.getLocations())
+				this.roomList += r.getName() + ", ";
+			this.roomTextLbl.setText(this.roomList);
+		}
+
+	}
+
+	public void populateChoiceBox() {
+
+		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
+	}
+
+	@FXML
+	public void refreshBtnClicked() {
+		this.populateChoiceBox();
+	}
+
+	@FXML
+	public void addCustomProBtnPressed() throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
+		this.addProController = loader.getController();
+		//this.addProController.setEditorController(this);
+		System.out.print("Onto the AddPro");
+		Scene addProScene = new Scene(loader.load());
+		Stage addProStage = new Stage();
+		addProStage.setScene(addProScene);
+
+		addProStage.showAndWait();
+	}
 
 
 	@FXML

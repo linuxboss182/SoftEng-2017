@@ -7,7 +7,7 @@ public class ApplicationController
 {
 
 	public static DatabaseController dbc;
-	private static Directory directory;
+	public static Directory directory;
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
