@@ -39,18 +39,20 @@ public class DatabaseTester
 		}
 		catch (main.DatabaseException e){
 			System.out.println("Database did not init");
-			assertEquals(true,false);
+			Assert.fail();
 		}
 
 		try {
 			controller.destructiveSaveDirectory(oldDirectory);
 		} catch (DatabaseException e) {
 			System.out.println(e.getMessage());
-			assertEquals(true,false);
+			Assert.fail();
 		}
 
 		Directory newDirectory = controller.getDirectory();
 
 		assertEquals(oldDirectory, newDirectory);
 	}
+
+
 }
