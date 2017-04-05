@@ -223,38 +223,89 @@ public class DatabaseController
 	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
+		HashMap<Integer, Room> profRooms = new HashMap<>();
+		HashMap<Integer, Professional> professionals = new HashMap<>();
 		try{
-			Statement query = this.db_connection.createStatement();
-			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+			//
+			Statement queryNodes = this.db_connection.createStatement();
+			Statement queryEdges = this.db_connection.createStatement();
+			Statement queryProfRooms = this.db_connection.createStatement();
+			Statement queryProfessionals = this.db_connection.createStatement();
+			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
+			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
+			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
 
 			//populate hash maps
-			while(result.next()){
-				if(result.getString("roomName") == null){
+			while(resultNodes.next()){
+				if(resultNodes.getString("roomName") == null){
 					//node, not room
-					Node node = new Node(result.getDouble("nodeX"),
-										 result.getDouble("nodeY"));
-
-					nodes.put(result.getInt("nodeID"), node);
+					Node node = new Node(resultNodes.getDouble("nodeX"),
+										 resultNodes.getDouble("nodeY"));
+					nodes.put(resultNodes.getInt("nodeID"), node);
 				} else {
 					//room, not node
-					Room room = new Room(result.getDouble("nodeX"),
-										 result.getDouble("nodeY"),
-										 result.getString("roomName"),
-										 result.getString("roomDescription"));
-
-					rooms.put(result.getInt("nodeID"),room); //image where?
+					Room room = new Room(resultNodes.getDouble("nodeX"),
+										 resultNodes.getDouble("nodeY"),
+										 resultNodes.getString("roomName"),
+										 resultNodes.getString("roomDescription"));
+					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
 				}
 			}
-			//populate directory
+			//reset the result set so we can iterate through again and add adjacent nodes
+			//hashmaps MUST have populated nodes before running this
+			resultNodes.first();
+			while(resultNodes.next()){
+				while(resultEdges.next()){
+					if(resultEdges.getInt("node1") == resultNodes.getInt("nodeID")){
+						//we have adjacent nodes
+						//find the initial node, add the edge
+						nodes.getOrDefault(resultNodes.getInt("nodeID"),
+								           rooms.get(resultNodes.getInt("nodeID")))
+								.connect(nodes.getOrDefault(resultEdges.getInt("node2"),
+										 rooms.get(resultEdges.getInt("node2"))));
+						//I'm aware this looks like arse
+					}
+				}
+			}
+
+			//find all them professionals
+			while(resultProfessionals.next()){
+
+				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
+															 resultProfessionals.getString("employeeSurname"),
+															 resultProfessionals.getString("employeeTitle"));
+				//look for any locations we might have
+				while(resultProfRooms.next()){
+					if(resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")){
+						//we have at least one room
+						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
+					}
+				}
+				//add to hashmap
+				professionals.put(resultProfessionals.getInt("employeeID"), professional);
+			}
+
+			//add all to directory
 			for(Node n: nodes.values()){
 				directory.addNode(n);
 			}
-			for(Room n: rooms.values()){
-				directory.addRoom(n);
+			for(Room r: rooms.values()){
+				directory.addRoom(r);
+			}
+			for(Professional p: professionals.values()){
+				directory.addProfessional(p);
 			}
 
-			result.close();
-			query.close();
+			resultNodes.close();
+			resultEdges.close();
+			resultProfRooms.close();
+			resultProfessionals.close();
+			queryNodes.close();
+			queryEdges.close();
+			queryProfRooms.close();
+			queryProfessionals.close();
+
 			return true;
 		} catch (SQLException e){
 			return false;
