@@ -1,5 +1,6 @@
 import entities.Directory;
 import entities.Node;
+import entities.Professional;
 import entities.Room;
 import main.DatabaseController;
 import main.DatabaseException;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.Assert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Walt on 4/4/2017.
@@ -51,7 +53,39 @@ public class DatabaseTester
 
 		Directory newDirectory = controller.getDirectory();
 
-		assertEquals(oldDirectory, newDirectory);
+		for (Node n:newDirectory.getNodes()){
+			if(!oldDirectory.getNodes().contains(n)){
+				Assert.fail();
+			}
+		}
+		for (Room r:newDirectory.getRooms()){
+			if(!oldDirectory.getRooms().contains(r)){
+				Assert.fail();
+			}
+		}
+		for (Professional p:newDirectory.getProfessionals()){
+			if(!oldDirectory.getProfessionals().contains(p)){
+				Assert.fail();
+			}
+		}
+
+		for (Node n:oldDirectory.getNodes()){
+			if(!newDirectory.getNodes().contains(n)){
+				Assert.fail();
+			}
+		}
+		for (Room r:oldDirectory.getRooms()){
+			if(!newDirectory.getRooms().contains(r)){
+				Assert.fail();
+			}
+		}
+		for (Professional p:oldDirectory.getProfessionals()){
+			if(!newDirectory.getProfessionals().contains(p)){
+				Assert.fail();
+			}
+		}
+
+		assertEquals(true, true);
 	}
 
 
