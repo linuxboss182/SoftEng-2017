@@ -151,8 +151,8 @@ public class StoredProcedures
 
 	public static String procInsertRoom(int nodeID, String roomName, String roomDescription){
 		//query needs work
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES("+roomName
-				+","+roomDescription+","+nodeID+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID) VALUES('"+roomName
+				+"', '"+roomDescription+"', "+nodeID+")";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
@@ -164,7 +164,7 @@ public class StoredProcedures
 	                                        String surname, String employeeTitle){
 		//query needs work
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) "
-				+ "VALUES("+employeeID+","+givenName+","+surname+","+employeeTitle+")";
+				+ "VALUES("+employeeID+", '"+givenName+"', '"+surname+"', '"+employeeTitle+"')";
 	}
 
 	public static String procInsertEmployeeRoom(int employeeID, int nodeID){
