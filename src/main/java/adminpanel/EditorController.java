@@ -118,10 +118,20 @@ public class EditorController implements Initializable
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = ApplicationController.getDirectory();
 
-		//make kiosk
-		this.kiosk = new Room(353.5, 122.5);
-		this.kiosk.setName(KIOSK_NAME);
-		this.directory.addRoom(this.kiosk);
+//		//make kiosk
+//		this.kiosk = new Room(353.5, 122.5);
+//		this.kiosk.setName(KIOSK_NAME);
+//		this.directory.addRoom(this.kiosk);
+
+//		this.kiosk = null;
+//		for (Room r : this.directory.getRooms()) {
+//			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
+//				this.kiosk = r;
+//			}
+//		}
+//		if (this.kiosk == null) {
+//			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
+//		}
 
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
@@ -311,7 +321,7 @@ public class EditorController implements Initializable
 
 
 		this.selectedNode.disconnectAll();
-		this.directory.removeNode(this.selectedNode);
+		this.directory.removeNodeOrRoom(this.selectedNode);
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
@@ -352,11 +362,11 @@ public class EditorController implements Initializable
 	public void paintRoomOnLocation(Room r) {
 		Rectangle rect;
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-		if (r.getName().equals(KIOSK_NAME)) {
-			rect.setFill(KIOSK_COLOR);
-		} else {
+//		if (r.getName().equals(KIOSK_NAME)) {
+//			rect.setFill(KIOSK_COLOR);
+//		} else {
 			rect.setFill(this.DEFAULT_SHAPE_COLOR);
-		}
+//		}
 
 		this.contentPane.getChildren().add(rect);
 		rect.setVisible(true);

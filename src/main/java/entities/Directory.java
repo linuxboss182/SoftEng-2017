@@ -83,6 +83,10 @@ public class Directory
 		return this.rooms.remove(room);
 	}
 
+	public boolean removeNodeOrRoom(Node  n) {
+		return this.nodes.remove(n) || this.rooms.remove(n);
+	}
+
 	public boolean removeProfessional(Professional professional) {
 		return this.professionals.remove(professional);
 	}

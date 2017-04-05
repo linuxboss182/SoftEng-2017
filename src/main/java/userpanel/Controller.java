@@ -71,7 +71,8 @@ public class Controller extends Window implements Initializable
 	private ListView<Room> directoryList;
 	@FXML
 	private TextFlow directionsTextField;
-
+	@FXML
+	private Button refreshbtn;
 
 	private Image map4;
 	private Node clickNode;
@@ -148,15 +149,16 @@ public class Controller extends Window implements Initializable
 //			this.directory.addRoom(this.kiosk);
 //		}
 
-		this.kiosk == null;
+		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
 				this.kiosk = r;
 			}
 		}
-		if (this.kiosk == null) {
-			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
-		}
+//		if (this.kiosk == null) {
+//			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
+//			this.directory.addRoom(this.kiosk);
+//		}
 
 		this.displayNodes();
 		this.populateListView();
@@ -174,6 +176,12 @@ public class Controller extends Window implements Initializable
 		this.contentAnchor.getChildren().add(rect);
 		rect.setVisible(true);
 
+	}
+
+	@FXML
+	private void refreshbtnClicked(){
+		this.displayNodes();
+		this.populateListView();
 	}
 
 	@FXML
@@ -228,10 +236,9 @@ public class Controller extends Window implements Initializable
 
 				ret = Pathfinder.findPath(kiosk, newValue);
 
-				System.out.print("Kiosk adj" + kiosk.getNeighbors().toString());
-				//paintPath(new ArrayList<>(ret));
+				//System.out.print("Kiosk adj" + kiosk.getNeighbors().toString());
+				paintPath(new ArrayList<>(ret));
 
-				System.out.println("Kiosk: " + kiosk.getName() + "Ret: " );
 				ret.forEach(Node -> { System.out.print(Node.toString());});
 
 			}
@@ -251,6 +258,8 @@ public class Controller extends Window implements Initializable
 
 
 	public void displayNodes() {
+		this.contentAnchor.getChildren().removeAll();
+
 		this.directory.getRooms().forEach(node -> {
 			Circle circ;
 			double nodeX = node.getX();
@@ -296,6 +305,10 @@ public class Controller extends Window implements Initializable
 
 		//add kiosk to start of list
 		//directionNodes.add(0, this.kiosk);
+		if(directionNodes.size() <= 0){
+			return;
+		}
+
 
 		double destX = directionNodes.get(directionNodes.size() - 1).getX();
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
