@@ -5,6 +5,8 @@ import entities.Directory;
 import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,7 +65,7 @@ public class Controller extends Window implements Initializable
 	@FXML
 	private Button doneBtn;
 	@FXML
-	private ListView directoryList;
+	private ListView<Room> directoryList;
 	@FXML
 	private TextFlow directionsTextField;
 
@@ -73,7 +75,7 @@ public class Controller extends Window implements Initializable
 	private ArrayList<Node> directionNodes = new ArrayList<Node>();
 	private ArrayList<Node> alon = new ArrayList<>();
 	private ArrayList<Room> roomList = new ArrayList<>();
-	protected ListProperty<String> listProperty = new SimpleListProperty<>();
+	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 	private Directory directory;
 	private Room kiosk;
 	private Node destNode;
@@ -133,7 +135,7 @@ public class Controller extends Window implements Initializable
 		this.directory.addRoom(this.kiosk);
 		this.paintRoomOnLocation(this.kiosk);
 		this.displayNodes();
-
+		this.populateListView();
 
 
 
@@ -169,11 +171,29 @@ public class Controller extends Window implements Initializable
 	}
 
 	public void populateListView() {
+		//this.directoryList = new ListView();
+//		this.directory.addRoom(new Room(50,50,"test", "test"));
+//		System.out.println(this.directory.getRooms());
+
 		this.directory.getRooms().forEach(room -> {
 			this.directoryList.itemsProperty().bind(this.listProperty);
-			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
-				}
+		//	this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
+			this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
+			}
 		);
+
+
+//		listProperty.setOnMouseClicked((MouseEvent e) -> {
+//			EditorController.this.onShapeClick(e, n);
+//		});
+
+		this.directoryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
+			@Override
+			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
+				// Your action here
+				System.out.println("Selected item: " + newValue.getName());
+			}
+		});
 
 	}
 
