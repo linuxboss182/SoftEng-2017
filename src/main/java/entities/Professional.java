@@ -63,4 +63,8 @@ public class Professional
 	public Set<Room> getLocations() {
 		return new HashSet<>(this.locations);
 	}
+
+	public void addLocation(Room room){
+		this.locations.add(room);
+	}
 }

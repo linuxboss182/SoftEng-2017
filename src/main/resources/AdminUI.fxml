@@ -24,7 +24,7 @@
 			<items>
 				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" fx:id="confirmBtn" onMouseClicked="#confirmBtnPressed"/>
+				<Button fx:id="confirmBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#confirmBtnPressed" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 			</items>
 		</ToolBar>
@@ -59,12 +59,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
-                        <Button mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Button fx:id="addProBtn" mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="proChoiceBox" prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
+                        <Button fx:id="delProBtn" mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label prefHeight="17.0" prefWidth="447.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
+                        <Label fx:id="proTextLbl" prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
                </children>

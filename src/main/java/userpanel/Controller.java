@@ -1,5 +1,6 @@
 package userpanel;
 
+import adminpanel.EditorController;
 import entities.Directory;
 import entities.Room;
 import javafx.beans.property.ListProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -25,6 +27,9 @@ import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import java.io.IOException;
@@ -34,10 +39,11 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
 import entities.Node;
+import main.ApplicationController;
 import main.DatabaseController;
 
 
-public class Controller implements Initializable
+public class Controller extends Window implements Initializable
 {
 	@FXML
 	private Button logAsAdmin;
@@ -59,26 +65,43 @@ public class Controller implements Initializable
 	private Button doneBtn;
 	@FXML
 	private ListView directoryList;
+	@FXML
+	private TextFlow directionsTextField;
 
 
-	Image map4;
-	entities.Node clickNode;
-	ArrayList<Node> directionNodes = new ArrayList<Node>();
-	ArrayList<Node> alon = new ArrayList<Node>();
-	ArrayList<Room> roomList = new ArrayList<>();
+	private Image map4;
+	private Node clickNode;
+	private ArrayList<Node> directionNodes = new ArrayList<Node>();
+	private ArrayList<Node> alon = new ArrayList<>();
+	private ArrayList<Room> roomList = new ArrayList<>();
 	protected ListProperty<String> listProperty = new SimpleListProperty<>();
-	Directory directory;
+	private Directory directory;
+	private Room kiosk;
+	private Node destNode;
+
+	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
+	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
+	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
+	private static final Color KIOSK_COLOR = Color.RED;
+
+	private static final double RECTANGLE_WIDTH = 7;
+	private static final double RECTANGLE_HEIGHT = 7;
+	private static final double CIRCLE_RADIUS = 5;
+	private static final String KIOSK_NAME = "You Are Here";
+
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Grab the database controller from main and use it to populate our directory
-		this.directory = main.ApplicationController.dbc.getDirectory();
+		this.directory = ApplicationController.getDirectory();
+
 
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
 		this.imageViewMap.setImage(this.map4);
-		this.displayNodes();
+		//this.imageViewMap.fitWidthProperty().bind(this.primaryStage.widthProperty());
+
 
 		//set elevator to clicked
 		//this.elevatorRadio.focusedProperty(true);
@@ -105,6 +128,29 @@ public class Controller implements Initializable
 		// this.roomList.add(r2);
 		// this.roomList.add(r3);
 		// this.populateListView(this.roomList);
+		//make kiosk
+		this.kiosk = new Room(353.5, 122.5);
+		this.kiosk.setName(KIOSK_NAME);
+		this.directory.addRoom(this.kiosk);
+		this.paintRoomOnLocation(this.kiosk);
+		this.displayNodes();
+
+
+
+
+	}
+
+	public void paintRoomOnLocation(Room r) {
+		Rectangle rect;
+		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		if (r.getName().equals(KIOSK_NAME)) {
+			rect.setFill(KIOSK_COLOR);
+		} else {
+			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+		}
+
+		this.contentAnchor.getChildren().add(rect);
+		rect.setVisible(true);
 
 	}
 
@@ -142,6 +188,7 @@ public class Controller implements Initializable
 		circ.setVisible(true);
 	}
 
+
 	public void displayNodes() {
 		this.directory.getNodes().forEach(node -> {
 			Circle circ;
@@ -159,6 +206,12 @@ public class Controller implements Initializable
 	public void getDirectionsClicked() {
 
 		this.paintPath(this.directionNodes);
+		Text t1 = new Text("hey");
+		Text t2 = new Text("heyyyyy");
+		this.directionsTextField.getChildren().add(t1);
+		this.directionsTextField.getChildren().add(t2);
+
+
 	}
 
 	@FXML
@@ -167,16 +220,24 @@ public class Controller implements Initializable
 	}
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		//add kiosk to start of list
+		directionNodes.add(0, this.kiosk);
+
+		double destX = directionNodes.get(directionNodes.size() - 1).getX();
+		double destY = directionNodes.get(directionNodes.size() - 1).getY();
+
+		this.destNode = new Node(destX, destY);
+		main.Pathfinder.findPath(this.kiosk, this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
-			System.out.println("X1: " + nodeX1);
+		//	System.out.println("X1: " + nodeX1);
 			double nodeY1 = directionNodes.get(i).getY();
-			System.out.println("Y1: " + nodeY1);
+		//	System.out.println("Y1: " + nodeY1);
 			double nodeX2 = directionNodes.get(i+1).getX();
-			System.out.println("X2: " + nodeX2);
+		//	System.out.println("X2: " + nodeX2);
 			double nodeY2 = directionNodes.get(i+1).getY();
-			System.out.println("Y2: " + nodeY2);
+		//	System.out.println("Y2: " + nodeY2);
 			final Line line = new Line();
 			line.setStartX(nodeX1);
 			line.setStartY(nodeY1);
