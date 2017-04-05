@@ -61,8 +61,6 @@ public class EditorController implements Initializable
 	@FXML
 	private Pane contentPane;
 	@FXML
-	private TextField roomNumberField;
-	@FXML
 	private Button modifyRoomBtn;
 	@FXML
 	private Button cancelBtn;
