@@ -148,7 +148,7 @@ public class Controller extends Window implements Initializable
 //			this.directory.addRoom(this.kiosk);
 //		}
 
-		this.kiosk == null;
+		//this.kiosk == null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
 				this.kiosk = r;
