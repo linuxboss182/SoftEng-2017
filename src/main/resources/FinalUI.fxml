@@ -25,12 +25,10 @@
 	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<TextField maxWidth="-Infinity" prefHeight="25.0" prefWidth="259.0" promptText="Enter Room Number or  Name" />
+				<TextField maxWidth="-Infinity" prefHeight="25.0" prefWidth="243.0" promptText="Enter Room Number or Name" />
 				<Button mnemonicParsing="false" text="Search" />
             <Button fx:id="refreshbtn" mnemonicParsing="false" onMouseClicked="#refreshbtnClicked" text="Refresh" />
 			<Region prefHeight="30.0" prefWidth="530.0" />
-			<TextField promptText="Start" />
-			<TextField promptText="Destination" />
 			</items>
 		</ToolBar>
 	</top>
