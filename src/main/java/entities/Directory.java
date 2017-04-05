@@ -71,9 +71,9 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void setKiosk(Room k) {
-		this.kiosk = Optional.of(k);
-	}
+//	public void setKiosk(Room k) {
+//		this.kiosk = Optional.of(k);
+//	}
 
 	public boolean removeNode(Node node) {
 		return this.nodes.remove(node);
@@ -93,16 +93,16 @@ public class Directory
 		return this.kiosk.isPresent();
 	}
 
-	/**
-	 * Get kiosk if present, or null otherwise.
-	 *
-	 * If kiosk is not present, return null
-	 *
-	 * @todo This should return Optional&lt;Room&rt;, not Room.
-	 */
-	public Room getKiosk() {
-		return this.kiosk.orElse(null);
-	}
+//	/**
+//	 * Get kiosk if present, or null otherwise.
+//	 *
+//	 * If kiosk is not present, return null
+//	 *
+//	 * @todo This should return Optional&lt;Room&rt;, not Room.
+//	 */
+//	public Room getKiosk() {
+//		return this.kiosk.orElse(null);
+//	}
 
 	// TODO: Write this method properly
 	private int getHeight() {

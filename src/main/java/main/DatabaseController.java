@@ -225,7 +225,7 @@ public class DatabaseController
 			this.retrieveNodes(nodes, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(rooms, professionals);
-			kioskID = this.retrieveKiosk();
+//			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			return false;
 		}
@@ -239,9 +239,9 @@ public class DatabaseController
 		for(Professional p: professionals.values()){
 			directory.addProfessional(p);
 		}
-		if (kioskID != null) {
-			directory.setKiosk(rooms.get(kioskID));
-		}
+//		if (kioskID != null) {
+//			directory.setKiosk(rooms.get(kioskID));
+//		}
 
 		return true;
 	}
@@ -395,12 +395,12 @@ public class DatabaseController
 		}
 		System.out.println("rooms saved");
 
-		if (dir.hasKiosk()) {
-			Room n = dir.getKiosk();
-			query = StoredProcedures.procInsertKiosk(n.hashCode());
-			db.executeUpdate(query);
-		}
-		System.out.println("kiosk saved");
+//		if (dir.hasKiosk()) {
+//			Room n = dir.getKiosk();
+//			query = StoredProcedures.procInsertKiosk(n.hashCode());
+//			db.executeUpdate(query);
+//		}
+//		System.out.println("kiosk saved");
 
 		for (Node n : dir.getNodes()) {
 			for (Node m : n.getNeighbors()) {
