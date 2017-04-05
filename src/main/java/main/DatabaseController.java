@@ -42,29 +42,18 @@ public class DatabaseController
 
 		SQLWarning warning;
 		try {
-			// db warning was issued if db existed before init
+			// db warning was issued if db existed before this function was called
 			warning = this.db_connection.getWarnings();
 			// if null, no warning = new database
 		} catch (SQLException e) {
 			throw new DatabaseException("Failed to check connecton warnings", e);
 		}
 
-		if (warning == null) { //if null, DB exists
+		if (warning == null) { //if null, DB does not exist
 			flag = this.reInitSchema();
 			if (! flag) {
 				throw new DatabaseException("Failed to initialize database schema");
 			}
-		}
-	}
-
-	/** true if the database already exists */
-	private boolean checkDBExists() {
-		try {
-			SQLWarning check = this.db_connection.getWarnings();
-			return (check != null);
-		} catch (SQLException e) {
-			System.err.println("Failed to get JDBC warnings.");
-			return false;
 		}
 	}
 
@@ -315,8 +304,10 @@ public class DatabaseController
 					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
 				}
 			}
+			resultNodes.close();
+
 			//populate adjacency lists
-			resultNodes.first();
+			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
 			while (resultNodes.next()) {
 				while (resultEdges.next()) {
 					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
@@ -410,6 +401,7 @@ public class DatabaseController
 		}
 
 		System.out.println("professionals saved");
+		db.close();
 	}
 
 	//A test call to the database
