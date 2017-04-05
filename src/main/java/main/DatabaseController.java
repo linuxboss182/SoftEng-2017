@@ -1,6 +1,7 @@
 package main;
 
 import java.sql.*;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -218,11 +219,13 @@ public class DatabaseController
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
 		HashMap<Integer, Professional> professionals = new HashMap<>();
+		Integer kioskID = null; // (should be Optional<Integer>)
 		try {
 			//retrieve nodes and rooms
 			this.retrieveNodes(nodes, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(rooms, professionals);
+			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			return false;
 		}
@@ -236,9 +239,28 @@ public class DatabaseController
 		for(Professional p: professionals.values()){
 			directory.addProfessional(p);
 		}
+		if (kioskID != null) {
+			directory.setKiosk(rooms.get(kioskID));
+		}
+
 		return true;
 	}
 
+
+	private Integer retrieveKiosk() throws SQLException { // (should return Optional<Integer>)
+		Statement query = this.db_connection.createStatement();
+		ResultSet result = query.executeQuery(StoredProcedures.procRetrieveKiosk());
+		if (result.next()) {
+			int i = result.getInt("nodeID");
+			if (result.wasNull()) {
+				return null;
+			} else {
+				return i;
+			}
+		} else {
+			return null;
+		}
+	}
 
 	/**Retrieves all employees with their location data populated(among other things)
 	 *
@@ -373,14 +395,21 @@ public class DatabaseController
 		}
 		System.out.println("rooms saved");
 
+		if (dir.hasKiosk()) {
+			Node n = dir.getKiosk();
+			query = StoredProcedures.procInsertKiosk(n.hashCode());
+			db.executeUpdate(query);
+		}
+		System.out.println("kiosk saved");
+
 		for (Node n : dir.getNodes()) {
 			for (Node m : n.getNeighbors()) {
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
 		}
-
 		System.out.println("edges saved");
+
 		for (Room n : dir.getRooms()) {
 			for (Node m : n.getNeighbors()) {
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
