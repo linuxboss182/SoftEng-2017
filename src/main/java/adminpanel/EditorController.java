@@ -74,6 +74,8 @@ public class EditorController implements Initializable
 	private Label roomTextLbl;
 	@FXML
 	private Button addCustomProBtn;
+	@FXML
+	private Button deleteProfBtn;
 
 	private AddProfessionalController addProController;
 
@@ -252,6 +254,12 @@ public class EditorController implements Initializable
 		addProStage.setScene(addProScene);
 
 		addProStage.showAndWait();
+	}
+
+	@FXML
+	public void deleteProfBtnClicked () {
+		this.directory.removeProfessional(this.selectedProf);
+		this.refreshBtnClicked();
 	}
 
 

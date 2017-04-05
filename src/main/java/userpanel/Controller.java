@@ -76,6 +76,7 @@ public class Controller extends Window implements Initializable
 	@FXML
 	private Button refreshbtn;
 
+
 	private Image map4;
 	private Node clickNode;
 	private ArrayList<Node> directionNodes = new ArrayList<Node>();
