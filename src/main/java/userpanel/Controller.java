@@ -148,14 +148,18 @@ public class Controller extends Window implements Initializable
 //			this.directory.addRoom(this.kiosk);
 //		}
 
-		this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
-
+		this.kiosk == null;
+		for (Room r : this.directory.getRooms()) {
+			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
+				this.kiosk = r;
+			}
+		}
+		if (this.kiosk == null) {
+			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
+		}
 
 		this.displayNodes();
 		this.populateListView();
-
-
-
 	}
 
 	public void paintRoomOnLocation(Room r) {
