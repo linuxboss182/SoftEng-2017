@@ -273,12 +273,14 @@ public class Controller extends Window implements Initializable
 				}
 		);
 
-		Circle circ;
-		double nodeX = this.kiosk.getX();
-		double nodeY = this.kiosk.getY();
-		circ = new Circle(nodeX, nodeY, 5, Color.RED);
-		this.contentAnchor.getChildren().add(circ);
-		circ.setVisible(true);
+		if(this.kiosk != null) {
+			Circle circ;
+			double nodeX = this.kiosk.getX();
+			double nodeY = this.kiosk.getY();
+			circ = new Circle(nodeX, nodeY, 5, Color.RED);
+			this.contentAnchor.getChildren().add(circ);
+			circ.setVisible(true);
+		}
 
 	}
 
@@ -334,11 +336,13 @@ public class Controller extends Window implements Initializable
 			line.setEndY(nodeY2);
 
 			this.contentAnchor.getChildren().add(line);
-			Text textDirections = new Text();
-			textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
-			//Call text directions
-			this.directionsTextField.getChildren().add(textDirections);
 		}
+
+		Text textDirections = new Text();
+		textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
+		//Call text directions
+		this.directionsTextField.getChildren().add(textDirections);
+
 	}
 
 	public void clearPath(ArrayList<entities.Node> directionNodes) {

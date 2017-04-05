@@ -58,7 +58,7 @@ public class DirectionsGenerator
 		String directions = "First, ";
 		int leftTurns = 0, rightTurns = 0;
 		for (int i = 1; i < path.length - 1; i++) {
-			double turnAngle = path[i].angle(path[i-1], path[i+1]);
+			double turnAngle = path[i].angle(path[i+1], path[i-1]); // TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
 
 			// Determine the direction of the turn through a bunch of if statements
 			if ((turnAngle >= rightMin1 && turnAngle < rightMax1) ||
