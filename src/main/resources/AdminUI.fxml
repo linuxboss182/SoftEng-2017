@@ -24,7 +24,7 @@
 			<items>
 				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
-				<Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
+				<Button fx:id="confirmBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#confirmBtnPressed" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
 			</items>
 		</ToolBar>
@@ -39,7 +39,7 @@
                <children>
                   <Pane fx:id="contentPane" prefHeight="479.0" prefWidth="825.0">
                      <children>
-                        <ImageView fx:id="imageViewMap" fitHeight="476.0" fitWidth="827.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                </children>
@@ -48,10 +48,12 @@
                <children>
                   <GridPane prefHeight="160.0" prefWidth="882.0">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.0" minWidth="0.0" prefWidth="0.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="522.0" minWidth="10.0" prefWidth="279.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="453.0" minWidth="10.0" prefWidth="442.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.0" minWidth="0.0" prefWidth="21.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="522.0" minWidth="10.0" prefWidth="231.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="453.0" minWidth="10.0" prefWidth="184.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="345.0" minWidth="10.0" prefWidth="172.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="345.0" minWidth="10.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.0" minWidth="10.0" prefWidth="95.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -59,12 +61,14 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" text="Add Professional" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
-                        <Button mnemonicParsing="false" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label text="Rooms Selected:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label prefHeight="17.0" prefWidth="447.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label prefHeight="17.0" prefWidth="446.0" GridPane.columnIndex="2" />
+                        <Button fx:id="addProBtn" mnemonicParsing="false" onMouseClicked="#addProfToRoom" text="Add Professional to Room" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="proChoiceBox" prefHeight="25.0" prefWidth="288.0" GridPane.columnIndex="1" />
+                        <Button fx:id="delProBtn" mnemonicParsing="false" onMouseClicked="#delProfFromRoom" text="Delete Professional from Room" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="Rooms Associated with Professional:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="roomTextLbl" prefHeight="17.0" prefWidth="511.0" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                        <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="3" />
+                        <Button fx:id="refreshBtn" mnemonicParsing="false" onMouseClicked="#refreshBtnClicked" text="Refresh" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                        <Button fx:id="deleteProfBtn" mnemonicParsing="false" onMouseClicked="#deleteProfBtnClicked" text="Delete Professional" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
                </children>
@@ -93,13 +97,11 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Name of Room" textAlignment="CENTER" GridPane.columnIndex="1" />
-            <Label text="Room Number" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Name of Room" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Room Description" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="X Position" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="Y Position" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField fx:id="nameField" GridPane.columnIndex="2" />
-            <TextField fx:id="roomNumberField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="nameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xCoordField" />
             <TextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
@@ -107,6 +109,11 @@
             <Button fx:id="modifyRoomBtn" mnemonicParsing="false" onMouseClicked="#modifyRoomBtnClicked" text="Modify Room" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Button fx:id="deleteRoomBtn" mnemonicParsing="false" onMouseClicked="#deleteRoomBtnClicked" text="Delete Room" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label text="Current Room" GridPane.columnIndex="1" GridPane.columnSpan="2">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
          </children>
       </GridPane>
    </left>

@@ -3,6 +3,7 @@ package entities;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Optional;
 
 // TODO: Improve documentation
 
@@ -19,7 +20,15 @@ public class Directory
 	private HashSet<Node> nodes;
 	private HashSet<Room> rooms;
 	private HashSet<Professional> professionals;
+	private Optional<Room> kiosk;
 
+	/*
+	addNode, addRoom
+	removeNode, removeRoom
+	addProf, removeProf
+
+	getProfessionals, getRooms, getNodes
+	 */
 
 	/* Constructors */
 
@@ -28,6 +37,7 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.professionals = new HashSet<>();
+		this.kiosk = Optional.empty();
 	}
 
 
@@ -37,18 +47,18 @@ public class Directory
 	public void getRoomData(Object n) {
 	}
 
-	/**
-	 * Returns the list of nodes in the directory
-	 */
-	public Set<Node> getNodeSet() {
-		return this.nodes;
+	public Set<Node> getNodes() {
+		return new HashSet<>(this.nodes);
 	}
 
-	/**
-	 * Adds a node to the list
-	 *
-	 * @param node The node that is being added to the list
-	 */
+	public Set<Room> getRooms() {
+		return new HashSet<>(this.rooms);
+	}
+
+	public Set<Professional> getProfessionals() {
+		return new HashSet<>(this.professionals);
+	}
+
 	public void addNode(Node node) {
 		this.nodes.add(node);
 	}
@@ -57,13 +67,14 @@ public class Directory
 		this.rooms.add(room);
 	}
 
-	/**
-	 * Removes a node from the list
-	 *
-	 * @param node The reference to the node that is being removed. This must be the same reference as the one in the list
-	 *
-	 * @return true if the node has successfully been removed, false otherwise
-	 */
+	public void addProfessional(Professional professional) {
+		this.professionals.add(professional);
+	}
+
+//	public void setKiosk(Room k) {
+//		this.kiosk = Optional.of(k);
+//	}
+
 	public boolean removeNode(Node node) {
 		return this.nodes.remove(node);
 	}
@@ -71,6 +82,31 @@ public class Directory
 	public boolean removeRoom(Room room) {
 		return this.rooms.remove(room);
 	}
+
+	public boolean removeNodeOrRoom(Node  n) {
+		return this.nodes.remove(n) || this.rooms.remove(n);
+	}
+
+	public boolean removeProfessional(Professional professional) {
+		return this.professionals.remove(professional);
+	}
+
+
+	/** return whether this directory has a kiosk */
+	public boolean hasKiosk() {
+		return this.kiosk.isPresent();
+	}
+
+//	/**
+//	 * Get kiosk if present, or null otherwise.
+//	 *
+//	 * If kiosk is not present, return null
+//	 *
+//	 * @todo This should return Optional&lt;Room&rt;, not Room.
+//	 */
+//	public Room getKiosk() {
+//		return this.kiosk.orElse(null);
+//	}
 
 	// TODO: Write this method properly
 	private int getHeight() {

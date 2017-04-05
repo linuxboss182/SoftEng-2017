@@ -3,5 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/main/java/main/DatabaseController.java" dialect="Derby" />
     <file url="file://$PROJECT_DIR$/src/main/java/main/StoredProcedures.java" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql.d/DatabaseData.sql" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql.d/DatabaseSchema.sql" dialect="Derby" />
   </component>
 </project>
