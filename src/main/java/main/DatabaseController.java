@@ -206,22 +206,22 @@ public class DatabaseController
 		return dir;
 	}
 
-	//returns all nodes(including rooms) as a directory
+	/**Populates a given directory with nodes/rooms/professionals
+	 *
+	 *
+	 * @param directory The directory to populate
+	 * @return True if success, false if failure
+	 */
 	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
-		HashMap<Integer, Room> profRooms = new HashMap<>();
-		HashMap<Integer, Professional> professionals = new HashMap<>();
+		HashMap<Integer, Professional> professionals;
 		try{
 			//
 			Statement queryNodes = this.db_connection.createStatement();
 			Statement queryEdges = this.db_connection.createStatement();
-			Statement queryProfRooms = this.db_connection.createStatement();
-			Statement queryProfessionals = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
 			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
-			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
-			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
 
 			//populate hash maps
 			while(resultNodes.next()){
@@ -257,21 +257,7 @@ public class DatabaseController
 			}
 
 			//find all them professionals
-			while(resultProfessionals.next()){
-
-				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
-															 resultProfessionals.getString("employeeSurname"),
-															 resultProfessionals.getString("employeeTitle"));
-				//look for any locations we might have
-				while(resultProfRooms.next()){
-					if(resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")){
-						//we have at least one room
-						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
-					}
-				}
-				//add to hashmap
-				professionals.put(resultProfessionals.getInt("employeeID"), professional);
-			}
+			professionals = this.retrieveProfessionals(rooms);
 
 			//add all to directory
 			for(Node n: nodes.values()){
@@ -286,18 +272,56 @@ public class DatabaseController
 
 			resultNodes.close();
 			resultEdges.close();
-			resultProfRooms.close();
-			resultProfessionals.close();
 			queryNodes.close();
 			queryEdges.close();
-			queryProfRooms.close();
-			queryProfessionals.close();
 
 			return true;
 		} catch (SQLException e){
 			return false;
 		}
 	}
+
+
+	/**Retrieves all employees with their location data populated(among other things)
+	 *
+	 * @param rooms A hash map of all rooms in the database
+	 * @return The hash map of populated professionals
+	 */
+	private HashMap<Integer, Professional> retrieveProfessionals(HashMap<Integer, Room> rooms){
+		HashMap<Integer, Room> profRooms = new HashMap<>();
+		HashMap<Integer, Professional> professionals = new HashMap<>();
+		try {
+			Statement queryProfRooms = this.db_connection.createStatement();
+			Statement queryProfessionals = this.db_connection.createStatement();
+			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
+			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
+
+			//find all them professionals
+			while (resultProfessionals.next()) {
+				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
+						resultProfessionals.getString("employeeSurname"),
+						resultProfessionals.getString("employeeTitle"));
+				//look for any locations we might have
+				while (resultProfRooms.next()) {
+					if (resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")) {
+						//we have at least one room
+						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
+					}
+				}
+				//add to hashmap
+				professionals.put(resultProfessionals.getInt("employeeID"), professional);
+			}
+			queryProfRooms.close();
+			queryProfessionals.close();
+			resultProfRooms.close();
+			resultProfessionals.close();
+		} catch (SQLException e){
+			return null;
+		}
+		return professionals;
+	}
+
+
 
 	/**
 	 * Replace the database with the contents of the given directory
