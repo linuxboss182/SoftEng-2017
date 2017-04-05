@@ -283,8 +283,7 @@ public class Controller extends Window implements Initializable
 
 	@FXML
 	public void getDirectionsClicked() {
-		Text t1 = new Text(" ");
-		this.directionsTextField.getChildren().add(t1);
+
 		this.paintPath(this.directionNodes);
 
 
@@ -292,12 +291,14 @@ public class Controller extends Window implements Initializable
 
 	@FXML
 	public void doneBtnClicked() {
+		this.directionsTextField.getChildren().removeAll();
 
 	}
 
 	private ArrayList<Line> lines = new ArrayList<Line>();
 
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {
 			this.contentAnchor.getChildren().remove(line);
 		});
@@ -346,5 +347,7 @@ public class Controller extends Window implements Initializable
 		}
 
 	}
+
+
 
 }
