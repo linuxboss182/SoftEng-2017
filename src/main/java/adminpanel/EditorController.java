@@ -61,8 +61,6 @@ public class EditorController implements Initializable
 	@FXML
 	private Pane contentPane;
 	@FXML
-	private TextField roomNumberField;
-	@FXML
 	private Button modifyRoomBtn;
 	@FXML
 	private Button cancelBtn;
@@ -110,6 +108,7 @@ public class EditorController implements Initializable
 	private static final String KIOSK_NAME = "You Are Here";
 	private Professional selectedProf;
 	private String roomList;
+	private ArrayList<Professional> proList;
 
 
 
@@ -159,6 +158,11 @@ public class EditorController implements Initializable
 		});
 		//populate box for professionals
 		this.populateChoiceBox();
+		this.proList = new ArrayList<>();
+		for (Professional pro: this.directory.getProfessionals()) {
+			this.proList.add(pro);
+
+		}
 		this.selectChoiceBox();
 
 
@@ -168,21 +172,19 @@ public class EditorController implements Initializable
 
 	public void selectChoiceBox() {
 
-		ArrayList<Professional> proList = new ArrayList<>();
-		for (Professional pro: this.directory.getProfessionals()) {
-			proList.add(pro);
-
-		}
-
-
-
 		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
 		{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
-				EditorController.this.selectedProf = proList.get(newValue.intValue() - 1);
 
+				System.out.println(newValue.intValue());
+				System.out.println(oldValue.intValue());
+				System.out.println(proList.size());
+				if(proList.size() != 0) {
+					EditorController.this.selectedProf = proList.get(newValue.intValue());
+				}
+				roomTextLbl.setText(selectedProf.getLocations().toString());
 			}
 		});
 	}
@@ -192,6 +194,8 @@ public class EditorController implements Initializable
 		if (this.selectedNode == null) {
 			return;
 		} else {
+			System.out.println(this.selectedProf);
+			System.out.println(this.selectedNode);
 			this.selectedProf.addLocation((Room)this.selectedNode);
 			this.roomList = "";
 			for (Room r: this.selectedProf.getLocations())
@@ -229,6 +233,10 @@ public class EditorController implements Initializable
 	@FXML
 	public void refreshBtnClicked() {
 		this.populateChoiceBox();
+		for (Professional pro: this.directory.getProfessionals()) {
+			this.proList.add(pro);
+
+		}
 	}
 
 	@FXML
