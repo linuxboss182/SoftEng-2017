@@ -186,4 +186,54 @@ public class NodeTester
 	// I think it's safe to say that Node.angle works
 	// The logic is sound and the code has been fixed for the odd cases
 
+	// Runs a test on DisconnectAll on a group of 4 nodes where 3 are connected to
+	// Node a. Note: those are the only edges present in the graph
+	@Test
+	public void testDisconnectAll(){
+    	// setup
+    	Node a = new Node(10, 15);
+    	Node b = new Node(20, 25);
+    	Node c = new Node(30, 35);
+    	Node d = new Node(40, 45);
+    	a.connect(b);
+    	a.connect(c);
+    	a.connect(d);
+    	// carry out test
+    	a.disconnectAll();
+    	boolean t1 = a.areConnected(b);
+    	boolean t2 = a.areConnected(c);
+    	boolean t3 = a.areConnected(d);
+    	boolean result = t1 || t2 || t3;
+    	Assert.assertTrue(!result);
+	}
+
+	// run test on graph of 4 nodes and run disconnect all on just node a, keep
+	// edges between all other nodes.
+	@Test
+	public void testDiconnectAllAtA(){
+		// setup connected node graph
+		Node a = new Node(10, 15);
+		Node b = new Node(20, 25);
+		Node c = new Node(30, 35);
+		Node d = new Node(40, 45);
+		a.connect(b);
+		a.connect(c);
+		a.connect(d);
+		b.connect(c);
+		c.connect(d);
+		d.connect(b);
+		// carry out test
+		a.disconnectAll();
+		// test to make sure node a connections are severed
+		boolean tA1 = !a.areConnected(b);
+		boolean tA2 = !a.areConnected(c);
+		boolean tA3 = !a.areConnected(d);
+		// test to make sure nodes b, c, and d are still connected amongst each other
+		boolean t4 = b.areConnected(c);
+		boolean t5 = c.areConnected(d);
+		boolean t6 = d.areConnected(b);
+		boolean result = tA1 && tA2 && tA3 && t4 && t5 && t6;
+		Assert.assertTrue(result);
+	}
+
 }

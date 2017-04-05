@@ -164,18 +164,18 @@ public class Node
 		if ((n.y > this.y) && (n.x > this.x)) {
 			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
 		} else if ((n.y > this.y) && (this.x > n.x)) {
-			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (this.y > n.y && this.x > n.x) {
-			return 180 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (this.y > n.y && n.x > this.x) {
-			return 360 + (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
-		} else if (n.y > this.y && n.x == this.x) {
+			return 180 + ((Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI);
+		} else if ((this.y > n.y) && (this.x > n.x)) {
+			return 180 + ((Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI);
+		} else if ((this.y > n.y) && (n.x > this.x)) {
+			return 360 + ((Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI);
+		} else if ((n.y > this.y) && (n.x == this.x)) {
 			return 90;
-		} else if (n.y == this.y && this.x > n.x) {
+		} else if ((n.y == this.y) && (this.x > n.x)) {
 			return 180;
-		} else if (this.y > n.y && n.x == this.x) {
+		} else if ((this.y > n.y) && (n.x == this.x)) {
 			return 270;
-		} else if (this.y == n.y && n.x > this.x) {
+		} else if ((this.y == n.y) && (n.x > this.x)) {
 			return 0;
 		} else {
 			return Double.NaN;
