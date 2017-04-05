@@ -219,65 +219,59 @@ public class DatabaseController
 		return dir;
 	}
 
-	//returns all nodes(including rooms) as a directory
+	/**Populates a given directory with nodes/rooms/professionals
+	 *
+	 *
+	 * @param directory The directory to populate
+	 * @return True if success, false if failure
+	 */
 	public boolean populateDirectory(Directory directory) {
 		HashMap<Integer, Node> nodes = new HashMap<>();
 		HashMap<Integer, Room> rooms = new HashMap<>();
-		HashMap<Integer, Room> profRooms = new HashMap<>();
 		HashMap<Integer, Professional> professionals = new HashMap<>();
-		try{
-			//
-			Statement queryNodes = this.db_connection.createStatement();
-			Statement queryEdges = this.db_connection.createStatement();
+		try {
+			//retrieve nodes and rooms
+			this.retrieveNodes(nodes, rooms);
+			//find all them professionals
+			this.retrieveProfessionals(rooms, professionals);
+		} catch (SQLException e){
+			return false;
+		}
+		//add all to directory
+		for(Node n: nodes.values()){
+			directory.addNode(n);
+		}
+		for(Room r: rooms.values()){
+			directory.addRoom(r);
+		}
+		for(Professional p: professionals.values()){
+			directory.addProfessional(p);
+		}
+		return true;
+	}
+
+
+	/**Retrieves all employees with their location data populated(among other things)
+	 *
+	 * @param rooms A hash map of all rooms in the database
+	 * @param professionals The hash map of professionals to populate
+	 */
+	private void retrieveProfessionals(HashMap<Integer, Room> rooms, HashMap<Integer, Professional> professionals) throws SQLException{
+		HashMap<Integer, Room> profRooms = new HashMap<>();
+		try {
 			Statement queryProfRooms = this.db_connection.createStatement();
 			Statement queryProfessionals = this.db_connection.createStatement();
-			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
-			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
 			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
 
-			//populate hash maps
-			while(resultNodes.next()){
-				if(resultNodes.getString("roomName") == null){
-					//node, not room
-					Node node = new Node(resultNodes.getDouble("nodeX"),
-										 resultNodes.getDouble("nodeY"));
-					nodes.put(resultNodes.getInt("nodeID"), node);
-				} else {
-					//room, not node
-					Room room = new Room(resultNodes.getDouble("nodeX"),
-										 resultNodes.getDouble("nodeY"),
-										 resultNodes.getString("roomName"),
-										 resultNodes.getString("roomDescription"));
-					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
-				}
-			}
-			//reset the result set so we can iterate through again and add adjacent nodes
-			//hashmaps MUST have populated nodes before running this
-			resultNodes.first();
-			while(resultNodes.next()){
-				while(resultEdges.next()){
-					if(resultEdges.getInt("node1") == resultNodes.getInt("nodeID")){
-						//we have adjacent nodes
-						//find the initial node, add the edge
-						nodes.getOrDefault(resultNodes.getInt("nodeID"),
-								           rooms.get(resultNodes.getInt("nodeID")))
-								.connect(nodes.getOrDefault(resultEdges.getInt("node2"),
-										 rooms.get(resultEdges.getInt("node2"))));
-						//I'm aware this looks like arse
-					}
-				}
-			}
-
 			//find all them professionals
-			while(resultProfessionals.next()){
-
+			while (resultProfessionals.next()) {
 				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
-															 resultProfessionals.getString("employeeSurname"),
-															 resultProfessionals.getString("employeeTitle"));
+						resultProfessionals.getString("employeeSurname"),
+						resultProfessionals.getString("employeeTitle"));
 				//look for any locations we might have
-				while(resultProfRooms.next()){
-					if(resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")){
+				while (resultProfRooms.next()) {
+					if (resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")) {
 						//we have at least one room
 						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
 					}
@@ -285,30 +279,59 @@ public class DatabaseController
 				//add to hashmap
 				professionals.put(resultProfessionals.getInt("employeeID"), professional);
 			}
-
-			//add all to directory
-			for(Node n: nodes.values()){
-				directory.addNode(n);
-			}
-			for(Room r: rooms.values()){
-				directory.addRoom(r);
-			}
-			for(Professional p: professionals.values()){
-				directory.addProfessional(p);
-			}
-
-			resultNodes.close();
-			resultEdges.close();
-			resultProfRooms.close();
-			resultProfessionals.close();
-			queryNodes.close();
-			queryEdges.close();
 			queryProfRooms.close();
 			queryProfessionals.close();
-
-			return true;
+			resultProfRooms.close();
+			resultProfessionals.close();
 		} catch (SQLException e){
-			return false;
+			throw e;
+		}
+	}
+
+	/**Retrieves nodes and rooms from the database and populates the given hash maps
+	 *
+	 * @param nodes The map of nodes to populate
+	 * @param rooms The map of rooms to populate
+	 */
+	private void retrieveNodes(HashMap<Integer, Node> nodes, HashMap<Integer, Room> rooms) throws SQLException{
+		try {
+			Statement queryNodes = this.db_connection.createStatement();
+			Statement queryEdges = this.db_connection.createStatement();
+			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
+			//populate initial objects
+			while(resultNodes.next()){
+				if(resultNodes.getString("roomName") == null){
+					//node, not room
+					Node node = new Node(resultNodes.getDouble("nodeX"),
+							resultNodes.getDouble("nodeY"));
+					nodes.put(resultNodes.getInt("nodeID"), node);
+				} else {
+					//room, not node
+					Room room = new Room(resultNodes.getDouble("nodeX"),
+							resultNodes.getDouble("nodeY"),
+							resultNodes.getString("roomName"),
+							resultNodes.getString("roomDescription"));
+					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
+				}
+			}
+			//populate adjacency lists
+			resultNodes.first();
+			while (resultNodes.next()) {
+				while (resultEdges.next()) {
+					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
+						//we have adjacent nodes
+						//find the initial node, add the edge
+						nodes.getOrDefault(resultNodes.getInt("nodeID"),
+								rooms.get(resultNodes.getInt("nodeID")))
+								.connect(nodes.getOrDefault(resultEdges.getInt("node2"),
+										rooms.get(resultEdges.getInt("node2"))));
+						//I'm aware this looks like arse
+					}
+				}
+			}
+		} catch (SQLException e){
+			throw e;
 		}
 	}
 
