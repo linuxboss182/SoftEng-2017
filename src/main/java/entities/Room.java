@@ -56,4 +56,6 @@ public class Room
 	public void setImage(String image) {
 		this.image = image;
 	}
+
+	public String toString() { return this.name; }
 }

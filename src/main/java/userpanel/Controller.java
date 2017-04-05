@@ -38,10 +38,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 import entities.Node;
 import main.DatabaseController;
+import main.Pathfinder;
 
 
 public class Controller extends Window implements Initializable
@@ -175,12 +177,23 @@ public class Controller extends Window implements Initializable
 //		this.directory.addRoom(new Room(50,50,"test", "test"));
 //		System.out.println(this.directory.getRooms());
 
+		this.directoryList.itemsProperty().bind(this.listProperty);
+		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
+
+
 		this.directory.getRooms().forEach(room -> {
-			this.directoryList.itemsProperty().bind(this.listProperty);
-		//	this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
-			this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
-			}
-		);
+
+			room.connect(this.kiosk);
+
+		//		this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
+
+				//this.directoryList.itemsProperty().bind(FXCollections.observableArrayList(this.directory.getRooms()));
+				//	this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms().forEach(room -> {})));
+
+		//			this.listProperty.set(FXCollections.observableArrayList(room.getName()));
+
+		});
+
 
 
 //		listProperty.setOnMouseClicked((MouseEvent e) -> {
@@ -191,7 +204,13 @@ public class Controller extends Window implements Initializable
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
 				// Your action here
-				System.out.println("Selected item: " + newValue.getName());
+				//	System.out.println("Selected item: " + newValue.getName());
+				List<Node> ret;
+
+				ret = Pathfinder.findPath(kiosk, newValue);
+
+				paintPath(new ArrayList<>(ret));
+
 			}
 		});
 
@@ -238,7 +257,13 @@ public class Controller extends Window implements Initializable
 
 	}
 
+	private ArrayList<Line> lines = new ArrayList<Line>();
+
 	public void paintPath(ArrayList<entities.Node> directionNodes) {
+		this.lines.forEach(line -> {
+			this.contentAnchor.getChildren().remove(line);
+		});
+
 		//add kiosk to start of list
 		directionNodes.add(0, this.kiosk);
 
@@ -257,7 +282,8 @@ public class Controller extends Window implements Initializable
 			System.out.println("X2: " + nodeX2);
 			double nodeY2 = directionNodes.get(i+1).getY();
 			System.out.println("Y2: " + nodeY2);
-			final Line line = new Line();
+			Line line = new Line();
+			this.lines.add(line);
 			line.setStartX(nodeX1);
 			line.setStartY(nodeY1);
 			line.setEndX(nodeX2);
