@@ -309,7 +309,7 @@ public class DatabaseController
 			Statement queryNodes = this.db_connection.createStatement();
 			Statement queryEdges = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
-			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
+			ResultSet resultEdges = null; //queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 			//populate initial objects
 			while(resultNodes.next()){
 				if(resultNodes.getString("roomName") == null){
@@ -331,6 +331,7 @@ public class DatabaseController
 			//populate adjacency lists
 			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
 			while (resultNodes.next()) {
+				resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 				while (resultEdges.next()) {
 					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
 						//we have adjacent nodes
@@ -347,7 +348,13 @@ public class DatabaseController
 			throw e;
 		}
 
-
+		//for ()
+		/*
+		while results remain:
+			while edges remain:
+				if current edge starts at current node:
+					get current node or room and connect to other node or room
+		 */
 	}
 
 	/**
