@@ -181,7 +181,7 @@ public class EditorController implements Initializable
 				System.out.println(newValue.intValue());
 				System.out.println(oldValue.intValue());
 				System.out.println(proList.size());
-				if(proList.size() != 0) {
+				if(proList.size() != 0 && newValue.intValue() >= 0) {
 					EditorController.this.selectedProf = proList.get(newValue.intValue());
 				}
 				roomTextLbl.setText(selectedProf.getLocations().toString());
@@ -191,7 +191,7 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedNode == null) {
+		if (this.selectedNode == null || !(this.selectedNode instanceof Room)) {
 			return;
 		} else {
 			System.out.println(this.selectedProf);
@@ -233,6 +233,7 @@ public class EditorController implements Initializable
 	@FXML
 	public void refreshBtnClicked() {
 		this.populateChoiceBox();
+
 		for (Professional pro: this.directory.getProfessionals()) {
 			this.proList.add(pro);
 
@@ -278,7 +279,14 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void modifyRoomBtnClicked() {
-		this.updateSelectedNode(this.readX(), this.readY());
+		if(this.selectedNode == null) return;
+		if(this.selectedNode instanceof Room) {
+			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+
+		} else {
+			this.updateSelectedNode(this.readX(), this.readY());
+
+		}
 	}
 
 	@FXML
@@ -381,6 +389,8 @@ public class EditorController implements Initializable
 
 		rect.setOnMouseClicked((MouseEvent e) ->{
 			EditorController.this.onShapeClick(e, r);
+			this.nameField.setText(r.getName());
+			this.descriptField.setText((r.getDescription()));
 		});
 
 		rect.setOnMouseDragged(e->{
