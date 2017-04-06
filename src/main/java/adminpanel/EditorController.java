@@ -82,7 +82,7 @@ public class EditorController implements Initializable
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
 	private Image map4;
-	private ArrayList<Line> lines = new ArrayList<Line>();
+	private List<Line> lines = new ArrayList<Line>();
 	private Directory directory;
 	private Room kiosk;
 
@@ -110,7 +110,7 @@ public class EditorController implements Initializable
 	private static final String KIOSK_NAME = "You Are Here";
 	private Professional selectedProf;
 	private String roomList;
-	private ArrayList<Professional> proList;
+	private List<Professional> proList;
 
 
 
