@@ -1,6 +1,7 @@
 package main;
 
 import java.sql.*;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -216,9 +217,9 @@ public class DatabaseController
 	 * @return True if success, false if failure
 	 */
 	public boolean populateDirectory(Directory directory) {
-		HashMap<Integer, Node> nodes = new HashMap<>();
-		HashMap<Integer, Room> rooms = new HashMap<>();
-		HashMap<Integer, Professional> professionals = new HashMap<>();
+		Map<Integer, Node> nodes = new HashMap<>();
+		Map<Integer, Room> rooms = new HashMap<>();
+		Map<Integer, Professional> professionals = new HashMap<>();
 		Integer kioskID = null; // (should be Optional<Integer>)
 		try {
 			//retrieve nodes and rooms
@@ -267,7 +268,7 @@ public class DatabaseController
 	 * @param rooms A hash map of all rooms in the database
 	 * @param professionals The hash map of professionals to populate
 	 */
-	private void retrieveProfessionals(HashMap<Integer, Room> rooms, HashMap<Integer, Professional> professionals) throws SQLException{
+	private void retrieveProfessionals(Map<Integer, Room> rooms, Map<Integer, Professional> professionals) throws SQLException{
 		HashMap<Integer, Room> profRooms = new HashMap<>();
 		try {
 			Statement queryProfRooms = this.db_connection.createStatement();
@@ -304,7 +305,7 @@ public class DatabaseController
 	 * @param nodes The map of nodes to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodes(HashMap<Integer, Node> nodes, HashMap<Integer, Room> rooms) throws SQLException{
+	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException{
 		try {
 			Statement queryNodes = this.db_connection.createStatement();
 			Statement queryEdges = this.db_connection.createStatement();

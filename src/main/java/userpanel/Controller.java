@@ -38,9 +38,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
+
 import entities.Node;
 import main.ApplicationController;
 import main.DatabaseController;
@@ -79,7 +80,7 @@ public class Controller extends Window implements Initializable
 
 	private Image map4;
 	private Node clickNode;
-	private ArrayList<Node> directionNodes = new ArrayList<Node>();
+	private List<Node> directionNodes = new ArrayList<>();
 	private ArrayList<Node> alon = new ArrayList<>();
 	private ArrayList<Room> roomList = new ArrayList<>();
 	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
@@ -97,6 +98,8 @@ public class Controller extends Window implements Initializable
 	private static final double CIRCLE_RADIUS = 5;
 	private static final String KIOSK_NAME = "You Are Here";
 
+	// TODO: Controller.lines should be renamed, and possible removed entirely.
+	private Collection<Line> lines = new ArrayList<Line>();
 
 
 	@Override
@@ -299,9 +302,7 @@ public class Controller extends Window implements Initializable
 
 	}
 
-	private ArrayList<Line> lines = new ArrayList<Line>();
-
-	public void paintPath(ArrayList<entities.Node> directionNodes) {
+	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {
 			this.contentAnchor.getChildren().remove(line);
@@ -346,7 +347,7 @@ public class Controller extends Window implements Initializable
 
 	}
 
-	public void clearPath(ArrayList<entities.Node> directionNodes) {
+	public void clearPath(Collection<Node> directionNodes) {
 		directionNodes.clear();
 		for (int i = 0; i < directionNodes.size(); i++) {
 
