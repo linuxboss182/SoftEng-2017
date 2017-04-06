@@ -77,14 +77,14 @@
       <option name="m_minLength" value="1" />
       <option name="m_maxLength" value="1" />
     </inspection_tool>
-    <inspection_tool class="UnclearBinaryExpression" enabled="true" level="Notice" enabled_by_default="true" />
+    <inspection_tool class="UnclearBinaryExpression" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryParentheses" enabled="true" level="INFORMATION" enabled_by_default="true">
       <option name="ignoreClarifyingParentheses" value="true" />
       <option name="ignoreParenthesesOnConditionals" value="true" />
       <option name="ignoreParenthesesOnLambdaParameter" value="false" />
     </inspection_tool>
-    <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="Really Annoying" enabled_by_default="true" />
-    <inspection_tool class="UnqualifiedMethodAccess" enabled="true" level="Really Annoying" enabled_by_default="true" />
+    <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="Style Warning" enabled_by_default="true" />
+    <inspection_tool class="UnqualifiedMethodAccess" enabled="true" level="Style Warning" enabled_by_default="true" />
     <inspection_tool class="UnqualifiedStaticUsage" enabled="true" level="Style Warning" enabled_by_default="true">
       <option name="m_ignoreStaticFieldAccesses" value="false" />
       <option name="m_ignoreStaticMethodCalls" value="false" />
