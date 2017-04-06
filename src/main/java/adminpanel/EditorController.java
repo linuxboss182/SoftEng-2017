@@ -153,6 +153,7 @@ public class EditorController implements Initializable
 
 
 			if(this.selectedShape != null) {
+				// TODO: Change use of instanceof to good coding standards
 				if(this.selectedNode instanceof Room) {
 					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 						this.selectedShape.setFill(this.KIOSK_COLOR);
@@ -205,6 +206,7 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void addProfToRoom() {
+		// TODO: Change use of instanceof to good coding standards
 		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode instanceof Room)) {
 			return;
 		} else {
@@ -297,6 +299,7 @@ public class EditorController implements Initializable
 	@FXML
 	public void modifyRoomBtnClicked() {
 		if(this.selectedNode == null) return;
+		// TODO: Change use of instanceof to good coding standards
 		if(this.selectedNode instanceof Room) {
 			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 
@@ -456,6 +459,7 @@ public class EditorController implements Initializable
 				line.setFill(this.CONNECTION_LINE_COLOR);
 				line.setStroke(this.DEFAULT_STROKE_COLOR);
 				line.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+				// TODO: Change use of instanceof to good coding standards
 				if(connected instanceof Room) {
 					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
 					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
@@ -483,6 +487,7 @@ public class EditorController implements Initializable
 				Line line = new Line();
 				line.setStartX(startX + this.RECTANGLE_WIDTH/2);
 				line.setStartY(startY + this.RECTANGLE_HEIGHT/2);
+				// TODO: Change use of instanceof to good coding standards
 				if(connected instanceof Room) {
 					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
 					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
@@ -535,6 +540,7 @@ public class EditorController implements Initializable
 		System.out.println("Clicked on a rectangle " + (this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) + " " + this.primaryPressed);
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedShape != null) {
+				// TODO: Change use of instanceof to good coding standards
 				if(this.selectedNode instanceof Room) {
 					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 						this.selectedShape.setFill(this.KIOSK_COLOR);
