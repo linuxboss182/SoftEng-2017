@@ -509,7 +509,14 @@ public class EditorController implements Initializable
 
 	@FXML
 	private void logoutBtnClicked() {
+		// TODO: Review
+		try {
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+			this.contentPane.getScene().setRoot(userUI);
 
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setFields(double x, double y) {

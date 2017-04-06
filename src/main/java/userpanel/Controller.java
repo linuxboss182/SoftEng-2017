@@ -193,14 +193,9 @@ public class Controller extends Window implements Initializable
 	@FXML
 	private void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
+		// TODO: Review
 		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		System.out.print("here");
-		Scene loginPromptScene = new Scene(loginPrompt);
-		Stage loginPromptStage = new Stage();
-		loginPromptStage.setScene(loginPromptScene);
-
-
-		loginPromptStage.showAndWait();
+		this.contentAnchor.getScene().setRoot(loginPrompt);
 
 
 	}

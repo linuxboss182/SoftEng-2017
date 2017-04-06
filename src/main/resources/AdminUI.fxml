@@ -22,7 +22,7 @@
 	<bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" />
+				<Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout" onMouseClicked="#logoutBtnClicked"/>
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="439.0" HBox.hgrow="ALWAYS" />
 				<Button fx:id="confirmBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#confirmBtnPressed" prefHeight="25.0" prefWidth="197.0" text="Save &amp; Apply" textAlignment="CENTER" />
 				<Pane prefHeight="30.0" prefWidth="354.0" />
