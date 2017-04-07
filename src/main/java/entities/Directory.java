@@ -1,9 +1,9 @@
 package entities;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 // TODO: Improve documentation
 
@@ -17,9 +17,9 @@ public class Directory
 
 	/* Attributes */
 
-	private HashSet<Node> nodes;
-	private HashSet<Room> rooms;
-	private HashSet<Professional> professionals;
+	private Set<Node> nodes;
+	private Set<Room> rooms;
+	private Set<Professional> professionals;
 	private Optional<Room> kiosk;
 
 	/*
@@ -36,7 +36,7 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
-		this.professionals = new HashSet<>();
+		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = Optional.empty();
 	}
 
@@ -56,7 +56,7 @@ public class Directory
 	}
 
 	public Set<Professional> getProfessionals() {
-		return new HashSet<>(this.professionals);
+		return new TreeSet<>(this.professionals);
 	}
 
 	public void addNode(Node node) {
