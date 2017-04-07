@@ -58,9 +58,10 @@ public class Node
 	 *
 	 * @param n The node to connect to this node
 	 *
-	 * @return false if the edge already existed
+	 * @return false if the edge already existed or this is the given node
 	 */
 	public boolean connect(Node n) {
+		if (this == n) return false;
 		n.neighbors.add(this);
 		return this.neighbors.add(n);
 	}
