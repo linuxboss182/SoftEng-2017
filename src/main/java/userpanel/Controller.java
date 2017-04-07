@@ -193,14 +193,9 @@ public class Controller extends Window implements Initializable
 	@FXML
 	private void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
+		// TODO: Review
 		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		System.out.print("here");
-		Scene loginPromptScene = new Scene(loginPrompt);
-		Stage loginPromptStage = new Stage();
-		loginPromptStage.setScene(loginPromptScene);
-
-
-		loginPromptStage.showAndWait();
+		this.contentAnchor.getScene().setRoot(loginPrompt);
 
 
 	}
@@ -244,9 +239,6 @@ public class Controller extends Window implements Initializable
 
 				//System.out.print("Kiosk adj" + kiosk.getNeighbors().toString());
 				paintPath(new ArrayList<>(ret));
-
-				ret.forEach(Node -> { System.out.print(Node.toString());});
-
 			}
 		});
 
@@ -267,15 +259,16 @@ public class Controller extends Window implements Initializable
 		this.contentAnchor.getChildren().removeAll();
 
 		this.directory.getRooms().forEach(node -> {
-			Rectangle rect;
-			double nodeX = node.getX();
-			double nodeY = node.getY();
-			rect = new Rectangle(nodeX - this.RECTANGLE_WIDTH/2, nodeY - this.RECTANGLE_HEIGHT/2, this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-			rect.setFill(this.DEFAULT_SHAPE_COLOR);
-			this.contentAnchor.getChildren().add(rect);
-			rect.setVisible(true);
-				}
-		);
+			if(!node.getName().equalsIgnoreCase("you are here")) {
+				Rectangle rect;
+				double nodeX = node.getX();
+				double nodeY = node.getY();
+				rect = new Rectangle(nodeX, nodeY, this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+				rect.setFill(this.DEFAULT_SHAPE_COLOR);
+				this.contentAnchor.getChildren().add(rect);
+				rect.setVisible(true);
+			}
+		});
 
 		if(this.kiosk != null) {
 			Circle circ;
@@ -302,6 +295,12 @@ public class Controller extends Window implements Initializable
 
 	}
 
+	// TODO: There was a bug with rectangles not showing up where they were supposed to.
+	// Because of that bug, we did not find the bug with this code
+	// Since rectangles are not stored based off of their center points,
+	// // and we want to draw based on their center points,
+	// // these lines do not draw onto rectangles properly
+	// Currently, the lines are drawn to the top left of the rectangles
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {

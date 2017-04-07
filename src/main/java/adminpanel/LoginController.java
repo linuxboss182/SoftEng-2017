@@ -28,13 +28,10 @@ public class LoginController {
 		boolean success = true;
 
 		if(success) {
+			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
-			System.out.print("Onto the Admin UI");
-			Scene adminScene = new Scene(adminUI);
-			Stage adminStage = new Stage();
-			adminStage.setScene(adminScene);
+			errorLabel.getScene().setRoot(adminUI);
 
-			adminStage.showAndWait();
 
 		} else {
 			this.errorLabel.setText("Incorrect Username or Password");

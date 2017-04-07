@@ -7,7 +7,6 @@ import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,7 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,15 +29,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import main.ApplicationController;
-import main.DatabaseController;
 import main.DatabaseException;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class EditorController implements Initializable
@@ -100,10 +95,12 @@ public class EditorController implements Initializable
 	private double releasedY;
 
 	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
+	private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
 	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
 	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	private static final Color KIOSK_COLOR = Color.RED;
+	private static final Color KIOSK_COLOR = Color.YELLOW;
 
+	private static final double DEFAULT_STROKE_WIDTH = 1.5;
 	private static final double RECTANGLE_WIDTH = 7;
 	private static final double RECTANGLE_HEIGHT = 7;
 	private static final double CIRCLE_RADIUS = 5;
@@ -156,9 +153,12 @@ public class EditorController implements Initializable
 
 
 			if(this.selectedShape != null) {
+				// TODO: Change use of instanceof to good coding standards
 				if(this.selectedNode instanceof Room) {
 					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 						this.selectedShape.setFill(this.KIOSK_COLOR);
+					} else {
+						this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 					}
 
 				} else {
@@ -193,9 +193,6 @@ public class EditorController implements Initializable
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
 
-				System.out.println(newValue.intValue());
-				System.out.println(oldValue.intValue());
-				System.out.println(proList.size());
 				if(proList.size() != 0 && newValue.intValue() >= 0) {
 					EditorController.this.selectedProf = proList.get(newValue.intValue());
 				}
@@ -206,11 +203,10 @@ public class EditorController implements Initializable
 
 	@FXML
 	public void addProfToRoom() {
+		// TODO: Change use of instanceof to good coding standards
 		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode instanceof Room)) {
 			return;
 		} else {
-			System.out.println(this.selectedProf);
-			System.out.println(this.selectedNode);
 			this.selectedProf.addLocation((Room)this.selectedNode);
 			this.roomList = "";
 			for (Room r: this.selectedProf.getLocations())
@@ -224,13 +220,11 @@ public class EditorController implements Initializable
 		if (this.selectedNode == null) {
 			return;
 		} else {
-			System.out.println(this.selectedProf.getLocations().size());
 			this.selectedProf.getLocations().forEach(room -> {
 				if(room.equals(this.selectedNode)) {
 					this.selectedProf.removeLocation(room);
 				}
 			});
-			System.out.println(this.selectedProf.getLocations().size());
 
 			this.roomList = "";
 			for (Room r: this.selectedProf.getLocations())
@@ -261,7 +255,6 @@ public class EditorController implements Initializable
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
 		this.addProController = loader.getController();
 		//this.addProController.setEditorController(this);
-		System.out.print("Onto the AddPro");
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
 		addProStage.setScene(addProScene);
@@ -279,7 +272,7 @@ public class EditorController implements Initializable
 	@FXML
 	public void confirmBtnPressed() {
 		this.directory.getRooms().forEach(room -> {
-			System.out.println(room.getName());
+			System.out.println("Attempting to save room: " + room.getName() + " to database...");
 		});
 
 		try {
@@ -301,6 +294,7 @@ public class EditorController implements Initializable
 	@FXML
 	public void modifyRoomBtnClicked() {
 		if(this.selectedNode == null) return;
+		// TODO: Change use of instanceof to good coding standards
 		if(this.selectedNode instanceof Room) {
 			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 
@@ -372,7 +366,8 @@ public class EditorController implements Initializable
 	public void paintNodeOnLocation(Node n) {
 		Circle circ;
 		circ = new Circle(n.getX(), n.getY(), this.CIRCLE_RADIUS,this.DEFAULT_SHAPE_COLOR);
-
+		circ.setStroke(this.DEFAULT_STROKE_COLOR);
+		circ.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 		this.contentPane.getChildren().add(circ);
 		circ.setVisible(true);
 
@@ -399,6 +394,8 @@ public class EditorController implements Initializable
 	public void paintRoomOnLocation(Room r) {
 		Rectangle rect;
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		rect.setStroke(this.DEFAULT_STROKE_COLOR);
+		rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 
 		if (r.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 			rect.setFill(this.KIOSK_COLOR);
@@ -455,6 +452,8 @@ public class EditorController implements Initializable
 				Line line = new Line();
 				line.setStartX(startX);
 				line.setStartY(startY);
+				line.setFill(this.CONNECTION_LINE_COLOR);
+				// TODO: Change use of instanceof to good coding standards
 				if(connected instanceof Room) {
 					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
 					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
@@ -482,6 +481,7 @@ public class EditorController implements Initializable
 				Line line = new Line();
 				line.setStartX(startX + this.RECTANGLE_WIDTH/2);
 				line.setStartY(startY + this.RECTANGLE_HEIGHT/2);
+				// TODO: Change use of instanceof to good coding standards
 				if(connected instanceof Room) {
 					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
 					line.setEndY(endY + this.RECTANGLE_HEIGHT/2);
@@ -509,7 +509,14 @@ public class EditorController implements Initializable
 
 	@FXML
 	private void logoutBtnClicked() {
+		// TODO: Review
+		try {
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+			this.contentPane.getScene().setRoot(userUI);
 
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setFields(double x, double y) {
@@ -524,12 +531,14 @@ public class EditorController implements Initializable
 
 		// check if you single click
 		// so, then you are selecting a node
-		System.out.println("Clicked on a rectangle " + (this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) + " " + this.primaryPressed);
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedShape != null) {
+				// TODO: Change use of instanceof to good coding standards
 				if(this.selectedNode instanceof Room) {
 					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 						this.selectedShape.setFill(this.KIOSK_COLOR);
+					} else {
+						this.selectedShape.setFill(DEFAULT_SHAPE_COLOR);
 					}
 
 				} else {
@@ -548,7 +557,6 @@ public class EditorController implements Initializable
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
-			System.out.println("Clicked on a rectangle " + this.selectedNode.getNeighbors().contains(n));
 			this.selectedNode.connectOrDisconnect(n);
 			this.redrawLines();
 		}
