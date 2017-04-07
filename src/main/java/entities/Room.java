@@ -6,18 +6,18 @@ package entities;
  */
 //TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
-		extends Node
 {
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
+	private Node location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
 
 	/* Constructors */
 	public Room(double x, double y, String name, String description, String image) {
-		super(x, y);
+		this.location = new Node(x, y);
 		this.name = name;
 		this.description = description;
 		this.image = image;
@@ -43,6 +43,14 @@ public class Room
 
 	public String getImage() {
 		return this.image;
+	}
+
+	public Node getLocation() {
+		return location;
+	}
+
+	public void setLocation(Node location) {
+		this.location = location;
 	}
 
 	public void setName(String name) {
