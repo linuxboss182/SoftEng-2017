@@ -46,7 +46,7 @@ public class Room
 	}
 
 	public Node getLocation() {
-		return location;
+		return this.location;
 	}
 
 	public void setLocation(Node location) {

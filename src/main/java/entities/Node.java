@@ -125,7 +125,7 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		return Math.sqrt(Math.pow((n.y - this.y), 2) + Math.pow((n.x - this.x), 2));
+		return Math.hypot((n.y - this.y), (n.x - this.x));
 	}
 
 	/**
