@@ -193,9 +193,6 @@ public class EditorController implements Initializable
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
 
-				System.out.println(newValue.intValue());
-				System.out.println(oldValue.intValue());
-				System.out.println(proList.size());
 				if(proList.size() != 0 && newValue.intValue() >= 0) {
 					EditorController.this.selectedProf = proList.get(newValue.intValue());
 				}
@@ -210,8 +207,6 @@ public class EditorController implements Initializable
 		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode instanceof Room)) {
 			return;
 		} else {
-			System.out.println(this.selectedProf);
-			System.out.println(this.selectedNode);
 			this.selectedProf.addLocation((Room)this.selectedNode);
 			this.roomList = "";
 			for (Room r: this.selectedProf.getLocations())
@@ -277,7 +272,7 @@ public class EditorController implements Initializable
 	@FXML
 	public void confirmBtnPressed() {
 		this.directory.getRooms().forEach(room -> {
-			System.out.println(room.getName());
+			System.out.println("Attempting to save room: " + room.getName() + " to database...");
 		});
 
 		try {
@@ -401,6 +396,7 @@ public class EditorController implements Initializable
 		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 		rect.setStroke(this.DEFAULT_STROKE_COLOR);
 		rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+
 		if (r.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 			rect.setFill(this.KIOSK_COLOR);
 		} else {
@@ -457,8 +453,6 @@ public class EditorController implements Initializable
 				line.setStartX(startX);
 				line.setStartY(startY);
 				line.setFill(this.CONNECTION_LINE_COLOR);
-				line.setStroke(this.DEFAULT_STROKE_COLOR);
-				line.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 				// TODO: Change use of instanceof to good coding standards
 				if(connected instanceof Room) {
 					line.setEndX(endX + this.RECTANGLE_WIDTH/2);
@@ -537,7 +531,6 @@ public class EditorController implements Initializable
 
 		// check if you single click
 		// so, then you are selecting a node
-		System.out.println("Clicked on a rectangle " + (this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) + " " + this.primaryPressed);
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(this.selectedShape != null) {
 				// TODO: Change use of instanceof to good coding standards
@@ -564,7 +557,6 @@ public class EditorController implements Initializable
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
-			System.out.println("Clicked on a rectangle " + this.selectedNode.getNeighbors().contains(n));
 			this.selectedNode.connectOrDisconnect(n);
 			this.redrawLines();
 		}

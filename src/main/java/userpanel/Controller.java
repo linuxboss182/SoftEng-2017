@@ -239,9 +239,6 @@ public class Controller extends Window implements Initializable
 
 				//System.out.print("Kiosk adj" + kiosk.getNeighbors().toString());
 				paintPath(new ArrayList<>(ret));
-
-				ret.forEach(Node -> { System.out.print(Node.toString());});
-
 			}
 		});
 
