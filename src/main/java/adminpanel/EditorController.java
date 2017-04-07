@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.StringJoiner;
 
 public class EditorController implements Initializable
 {
@@ -196,7 +197,12 @@ public class EditorController implements Initializable
 				if(proList.size() != 0 && newValue.intValue() >= 0) {
 					EditorController.this.selectedProf = proList.get(newValue.intValue());
 				}
-				roomTextLbl.setText(selectedProf.getLocations().toString());
+
+				// Build a string listing the names of the professional's rooms
+				StringJoiner roomList = new StringJoiner(", ");
+				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
+
+				roomTextLbl.setText(roomList.toString());
 			}
 		});
 	}
