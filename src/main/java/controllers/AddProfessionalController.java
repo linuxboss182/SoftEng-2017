@@ -1,4 +1,4 @@
-package adminpanel;
+package controllers;
 
 import entities.Professional;
 import javafx.fxml.FXML;
@@ -9,9 +9,6 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.stage.Stage;
-import main.ApplicationController;
 
 import static main.ApplicationController.directory;
 

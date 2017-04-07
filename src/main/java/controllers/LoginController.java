@@ -1,4 +1,4 @@
-package adminpanel;
+package controllers;
 
 
 import javafx.fxml.FXML;

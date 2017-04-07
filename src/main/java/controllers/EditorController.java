@@ -1,4 +1,4 @@
-package adminpanel;
+package controllers;
 
 
 import entities.Directory;
@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DatabaseException;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringJoiner;
 
-public class EditorController implements Initializable
+public class EditorController extends MapDisplayController implements Initializable
 {
 	@FXML
 	private Button addRoomBtn;
@@ -72,65 +73,22 @@ public class EditorController implements Initializable
 	private Button addCustomProBtn;
 	@FXML
 	private Button deleteProfBtn;
+	@FXML
+	protected Pane linePane;
+	@FXML
+	protected Pane nodePane;
 
 	private AddProfessionalController addProController;
 
-	// TODO: Add click+drag to select a rectangle area of nodes/a node
-
-	private Image map4;
-	private List<Line> lines = new ArrayList<Line>();
-	private Directory directory;
-	private Room kiosk;
-
-	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
-
-	private Node selectedNode; // you select a node by double clicking
-	private Shape selectedShape; // This and the selectedNode should be set at the same time
-
-	// Primary is left click and secondary is right click
-	// these keep track of which button was pressed last on the mouse
-	private boolean primaryPressed;
-	private boolean secondaryPressed;
-
-	private double releasedX;
-	private double releasedY;
-
-	private static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
-	private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
-	private static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
-	private static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	private static final Color KIOSK_COLOR = Color.YELLOW;
-
-	private static final double DEFAULT_STROKE_WIDTH = 1.5;
-	private static final double RECTANGLE_WIDTH = 7;
-	private static final double RECTANGLE_HEIGHT = 7;
-	private static final double CIRCLE_RADIUS = 5;
-	private static final String KIOSK_NAME = "You Are Here";
-	private Professional selectedProf;
-	private String roomList;
-	private List<Professional> proList;
 
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//Set the panes
+		this.setPanes(linePane, nodePane);
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = ApplicationController.getDirectory();
-
-//		//make kiosk
-//		this.kiosk = new Room(353.5, 122.5);
-//		this.kiosk.setName(KIOSK_NAME);
-//		this.directory.addRoom(this.kiosk);
-
-//		this.kiosk = null;
-//		for (Room r : this.directory.getRooms()) {
-//			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-//				this.kiosk = r;
-//			}
-//		}
-//		if (this.kiosk == null) {
-//			this.kiosk = new Room(353.5, 122.5, "You are here", "this is the kiosk");
-//		}
 
 		//Add map
 		this.map4 = new Image("/4_thefourthfloor.png");
@@ -141,17 +99,14 @@ public class EditorController implements Initializable
 
 		this.redrawLines();
 
-		this.imageViewMap.setOnMouseClicked(e -> {
+
+		this.topPane.setPickOnBounds(false);
+		this.botPane.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				this.addNode(e.getX(), e.getY());
 			}
-			//Paint something at that location
-			//update the text boxes
-
-			// reset selected circle and node
-
 
 			if(this.selectedShape != null) {
 				// TODO: Change use of instanceof to good coding standards
@@ -184,6 +139,30 @@ public class EditorController implements Initializable
 				this.kiosk = r;
 			}
 		}
+	}
+
+	@Override
+	public void addRoomListener(Room r){
+		r.getShape().setOnMouseClicked((MouseEvent e) ->{
+			EditorController.this.onShapeClick(e, r);
+			this.nameField.setText(r.getName());
+			this.descriptField.setText((r.getDescription()));
+		});
+
+		r.getShape().setOnMouseDragged(e->{
+			EditorController.this.onRectangleDrag(e, r);
+		});
+
+		// Working as intended
+		r.getShape().setOnMousePressed(e->{
+			this.primaryPressed = e.isPrimaryButtonDown();
+			this.secondaryPressed = e.isSecondaryButtonDown();
+		});
+
+
+		r.getShape().setOnMouseReleased(e->{
+			EditorController.this.onShapeReleased(e, r);
+		});
 	}
 
 	public void selectChoiceBox() {
@@ -374,7 +353,7 @@ public class EditorController implements Initializable
 		circ = new Circle(n.getX(), n.getY(), this.CIRCLE_RADIUS,this.DEFAULT_SHAPE_COLOR);
 		circ.setStroke(this.DEFAULT_STROKE_COLOR);
 		circ.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
-		this.contentPane.getChildren().add(circ);
+		this.topPane.getChildren().add(circ);
 		circ.setVisible(true);
 
 		circ.setOnMouseClicked((MouseEvent e) ->{
@@ -397,47 +376,12 @@ public class EditorController implements Initializable
 		});
 	}
 
-	public void paintRoomOnLocation(Room r) {
-		Rectangle rect;
-		rect = new Rectangle(r.getX(), r.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-		rect.setStroke(this.DEFAULT_STROKE_COLOR);
-		rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 
-		if (r.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-			rect.setFill(this.KIOSK_COLOR);
-		} else {
-			rect.setFill(this.DEFAULT_SHAPE_COLOR);
-		}
-
-		this.contentPane.getChildren().add(rect);
-		rect.setVisible(true);
-
-		rect.setOnMouseClicked((MouseEvent e) ->{
-			EditorController.this.onShapeClick(e, r);
-			this.nameField.setText(r.getName());
-			this.descriptField.setText((r.getDescription()));
-		});
-
-		rect.setOnMouseDragged(e->{
-			EditorController.this.onRectangleDrag(e, r);
-		});
-
-		// Working as intended
-		rect.setOnMousePressed(e->{
-			this.primaryPressed = e.isPrimaryButtonDown();
-			this.secondaryPressed = e.isSecondaryButtonDown();
-		});
-
-
-		rect.setOnMouseReleased(e->{
-			EditorController.this.onShapeReleased(e, r);
-		});
-	}
 
 	public void redrawLines() {
 		// clear arraylist
 		for(int i = 0; i < this.lines.size(); i++) {
-			this.contentPane.getChildren().remove(this.lines.get(i));
+			this.botPane.getChildren().remove(this.lines.get(i));
 		}
 		this.lines.clear();
 		// repopulate arraylist
@@ -471,7 +415,7 @@ public class EditorController implements Initializable
 
 				this.lines.add(line);
 
-				this.contentPane.getChildren().add(line);
+				this.botPane.getChildren().add(line);
 				line.setVisible(true);
 			}
 		});
@@ -508,9 +452,7 @@ public class EditorController implements Initializable
 		this.directory.getNodes().forEach(node -> this.paintNodeOnLocation(node));
 	}
 
-	public void displayRooms() {
-		this.directory.getRooms().forEach(room -> this.paintRoomOnLocation(room));
-	}
+
 
 
 	@FXML

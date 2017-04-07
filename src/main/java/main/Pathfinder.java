@@ -13,7 +13,7 @@ import entities.Node;
 //TODO: Add documentation
 
 /**
- * Controller class wrapping pathfinding algorithms.
+ * UserController class wrapping pathfinding algorithms.
  * (Currently contains algorithms.)
  */
 public class Pathfinder

@@ -2,8 +2,13 @@ package main;
 
 import javafx.application.Application;
 import entities.Directory;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
-public class ApplicationController
+public class ApplicationController extends Application
 {
 
 	public static DatabaseController dbc;
@@ -25,9 +30,19 @@ public class ApplicationController
 
 		ApplicationController.directory = ApplicationController.dbc.getDirectory();
 
-		Application.launch(userpanel.Window.class, args);
+		Application.launch(args);
 
 		ApplicationController.dbc.close();
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+		primaryStage.setTitle("Faulkner Hospital Navigator");
+		Scene user = new Scene(root, 1174, 722);
+		primaryStage.setScene(user);
+		primaryStage.show();
+
 	}
 }
 
