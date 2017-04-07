@@ -139,7 +139,7 @@ public class Node
 	 * @param B The terminal node for the angle
 	 *
 	 * @return The angle of the turn through this point when moving from A to B.
-	 * returns an angle betweeon [0 and 360) where 0 is a Right turn, 90 is Straight, 180 is Left, and 270 is Backwards
+	 * returns an angle between [0 and 360) where 0 is a Right turn, 90 is Straight, 180 is Left, and 270 is Backwards
 	 */
 	// TODO: Determine which way is positive (answer: whichever makes the math easier)
 	public double angle(Node A, Node B) {
