@@ -172,9 +172,4 @@ public class Node
 		}
 	}
 
-	/** @debug */
-	public String toString() {
-		return ("(" + this.x + ", " + this.y + ")");
-	}
-
 }

@@ -57,5 +57,6 @@ public class Room
 		this.image = image;
 	}
 
+	@Override
 	public String toString() { return this.name; }
 }
