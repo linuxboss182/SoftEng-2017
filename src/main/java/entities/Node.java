@@ -80,17 +80,6 @@ public class Node
 	}
 
 	/**
-	 * Determines whether this node is connected to Node n
-	 * @param n The node we are checking for a connection to
-	 * @return true: if they are connected. false: otherwise
-	 * @deprecated Remains for use in tests.
-	 */
-	@Deprecated
-	public boolean areConnected(Node n) {
-		return this.neighbors.contains(n);
-	}
-
-	/**
 	 * Either connect this node to or disconnect this node from the given node.
 	 *
 	 * If the nodes are not connected, connect them.
