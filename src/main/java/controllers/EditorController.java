@@ -379,7 +379,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	public void redrawLines() {
-		this.botPane.getChildren().removeAll();
+		this.botPane.getChildren().clear();
 		this.fillDrawLines();
 	}
 
@@ -454,7 +454,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		// TODO: Review
 		try {
 			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
-			this.contentPane.getScene().setRoot(userUI);
+			this.botPane.getScene().setRoot(userUI);
 
 		} catch(IOException e) {
 			e.printStackTrace();
