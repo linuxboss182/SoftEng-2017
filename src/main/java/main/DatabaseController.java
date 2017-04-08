@@ -173,37 +173,6 @@ public class DatabaseController
 		}
 	}
 
-
-	//adds a node to the database
-	//returns true if success, false if failure
-	private boolean addNode(Node node, int id){
-		try {
-			Statement insert = this.db_connection.createStatement();
-			//do some sort of autoincrement
-			insert.execute(StoredProcedures.procInsertNode(id, node.getX(),node.getY()));
-			insert.close();
-			return true;
-		} catch (SQLException e) {
-			return false;
-		}
-	}
-
-	//attempts to retrieve a node at a given id
-	//returns null if failure
-	private Node getNodeAtID(int id){
-		try{
-			Statement query = this.db_connection.createStatement();
-			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodeID(id));
-			//figure out adjacencies
-			Node node = new Node(result.getDouble("nodeX"), result.getDouble("nodeY"));
-			result.close();
-			query.close();
-			return node;
-		} catch (SQLException e){
-			return null;
-		}
-	}
-
 	public Directory getDirectory() {
 		Directory dir = new Directory();
 		this.populateDirectory(dir);
@@ -327,7 +296,8 @@ public class DatabaseController
 				room = new Room(resultRooms.getString("roomName"),
 				                resultRooms.getString("roomDescription"));
 				nodeID = resultRooms.getInt("nodeID");
-				if (! resultRooms.wasNull()) { //room without location
+				if (! resultRooms.wasNull()) {
+					//we have a location in the room
 					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
 				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
@@ -412,10 +382,17 @@ public class DatabaseController
 		System.out.println("nodes saved");
 
 		for (Room r : dir.getRooms()) { // the order of these queries is important
-			query = StoredProcedures.procInsertNode(r.hashCode(), r.getX(), r.getY());
-			db.executeUpdate(query);
-			query = StoredProcedures.procInsertRoom(r.hashCode(), r.getName(), r.getDescription());
-			db.executeUpdate(query);
+			if(r.getLocation() != null) {
+				query = StoredProcedures.procInsertNode(r.hashCode(),
+														r.getLocation().getX(),
+														r.getLocation().getY());
+				db.executeUpdate(query);
+				query = StoredProcedures.procInsertRoom(r.hashCode(),
+														r.getLocation().hashCode(),
+														r.getName(),
+														r.getDescription());
+				db.executeUpdate(query);
+			}
 		}
 		System.out.println("rooms saved");
 
@@ -482,40 +459,5 @@ public class DatabaseController
 			e.printStackTrace();
 		}
 	}
-
-//	public void saveDirectoryToDatabase(Directory dir) {
-//		Statement query = this.db_connection.createStatement();
-//
-//		query.;
-//
-//		query.close();
-//	}
-
-	//This code is broken, the batch executes in reverse order. Unneeded at this time, was use for testing.
-//	//populates the database with initial data specified in the stored proc
-//	//database must have schema before running this
-//	//returns true if success, false if error
-//	public boolean initData(){
-//		boolean result;
-//		String[] data = StoredProcedures.getInitialData();
-//		String insertion = "";
-//		try {
-//			Statement insert = this.db_connection.createStatement();
-//			for  (String s : data) {
-//				insertion = s;
-//				insert.addBatch(s);
-//			}
-//			insert.executeBatch();
-//			this.db_connection.commit();
-//			System.out.println("Success!");
-//			insert.close();
-//		} catch (SQLException e) {
-//			System.err.println("SQL error while inserting sample data.");
-//			System.err.println("Failed on this insertion: " + insertion);
-//			e.printStackTrace();
-//			return false;
-//		}
-//		return true;
-//	}
 
 }

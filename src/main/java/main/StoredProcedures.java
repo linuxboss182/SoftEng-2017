@@ -31,12 +31,12 @@ public class StoredProcedures
 			"CREATE TABLE EmployeeRooms ("
 					+"roomID   integer references Rooms(roomID)"
 					+" , employeeID integer references Employees(employeeID)"
-					+" , constraint EmployeeRooms_pk PRIMARY KEY (nodeID, employeeID))",
-			"CREATE TABLE Kiosk (nodeID integer references Nodes(nodeID) NOT NULL)"
+					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))"
 	); // TODO: Remove Kiosk table from database
+	//"CREATE TABLE Kiosk (nodeID integer references Nodes(nodeID) NOT NULL)"
+	//"DROP TABLE Kiosk"
 
 	private static final List<String> drops = Arrays.asList(
-			"DROP TABLE Kiosk",
 			"DROP TABLE EmployeeRooms",
 			"DROP TABLE Employees",
 			"DROP TABLE Rooms",
@@ -45,6 +45,7 @@ public class StoredProcedures
 	);
 
 	//initial data that will be in the database upon construction
+	//breaks things don't run
 	private static final String[] initialData = {
 			"INSERT INTO Nodes (nodeX, nodeY, nodeid) VALUES(3600, 700, 1)",
 			"INSERT INTO Nodes (nodeX, nodeY, nodeid) VALUES(3700, 700, 2)",
