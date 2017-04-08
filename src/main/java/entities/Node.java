@@ -20,14 +20,17 @@ public class Node
 {
 	private double x;
 	private double y;
+	// TODO: add floor or z coord
 	private HashSet<Node> neighbors;
+
+	private Room room;
 
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.neighbors = new HashSet<>();
+		this.room = null;
 	}
-
 
 	public double getX() {
 		return this.x;
@@ -35,6 +38,14 @@ public class Node
 
 	public double getY() {
 		return this.y;
+	}
+
+	public Room getRoom() {
+		return this.room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
 	/** Set node coordinates */
@@ -115,7 +126,7 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		return Math.sqrt(Math.pow((n.y - this.y), 2) + Math.pow((n.x - this.x), 2));
+		return Math.hypot((n.y - this.y), (n.x - this.x));
 	}
 
 	/**

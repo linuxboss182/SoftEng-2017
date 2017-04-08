@@ -9,9 +9,8 @@ import javafx.scene.shape.Rectangle;
  */
 //TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
-		extends Node
 {
-
+	// TODO: Fix room shape operations
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
 	protected static final double RECTANGLE_WIDTH = 7;
 	protected static final double RECTANGLE_HEIGHT = 7;
@@ -24,24 +23,37 @@ public class Room
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
+	private Node location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
 	private Rectangle rect;
 
 	/* Constructors */
-	public Room(double x, double y, String name, String description, String image) {
-		super(x, y);
+	public Room(String name, String description, String image) {
+		this.location = null;
 		this.name = name;
 		this.description = description;
 		this.image = image;
+		this.makeShape();
 	}
 
+	// TODO: Remove this constructor in favor of association with existing nodes
+	public Room(double x, double y, String name, String description, String image) {
+		this(name, description, image);
+		this.location = new Node(x, y);
+	}
+
+	public Room(String name, String description) {
+		this(name, description, Room.DEFAULT_IMAGE_PATH);
+	}
+
+	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y, String name, String description) {
 		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
-		makeShape();
 	}
 
+	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y) {
 		this(x, y, "Anonymous Room", "A Room with no name or special description.");
 	}
@@ -58,6 +70,14 @@ public class Room
 
 	public String getImage() {
 		return this.image;
+	}
+
+	public Node getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(Node location) {
+		this.location = location;
 	}
 
 	public void setName(String name) {
@@ -80,14 +100,14 @@ public class Room
 	}
 
 	public void makeShape() {
-		this.rect = new Rectangle(this.getX(), this.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 		this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
 		this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 
 		if (this.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-			rect.setFill(this.KIOSK_COLOR);
+			this.rect.setFill(this.KIOSK_COLOR);
 		} else {
-			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+			this.rect.setFill(this.DEFAULT_SHAPE_COLOR);
 		}
 	}
 }

@@ -173,37 +173,6 @@ public class DatabaseController
 		}
 	}
 
-
-	//adds a node to the database
-	//returns true if success, false if failure
-	private boolean addNode(Node node, int id){
-		try {
-			Statement insert = this.db_connection.createStatement();
-			//do some sort of autoincrement
-			insert.execute(StoredProcedures.procInsertNode(id, node.getX(),node.getY()));
-			insert.close();
-			return true;
-		} catch (SQLException e) {
-			return false;
-		}
-	}
-
-	//attempts to retrieve a node at a given id
-	//returns null if failure
-	private Node getNodeAtID(int id){
-		try{
-			Statement query = this.db_connection.createStatement();
-			ResultSet result = query.executeQuery(StoredProcedures.procRetrieveNodeID(id));
-			//figure out adjacencies
-			Node node = new Node(result.getDouble("nodeX"), result.getDouble("nodeY"));
-			result.close();
-			query.close();
-			return node;
-		} catch (SQLException e){
-			return null;
-		}
-	}
-
 	public Directory getDirectory() {
 		Directory dir = new Directory();
 		this.populateDirectory(dir);
@@ -305,46 +274,61 @@ public class DatabaseController
 	 * @param nodes The map of nodes to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException{
+	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
 		try {
+			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
-			Statement queryEdges = this.db_connection.createStatement();
-			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
-			ResultSet resultEdges = null; //queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
-			//populate initial objects
-			while(resultNodes.next()){
-				if(resultNodes.getString("roomName") == null){
-					//node, not room
-					Node node = new Node(resultNodes.getDouble("nodeX"),
-							resultNodes.getDouble("nodeY"));
-					nodes.put(resultNodes.getInt("nodeID"), node);
-				} else {
-					//room, not node
-					Room room = new Room(resultNodes.getDouble("nodeX"),
-							resultNodes.getDouble("nodeY"),
-							resultNodes.getString("roomName"),
-							resultNodes.getString("roomDescription"));
-					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
-				}
+			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+			while (resultNodes.next()) {
+				//node, not room
+				Node node = new Node(resultNodes.getDouble("nodeX"),
+				                     resultNodes.getDouble("nodeY"));
+				nodes.put(resultNodes.getInt("nodeID"), node);
 			}
 			resultNodes.close();
 
+			// populate Rooms
+			Statement queryRooms = this.db_connection.createStatement();
+			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
+			int nodeID;
+			Room room;
+			while (resultRooms.next()) {
+				room = new Room(resultRooms.getString("roomName"),
+				                resultRooms.getString("roomDescription"));
+				nodeID = resultRooms.getInt("nodeID");
+				if (! resultRooms.wasNull()) {
+					//we have a location in the room
+					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
+				}
+				rooms.put(resultRooms.getInt("roomID"),room); //image where?
+			}
+			resultRooms.close();
+
 			//populate adjacency lists
-			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+			Statement queryEdges = this.db_connection.createStatement();
+			ResultSet resultEdges = null;
+			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+			int roomID;
 			while (resultNodes.next()) {
+				nodeID = resultNodes.getInt("nodeID");
+				roomID = resultNodes.getInt("roomID");
+				if (! resultNodes.wasNull()) {
+					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+				}
+
 				resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 				while (resultEdges.next()) {
+					// If the current edge starts at the current node
 					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
 						//we have adjacent nodes
-						//find the initial node, add the edge
-						nodes.getOrDefault(resultNodes.getInt("nodeID"),
-								rooms.get(resultNodes.getInt("nodeID")))
-								.connect(nodes.getOrDefault(resultEdges.getInt("node2"),
-										rooms.get(resultEdges.getInt("node2"))));
-						//I'm aware this looks like arse
+						nodes.get(nodeID).connect(nodes.get(resultNodes.getInt("node2")));
 					}
 				}
 			}
+			// Close statements
+			resultNodes.close();
+			resultEdges.close();
+			resultRooms.close();
 		} catch (SQLException e){
 			throw e;
 		}
@@ -397,11 +381,19 @@ public class DatabaseController
 		}
 		System.out.println("nodes saved");
 
-		for (Room r : dir.getRooms()) { // the order of these queries is important
-			query = StoredProcedures.procInsertNode(r.hashCode(), r.getX(), r.getY());
-			db.executeUpdate(query);
-			query = StoredProcedures.procInsertRoom(r.hashCode(), r.getName(), r.getDescription());
-			db.executeUpdate(query);
+		for (Room r : dir.getRooms()) {
+			if(r.getLocation() != null) {
+
+				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
+																	r.getLocation().hashCode(),
+																	r.getName(),
+																	r.getDescription());
+			} else {
+				query = StoredProcedures.procInsertRoom(r.hashCode(),
+														r.getName(),
+														r.getDescription());
+			}
+			db.executeQuery(query);
 		}
 		System.out.println("rooms saved");
 
@@ -421,7 +413,7 @@ public class DatabaseController
 		System.out.println("edges saved");
 
 		for (Room n : dir.getRooms()) {
-			for (Node m : n.getNeighbors()) {
+			for (Node m : n.getLocation().getNeighbors()) {
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
@@ -442,6 +434,7 @@ public class DatabaseController
 		System.out.println("professionals saved");
 		db.close();
 	}
+
 
 	//A test call to the database
 	public void exampleQueries() {
@@ -468,40 +461,5 @@ public class DatabaseController
 			e.printStackTrace();
 		}
 	}
-
-//	public void saveDirectoryToDatabase(Directory dir) {
-//		Statement query = this.db_connection.createStatement();
-//
-//		query.;
-//
-//		query.close();
-//	}
-
-	//This code is broken, the batch executes in reverse order. Unneeded at this time, was use for testing.
-//	//populates the database with initial data specified in the stored proc
-//	//database must have schema before running this
-//	//returns true if success, false if error
-//	public boolean initData(){
-//		boolean result;
-//		String[] data = StoredProcedures.getInitialData();
-//		String insertion = "";
-//		try {
-//			Statement insert = this.db_connection.createStatement();
-//			for  (String s : data) {
-//				insertion = s;
-//				insert.addBatch(s);
-//			}
-//			insert.executeBatch();
-//			this.db_connection.commit();
-//			System.out.println("Success!");
-//			insert.close();
-//		} catch (SQLException e) {
-//			System.err.println("SQL error while inserting sample data.");
-//			System.err.println("Failed on this insertion: " + insertion);
-//			e.printStackTrace();
-//			return false;
-//		}
-//		return true;
-//	}
 
 }
