@@ -120,13 +120,15 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 
 			if(this.selectedShape != null) {
-				// TODO: Change use of instanceof to good coding standards
+
 				if(this.selectedNode instanceof Room) {
 					if(((Room) this.selectedNode).getName().equalsIgnoreCase(this.KIOSK_NAME)) {
 						this.selectedShape.setFill(this.KIOSK_COLOR);
 					} else {
 						this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 					}
+
+
 
 				} else {
 					this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
