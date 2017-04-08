@@ -22,6 +22,8 @@ public class Node
 	private double y;
 	private HashSet<Node> neighbors;
 
+	private Room room;
+
 	public Node(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -35,6 +37,14 @@ public class Node
 
 	public double getY() {
 		return this.y;
+	}
+
+	public Room getRoom() {
+		return this.room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
 	/** Set node coordinates */
@@ -115,7 +125,7 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		return Math.sqrt(Math.pow((n.y - this.y), 2) + Math.pow((n.x - this.x), 2));
+		return Math.hypot((n.y - this.y), (n.x - this.x));
 	}
 
 	/**

@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
  */
 //TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
-		extends Node
 {
 
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
@@ -25,6 +24,7 @@ public class Room
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
+	private Node location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
@@ -32,7 +32,7 @@ public class Room
 
 	/* Constructors */
 	public Room(double x, double y, String name, String description, String image) {
-		super(x, y);
+		this.location = new Node(x, y);
 		this.name = name;
 		this.description = description;
 		this.image = image;
@@ -59,6 +59,14 @@ public class Room
 
 	public String getImage() {
 		return this.image;
+	}
+
+	public Node getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(Node location) {
+		this.location = location;
 	}
 
 	public void setName(String name) {
