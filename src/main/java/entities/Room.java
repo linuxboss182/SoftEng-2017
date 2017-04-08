@@ -43,6 +43,10 @@ public class Room
 		this(new Node(x, y), name, description, image);
 	}
 
+	public Room(Node n, String name, String description) {
+		this(n, name, description, Room.DEFAULT_IMAGE_PATH);
+	}
+
 	public Room(double x, double y, String name, String description) {
 		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
 	}
