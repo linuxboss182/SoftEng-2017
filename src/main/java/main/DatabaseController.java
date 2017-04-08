@@ -305,32 +305,35 @@ public class DatabaseController
 	 * @param nodes The map of nodes to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException{
+	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
 		try {
+			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
-			Statement queryEdges = this.db_connection.createStatement();
-			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
-			ResultSet resultEdges = null; //queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
-			//populate initial objects
-			while(resultNodes.next()){
-				if(resultNodes.getString("roomName") == null){
-					//node, not room
-					Node node = new Node(resultNodes.getDouble("nodeX"),
-							resultNodes.getDouble("nodeY"));
-					nodes.put(resultNodes.getInt("nodeID"), node);
-				} else {
-					//room, not node
-					Room room = new Room(resultNodes.getDouble("nodeX"),
-							resultNodes.getDouble("nodeY"),
-							resultNodes.getString("roomName"),
-							resultNodes.getString("roomDescription"));
-					rooms.put(resultNodes.getInt("nodeID"),room); //image where?
-				}
+			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+			while (resultNodes.next()) {
+				//node, not room
+				Node node = new Node(resultNodes.getDouble("nodeX"),
+				                     resultNodes.getDouble("nodeY"));
+				nodes.put(resultNodes.getInt("nodeID"), node);
 			}
 			resultNodes.close();
 
+			// populate Rooms
+			Statement queryRooms = this.db_connection.createStatement();
+			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
+			while (resultRooms.next()) {
+				//room, not node
+				Room room = new Room(nodes.getOrDefault(resultRooms.getInt("nodeID"), null),
+						             resultRooms.getString("roomName"),
+						             resultRooms.getString("roomDescription"));
+				rooms.put(resultRooms.getInt("roomID"),room); //image where?
+			}
+			resultRooms.close();
+
 			//populate adjacency lists
-			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodesAndRooms());
+			Statement queryEdges = this.db_connection.createStatement();
+			ResultSet resultEdges = null;
+			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
 				resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 				while (resultEdges.next()) {
@@ -345,6 +348,10 @@ public class DatabaseController
 					}
 				}
 			}
+			// Close statements
+			resultNodes.close();
+			resultEdges.close();
+			resultRooms.close();
 		} catch (SQLException e){
 			throw e;
 		}
