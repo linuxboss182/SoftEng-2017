@@ -379,13 +379,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	public void redrawLines() {
-		// clear arraylist
-		for(int i = 0; i < this.lines.size(); i++) {
-			this.botPane.getChildren().remove(this.lines.get(i));
-		}
-		this.lines.clear();
-		// repopulate arraylist
-		// then draw the lines
+		this.botPane.getChildren().removeAll();
 		this.fillDrawLines();
 	}
 
@@ -442,7 +436,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 				this.lines.add(line);
 
-				this.contentPane.getChildren().add(line);
+				this.botPane.getChildren().add(line);
 				line.setVisible(true);
 			}
 		});
