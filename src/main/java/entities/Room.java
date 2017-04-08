@@ -31,12 +31,16 @@ public class Room
 	private Rectangle rect;
 
 	/* Constructors */
-	public Room(double x, double y, String name, String description, String image) {
-		this.location = new Node(x, y);
+	public Room(Node n, String name, String description, String image) {
+		this.location = n;
 		this.name = name;
 		this.description = description;
 		this.image = image;
 		this.makeShape();
+	}
+
+	public Room(double x, double y, String name, String description, String image) {
+		this(new Node(x, y), name, description, image);
 	}
 
 	public Room(double x, double y, String name, String description) {
