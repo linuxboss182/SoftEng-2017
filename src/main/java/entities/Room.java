@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 //TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
 {
-
+	// TODO: Fix room shape operations
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
 	protected static final double RECTANGLE_WIDTH = 7;
 	protected static final double RECTANGLE_HEIGHT = 7;
@@ -36,11 +36,11 @@ public class Room
 		this.name = name;
 		this.description = description;
 		this.image = image;
+		this.makeShape();
 	}
 
 	public Room(double x, double y, String name, String description) {
 		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
-		makeShape();
 	}
 
 	public Room(double x, double y) {
@@ -89,14 +89,14 @@ public class Room
 	}
 
 	public void makeShape() {
-		this.rect = new Rectangle(this.getX(), this.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 		this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
 		this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 
 		if (this.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-			rect.setFill(this.KIOSK_COLOR);
+			this.rect.setFill(this.KIOSK_COLOR);
 		} else {
-			rect.setFill(this.DEFAULT_SHAPE_COLOR);
+			this.rect.setFill(this.DEFAULT_SHAPE_COLOR);
 		}
 	}
 }
