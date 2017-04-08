@@ -32,7 +32,6 @@ public class Node
 		this.room = null;
 	}
 
-
 	public double getX() {
 		return this.x;
 	}

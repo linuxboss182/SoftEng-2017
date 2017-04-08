@@ -31,26 +31,30 @@ public class Room
 	private Rectangle rect;
 
 	/* Constructors */
-	public Room(Node n, String name, String description, String image) {
-		this.location = n;
+	public Room(String name, String description, String image) {
+		this.location = null;
 		this.name = name;
 		this.description = description;
 		this.image = image;
 		this.makeShape();
 	}
 
+	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y, String name, String description, String image) {
-		this(new Node(x, y), name, description, image);
+		this(name, description, image);
+		this.location = new Node(x, y);
 	}
 
-	public Room(Node n, String name, String description) {
-		this(n, name, description, Room.DEFAULT_IMAGE_PATH);
+	public Room(String name, String description) {
+		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
+	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y, String name, String description) {
 		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
+	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y) {
 		this(x, y, "Anonymous Room", "A Room with no name or special description.");
 	}
