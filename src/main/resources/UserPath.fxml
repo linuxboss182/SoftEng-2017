@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserController">
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
+            <Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefWidth="200.0" text="Done" textAlignment="CENTER" />
+            <Pane prefHeight="30.0" prefWidth="354.0" />
+            <ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
+         </items>
+      </ToolBar>
+   </bottom>
+   <center>
+      <SplitPane dividerPositions="0.7671875" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
+         <items>
+            <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
+               <children>
+                  <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                  <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                  <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0">
+                     <children>
+                        <Accordion layoutX="14.0" layoutY="26.0" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="216.0" layoutY="66.0" prefHeight="17.0" prefWidth="393.0" text="FLOORS DURING ROUTE" textAlignment="CENTER">
+                     <font>
+                        <Font size="19.0" />
+                     </font>
+                  </Label>
+                  <Separator layoutX="170.0" layoutY="59.0" prefHeight="13.0" prefWidth="490.0" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
+                     <font>
+                        <Font size="19.0" />
+                     </font>
+                  </Label>
+                  <Slider layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" />
+                  <Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" />
+                  <Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" />
+               </children>
+            </AnchorPane>
+         </items>
+      </SplitPane>
+   </center>
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </top>
+   <left>
+      <GridPane prefHeight="640.0" prefWidth="332.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="305.0" minHeight="10.0" prefHeight="204.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="305.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="455.0" minHeight="10.0" prefHeight="455.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Starting Location">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+                <Tab text="Ending Location">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+            <GridPane prefHeight="431.0" prefWidth="376.0" GridPane.rowIndex="2">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="183.0" minWidth="7.0" prefWidth="11.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="368.0" minWidth="10.0" prefWidth="364.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="220.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="426.0" minHeight="10.0" prefHeight="418.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label prefHeight="17.0" prefWidth="161.0" text="Directions:" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <TextFlow fx:id="directionsTextField" prefHeight="408.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <Separator prefWidth="200.0" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </left>
+</BorderPane>

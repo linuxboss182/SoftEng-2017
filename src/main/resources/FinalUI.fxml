@@ -32,7 +32,6 @@
 			<items>
 				<TextField maxWidth="-Infinity" prefHeight="25.0" prefWidth="243.0" promptText="Enter Room Number or Name" />
 				<Button mnemonicParsing="false" text="Search" />
-            <Button fx:id="refreshbtn" mnemonicParsing="false" onMouseClicked="#refreshbtnClicked" text="Refresh" />
 			<Region prefHeight="30.0" prefWidth="530.0" />
 			</items>
 		</ToolBar>

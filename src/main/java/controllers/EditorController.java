@@ -274,15 +274,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
 	}
 
-	@FXML
-	public void refreshBtnClicked() {
-		this.populateChoiceBox();
-
-		for (Professional pro: this.directory.getProfessionals()) {
-			this.proList.add(pro);
-
-		}
-	}
 
 	@FXML
 	public void addCustomProBtnPressed() throws IOException {
@@ -300,7 +291,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
-		this.refreshBtnClicked();
 	}
 
 
