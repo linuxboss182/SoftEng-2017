@@ -321,11 +321,15 @@ public class DatabaseController
 			// populate Rooms
 			Statement queryRooms = this.db_connection.createStatement();
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
+			int nodeID;
+			Room room;
 			while (resultRooms.next()) {
-				//room, not node
-				Room room = new Room(nodes.getOrDefault(resultRooms.getInt("nodeID"), null),
-						             resultRooms.getString("roomName"),
-						             resultRooms.getString("roomDescription"));
+				room = new Room(resultRooms.getString("roomName"),
+				                resultRooms.getString("roomDescription"));
+				nodeID = resultRooms.getInt("nodeID");
+				if (! resultRooms.wasNull()) { //room without location
+					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
+				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
 			}
 			resultRooms.close();
@@ -334,17 +338,20 @@ public class DatabaseController
 			Statement queryEdges = this.db_connection.createStatement();
 			ResultSet resultEdges = null;
 			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+			int roomID;
 			while (resultNodes.next()) {
+				nodeID = resultNodes.getInt("nodeID");
+				roomID = resultNodes.getInt("roomID");
+				if (! resultNodes.wasNull()) {
+					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+				}
+
 				resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 				while (resultEdges.next()) {
+					// If the current edge starts at the current node
 					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
 						//we have adjacent nodes
-						//find the initial node, add the edge
-						nodes.getOrDefault(resultNodes.getInt("nodeID"),
-								rooms.get(resultNodes.getInt("nodeID")))
-								.connect(nodes.getOrDefault(resultEdges.getInt("node2"),
-										rooms.get(resultEdges.getInt("node2"))));
-						//I'm aware this looks like arse
+						nodes.get(nodeID).connect(nodes.get(resultNodes.getInt("node2")));
 					}
 				}
 			}
@@ -428,7 +435,7 @@ public class DatabaseController
 		System.out.println("edges saved");
 
 		for (Room n : dir.getRooms()) {
-			for (Node m : n.getNeighbors()) {
+			for (Node m : n.getLocation().getNeighbors()) {
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
