@@ -20,6 +20,7 @@ public class Node
 {
 	private double x;
 	private double y;
+	// TODO: add floor or z coord
 	private HashSet<Node> neighbors;
 
 	private Room room;
@@ -28,6 +29,7 @@ public class Node
 		this.x = x;
 		this.y = y;
 		this.neighbors = new HashSet<>();
+		this.room = null;
 	}
 
 
