@@ -435,6 +435,7 @@ public class DatabaseController
 		db.close();
 	}
 
+
 	//A test call to the database
 	public void exampleQueries() {
 		try {
