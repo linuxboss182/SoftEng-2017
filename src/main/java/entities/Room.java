@@ -21,7 +21,6 @@ public class Room
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 	protected static final Color KIOSK_COLOR = Color.YELLOW;
 	protected static final String KIOSK_NAME = "You Are Here";
-
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */

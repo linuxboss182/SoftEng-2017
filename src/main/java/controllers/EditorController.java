@@ -7,6 +7,7 @@ import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,6 +20,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -77,11 +80,15 @@ public class EditorController extends MapDisplayController implements Initializa
 	protected Pane linePane;
 	@FXML
 	protected Pane nodePane;
+	@FXML
+	public AnchorPane contentAnchor = new AnchorPane();
 
 	private AddProfessionalController addProController;
 
 
-
+	final double SCALE_DELTA = 1.1;
+	private double clickedX, clickedY;
+	private boolean beingDragged;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -99,10 +106,14 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		this.redrawLines();
 
-
+		this.contentAnchor.setPickOnBounds(false);
 		this.topPane.setPickOnBounds(false);
+//		this.botPane.setPickOnBounds(false);
+//		this.imageViewMap.setPickOnBounds(false);
 		this.botPane.setOnMouseClicked(e -> {
+
 			this.setFields(e.getX(), e.getY());
+
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				this.addNode(e.getX(), e.getY());
@@ -121,15 +132,16 @@ public class EditorController extends MapDisplayController implements Initializa
 					this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
 				}
 			}
+
 			this.selectedNode = null;
 			this.selectedShape = null;
 		});
+
 		//populate box for professionals
 		this.populateChoiceBox();
 		this.proList = new ArrayList<>();
 		for (Professional pro: this.directory.getProfessionals()) {
 			this.proList.add(pro);
-
 		}
 		this.selectChoiceBox();
 
@@ -139,6 +151,42 @@ public class EditorController extends MapDisplayController implements Initializa
 				this.kiosk = r;
 			}
 		}
+
+
+
+
+		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
+			@Override public void handle(ScrollEvent event) {
+				event.consume();
+				if (event.getDeltaY() == 0) {
+					return;
+				}
+				double scaleFactor =
+						(event.getDeltaY() > 0)
+								? SCALE_DELTA
+								: 1/SCALE_DELTA;
+				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
+				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+			}
+		});
+
+		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				clickedX = event.getX();
+				clickedY = event.getY();
+			}
+		});
+
+		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				if(!beingDragged) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+				}
+				event.consume();
+			}
+		});
+
 	}
 
 	@Override
@@ -150,6 +198,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		});
 
 		r.getShape().setOnMouseDragged(e->{
+			beingDragged = true;
 			EditorController.this.onRectangleDrag(e, r);
 		});
 
@@ -161,6 +210,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 		r.getShape().setOnMouseReleased(e->{
+			beingDragged = false;
 			EditorController.this.onShapeReleased(e, r);
 		});
 	}
@@ -361,6 +411,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		});
 
 		circ.setOnMouseDragged(e->{
+			beingDragged = true;
 			EditorController.this.onCircleDrag(e, n);
 		});
 
@@ -373,6 +424,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		circ.setOnMouseReleased(e->{
 			EditorController.this.onShapeReleased(e, n);
+			beingDragged = false;
 		});
 	}
 
@@ -451,7 +503,8 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	private void logoutBtnClicked() {
-		// TODO: Review
+		//System.out.println();
+		//System.out.println("addRoomBtn = " + addRoomBtn);
 		try {
 			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
 			this.botPane.getScene().setRoot(userUI);
@@ -506,6 +559,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	// This is going to allow us to drag a node!!!
 	public void onCircleDrag(MouseEvent e, Node n) {
+		beingDragged = true;
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 			if(this.primaryPressed) {
 				this.selectedShape = (Shape) e.getSource();
@@ -515,9 +569,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			} else if(this.secondaryPressed) {
 				// right click drag on the selected node
 			}
-
 		}
-
 	}
 
 	public void onShapeReleased(MouseEvent e, Node n) {

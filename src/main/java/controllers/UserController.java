@@ -1,12 +1,10 @@
 package controllers;
 
-import entities.Directory;
 import entities.Room;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXMLLoader;
@@ -16,14 +14,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.image.Image;
@@ -31,7 +26,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -40,8 +34,6 @@ import main.ApplicationController;
 import main.DirectionsGenerator;
 import main.Pathfinder;
 //import userpanel.Window;
-
-import javax.annotation.PostConstruct;
 
 
 public class UserController
@@ -73,6 +65,8 @@ public class UserController
 	@FXML
 	protected Pane nodePane;
 
+	final double SCALE_DELTA = 1.1;
+	private double clickedX, clickedY;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -95,7 +89,40 @@ public class UserController
 		this.displayRooms();
 		this.populateListView();
 
+
+		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
+			@Override public void handle(ScrollEvent event) {
+				event.consume();
+				if (event.getDeltaY() == 0) {
+					return;
+				}
+				double scaleFactor =
+						(event.getDeltaY() > 0)
+								? SCALE_DELTA
+								: 1/SCALE_DELTA;
+				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
+				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+			}
+		});
+		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				clickedX = event.getX();
+				clickedY = event.getY();
+			}
+		});
+		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+				event.consume();
+			}
+		});
+
+
 	}
+
+
+
 
 
 	@FXML
@@ -151,7 +178,7 @@ public class UserController
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {
-			this.contentAnchor.getChildren().remove(line);
+			this.botPane.getChildren().remove(line);
 		});
 
 		//add kiosk to start of list
@@ -183,7 +210,7 @@ public class UserController
 			line.setEndX(nodeX2);
 			line.setEndY(nodeY2);
 
-			this.contentAnchor.getChildren().add(line);
+			this.botPane.getChildren().add(line);
 		}
 
 		Text textDirections = new Text();
