@@ -156,8 +156,13 @@ public class StoredProcedures
 		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+nodeID+", "+nodeX+", "+nodeY+")";
 	}
 
-	public static String procInsertRoom(int roomID, int nodeID, String roomName, String roomDescription){
+	public static String procInsertRoom(int roomID, String roomName, String roomDescription){
 		//query needs work
+		return "INSERT INTO Rooms (roomName, roomDescription, roomID) VALUES('"+roomName
+				+"', '"+roomDescription+"', "+roomID+")";
+	}
+
+	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription){
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID) VALUES('"+roomName
 				+"', '"+roomDescription+"', "+nodeID+", "+roomID+")";
 	}

@@ -381,18 +381,19 @@ public class DatabaseController
 		}
 		System.out.println("nodes saved");
 
-		for (Room r : dir.getRooms()) { // the order of these queries is important
+		for (Room r : dir.getRooms()) {
 			if(r.getLocation() != null) {
-				query = StoredProcedures.procInsertNode(r.hashCode(),
-														r.getLocation().getX(),
-														r.getLocation().getY());
-				db.executeUpdate(query);
+
+				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
+																	r.getLocation().hashCode(),
+																	r.getName(),
+																	r.getDescription());
+			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
-														r.getLocation().hashCode(),
 														r.getName(),
 														r.getDescription());
-				db.executeUpdate(query);
 			}
+			db.executeQuery(query);
 		}
 		System.out.println("rooms saved");
 
