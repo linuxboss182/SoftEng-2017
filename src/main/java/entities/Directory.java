@@ -114,4 +114,16 @@ public class Directory
 		return 4;
 	}
 
+	public void newRoom(double x, double y, String name, String desc) {
+		Room newRoom = new Room(x, y, name, desc);
+		this.rooms.add(newRoom);
+	}
+
+	public void newNode(double x, double y) {
+		Node newNode = new Node(x, y);
+		this.nodes.add(newNode);
+	}
+
 }
+
+
