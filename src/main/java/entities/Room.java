@@ -102,14 +102,17 @@ public class Room
 	}
 
 	public void makeShape() {
-		this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-		this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
-		this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+		if(location != null) {
+			this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 
-		if (this.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-			this.rect.setFill(this.KIOSK_COLOR);
-		} else {
-			this.rect.setFill(this.DEFAULT_SHAPE_COLOR);
+			this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
+			this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+
+			if (this.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+				this.rect.setFill(this.KIOSK_COLOR);
+			} else {
+				this.rect.setFill(this.DEFAULT_SHAPE_COLOR);
+			}
 		}
 	}
 }
