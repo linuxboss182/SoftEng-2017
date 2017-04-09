@@ -387,7 +387,6 @@ public class DatabaseController
 
 		for (Room r : dir.getRooms()) {
 			if(r.getLocation() != null) {
-
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	r.getName(),
@@ -397,7 +396,7 @@ public class DatabaseController
 														r.getName(),
 														r.getDescription());
 			}
-			db.executeQuery(query);
+			db.executeUpdate(query);
 		}
 		System.out.println("rooms saved");
 
