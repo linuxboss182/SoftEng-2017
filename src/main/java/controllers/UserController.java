@@ -70,8 +70,9 @@ public class UserController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//Set the panes
-		this.setPanes(linePane, nodePane);
+		this.setPanes(linePane, nodePane);	//Set the panes
+
+
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = ApplicationController.getDirectory();
 
@@ -80,45 +81,16 @@ public class UserController
 		this.imageViewMap.setImage(this.map4);
 		this.imageViewMap.setPickOnBounds(true);
 
+
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
 				this.kiosk = r;
 			}
 		}
+
 		this.displayRooms();
 		this.populateListView();
-
-
-		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor =
-						(event.getDeltaY() > 0)
-								? SCALE_DELTA
-								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
-			}
-		});
-		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				clickedX = event.getX();
-				clickedY = event.getY();
-			}
-		});
-		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-				event.consume();
-			}
-		});
-
-
 	}
 
 
@@ -150,7 +122,7 @@ public class UserController
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
 				List<Node> ret;
-				ret = Pathfinder.findPath(kiosk, newValue);
+				ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
 				paintPath(new ArrayList<>(ret));
 			}
 		});
@@ -192,7 +164,7 @@ public class UserController
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
 
 		this.destNode = new Node(destX, destY);
-		main.Pathfinder.findPath(this.kiosk, this.destNode);
+		main.Pathfinder.findPath(this.kiosk.getLocation(), this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();

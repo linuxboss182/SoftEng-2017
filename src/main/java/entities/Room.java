@@ -51,11 +51,13 @@ public class Room
 	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y, String name, String description) {
 		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
+		this.location = new Node(x, y);
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes
 	public Room(double x, double y) {
 		this(x, y, "Anonymous Room", "A Room with no name or special description.");
+		this.location = new Node(x, y);
 	}
 
 	/* Methods */

@@ -73,67 +73,36 @@ public abstract class MapDisplayController
 		this.botPane = botPane;
 		this.topPane = topPane;
 	}
-	//Constructor
-//	public MapDisplayController () {
-//
-//	}
 
-//	public MapDisplayController (Pane botPane, Pane topPane) {
-//		this.botPane = botPane;
-//		this.topPane = topPane;
-//	}
-
-	//User
-//	public void displayRooms() {
-//		this.topPane.getChildren().removeAll();
-//
-//		this.directory.getRooms().forEach(node -> {
-//			if(!node.getName().equalsIgnoreCase("you are here")) {
-//				Rectangle rect;
-//				double nodeX = node.getX();
-//				double nodeY = node.getY();
-//				rect = new Rectangle(nodeX, nodeY, this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
-//				rect.setFill(this.DEFAULT_SHAPE_COLOR);
-//				this.topPane.getChildren().add(rect);
-//				rect.setVisible(true);
-//			}
-//		});
-//
-//		if(this.kiosk != null) {
-//			Circle circ;
-//			double nodeX = this.kiosk.getX();
-//			double nodeY = this.kiosk.getY();
-//			circ = new Circle(nodeX, nodeY, 5, Color.RED);
-//			this.topPane.getChildren().add(circ);
-//			circ.setVisible(true);
-//		}
-//
-//	}
+	//Editor
+	public void displayNodes() {
+		this.topPane.getChildren().removeAll();
+		this.directory.getNodes().forEach(node -> this.paintNode(node));
+	}
 
 	//Editor
 	public void displayRooms() {
 		this.topPane.getChildren().removeAll();
-		this.directory.getRooms().forEach(room -> this.paintRoomOnLocation(room));
-
+		this.directory.getRooms().forEach(room -> this.paintNode(room.getLocation()));
 	}
 
 	//Editor
-	public void paintRoomOnLocation(Room r) {
-		this.topPane.getChildren().add(r.getShape());
-		r.getShape().setVisible(true);
-		addRoomListener(r);
+	public void paintNode(Node n) {
+		this.topPane.getChildren().add(n.getShape());
+		n.getShape().setVisible(true);
 	}
 
-	public void addRoomListener(Room r) {
-
+	//This function takes in two nodes, displays a
+	public void paintLine(Node start, Node finish){
+				Line line = new Line();
+				line.setStartX(start.getX());
+				line.setStartY(start.getY());
+				line.setFill(this.CONNECTION_LINE_COLOR);
+				line.setEndX(finish.getX());
+				line.setEndY(finish.getY());
+				this.lines.add(line);
+				this.botPane.getChildren().add(line);
+				line.setVisible(true);
 	}
-
-
-
-
-
-
-
-
 
 }

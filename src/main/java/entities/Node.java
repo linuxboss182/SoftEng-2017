@@ -1,5 +1,9 @@
 package entities;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +26,19 @@ public class Node
 	private double y;
 	// TODO: add floor or z coord
 	private HashSet<Node> neighbors;
-
 	private Room room;
+	private Circle circ;
+
+	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
+	protected static final double RECTANGLE_WIDTH = 7;
+	protected static final double RECTANGLE_HEIGHT = 7;
+	protected static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
+	protected static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
+	protected static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
+	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
+	protected static final Color KIOSK_COLOR = Color.YELLOW;
+	protected static final String KIOSK_NAME = "You Are Here";
+	protected static final double CIRCLE_RADIUS = 5;
 
 	public Node(double x, double y) {
 		this.x = x;
@@ -181,6 +196,24 @@ public class Node
 		} else {
 			return Double.NaN;
 		}
+	}
+
+	public boolean containsRoom(){
+		if(this.room == null){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public Circle getShape() {
+		return this.circ;
+	}
+
+	public void makeShape() {
+		this.circ = new Circle(this.getX(), this.getY(), this.CIRCLE_RADIUS, this.DEFAULT_SHAPE_COLOR);
+		this.circ.setStroke(this.DEFAULT_STROKE_COLOR);
+		this.circ.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
 	}
 
 }
