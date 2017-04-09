@@ -38,25 +38,21 @@ public class Room
 		this.makeShape();
 	}
 
-	// TODO: Remove this constructor in favor of association with existing nodes
-	public Room(double x, double y, String name, String description, String image) {
-		this(name, description, image);
-		this.location = new Node(x, y);
-	}
-
 	public Room(String name, String description) {
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes
-	public Room(double x, double y, String name, String description) {
-		this(x, y, name, description, Room.DEFAULT_IMAGE_PATH);
+	@Deprecated
+	public Room(double x, double y, String name, String description, String image) {
+		this(name, description, image);
 		this.location = new Node(x, y);
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes
+	@Deprecated
 	public Room(double x, double y) {
-		this(x, y, "Anonymous Room", "A Room with no name or special description.");
+		this("Anonymous Room", "A Room with no name or special description.");
 		this.location = new Node(x, y);
 	}
 
