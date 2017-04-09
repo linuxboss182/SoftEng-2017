@@ -5,7 +5,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 
 /* DEV NOTES
@@ -26,9 +28,11 @@ public class Node
 	private double y;
 	private int floor;
 	private HashSet<Node> neighbors;
-	private Room room;
+	private Optional<Room> room;
 	private Circle circ;
 
+	/* Default shape parameters */
+	// TODO: Fix all Node shape operations
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
 	protected static final double RECTANGLE_WIDTH = 7;
 	protected static final double RECTANGLE_HEIGHT = 7;
@@ -45,7 +49,7 @@ public class Node
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
-		this.room = null;
+		this.room = Optional.empty();
 	}
 
 	public Node(double x, double y) {
@@ -60,12 +64,30 @@ public class Node
 		return this.y;
 	}
 
+	// TODO: Refactor Node::getRoom uses to accept an Optional, and return the Optional
 	public Room getRoom() {
-		return this.room;
+		return this.room.orElse(null);
+	}
+
+	/** Apply the given consumer function to this node's associated room, if present */
+	public void applyToRoom(Consumer<? super Room> consumer) {
+		this.room.ifPresent(consumer);
+
+		// Non-Optional equivalent
+//		if (this.room != null) {
+//			consumer.accept(this.room);
+//		}
 	}
 
 	public void setRoom(Room room) {
-		this.room = room;
+		// if this function throws NullPointerException, you passed it a null value
+		// Don't do that.
+		this.room = Optional.of(room);
+	}
+
+	/** Remove this node's association with a room, if any */
+	public void unsetRoom() {
+		this.room = Optional.empty();
 	}
 
 	/** Set node coordinates */
@@ -212,7 +234,7 @@ public class Node
 	}
 
 	public Circle getShape() {
-		if(this.circ == null){this.makeShape();}
+		if(this.circ == null) {this.makeShape();}
 		return this.circ;
 	}
 
