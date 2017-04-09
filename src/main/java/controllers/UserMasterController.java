@@ -148,8 +148,11 @@ public abstract class UserMasterController extends MapDisplayController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+		System.out.println("UserMasterController.getDirectionsClicked");
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.sideGridPane.getScene().setRoot(userPath);
+		System.out.println("UserMasterController.getDirectionsClicked");
+		this.getDirectionsBtn.getScene().setRoot(userPath);
+		System.out.println("UserMasterController.getDirectionsClicked");
 	}
 
 
