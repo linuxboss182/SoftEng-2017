@@ -1,5 +1,6 @@
 package controllers;
 
+import entities.Directory;
 import entities.Professional;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +11,6 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static main.ApplicationController.directory;
 
 /**
  * Created by s7sal on 4/4/2017.
@@ -31,6 +31,8 @@ public class AddProfessionalController implements Initializable
 
 	private EditorController editorController;
 	private ChoiceBox cb;
+
+	private static Directory directory = main.ApplicationController.getDirectory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

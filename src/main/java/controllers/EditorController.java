@@ -365,8 +365,14 @@ public class EditorController extends MapDisplayController implements Initializa
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+
+				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
+				potentialScaleX = (potentialScaleX < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleX);
+				potentialScaleY = (potentialScaleY < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleY);
+				contentAnchor.setScaleX(potentialScaleX);
+				contentAnchor.setScaleY(potentialScaleY);
 			}
 		});
 

@@ -101,12 +101,9 @@ public abstract class UserMasterController extends MapDisplayController
 								: 1/SCALE_DELTA;
 				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
 				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
-				if(potentialScaleX < 1/SCALE_DELTA) {
-					potentialScaleX = 1/SCALE_DELTA;
-				}
-				if(potentialScaleY < 1/SCALE_DELTA) {
-					potentialScaleY = 1/SCALE_DELTA;
-				}
+				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
+				potentialScaleX = (potentialScaleX < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleX);
+				potentialScaleY = (potentialScaleY < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleY);
 				contentAnchor.setScaleX(potentialScaleX);
 				contentAnchor.setScaleY(potentialScaleY);
 			}
