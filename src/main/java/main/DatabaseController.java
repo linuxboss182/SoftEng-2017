@@ -125,6 +125,8 @@ public class DatabaseController
 			}
 		}
 
+		/**  Code below wasn't working and was replaced with for loops above. Keeping just
+		 *   in case we want to use it again. */
 		/*
 		String[] schema = StoredProcedures.getSchema();
 		//find our tables in the schema
@@ -160,8 +162,8 @@ public class DatabaseController
 		return true;
 	}
 
-	//close the connection to the database
-	//returns true if success, false if failure
+	// close the connection to the database
+	// returns true if success, false if failure
 	public boolean close() {
 		try {
 			this.db_connection.close();
@@ -189,13 +191,13 @@ public class DatabaseController
 		Map<Integer, Node> nodes = new HashMap<>();
 		Map<Integer, Room> rooms = new HashMap<>();
 		Map<Integer, Professional> professionals = new HashMap<>();
-		Integer kioskID = null; // (should be Optional<Integer>)
+		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
 			this.retrieveNodes(nodes, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(rooms, professionals);
-//			kioskID = this.retrieveKiosk();
+//			kioskID = this.retrieveKiosk(); // Not using kiosks at the moment
 		} catch (SQLException e){
 			return false;
 		}
@@ -209,6 +211,7 @@ public class DatabaseController
 		for(Professional p: professionals.values()){
 			directory.addProfessional(p);
 		}
+		// commented out because we don't have a defined kiosk location at the moment
 //		if (kioskID != null) {
 //			directory.setKiosk(rooms.get(kioskID));
 //		}
@@ -216,7 +219,7 @@ public class DatabaseController
 		return true;
 	}
 
-
+	/** This method is not in use because we are not using kiosks at the moment */
 	private Integer retrieveKiosk() throws SQLException { // (should return Optional<Integer>)
 		Statement query = this.db_connection.createStatement();
 		ResultSet result = query.executeQuery(StoredProcedures.procRetrieveKiosk());
@@ -332,14 +335,6 @@ public class DatabaseController
 		} catch (SQLException e){
 			throw e;
 		}
-
-		//for ()
-		/*
-		while results remain:
-			while edges remain:
-				if current edge starts at current node:
-					get current node or room and connect to other node or room
-		 */
 	}
 
 	/**
@@ -396,7 +391,7 @@ public class DatabaseController
 			db.executeQuery(query);
 		}
 		System.out.println("rooms saved");
-
+		/* commented out because, again, kiosks are not yet implemented */
 //		if (dir.hasKiosk()) {
 //			Room n = dir.getKiosk();
 //			query = StoredProcedures.procInsertKiosk(n.hashCode());
