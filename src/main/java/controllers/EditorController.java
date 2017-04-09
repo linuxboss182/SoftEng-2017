@@ -498,9 +498,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		//System.out.println();
 		//System.out.println("addRoomBtn = " + addRoomBtn);
 		try {
-			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.botPane.getScene().setRoot(userUI);
-
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
