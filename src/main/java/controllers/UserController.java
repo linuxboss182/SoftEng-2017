@@ -4,7 +4,6 @@ import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXMLLoader;
@@ -14,8 +13,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -77,8 +74,8 @@ public class UserController
 		this.directory = ApplicationController.getDirectory();
 
 		//Add map
-		this.map4 = new Image("/4_thefourthfloor.png");
-		this.imageViewMap.setImage(this.map4);
+		this.map = new Image("/4_thefourthfloor.png");
+		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
 

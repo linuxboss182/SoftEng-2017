@@ -1,7 +1,6 @@
 package controllers;
 
 
-import entities.Directory;
 import entities.Professional;
 import entities.Room;
 import javafx.beans.value.ChangeListener;
@@ -24,21 +23,16 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DatabaseException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringJoiner;
 
@@ -94,8 +88,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		this.map4 = new Image("/4_thefourthfloor.png"); //TODO: load this from the directory
-		this.imageViewMap.setImage(this.map4); //Load background
+		this.map = new Image("/4_thefourthfloor.png"); //TODO: load this from the directory
+		this.imageViewMap.setImage(this.map); //Load background
 
 		//Init
 		this.populateChoiceBox(); //populate box for professionals

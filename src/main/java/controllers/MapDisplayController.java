@@ -19,6 +19,7 @@ import javafx.scene.shape.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -28,12 +29,10 @@ public abstract class MapDisplayController
 {
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
 
-	protected Image map4;
+	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
 	protected Directory directory;
 	protected Room kiosk;
-
-	// TODO: We want to have this use a directory instead of a list of nodes or a list of rooms
 
 	protected Node selectedNode; // you select a node by double clicking
 	protected Shape selectedShape; // This and the selectedNode should be set at the same time
@@ -68,6 +67,8 @@ public abstract class MapDisplayController
 	protected Pane botPane;
 	protected Pane topPane;
 
+	protected FloorProxy floorProxy = new FloorProxy(4); // Default to the fourth floor because that's the only image we have in our resources
+
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
@@ -75,15 +76,15 @@ public abstract class MapDisplayController
 	}
 
 	//Editor
-	public void displayNodes() {
-		this.topPane.getChildren().removeAll();
-		this.directory.getNodes().forEach(node -> this.paintNode(node));
+	public void displayNodes(Set<Node> nodes) {
+		this.topPane.getChildren().clear();
+		nodes.forEach(node -> this.paintNode(node));
 	}
 
 	//Editor
-	public void displayRooms() {
-		this.topPane.getChildren().removeAll();
-		this.directory.getRooms().forEach(room -> this.paintNode(room.getLocation()));
+	public void displayRooms(Set<Room> rooms) {
+		this.topPane.getChildren().clear();
+		rooms.forEach(room -> this.paintNode(room.getLocation()));
 	}
 
 	//Editor
@@ -105,6 +106,16 @@ public abstract class MapDisplayController
 				this.lines.add(line);
 				this.botPane.getChildren().add(line);
 				line.setVisible(true);
+	}
+
+	/** Switches the map to the given floor
+	 *
+	 * @param floor the floor we want to swtich to
+	 */
+	public void switchFloors(int floor) {
+		this.floorProxy.floorProxy(floor);
+		this.displayNodes();
+		this.displayRooms();
 	}
 
 }
