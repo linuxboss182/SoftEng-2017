@@ -231,10 +231,12 @@ public class Node
 		}
 	}
 
+	/** @deprecated Use applyToRoom instead */
+	@Deprecated
 	public boolean containsRoom(){
-		if(this.room == null){
+		if (this.room == null) {
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
