@@ -295,7 +295,8 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	@FXML
-	public void confirmBtnPressed() {
+	public void confirmBtnPressed() { // TODO: Fix this from crashing the program, probably something in the database needs to be changed due to the refactoring of node and room
+		System.out.println("WARNING: SAVE BUTTON PRESSED - THIS MAY CRASH THE PROGRAM");
 		this.directory.getRooms().forEach(room -> {
 			System.out.println("Attempting to save room: " + room.getName() + " to database...");
 		});
@@ -330,8 +331,9 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	@FXML
-	public void deleteRoomBtnClicked() {
-		this.deleteSelectedNode();
+	public void deleteRoomBtnClicked() { // TODO: FIX THIS
+		System.out.println("WARNING: THIS WILL BREAK IF YOU TRY TO DELETE A ROOM");
+		this.deleteSelectedNode(); // TODO: this is the thing that breaks it actually
 	}
 
 	private double readX() {
