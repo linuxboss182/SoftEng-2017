@@ -110,12 +110,44 @@ public class Directory
 		return 4;
 	}
 
-	public Room addNewRoom(double x, double y, String name, String desc) {
-		Room newRoom = new Room(x, y, name, desc);
+	/**
+	 * Create a Room and an associated Node in this directory
+	 *
+	 * The new room and node are created and associated with each other, and are added
+	 * to this directory.
+	 *
+	 * @param x The x-coordinate of the new room.
+	 * @param y The y-coordinate of the new room.
+	 * @param name The name of the new room.
+	 * @param desc A description of the new room.
+	 *
+	 * @return The new node.
+	 */
+	public Node addNewRoomNode(double x, double y, String name, String desc) {
+		Room newRoom = new Room(name, desc);
+		Node newNode = new Node(x, y);
+		newRoom.setLocation(newNode);
+		newNode.setRoom(newRoom);
+		this.nodes.add(newNode);
+		this.rooms.add(newRoom);
+		return newNode;
+	}
+
+	/**
+	 * Create a new room in this directory
+	 *
+	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 */
+	public Room addNewRoom(String name, String desc) {
+		Room newRoom = new Room(name, desc);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
 
+	/**
+	 * Create a new node in this directory
+	 */
+	// TODO: Add "floor" argument
 	public Node addNewNode(double x, double y) {
 		Node newNode = new Node(x, y);
 		this.nodes.add(newNode);
