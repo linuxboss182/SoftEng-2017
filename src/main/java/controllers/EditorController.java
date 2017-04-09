@@ -213,6 +213,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public void modifyRoomBtnClicked() { //TODO
 		if(this.selectedNode == null) return;
+
 		if(this.selectedNode.containsRoom()) {
 			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 		} else {
@@ -251,9 +252,16 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	private void addRoom(double x, double y, String name, String description) { //TODO
-		//		Room newRoom = new Room(x-this.RECTANGLE_WIDTH/2, y-this.RECTANGLE_HEIGHT/2, name, description);
-		//		this.directory.addRoom(newRoom);
-		//		this.paintRoomOnLocation(newRoom);
+		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
+		this.paintNode(newNode);
+		newNode.getShape().setOnMouseClicked(e -> this.onShapeClick(e, newNode));
+		newNode.getShape().setOnMouseDragged(e -> this.onShapeDrag(e, newNode));
+		newNode.getShape().setOnMouseReleased(e -> this.onShapeReleased(e, newNode));
+		newNode.getShape().setOnMousePressed((MouseEvent e) -> {
+			this.primaryPressed = e.isPrimaryButtonDown();
+			this.secondaryPressed = e.isSecondaryButtonDown();
+		});
+
 	}
 
 	private double readX() {
@@ -289,6 +297,11 @@ public class EditorController extends MapDisplayController implements Initializa
 //		Rectangle selectedRectangle = (Rectangle) this.selectedShape;
 //		selectedRectangle.setX(x);
 //		selectedRectangle.setY(y);
+		this.selectedNode.applyToRoom(room -> {
+			room.setName(name);
+			room.setDescription(description);
+		});
+		// TODO: Update the location of the node, whether or not it is a room
 	}
 
 	private void updateSelectedNode(double x, double y) { //TODO
@@ -299,12 +312,11 @@ public class EditorController extends MapDisplayController implements Initializa
 		selectedCircle.setCenterY(y);
 	}
 
-	private void deleteSelectedNode() { //TODO
+	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
 		if(this.selectedNode == null) return;
 
-
-		this.selectedNode.disconnectAll();
-		this.directory.removeNodeOrRoom(this.selectedNode);
+		this.selectedNode.disconnectAll(); // maybe should be in Directory?
+		this.directory.removeNodeAndRoom(this.selectedNode);
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
@@ -312,7 +324,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.selectedShape = null;
 
 		this.redrawLines();
-
 	}
 
 	public void redrawLines() {
