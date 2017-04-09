@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 // TODO: Improve documentation
 
@@ -156,9 +157,20 @@ public class Directory
 		return newNode;
 	}
 
-	// TODO: I would like these methods to be written as soon as Node has a z value
+	// TODO: Add test cases for new Directory methods like getNodesOnFloor
+
+	/**
+	 * Get a set of the nodes on the given floor
+	 *
+	 * @param floor The floor number to get noes for.
+	 *
+	 * @return A set of the nodes in this directory on the given floor.
+	 */
 	public Set<Node> getNodesOnFloor(int floor) {
-		return this.getNodes(); // TODO: CHANGE THIS
+		return this.nodes.stream()
+				// Stream::filter removes elements for which the lambda returns false
+				.filter(node -> node.getFloor() == floor)
+				.collect(Collectors.toSet()); // make the stream back into a set
 	}
 
 	public Set<Room> getRoomsOnFloor(int floor) {
