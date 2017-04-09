@@ -35,9 +35,10 @@ public class ApplicationController extends Application
 		ApplicationController.dbc.close();
 	}
 
+	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
 		Scene user = new Scene(root, 1174, 722);
 		primaryStage.setScene(user);

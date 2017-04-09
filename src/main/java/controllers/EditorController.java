@@ -91,8 +91,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		this.map4 = new Image("/4_thefourthfloor.png"); //TODO: load this from the directory
-		this.imageViewMap.setImage(this.map4); //Load background
+		this.loadMap();
+		this.imageViewMap.setImage(this.map); //Load background
 
 		//Init
 		this.populateChoiceBox(); //populate box for professionals
@@ -108,7 +108,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		}
 
-		this.displayNodes(); //draws the nodes from the directory
+		this.displayNodes(this.directory.getNodesOnFloor(floor)); //draws the nodes from the directory
 		this.redrawLines();  //deletes all the lines then draws them again from the directory
 
 		//Lets us click through items
@@ -125,7 +125,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private void logoutBtnClicked() {
 		try {
-			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.botPane.getScene().setRoot(userUI);
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -380,7 +380,7 @@ public class EditorController extends MapDisplayController implements Initializa
 				selectedShape = null;
 			}
 
-			this.displayNodes();
+			this.displayNodes(this.directory.getNodesOnFloor(floor));
 
 			this.selectedNode = null;
 			this.selectedShape = null;
@@ -396,8 +396,14 @@ public class EditorController extends MapDisplayController implements Initializa
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+
+				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
+				potentialScaleX = (potentialScaleX < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleX);
+				potentialScaleY = (potentialScaleY < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleY);
+				contentAnchor.setScaleX(potentialScaleX);
+				contentAnchor.setScaleY(potentialScaleY);
 			}
 		});
 
