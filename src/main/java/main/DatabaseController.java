@@ -366,6 +366,7 @@ public class DatabaseController
 		} catch (SQLException e) {
 			throw new DatabaseException("Failed to update database; database may be corrupt", e);
 		}
+		System.out.println("Done saving");
 	}
 
 	/**
@@ -414,14 +415,14 @@ public class DatabaseController
 			}
 		}
 		System.out.println("edges saved");
-
-		for (Room n : dir.getRooms()) {
-			for (Node m : n.getLocation().getNeighbors()) {
-				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
-				db.executeUpdate(query);
-			}
-		}
-		System.out.println("room edges saved");
+//
+//		for (Room n : dir.getRooms()) {
+//			for (Node m : n.getLocation().getNeighbors()) {
+//				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
+//				db.executeUpdate(query);
+//			}
+//		}
+//		System.out.println("room edges saved");
 
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
