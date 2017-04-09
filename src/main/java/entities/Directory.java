@@ -81,6 +81,7 @@ public class Directory
 
 	/** Remove the given node and its associated room from this directory */
 	public boolean removeNodeAndRoom(Node  n) {
+		n.disconnectAll();
 		n.applyToRoom(room -> this.rooms.remove(room));
 		return this.nodes.remove(n);
 	}

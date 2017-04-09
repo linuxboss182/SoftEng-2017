@@ -335,7 +335,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
 		if(this.selectedNode == null) return;
 
-		this.selectedNode.disconnectAll(); // maybe should be in Directory?
 		this.directory.removeNodeAndRoom(this.selectedNode);
 		this.selectedNode = null;
 		// now garbage collector has to do its work
