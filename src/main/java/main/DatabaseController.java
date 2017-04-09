@@ -13,12 +13,22 @@ import entities.Node;
 import entities.Professional;
 import entities.Room;
 
+// Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
+
 public class DatabaseController
 {
 	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private Connection db_connection;
 	private String connection_string;
+
+	// Debugging functions
+//	private static void PRINTLN(Object o) {
+//		System.out.println(o);
+//	}
+//	private static void PRINT(Object o) {
+//		System.out.print(o);
+//	}
 
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
@@ -283,7 +293,7 @@ public class DatabaseController
 			Statement queryNodes = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
-				//node, not room
+				//PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = new Node(resultNodes.getDouble("nodeX"),
 				                     resultNodes.getDouble("nodeY"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
@@ -293,12 +303,11 @@ public class DatabaseController
 			// populate Rooms
 			Statement queryRooms = this.db_connection.createStatement();
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
-			int nodeID;
-			Room room;
 			while (resultRooms.next()) {
-				room = new Room(resultRooms.getString("roomName"),
-				                resultRooms.getString("roomDescription"));
-				nodeID = resultRooms.getInt("nodeID");
+				//PRINTLN("Loading room " + resultRooms.getInt("roomID"));
+				Room room = new Room(resultRooms.getString("roomName"),
+				                     resultRooms.getString("roomDescription"));
+				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
 					//we have a location in the room
 					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
@@ -307,31 +316,33 @@ public class DatabaseController
 			}
 			resultRooms.close();
 
-			//populate adjacency lists
+			// add rooms to nodes
+			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
 			Statement queryEdges = this.db_connection.createStatement();
-			ResultSet resultEdges = null;
+			//ResultSet resultEdges = null;
 			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
-			int roomID;
 			while (resultNodes.next()) {
-				nodeID = resultNodes.getInt("nodeID");
-				roomID = resultNodes.getInt("roomID");
+				//PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
+				int nodeID = resultNodes.getInt("nodeID");
+				int roomID = resultNodes.getInt("roomID");
+				//PRINTLN("Loading room "+roomID);
 				if (! resultNodes.wasNull()) {
 					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
 				}
-
-				resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
-				while (resultEdges.next()) {
-					// If the current edge starts at the current node
-					if (resultEdges.getInt("node1") == resultNodes.getInt("nodeID")) {
-						//we have adjacent nodes
-						nodes.get(nodeID).connect(nodes.get(resultNodes.getInt("node2")));
-					}
-				}
-				resultEdges.close();
 			}
-			// Close statements
 			resultNodes.close();
-			resultRooms.close();
+
+			// add adjacency lists to nodes
+			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
+			while (resultEdges.next()) {
+				int node1 = resultEdges.getInt("node1");
+				int node2 = resultEdges.getInt("node2");
+				// PRINTLN("Loading edge "+node1+" "+node2);
+				nodes.get(node1).connect(nodes.get(node2));
+			}
+			resultEdges.close();
+
+			// Close statements
 			queryEdges.close();
 			queryNodes.close();
 			queryRooms.close();
@@ -356,12 +367,13 @@ public class DatabaseController
 	public void destructiveSaveDirectory(Directory dir)
 			throws DatabaseException {
 		this.reInitSchema(); // drop tables, then recreate tables
+		System.out.println("START SAVING");
 		try {
 			this.saveDirectory(dir); // insert directory info into tables
 		} catch (SQLException e) {
 			throw new DatabaseException("Failed to update database; database may be corrupt", e);
 		}
-		System.out.println("Done saving");
+		System.out.println("DONE SAVING");
 	}
 
 	/**
@@ -371,17 +383,18 @@ public class DatabaseController
 	 */
 	private void saveDirectory(Directory dir)
 			throws SQLException {
-		System.out.println("STARTING");
 		Statement db = this.db_connection.createStatement();
 		String query;
 
 		for (Node n : dir.getNodes()) {
+			//PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
 			db.executeUpdate(query);
 		}
 		System.out.println("nodes saved");
 
 		for (Room r : dir.getRooms()) {
+			//PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
@@ -404,7 +417,9 @@ public class DatabaseController
 //		System.out.println("kiosk saved");
 
 		for (Node n : dir.getNodes()) {
+			//PRINTLN("Saving edges for node "+n.hashCode());
 			for (Node m : n.getNeighbors()) {
+				//PRINTLN("Saving edge to "+m.hashCode());
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
