@@ -75,8 +75,8 @@ public abstract class UserMasterController extends MapDisplayController
 		this.directory = ApplicationController.getDirectory();
 
 		//Add map
-		this.map4 = new Image("/4_thefourthfloor.png");
-		this.imageViewMap.setImage(this.map4);
+		this.map = new Image("/4_thefourthfloor.png");
+		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
 		this.kiosk = null;
@@ -85,7 +85,7 @@ public abstract class UserMasterController extends MapDisplayController
 				this.kiosk = r;
 			}
 		}
-		this.displayRooms();
+		this.displayRooms(directory.getRoomsOnFloor(floor));
 		//this.populateListView();
 
 
@@ -147,7 +147,7 @@ public abstract class UserMasterController extends MapDisplayController
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
 				List<Node> ret;
-				ret = Pathfinder.findPath(kiosk, newValue);
+				ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
 				paintPath(new ArrayList<>(ret));
 			}
 		});
@@ -157,7 +157,7 @@ public abstract class UserMasterController extends MapDisplayController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.getDirectionsBtn.getScene().setRoot(userPath);
+		this.imageViewMap.getScene().setRoot(userPath);
 	}
 
 
@@ -185,7 +185,7 @@ public abstract class UserMasterController extends MapDisplayController
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
 
 		this.destNode = new Node(destX, destY);
-		main.Pathfinder.findPath(this.kiosk, this.destNode);
+		main.Pathfinder.findPath(this.kiosk.getLocation(), this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
