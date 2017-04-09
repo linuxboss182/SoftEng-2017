@@ -63,7 +63,6 @@
                         <Label text="Rooms Associated with Professional:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="roomTextLbl" prefHeight="17.0" prefWidth="511.0" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                         <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="3" />
-                        <Button fx:id="refreshBtn" mnemonicParsing="false" onMouseClicked="#refreshBtnClicked" text="Refresh" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                         <Button fx:id="deleteProfBtn" mnemonicParsing="false" onMouseClicked="#deleteProfBtnClicked" text="Delete Professional" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
