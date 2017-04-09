@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import main.ApplicationController;
@@ -30,14 +31,13 @@ import main.Pathfinder;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Set;
 
-/**
- * Created by s7sal on 4/8/2017.
- */
+
 public abstract class UserMasterController extends MapDisplayController
 {
 	@FXML
@@ -133,6 +133,14 @@ public abstract class UserMasterController extends MapDisplayController
 		this.contentAnchor.getScene().setRoot(loginPrompt);
 
 
+	}
+
+	public void displayRooms(Collection<Room> rooms) {
+		Set<Rectangle> roomShapes = new HashSet<>();
+		for (Room r : rooms) {
+			roomShapes.add(r.getShape());
+		}
+		this.topPane.getChildren().setAll(roomShapes);
 	}
 
 	public void populateListView() {
