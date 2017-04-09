@@ -99,8 +99,16 @@ public abstract class UserMasterController extends MapDisplayController
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+				if(potentialScaleX < 1/SCALE_DELTA) {
+					potentialScaleX = 1/SCALE_DELTA;
+				}
+				if(potentialScaleY < 1/SCALE_DELTA) {
+					potentialScaleY = 1/SCALE_DELTA;
+				}
+				contentAnchor.setScaleX(potentialScaleX);
+				contentAnchor.setScaleY(potentialScaleY);
 			}
 		});
 		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {

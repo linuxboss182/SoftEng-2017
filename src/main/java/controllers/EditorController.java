@@ -157,6 +157,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
+				System.out.println(event.getDeltaY());
 				event.consume();
 				if (event.getDeltaY() == 0) {
 					return;
@@ -165,8 +166,20 @@ public class EditorController extends MapDisplayController implements Initializa
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+				System.out.println("scaleFactor = " + scaleFactor);
+
+				// We want to make sure they can't zoom out too much because that will cause some issues
+				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+				if(potentialScaleX < 1/SCALE_DELTA) {
+					potentialScaleX = 1/SCALE_DELTA;
+				}
+				if(potentialScaleY < 1/SCALE_DELTA) {
+					potentialScaleY = 1/SCALE_DELTA;
+				}
+				contentAnchor.setScaleX(potentialScaleX);
+				contentAnchor.setScaleY(potentialScaleY);
+
 			}
 		});
 
@@ -180,8 +193,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				if(!beingDragged) {
-					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (int)event.getX() - clickedX);
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (int)event.getY() - clickedY);
 				}
 				event.consume();
 			}
