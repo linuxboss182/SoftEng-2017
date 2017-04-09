@@ -75,7 +75,9 @@ public abstract class UserMasterController extends MapDisplayController
 		this.directory = ApplicationController.getDirectory();
 
 		//Add map
-		this.map = new Image("/4_thefourthfloor.png");
+		//this.map = new Image("/4_thefourthfloor.png");
+		// use floor proxy class to load in map
+		this.map = new FloorProxy(4).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
