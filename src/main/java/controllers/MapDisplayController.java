@@ -86,6 +86,7 @@ public abstract class MapDisplayController
 		this.directory.getRooms().forEach(room -> this.paintNode(room.getLocation()));
 	}
 
+	// TODO: Probably make displayNodes/displayRooms/paintNode non-inherited
 	//Editor
 	public void paintNode(Node n) {
 		if(!this.topPane.getChildren().contains(n.getShape())) {

@@ -33,8 +33,11 @@ import main.DatabaseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class EditorController extends MapDisplayController implements Initializable
 {
@@ -113,8 +116,10 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.contentAnchor.setPickOnBounds(false);
 		this.topPane.setPickOnBounds(false);
 
-		this.installPaneLisenters();
+		this.installPaneListeners();
 
+		// Add listeners to all nodes
+		this.directory.getNodes().forEach(this::addNodeListeners);
 	}
 
 	@FXML
@@ -132,6 +137,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		if (this.selectedProf == null || this.selectedNode == null) return;
 
 		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
+		// TODO: Use StringBuilder
 		String roomList = "";
 		for (Room r: this.selectedProf.getLocations()) {
 			roomList += r.getName() + ", ";
@@ -222,6 +228,22 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.deleteSelectedNode();
 	}
 
+	/* **** Non-FXML functions **** */
+
+	//Editor
+	@Override
+	public void displayNodes() {
+		Set<Circle> nodeShapes = new HashSet<>();
+		for (Node n : this.directory.getNodes()) {
+			nodeShapes.add(n.getShape());
+		}
+		this.topPane.getChildren().setAll(nodeShapes);
+//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
+
+//		this.topPane.getChildren().removeAll();
+//		this.directory.getNodes().forEach(node -> this.paintNode(node));
+	}
+
 
 	public void selectChoiceBox(){
 		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -247,17 +269,19 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 
-	private void addRoom(double x, double y, String name, String description) { //TODO
-		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
-		this.paintNode(newNode);
-		newNode.getShape().setOnMouseClicked(e -> this.onShapeClick(e, newNode));
-		newNode.getShape().setOnMouseDragged(e -> this.onShapeDrag(e, newNode));
-		newNode.getShape().setOnMouseReleased(e -> this.onShapeReleased(e, newNode));
-		newNode.getShape().setOnMousePressed((MouseEvent e) -> {
-			this.primaryPressed = e.isPrimaryButtonDown();
-			this.secondaryPressed = e.isSecondaryButtonDown();
+	/**
+	 * Add listeners to the given node
+	 *
+	 * @note No other function should add the base listeners to nodes.
+	 */
+	private void addNodeListeners(Node node) {
+		node.getShape().setOnMouseClicked(event -> this.onShapeClick(event, node));
+		node.getShape().setOnMouseDragged(event -> this.onShapeDrag(event, node));
+		node.getShape().setOnMouseReleased(event -> this.onShapeReleased(event, node));
+		node.getShape().setOnMousePressed((MouseEvent event) -> {
+			this.primaryPressed = event.isPrimaryButtonDown();
+			this.secondaryPressed = event.isSecondaryButtonDown();
 		});
-
 	}
 
 	private double readX() {
@@ -268,22 +292,22 @@ public class EditorController extends MapDisplayController implements Initializa
 		return Double.parseDouble(this.yCoordField.getText());
 	}
 
+
+	/**
+	 * Add a new room with the given information to the directory.
+	 * Also add a new node associated ith the room.
+	 */
+	private void addRoom(double x, double y, String name, String description) { //TODO
+		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
+		this.paintNode(newNode);
+		this.addNodeListeners(newNode);
+	}
+
+	/** Add a new node to the directory at the given coordinates */
 	private void addNode(double x, double y) {
 		Node newNode = this.directory.addNewNode(x, y);
 		this.paintNode(newNode);
-		newNode.getShape().setOnMouseClicked((MouseEvent e) -> {
-			onShapeClick(e, newNode);
-		});
-		newNode.getShape().setOnMouseDragged((MouseEvent e) -> {
-			onShapeDrag(e, newNode);
-		});
-		newNode.getShape().setOnMouseReleased((MouseEvent e) -> {
-			onShapeReleased(e, newNode);
-		});
-		newNode.getShape().setOnMousePressed((MouseEvent e) -> {
-			this.primaryPressed = e.isPrimaryButtonDown();
-			this.secondaryPressed = e.isSecondaryButtonDown();
-		});
+		this.addNodeListeners(newNode);
 	}
 
 	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
@@ -343,7 +367,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	/////EVENT HANDLERS////
 	///////////////////////
 
-	public void installPaneLisenters(){
+	public void installPaneListeners(){
 		botPane.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
@@ -426,15 +450,17 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	// This is going to allow us to drag a node!!!
 	public void onShapeDrag(MouseEvent e, Node n) {
-		beingDragged = true;
+		this.beingDragged = true;
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
-			if(this.primaryPressed) {
+
+			if(e.isPrimaryButtonDown()) {
 				this.selectedShape = (Shape) e.getSource();
 				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
 			} else if(this.secondaryPressed) {
 				// right click drag on the selected node
+				// do nothing for now
 			}
 		}
 	}
@@ -448,8 +474,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		if(this.releasedX < 0 || this.releasedY < 0) {
 			this.deleteSelectedNode();
 		}
+
+		this.beingDragged = false;
 	}
-
-
 
 }
