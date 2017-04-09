@@ -33,11 +33,11 @@ import main.DatabaseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class EditorController extends MapDisplayController implements Initializable
 {
@@ -336,9 +336,12 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
-		this.contentPane.getChildren().remove(this.selectedShape);
+		// this.contentPane is always null
+//		System.err.println(this.contentPane);
+//		this.contentPane.getChildren().remove(this.selectedShape);
 		this.selectedShape = null;
 
+		this.displayNodes(this.directory.getNodesOnFloor(floor));
 		this.redrawLines();
 	}
 
