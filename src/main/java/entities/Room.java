@@ -90,12 +90,15 @@ public class Room
 		this.description = description;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setImage(String imagepath) {
+		this.image = imagepath;
 	}
 
+	// TODO: Remove Room::toString; replace with custom method
 	@Override
-	public String toString() { return this.name; }
+	public String toString() {
+		return this.name;
+	}
 
 	public Rectangle getShape() {
 		return this.rect;
