@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 
-/**
- * Created by s7sal on 4/7/2017.
- */
+
 public abstract class MapDisplayController
 {
 	// TODO: Add click+drag to select a rectangle area of nodes/a node
@@ -76,11 +74,7 @@ public abstract class MapDisplayController
 		this.topPane = topPane;
 	}
 
-	//Editor
-	public void displayNodes(Set<Node> nodes) {
-		this.topPane.getChildren().clear();
-		nodes.forEach(node -> this.paintNode(node));
-	}
+
 
 	//Editor
 	public void displayRooms(Set<Room> rooms) {

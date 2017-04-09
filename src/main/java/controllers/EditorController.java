@@ -231,17 +231,14 @@ public class EditorController extends MapDisplayController implements Initializa
 	/* **** Non-FXML functions **** */
 
 	//Editor
-	@Override
-	public void displayNodes() {
+	public void displayNodes(Collection<Node> nodes) {
 		Set<Circle> nodeShapes = new HashSet<>();
-		for (Node n : this.directory.getNodes()) {
+		for (Node n : nodes) {
 			nodeShapes.add(n.getShape());
 		}
 		this.topPane.getChildren().setAll(nodeShapes);
-//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
 
-//		this.topPane.getChildren().removeAll();
-//		this.directory.getNodes().forEach(node -> this.paintNode(node));
+//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
 	}
 
 
