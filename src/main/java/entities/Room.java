@@ -97,6 +97,9 @@ public class Room
 	}
 
 	public Rectangle getShape() {
+		if(this.rect == null) {
+			this.makeShape(); // maybe move this to the constructor
+		}
 		return this.rect;
 	}
 
