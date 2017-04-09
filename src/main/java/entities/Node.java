@@ -241,6 +241,7 @@ public class Node
 		}
 	}
 
+	// TODO: Return a different shape if associated with a room
 	public Circle getShape() {
 		if(this.circ == null) {this.makeShape();}
 		return this.circ;

@@ -129,33 +129,29 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode.containsRoom())) {
-			return;
-		} else {
-			this.selectedProf.addLocation(this.selectedNode.getRoom());
-			this.roomList = "";
-			for (Room r: this.selectedProf.getLocations())
-				this.roomList += r.getName() + ", ";
-			this.roomTextLbl.setText(this.roomList);
+		if (this.selectedProf == null || this.selectedNode == null) return;
+
+		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
+		String roomList = "";
+		for (Room r: this.selectedProf.getLocations()) {
+			roomList += r.getName() + ", ";
 		}
+		this.roomTextLbl.setText(roomList);
 	}
 
 	@FXML
 	public void delProfFromRoom() {
-		if (this.selectedNode == null) {
-			return;
-		} else {
-			this.selectedProf.getLocations().forEach(room -> {
-				if(room.equals(this.selectedNode)) {
-					this.selectedProf.removeLocation(room);
-				}
-			});
+		if (this.selectedNode == null || this.selectedProf == null) return;
 
-			this.roomList = "";
-			for (Room r: this.selectedProf.getLocations())
-				this.roomList += r.getName() + ", ";
-			this.roomTextLbl.setText(this.roomList);
+		this.selectedNode.applyToRoom(room -> this.selectedProf.removeLocation(room));
+
+		// TODO: Use StringBuilder
+		String roomList = "";
+		for (Room r: this.selectedProf.getLocations()) {
+			roomList += r.getName() + ", ";
 		}
+		this.roomTextLbl.setText(roomList);
+
 	}
 
 	@FXML
