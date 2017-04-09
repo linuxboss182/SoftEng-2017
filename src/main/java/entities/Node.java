@@ -41,8 +41,9 @@ public class Node
 		this.room = Optional.empty();
 	}
 
+	// TODO: Change default floor to 0 once floor-switching works
 	public Node(double x, double y) {
-		this(x, y, 0);
+		this(x, y, 4);
 	}
 
 	public double getX() {
@@ -51,6 +52,10 @@ public class Node
 
 	public double getY() {
 		return this.y;
+	}
+
+	public int getFloor() {
+		return this.floor;
 	}
 
 	// TODO: Refactor Node::getRoom uses to accept an Optional, and return the Optional
@@ -74,6 +79,10 @@ public class Node
 //		if (this.room != null) {
 //			consumer.accept(this.room);
 //		}
+	}
+
+	public void setFloor(int floor) {
+		this.floor = floor;
 	}
 
 	public void setRoom(Room room) {
