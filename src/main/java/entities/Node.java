@@ -69,7 +69,15 @@ public class Node
 		return this.room.orElse(null);
 	}
 
-	/** Apply the given consumer function to this node's associated room, if present */
+	/**
+	 * Apply the given consumer function to this node's associated room, if present
+	 *
+	 * With lambdas, this allows you to pretend all nodes have a room
+	 *
+	 * e.g. {@code node.applyToRoom(room -> room.setName("Room 1"));}
+	 *
+	 * @param consumer A function that may take a single Room as its only argument
+	 */
 	public void applyToRoom(Consumer<? super Room> consumer) {
 		this.room.ifPresent(consumer);
 
