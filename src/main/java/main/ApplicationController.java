@@ -12,7 +12,7 @@ public class ApplicationController extends Application
 {
 
 	public static DatabaseController dbc;
-	public static Directory directory;
+	private static Directory directory;
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
@@ -38,7 +38,7 @@ public class ApplicationController extends Application
 	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
 		Scene user = new Scene(root, 1174, 722);
 		primaryStage.setScene(user);

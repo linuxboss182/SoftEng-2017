@@ -120,7 +120,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private void logoutBtnClicked() {
 		try {
-			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/FinalUI.fxml"));
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.botPane.getScene().setRoot(userUI);
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -365,8 +365,14 @@ public class EditorController extends MapDisplayController implements Initializa
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
-				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+
+				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
+				potentialScaleX = (potentialScaleX < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleX);
+				potentialScaleY = (potentialScaleY < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleY);
+				contentAnchor.setScaleX(potentialScaleX);
+				contentAnchor.setScaleY(potentialScaleY);
 			}
 		});
 
