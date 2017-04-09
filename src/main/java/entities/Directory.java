@@ -109,7 +109,7 @@ public class Directory
 //		return this.kiosk.orElse(null);
 //	}
 
-	// TODO: Write this method properly
+	// TODO: We probably don't need this.
 	private int getHeight() {
 		return 4;
 	}
@@ -126,6 +126,14 @@ public class Directory
 		return newNode;
 	}
 
+	// TODO: I would like these methods to be written as soon as Node has a z value
+	public Set<Node> getNodesOnFloor(int floor) {
+		return this.getNodes(); // TODO: CHANGE THIS
+	}
+
+	public Set<Room> getRoomsOnFloor(int floor) {
+		return this.getRooms(); // TODO: CHANGE THIS
+	}
 }
 
 

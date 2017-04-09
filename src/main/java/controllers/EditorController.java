@@ -88,7 +88,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		this.map = new Image("/4_thefourthfloor.png"); //TODO: load this from the directory
+		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
 
 		//Init
@@ -105,7 +105,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		}
 
-		this.displayNodes(); //draws the nodes from the directory
+		this.displayNodes(this.directory.getNodesOnFloor(floor)); //draws the nodes from the directory
 		this.redrawLines();  //deletes all the lines then draws them again from the directory
 
 		//Lets us click through items
@@ -349,7 +349,7 @@ public class EditorController extends MapDisplayController implements Initializa
 				selectedShape = null;
 			}
 
-			this.displayNodes();
+			this.displayNodes(this.directory.getNodesOnFloor(floor));
 
 			this.selectedNode = null;
 			this.selectedShape = null;
