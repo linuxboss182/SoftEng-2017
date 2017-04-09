@@ -83,6 +83,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 
+	AddProfessionalController addProController = new AddProfessionalController();
+
 	final double SCALE_DELTA = 1.1; //The rate to scale
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
@@ -133,85 +135,80 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addProfToRoom() {
-		// TODO: Change use of instanceof to good coding standards
-//		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode instanceof Room)) {
-//			return;
-//		} else {
-//			this.selectedProf.addLocation((Room)this.selectedNode);
-//			this.roomList = "";
-//			for (Room r: this.selectedProf.getLocations())
-//				this.roomList += r.getName() + ", ";
-//			this.roomTextLbl.setText(this.roomList);
-//		}
+		if (this.selectedProf == null || this.selectedNode == null || !(this.selectedNode.containsRoom())) {
+			return;
+		} else {
+			this.selectedProf.addLocation(this.selectedNode.getRoom());
+			this.roomList = "";
+			for (Room r: this.selectedProf.getLocations())
+				this.roomList += r.getName() + ", ";
+			this.roomTextLbl.setText(this.roomList);
+		}
 	}
 
 	@FXML
 	public void delProfFromRoom() {
-//		if (this.selectedNode == null) {
-//			return;
-//		} else {
-//			this.selectedProf.getLocations().forEach(room -> {
-//				if(room.equals(this.selectedNode)) {
-//					this.selectedProf.removeLocation(room);
-//				}
-//			});
-//
-//			this.roomList = "";
-//			for (Room r: this.selectedProf.getLocations())
-//				this.roomList += r.getName() + ", ";
-//			this.roomTextLbl.setText(this.roomList);
-//		}
+		if (this.selectedNode == null) {
+			return;
+		} else {
+			this.selectedProf.getLocations().forEach(room -> {
+				if(room.equals(this.selectedNode)) {
+					this.selectedProf.removeLocation(room);
+				}
+			});
+
+			this.roomList = "";
+			for (Room r: this.selectedProf.getLocations())
+				this.roomList += r.getName() + ", ";
+			this.roomTextLbl.setText(this.roomList);
+		}
 	}
 
 	@FXML
 	public void refreshBtnClicked() {
-		//TODO
-//		this.populateChoiceBox();
-//
-//		for (Professional pro: this.directory.getProfessionals()) {
-//			this.proList.add(pro);
-//
-//		}
+		this.populateChoiceBox();
+
+		for (Professional pro: this.directory.getProfessionals()) {
+			this.proList.add(pro);
+
+		}
 	}
 
 	@FXML
 	public void addCustomProBtnPressed() throws IOException {
-		//TODO
-//		FXMLLoader loader = new FXMLLoader();
-//		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
-//		this.addProController = loader.getController();
-//		//this.addProController.setEditorController(this);
-//		Scene addProScene = new Scene(loader.load());
-//		Stage addProStage = new Stage();
-//		addProStage.setScene(addProScene);
-//
-//		addProStage.showAndWait();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
+		this.addProController = loader.getController();
+		//this.addProController.setEditorController(this);
+		Scene addProScene = new Scene(loader.load());
+		Stage addProStage = new Stage();
+		addProStage.setScene(addProScene);
+
+		addProStage.showAndWait();
 	}
 
 	@FXML
 	public void deleteProfBtnClicked () {
-		//TODO
-//		this.directory.removeProfessional(this.selectedProf);
-//	//	this.refreshBtnClicked();
+		this.directory.removeProfessional(this.selectedProf);
+	//	this.refreshBtnClicked();
 	}
 
 
 	@FXML
 	public void confirmBtnPressed() {
-		//TODO
-//		this.directory.getRooms().forEach(room -> {
-//			System.out.println("Attempting to save room: " + room.getName() + " to database...");
-//		});
-//
-//		try {
-//
-//
-//			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
-//		} catch (DatabaseException e) {
-//			System.err.println("\n\nDATABASE DAMAGED\n\n");
-//			e.printStackTrace();
-//			System.err.println("\n\nDATABASE DAMAGED\n\n");
-//		}
+		this.directory.getRooms().forEach(room -> {
+			System.out.println("Attempting to save room: " + room.getName() + " to database...");
+		});
+
+		try {
+
+
+			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
+		} catch (DatabaseException e) {
+			System.err.println("\n\nDATABASE DAMAGED\n\n");
+			e.printStackTrace();
+			System.err.println("\n\nDATABASE DAMAGED\n\n");
+		}
 	}
 
 	@FXML
@@ -220,9 +217,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	@FXML
-	public void modifyRoomBtnClicked() {
+	public void modifyRoomBtnClicked() { //TODO
 		if(this.selectedNode == null) return;
-		//TODO: Change use of instanceof to good coding standards
 		if(this.selectedNode.containsRoom()) {
 			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 		} else {
@@ -237,23 +233,22 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	public void selectChoiceBox(){
-		//TODO
-//		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
-//
-//				if(proList.size() != 0 && newValue.intValue() >= 0) {
-//					EditorController.this.selectedProf = proList.get(newValue.intValue());
-//				}
-//
-//				// Build a string listing the names of the professional's rooms
-//				StringJoiner roomList = new StringJoiner(", ");
-//				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
-//
-//				roomTextLbl.setText(roomList.toString());
-//			}
-//		});
+		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
+
+				if(proList.size() != 0 && newValue.intValue() >= 0) {
+					EditorController.this.selectedProf = proList.get(newValue.intValue());
+				}
+
+				// Build a string listing the names of the professional's rooms
+				StringJoiner roomList = new StringJoiner(", ");
+				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
+
+				roomTextLbl.setText(roomList.toString());
+			}
+		});
 	}
 
 	public void populateChoiceBox() {
@@ -293,7 +288,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		});
 	}
 
-	private void updateSelectedRoom(double x, double y, String name, String description) {
+	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
 //		this.selectedNode.moveTo(x, y);
 //		((Room) this.selectedNode).setName(name);
 //		((Room) this.selectedNode).setDescription(description);
@@ -355,16 +350,11 @@ public class EditorController extends MapDisplayController implements Initializa
 				this.addNode(e.getX(), e.getY());
 			}
 
-			//TODO change only this shape
-//			if(this.selectedShape != null) {
-//				if(this.selectedNode.getRoom() != null) {
-//					if (this.selectedNode.getRoom().getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-//						this.selectedShape.setFill(this.KIOSK_COLOR);
-//					} else {
-//						this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
-//					}
-//				}
-//			}
+			if(this.selectedShape != null) {
+				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				selectedShape = null;
+			}
+
 			this.displayNodes();
 
 			this.selectedNode = null;
@@ -411,24 +401,11 @@ public class EditorController extends MapDisplayController implements Initializa
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-//			if(this.selectedShape != null) {
-//
-//				//TODO change only this shape
-//				if(this.selectedShape != null) {
-//					if(this.selectedNode.getRoom() != null) {
-//						if (this.selectedNode.getRoom().getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-//							this.selectedShape.setFill(this.KIOSK_COLOR);
-//						} else {
-//							this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
-//						}
-//					}
-//				}
-//
-////				this.displayNodes();
-//
-//			} else {
-//				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
-//			}
+
+			if(this.selectedShape != null) {
+				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				selectedShape = null;
+			}
 
 			this.selectedShape = (Shape) e.getSource();
 			this.selectedNode = n;
