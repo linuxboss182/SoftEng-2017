@@ -10,27 +10,27 @@ public class StoredProcedures
 
 	private static final List<String> schema = Arrays.asList(
 			"CREATE TABLE Nodes ("
-					+ "nodeID integer PRIMARY KEY"
+					+ " nodeID integer PRIMARY KEY"
 					+ " , nodeX  DOUBLE PRECISION "
-					+ ", nodeY  DOUBLE PRECISION)"
+					+ ", nodeY  DOUBLE PRECISION"
 					+  ", roomID integer)",/*references Rooms(roomID))",*/ // foreign key would cause drop problems
 			"CREATE TABLE Edges ("
-					+"node1 integer references Nodes(nodeID) NOT NULL"
-					+" , node2 integer references Nodes(nodeID) NOT NULL)",
+					+" node1 integer references Nodes(nodeID) ON DELETE CASCADE"
+					+" , node2 integer references Nodes(nodeID) ON DELETE CASCADE"
+					+" , constraint Edges_pk PRIMARY KEY (node1, node2))",
 			"CREATE TABLE Rooms ("
-					+"roomID             integer PRIMARY KEY"
-					+"roomName           varchar(200) NOT NULL"
+					+" roomID             integer PRIMARY KEY"
+					+" , roomName           varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
-					+" , nodeID          integer references Nodes(nodeID)"
-					+" , constraint Rooms_pk PRIMARY KEY (nodeID))",
+					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL)",
 			"CREATE TABLE Employees ("
-					+"employeeID        integer PRIMARY KEY"
+					+" employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
 					+" , employeeSurname   varchar(100)"
 					+" , employeeTitle     varchar(100))",
 			"CREATE TABLE EmployeeRooms ("
-					+"roomID   integer references Rooms(roomID)"
-					+" , employeeID integer references Employees(employeeID)"
+					+"roomID   integer references Rooms(roomID) ON DELETE CASCADE"
+					+" , employeeID integer references Employees(employeeID) ON DELETE CASCADE"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))"
 	); // TODO: Remove Kiosk table from database
 	//"CREATE TABLE Kiosk (nodeID integer references Nodes(nodeID) NOT NULL)"

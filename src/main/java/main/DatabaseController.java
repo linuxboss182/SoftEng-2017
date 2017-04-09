@@ -116,7 +116,6 @@ public class DatabaseController
 		}
 
 		for (String table : StoredProcedures.getSchema()) {
-			//drop the table if it exists
 			try {
 				initSchema.executeUpdate(table);
 			} catch (SQLException e) {
@@ -152,6 +151,7 @@ public class DatabaseController
 		try {
 			initSchema.close();
 		} catch (SQLException e) {
+			System.err.println("Failed to close connection");
 			e.printStackTrace();
 			return false;
 		}
@@ -324,11 +324,14 @@ public class DatabaseController
 						nodes.get(nodeID).connect(nodes.get(resultNodes.getInt("node2")));
 					}
 				}
+				resultEdges.close();
 			}
 			// Close statements
 			resultNodes.close();
-			resultEdges.close();
 			resultRooms.close();
+			queryEdges.close();
+			queryNodes.close();
+			queryRooms.close();
 		} catch (SQLException e){
 			throw e;
 		}
@@ -357,8 +360,8 @@ public class DatabaseController
 	// (i.e. copy the db directory, then operate, and remove it if successful)
 	public void destructiveSaveDirectory(Directory dir)
 			throws DatabaseException {
+		this.reInitSchema(); // drop tables, then recreate tables
 		try {
-			this.reInitSchema(); // drop tables, then recreate tables
 			this.saveDirectory(dir); // insert directory info into tables
 		} catch (SQLException e) {
 			throw new DatabaseException("Failed to update database; database may be corrupt", e);
@@ -372,6 +375,7 @@ public class DatabaseController
 	 */
 	private void saveDirectory(Directory dir)
 			throws SQLException {
+		System.out.println("STARTING");
 		Statement db = this.db_connection.createStatement();
 		String query;
 
