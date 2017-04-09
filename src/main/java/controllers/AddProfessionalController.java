@@ -10,11 +10,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static main.ApplicationController.directory;
+import static main.ApplicationController.getDirectory;
 
-/**
- * Created by s7sal on 4/4/2017.
- */
+
 public class AddProfessionalController implements Initializable
 {
 
@@ -46,7 +44,7 @@ public class AddProfessionalController implements Initializable
 	@FXML
 	public void onAddProBtnClicked() {
 		Professional newPro = new Professional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
-		directory.addProfessional(newPro);
+		getDirectory().addProfessional(newPro);
 		//this.editorController.populateChoiceBox();
 
 

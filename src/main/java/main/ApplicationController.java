@@ -12,7 +12,7 @@ public class ApplicationController extends Application
 {
 
 	public static DatabaseController dbc;
-	public static Directory directory;
+	private static Directory directory;
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
