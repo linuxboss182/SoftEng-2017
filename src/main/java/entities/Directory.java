@@ -79,9 +79,10 @@ public class Directory
 		return this.rooms.remove(room);
 	}
 
-	/** Remove the given node or room from this directory */
-	public boolean removeNodeOrRoom(Node  n) {
-		return this.nodes.remove(n) || this.rooms.remove(n);
+	/** Remove the given node and its associated room from this directory */
+	public boolean removeNodeAndRoom(Node  n) {
+		n.applyToRoom(room -> this.rooms.remove(room));
+		return this.nodes.remove(n);
 	}
 
 	public boolean removeProfessional(Professional professional) {
