@@ -1,8 +1,6 @@
 package entities;
 
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -33,16 +31,7 @@ public class Node
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
-	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
-	protected static final double RECTANGLE_WIDTH = 7;
-	protected static final double RECTANGLE_HEIGHT = 7;
-	protected static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
-	protected static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
-	protected static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
-	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	protected static final Color KIOSK_COLOR = Color.YELLOW;
-	protected static final String KIOSK_NAME = "You Are Here";
-	protected static final double CIRCLE_RADIUS = 5;
+	private static final double CIRCLE_RADIUS = 5;
 
 	public Node(double x, double y, int floor) {
 		this.x = x;
@@ -241,16 +230,32 @@ public class Node
 		}
 	}
 
-	// TODO: Return a different shape if associated with a room
+	/**
+	 * Get the this node's shape
+	 *
+	 * If it does not have a shape, create one.
+	 *
+	 * @return This node's shape, a Circle
+	 */
+	//TODO: Maybe make a Node's shape be a Shape rather than a Circle
 	public Circle getShape() {
-		if(this.circ == null) {this.makeShape();}
+		if(this.circ == null) {
+			this.makeShape(); // maybe move this to the constructor
+		}
 		return this.circ;
 	}
 
 	private void makeShape() {
-		this.circ = new Circle(this.getX(), this.getY(), this.CIRCLE_RADIUS, this.DEFAULT_SHAPE_COLOR);
-		this.circ.setStroke(this.DEFAULT_STROKE_COLOR);
-		this.circ.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+		this.circ = new Circle(this.x, this.y, Node.CIRCLE_RADIUS);
+		if (this.room.isPresent()) {
+			this.circ.setFill(COLORS.ROOM.bodyColor());
+			this.circ.setStroke(COLORS.ROOM.lineColor());
+			this.circ.setStrokeWidth(COLORS.ROOM.strokeWidth());
+		} else {
+			this.circ.setFill(COLORS.NO_ROOM.bodyColor());
+			this.circ.setStroke(COLORS.NO_ROOM.lineColor());
+			this.circ.setStrokeWidth(COLORS.NO_ROOM.strokeWidth());
+		}
 	}
 
 }
