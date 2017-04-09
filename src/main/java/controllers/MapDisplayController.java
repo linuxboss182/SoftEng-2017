@@ -88,8 +88,10 @@ public abstract class MapDisplayController
 
 	//Editor
 	public void paintNode(Node n) {
-		this.topPane.getChildren().add(n.getShape());
-		n.getShape().setVisible(true);
+		if(!this.topPane.getChildren().contains(n.getShape())) {
+			this.topPane.getChildren().add(n.getShape());
+			n.getShape().setVisible(true);
+		}
 	}
 
 	//This function takes in two nodes, displays a

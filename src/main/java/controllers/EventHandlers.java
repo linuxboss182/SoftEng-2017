@@ -6,13 +6,15 @@ import entities.Room;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
 
-public class Events 
+public class EventHandlers
 {
-//
+
+
 //	public void addLisenter(EditorController that) {
 //		this.botPane.setOnMouseClicked(e -> {
 //
@@ -36,21 +38,8 @@ public class Events
 //			this.selectedNode = null;
 //			this.selectedShape = null;
 //		});
-//
-//		//populate box for professionals
-//		this.populateChoiceBox();
-//		this.proList = new ArrayList<>();
-//		for (Professional pro: this.directory.getProfessionals()) {
-//			this.proList.add(pro);
-//		}
-//		this.selectChoiceBox();
-//
-//		this.kiosk = null;
-//		for (Room r : this.directory.getRooms()) {
-//			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-//				this.kiosk = r;
-//			}
-//		}
+
+
 //
 //		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 //			@Override public void handle(ScrollEvent event) {
@@ -84,10 +73,10 @@ public class Events
 //			}
 //		});
 //	}
-//
-//
-//
-//
+
+
+
+
 //
 //
 //
@@ -116,10 +105,10 @@ public class Events
 //			EditorController.this.onShapeReleased(e, r);
 //		});
 //	}
-//
-//
-//
-//
+
+
+
+
 //	public void onShapeClick(MouseEvent e, Node n) {
 //
 //		// update text fields
@@ -185,8 +174,8 @@ public class Events
 //			this.deleteSelectedNode();
 //		}
 //	}
-//
-//
+
+
 //	public void onRectangleDrag(MouseEvent e, Room r) {
 //		if(this.selectedNode != null && this.selectedNode.equals(r)) {
 //			if(this.primaryPressed) {
@@ -197,7 +186,6 @@ public class Events
 //			} else if(this.secondaryPressed) {
 //				// right click drag on the selected node
 //			}
-//
 //		}
-//
+
 }

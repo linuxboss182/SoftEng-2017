@@ -89,13 +89,25 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
-
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+		this.map4 = new Image("/4_thefourthfloor.png"); //TODO: load this from the directory
+		this.imageViewMap.setImage(this.map4); //Load background
 
-		//TODO: get this from the directory
-		this.map4 = new Image("/4_thefourthfloor.png");
-		this.imageViewMap.setImage(this.map4);
+		//Init
+		this.populateChoiceBox(); //populate box for professionals
+		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
+		for (Professional pro: this.directory.getProfessionals()) {
+			this.proList.add(pro);
+		}
+		this.selectChoiceBox();
+		this.kiosk = null;
+		for (Room r : this.directory.getRooms()) {
+			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
+				this.kiosk = r;
+			}
+		}
 
 		this.displayNodes(); //draws the nodes from the directory
 		this.redrawLines();  //deletes all the lines then draws them again from the directory
@@ -104,6 +116,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.imageViewMap.setPickOnBounds(true);
 		this.contentAnchor.setPickOnBounds(false);
 		this.topPane.setPickOnBounds(false);
+
+		this.installPaneLisenters();
 
 	}
 
@@ -202,8 +216,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addRoomBtnClicked() {
-		//TODO
-//		this.addRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.addRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -263,19 +276,24 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	private void addNode(double x, double y) {
-		Node newNode = this.directory.newNode(x,y);
+		Node newNode = this.directory.newNode(x, y);
 		this.paintNode(newNode);
+		newNode.getShape().setOnMouseClicked((MouseEvent e) -> {
+			onShapeClick(e, newNode);
+		});
+		newNode.getShape().setOnMouseDragged((MouseEvent e) -> {
+			onShapeDrag(e, newNode);
+		});
+		newNode.getShape().setOnMouseReleased((MouseEvent e) -> {
+			onShapeReleased(e, newNode);
+		});
+		newNode.getShape().setOnMousePressed((MouseEvent e) -> {
+			this.primaryPressed = e.isPrimaryButtonDown();
+			this.secondaryPressed = e.isSecondaryButtonDown();
+		});
 	}
 
-	private void updateSelectedNode(double x, double y) { //TODO
-//		this.selectedNode.moveTo(x, y);
-//
-//		Circle selectedCircle = (Circle) this.selectedShape;
-//		selectedCircle.setCenterX(x);
-//		selectedCircle.setCenterY(y);
-	}
-
-	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
+	private void updateSelectedRoom(double x, double y, String name, String description) {
 //		this.selectedNode.moveTo(x, y);
 //		((Room) this.selectedNode).setName(name);
 //		((Room) this.selectedNode).setDescription(description);
@@ -284,19 +302,27 @@ public class EditorController extends MapDisplayController implements Initializa
 //		selectedRectangle.setY(y);
 	}
 
+	private void updateSelectedNode(double x, double y) { //TODO
+		this.selectedNode.moveTo(x, y);
+
+		Circle selectedCircle = (Circle) this.selectedShape;
+		selectedCircle.setCenterX(x);
+		selectedCircle.setCenterY(y);
+	}
+
 	private void deleteSelectedNode() { //TODO
-//		if(this.selectedNode == null) return;
-//
-//
-//		this.selectedNode.disconnectAll();
-//		this.directory.removeNodeOrRoom(this.selectedNode);
-//		this.selectedNode = null;
-//		// now garbage collector has to do its work
-//
-//		this.contentPane.getChildren().remove(this.selectedShape);
-//		this.selectedShape = null;
-//
-//		this.redrawLines();
+		if(this.selectedNode == null) return;
+
+
+		this.selectedNode.disconnectAll();
+		this.directory.removeNodeOrRoom(this.selectedNode);
+		this.selectedNode = null;
+		// now garbage collector has to do its work
+
+		this.contentPane.getChildren().remove(this.selectedShape);
+		this.selectedShape = null;
+
+		this.redrawLines();
 
 	}
 
@@ -314,5 +340,138 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.xCoordField.setText(x+"");
 		this.yCoordField.setText(y+"");
 	}
+
+
+
+	///////////////////////
+	/////EVENT HANDLERS////
+	///////////////////////
+
+	public void installPaneLisenters(){
+		botPane.setOnMouseClicked(e -> {
+			this.setFields(e.getX(), e.getY());
+			//Create node on double click
+			if(e.getClickCount() == 2) {
+				this.addNode(e.getX(), e.getY());
+			}
+
+			//TODO change only this shape
+//			if(this.selectedShape != null) {
+//				if(this.selectedNode.getRoom() != null) {
+//					if (this.selectedNode.getRoom().getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+//						this.selectedShape.setFill(this.KIOSK_COLOR);
+//					} else {
+//						this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+//					}
+//				}
+//			}
+			this.displayNodes();
+
+			this.selectedNode = null;
+			this.selectedShape = null;
+		});
+
+		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
+			@Override public void handle(ScrollEvent event) {
+				event.consume();
+				if (event.getDeltaY() == 0) {
+					return;
+				}
+				double scaleFactor =
+						(event.getDeltaY() > 0)
+								? SCALE_DELTA
+								: 1/SCALE_DELTA;
+				contentAnchor.setScaleX(contentAnchor.getScaleX() * scaleFactor);
+				contentAnchor.setScaleY(contentAnchor.getScaleY() * scaleFactor);
+			}
+		});
+
+		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				clickedX = event.getX();
+				clickedY = event.getY();
+			}
+		});
+
+		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				if(!beingDragged) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+				}
+				event.consume();
+			}
+		});
+	}
+
+	public void onShapeClick(MouseEvent e, Node n) {
+		// update text fields
+		this.setFields(n.getX(), n.getY());
+
+		// check if you single click
+		// so, then you are selecting a node
+		if(e.getClickCount() == 1 && this.primaryPressed) {
+//			if(this.selectedShape != null) {
+//
+//				//TODO change only this shape
+//				if(this.selectedShape != null) {
+//					if(this.selectedNode.getRoom() != null) {
+//						if (this.selectedNode.getRoom().getName().equalsIgnoreCase(this.KIOSK_NAME)) {
+//							this.selectedShape.setFill(this.KIOSK_COLOR);
+//						} else {
+//							this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+//						}
+//					}
+//				}
+//
+////				this.displayNodes();
+//
+//			} else {
+//				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+//			}
+
+			this.selectedShape = (Shape) e.getSource();
+			this.selectedNode = n;
+			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
+		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
+			// ^ checks if there has been a node selected,
+			// checks if the node selected is not the node we are clicking on
+			// and checks if the button pressed is the right mouse button (secondary)
+
+			// finally check if they are connected or not
+			// if they are connected, remove the connection
+			// if they are not connected, add a connection
+			this.selectedNode.connectOrDisconnect(n);
+			this.redrawLines();
+		}
+	}
+
+	// This is going to allow us to drag a node!!!
+	public void onShapeDrag(MouseEvent e, Node n) {
+		beingDragged = true;
+		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+			if(this.primaryPressed) {
+				this.selectedShape = (Shape) e.getSource();
+				this.updateSelectedNode(e.getX(), e.getY());
+				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
+				this.redrawLines();
+			} else if(this.secondaryPressed) {
+				// right click drag on the selected node
+			}
+		}
+	}
+
+	public void onShapeReleased(MouseEvent e, Node n) {
+		this.releasedX = e.getX();
+		this.releasedY = e.getY();
+
+		// if the releasedX or Y is negative we want to remove the node
+
+		if(this.releasedX < 0 || this.releasedY < 0) {
+			this.deleteSelectedNode();
+		}
+	}
+
+
 
 }

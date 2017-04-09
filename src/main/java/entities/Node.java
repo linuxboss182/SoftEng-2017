@@ -207,6 +207,7 @@ public class Node
 	}
 
 	public Circle getShape() {
+		if(this.circ == null){this.makeShape();}
 		return this.circ;
 	}
 
