@@ -26,7 +26,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserDestinationController">
 	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
@@ -37,7 +37,7 @@
 	<bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
+				<Button fx:id="logAsAdmin" mnemonicParsing="false" onAction="#logAsAdminClicked" text="Login As Admin" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
 				<Pane prefHeight="30.0" prefWidth="554.0" />
 				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
@@ -80,7 +80,7 @@
 		</SplitPane>
 	</center>
    <left>
-      <GridPane prefHeight="642.0" prefWidth="369.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="destGridPane" prefHeight="642.0" prefWidth="369.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="5.0" prefWidth="5.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="348.0" minWidth="10.0" prefWidth="348.0" />
@@ -111,8 +111,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="157.0" text="Change Starting Location" />
-                  <Button fx:id="getDirectionsBtn" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" prefWidth="174.0" text="Find Path Now" GridPane.columnIndex="2" />
+                  <Button fx:id="changeStartBtn" mnemonicParsing="false" onAction="#changeStartClicked" prefHeight="25.0" prefWidth="157.0" text="Change Starting Location" />
+                  <Button fx:id="getDirectionsBtn" defaultButton="true" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="174.0" text="Find Path Now" GridPane.columnIndex="2" />
                   <Label text="OR" GridPane.columnIndex="1" />
                </children>
             </GridPane>

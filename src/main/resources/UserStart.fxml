@@ -26,7 +26,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserStartController">
 	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
@@ -80,7 +80,7 @@
 		</SplitPane>
 	</center>
    <left>
-      <GridPane prefHeight="642.0" prefWidth="369.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="sideGridPane" prefHeight="642.0" prefWidth="369.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="5.0" prefWidth="5.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="348.0" minWidth="10.0" prefWidth="348.0" />
@@ -110,8 +110,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button defaultButton="true" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Find Path Now" GridPane.columnIndex="2" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="68.0" text="Back" />
+                  <Button fx:id="getDirectionsBtn" defaultButton="true" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="98.0" text="Get Directions" GridPane.columnIndex="2" />
+                  <Button fx:id="backBtn" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="25.0" prefWidth="68.0" text="Back" />
                </children>
             </GridPane>
          </children>
