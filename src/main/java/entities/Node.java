@@ -24,7 +24,7 @@ public class Node
 {
 	private double x;
 	private double y;
-	// TODO: add floor or z coord
+	private int floor;
 	private HashSet<Node> neighbors;
 	private Room room;
 	private Circle circ;
@@ -40,11 +40,16 @@ public class Node
 	protected static final String KIOSK_NAME = "You Are Here";
 	protected static final double CIRCLE_RADIUS = 5;
 
-	public Node(double x, double y) {
+	public Node(double x, double y, int floor) {
 		this.x = x;
 		this.y = y;
+		this.floor = floor;
 		this.neighbors = new HashSet<>();
 		this.room = null;
+	}
+
+	public Node(double x, double y) {
+		this(x, y, 0);
 	}
 
 	public double getX() {
@@ -211,7 +216,7 @@ public class Node
 		return this.circ;
 	}
 
-	public void makeShape() {
+	private void makeShape() {
 		this.circ = new Circle(this.getX(), this.getY(), this.CIRCLE_RADIUS, this.DEFAULT_SHAPE_COLOR);
 		this.circ.setStroke(this.DEFAULT_STROKE_COLOR);
 		this.circ.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);

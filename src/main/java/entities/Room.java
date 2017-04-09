@@ -101,8 +101,8 @@ public class Room
 		return this.rect;
 	}
 
-	public void makeShape() {
-		if(location != null) {
+	private void makeShape() {
+		if(this.location != null) {
 			this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 
 			this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
