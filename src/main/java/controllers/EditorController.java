@@ -298,6 +298,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
+		this.displayNodes(this.directory.getNodesOnFloor(floor));
 	}
 
 	/** Add a new node to the directory at the given coordinates */
