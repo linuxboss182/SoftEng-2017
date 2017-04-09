@@ -67,7 +67,8 @@ public abstract class MapDisplayController
 	protected Pane botPane;
 	protected Pane topPane;
 
-	protected FloorProxy floorProxy = new FloorProxy(4); // Default to the fourth floor because that's the only image we have in our resources
+	protected int floor = 4;
+	protected FloorProxy floorProxy = new FloorProxy(floor); // Default to the fourth floor because that's the only image we have in our resources
 
 
 	public void setPanes(Pane botPane, Pane topPane) {
@@ -114,8 +115,12 @@ public abstract class MapDisplayController
 	 */
 	public void switchFloors(int floor) {
 		this.floorProxy.floorProxy(floor);
-		this.displayNodes();
-		this.displayRooms();
+		this.map = floorProxy.display();
 	}
 
+	public void loadMap() {
+		switchFloors(floor);
+	}
+
+	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
 }

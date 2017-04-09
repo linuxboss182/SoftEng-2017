@@ -86,7 +86,7 @@ public class UserController
 			}
 		}
 
-		this.displayRooms();
+		this.displayRooms(this.directory.getRoomsOnFloor(floor));
 		this.populateListView();
 	}
 
@@ -96,7 +96,7 @@ public class UserController
 
 	@FXML
 	private void refreshbtnClicked(){
-		this.displayRooms();
+		this.displayRooms(this.directory.getRoomsOnFloor(floor));
 		this.populateListView();
 	}
 
