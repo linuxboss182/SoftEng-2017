@@ -56,8 +56,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private ImageView imageViewMap;
 	@FXML
-	private Pane contentPane;
-	@FXML
 	private Button modifyRoomBtn;
 	@FXML
 	private Button cancelBtn;
@@ -298,6 +296,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
+		this.displayNodes(this.directory.getNodesOnFloor(floor));
 	}
 
 	/** Add a new node to the directory at the given coordinates */
@@ -336,9 +335,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.selectedNode = null;
 		// now garbage collector has to do its work
 
-		// this.contentPane is always null
-//		System.err.println(this.contentPane);
-//		this.contentPane.getChildren().remove(this.selectedShape);
 		this.selectedShape = null;
 
 		this.displayNodes(this.directory.getNodesOnFloor(floor));

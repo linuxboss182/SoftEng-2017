@@ -18,9 +18,9 @@ import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 
 public abstract class MapDisplayController
@@ -75,20 +75,13 @@ public abstract class MapDisplayController
 	}
 
 
-
-	//Editor
-	public void displayRooms(Set<Room> rooms) {
-		this.topPane.getChildren().clear();
-		rooms.forEach(room -> this.paintNode(room.getLocation()));
-	}
-
 	// TODO: Probably make displayNodes/displayRooms/paintNode non-inherited
 	//Editor
 	public void paintNode(Node n) {
-		if(!this.topPane.getChildren().contains(n.getShape())) {
-			this.topPane.getChildren().add(n.getShape());
-			n.getShape().setVisible(true);
-		}
+//		if(!this.topPane.getChildren().contains(n.getShape())) {
+//			this.topPane.getChildren().add(n.getShape());
+//			n.getShape().setVisible(true);
+//		}
 	}
 
 	//This function takes in two nodes, displays a
