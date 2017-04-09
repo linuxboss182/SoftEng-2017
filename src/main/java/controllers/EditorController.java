@@ -1,7 +1,6 @@
 package controllers;
 
 
-import entities.Directory;
 import entities.Professional;
 import entities.Room;
 import javafx.beans.value.ChangeListener;
@@ -24,21 +23,16 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DatabaseException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringJoiner;
 
@@ -271,7 +265,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	private void addNode(double x, double y) {
-		Node newNode = this.directory.newNode(x, y);
+		Node newNode = this.directory.addNewNode(x, y);
 		this.paintNode(newNode);
 		newNode.getShape().setOnMouseClicked((MouseEvent e) -> {
 			onShapeClick(e, newNode);

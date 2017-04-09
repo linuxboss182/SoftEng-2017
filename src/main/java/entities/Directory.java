@@ -110,13 +110,13 @@ public class Directory
 		return 4;
 	}
 
-	public Room newRoom(double x, double y, String name, String desc) {
+	public Room addNewRoom(double x, double y, String name, String desc) {
 		Room newRoom = new Room(x, y, name, desc);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
 
-	public Node newNode(double x, double y) {
+	public Node addNewNode(double x, double y) {
 		Node newNode = new Node(x, y);
 		this.nodes.add(newNode);
 		return newNode;
