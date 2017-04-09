@@ -43,10 +43,6 @@ public class Directory
 
 	/* Methods */
 
-	//TODO: make this work
-	public void getRoomData(Object n) {
-	}
-
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
 	}
