@@ -174,35 +174,26 @@ public abstract class UserMasterController extends MapDisplayController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
-			r.getShape().setOnMousePressed(e->{
-				switch (e.getButton()) {
-					case PRIMARY: // we don't really care if it's the primary
-						break;
-					case SECONDARY: // if it's the secondary, we want to create a new ContextMenu and display the options
+			r.getShape().setOnContextMenuRequested(e->{
 						ContextMenu optionsMenu = new ContextMenu();
-						MenuItem item1 = new MenuItem("About");
-						item1.setOnAction(new EventHandler<ActionEvent>() {
+
+						MenuItem startRoomItem = new MenuItem("Set as starting location");
+						startRoomItem.setOnAction(new EventHandler<ActionEvent>() {
 							public void handle(ActionEvent e) {
-								System.out.println("About");
+								startRoom = r;
 							}
 						});
-						MenuItem item2 = new MenuItem("Preferences");
-						item2.setOnAction(new EventHandler<ActionEvent>() {
+						MenuItem endRoomItem = new MenuItem("Set as destination");
+						endRoomItem.setOnAction(new EventHandler<ActionEvent>() {
 							public void handle(ActionEvent e) {
-								System.out.println("Preferences");
+								endRoom = r;
 							}
 						});
-						optionsMenu.getItems().addAll(item1, item2);
-						TextField text = new TextField("");
-						text.setContextMenu(optionsMenu);
-						text.setLayoutX(e.getX() + r.getShape().getLayoutX());
-						text.setLayoutY(e.getY() + r.getShape().getLayoutY());
-						topPane.getChildren().add(text);
-						break;
-					default:
-						break;
-				}
-			});
+						optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+						optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+
+
+				});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
 	}
