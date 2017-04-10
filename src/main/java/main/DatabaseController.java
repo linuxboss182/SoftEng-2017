@@ -295,7 +295,8 @@ public class DatabaseController
 			while (resultNodes.next()) {
 				//PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = new Node(resultNodes.getDouble("nodeX"),
-				                     resultNodes.getDouble("nodeY"));
+				                     resultNodes.getDouble("nodeY"),
+				                     resultNodes.getInt("floor"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 			}
 			resultNodes.close();
@@ -388,10 +389,9 @@ public class DatabaseController
 
 		for (Node n : dir.getNodes()) {
 			//PRINTLN("Saving node "+n.hashCode());
-			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
+			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor());
 			db.executeUpdate(query);
 		}
-		System.out.println("nodes saved");
 
 		for (Room r : dir.getRooms()) {
 			//PRINTLN("Saving node "+r.hashCode());
@@ -407,7 +407,6 @@ public class DatabaseController
 			}
 			db.executeUpdate(query);
 		}
-		System.out.println("rooms saved");
 		/* commented out because, again, kiosks are not yet implemented */
 //		if (dir.hasKiosk()) {
 //			Room n = dir.getKiosk();
@@ -424,7 +423,6 @@ public class DatabaseController
 				db.executeUpdate(query);
 			}
 		}
-		System.out.println("edges saved");
 //
 //		for (Room n : dir.getRooms()) {
 //			for (Node m : n.getLocation().getNeighbors()) {
@@ -444,8 +442,6 @@ public class DatabaseController
 				db.executeUpdate(query);
 			}
 		}
-
-		System.out.println("professionals saved");
 		db.close();
 	}
 

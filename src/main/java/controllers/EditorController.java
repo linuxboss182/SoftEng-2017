@@ -12,10 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -48,7 +45,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private TextField nameField;
 	@FXML
-	private TextField descriptField;
+	private TextArea descriptField;
 	@FXML
 	private TextField xCoordField;
 	@FXML
@@ -192,6 +189,12 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
 	//	this.refreshBtnClicked();
+
+		// Temporary floor-cycling code
+//		this.switchFloors((++floor)%7+1);
+//		this.imageViewMap.setImage(map);
+//		this.displayNodes(this.directory.getNodesOnFloor(floor));
+//		this.redrawLines();
 	}
 
 
@@ -214,18 +217,14 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addRoomBtnClicked() {
-		this.addRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
 	public void modifyRoomBtnClicked() { //TODO
 		if(this.selectedNode == null) return;
 
-		if(this.selectedNode.containsRoom()) {
-			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
-		} else {
-			this.updateSelectedNode(this.readX(), this.readY());
-		}
+		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -299,8 +298,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated ith the room.
 	 */
-	private void addRoom(double x, double y, String name, String description) { //TODO
-		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
+	private void addNodeRoom(double x, double y, String name, String description) { //TODO
+		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 		this.displayNodes(this.directory.getNodesOnFloor(floor));
@@ -308,23 +307,17 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	/** Add a new node to the directory at the given coordinates */
 	private void addNode(double x, double y) {
-		Node newNode = this.directory.addNewNode(x, y);
+		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 	}
 
-	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
-//		this.selectedNode.moveTo(x, y);
-//		((Room) this.selectedNode).setName(name);
-//		((Room) this.selectedNode).setDescription(description);
-//		Rectangle selectedRectangle = (Rectangle) this.selectedShape;
-//		selectedRectangle.setX(x);
-//		selectedRectangle.setY(y);
+	private void  updateSelectedRoom(double x, double y, String name, String description) { //TODO
 		this.selectedNode.applyToRoom(room -> {
 			room.setName(name);
 			room.setDescription(description);
 		});
-		// TODO: Update the location of the node, whether or not it is a room
+		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
 	private void updateSelectedNode(double x, double y) { //TODO
@@ -350,11 +343,8 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	public void redrawLines() {
 		this.botPane.getChildren().clear();
-		this.directory.getNodesOnFloor(floor).forEach(node -> {
-				node.getNeighbors().forEach(Neighbor -> {
-					this.paintLine(node,Neighbor);
-				});
-		});
+		this.directory.getNodesOnFloor(floor).forEach(node ->
+				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
 	}
 
 

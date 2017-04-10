@@ -170,7 +170,7 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 	public void displayRooms(Collection<Room> rooms) {
-		Set<Rectangle> roomShapes = new HashSet<>();
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
 		}

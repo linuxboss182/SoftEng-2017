@@ -19,12 +19,27 @@ public class DatabaseTester
 {
 	@Test
 	public void tester(){
-		Room roomA = new Room(1, 1, "A", "A", "A");
-		Room roomB = new Room(2, 2, "B", "B", "B");
-		Room roomC = new Room(3, 3, "C", "C", "C");
+		//Create 3 Rooms
+		Room roomA = new Room("A", "A", "A");
+		Room roomB = new Room("B", "B", "B");
+		Room roomC = new Room("C", "C", "C");
 
-		Node nodeA = new Node(1,2);
-		Node nodeB = new Node(2,3);
+		//Create Nodes attached to Rooms
+		Node roomNodeA = new Node(1, 1, 4);
+		Node roomNodeB = new Node(2, 2, 4);
+		Node roomNodeC = new Node(3, 3,4);
+
+		//Attach the node to the room
+		roomA.setLocation(roomNodeA);
+		roomNodeA.setRoom(roomA);
+		roomB.setLocation(roomNodeB);
+		roomNodeB.setRoom(roomB);
+		roomC.setLocation(roomNodeC);
+		roomNodeC.setRoom(roomC);
+
+		//Create 2 navigation Nodes
+		Node nodeA = new Node(1,2, 4);
+		Node nodeB = new Node(2,3, 4);
 
 		DatabaseController controller = new DatabaseController();
 		Directory oldDirectory = new Directory();
@@ -33,8 +48,12 @@ public class DatabaseTester
 		oldDirectory.addRoom(roomB);
 		oldDirectory.addRoom(roomC);
 
+		//Add the nodes to the directory
 		oldDirectory.addNode(nodeA);
 		oldDirectory.addNode(nodeB);
+		oldDirectory.addNode(roomNodeA);
+		oldDirectory.addNode(roomNodeB);
+		oldDirectory.addNode(roomNodeC);
 
 		try{
 			controller.init();
@@ -49,6 +68,7 @@ public class DatabaseTester
 		} catch (DatabaseException e) {
 			System.out.println(e.getMessage());
 			Assert.fail();
+			e.printStackTrace();
 		}
 
 		Directory newDirectory = controller.getDirectory();

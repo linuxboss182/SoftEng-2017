@@ -48,8 +48,19 @@ public class Directory
 		return new HashSet<>(this.nodes);
 	}
 
+	/**
+	 * Get a copy of this directory's rooms, sorted by name
+	 */
+	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		return new HashSet<>(this.rooms);
+		Set<Room> rooms = new TreeSet<>((r1, r2) -> {
+			int compName = r1.getName().compareTo(r2.getName());
+			if (compName != 0) return compName;
+			return (r1 == r2) ? 0 : 1;
+			// handle identity or SortedSet won't take people with the same name
+		});
+		rooms.addAll(this.rooms);
+		return rooms;
 	}
 
 	public Set<Professional> getProfessionals() {
@@ -88,6 +99,8 @@ public class Directory
 	}
 
 	public boolean removeProfessional(Professional professional) {
+		// Must check null because naturally-ordered TreeSets can't use nulls
+		if (professional == null) return false;
 		return this.professionals.remove(professional);
 	}
 
@@ -126,9 +139,9 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, String name, String desc) {
+	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
 		Room newRoom = new Room(name, desc);
-		Node newNode = new Node(x, y);
+		Node newNode = new Node(x, y, floor);
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
 		this.nodes.add(newNode);
@@ -151,8 +164,8 @@ public class Directory
 	 * Create a new node in this directory
 	 */
 	// TODO: Add "floor" argument
-	public Node addNewNode(double x, double y) {
-		Node newNode = new Node(x, y);
+	public Node addNewNode(double x, double y, int floor) {
+		Node newNode = new Node(x, y, floor);
 		this.nodes.add(newNode);
 		return newNode;
 	}
@@ -173,6 +186,14 @@ public class Directory
 				.collect(Collectors.toSet()); // make the stream back into a set
 	}
 
+	/**
+	 * Gets a set of all of the rooms on a given floor
+	 *
+	 * A room's floor is determined by its associated node
+	 *
+	 * @param floor
+	 * @return
+	 */
 	public Set<Room> getRoomsOnFloor(int floor) {
 		return this.rooms.stream()
 				// Stream::filter removes elements for which the lambda returns false
