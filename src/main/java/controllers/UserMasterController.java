@@ -81,7 +81,8 @@ public abstract class UserMasterController extends MapDisplayController
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
-		initFloorChoiceBox();
+		if(floorChoiceBox != null)
+			initFloorChoiceBox();
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
