@@ -14,9 +14,9 @@ public class Floor implements FloorImage
 	private int floorNum;
 	private String path;
 	private LinkedList<String> floorImages = new LinkedList<>(Arrays.asList(
-							  "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png",
-							  "/4_thefourthfloor.png", "/MysteryRoom.png", "/MysteryRoom.png",
-							  "/MysteryRoom.png"));
+							  "/1_thefirstfloor.png", "/2_thesecondfloor.png", "/3_thethirdfloor.png",
+							  "/4_thefourthfloor.png", "/5_thefifthfloor.png", "/6_thesixthfloor.png",
+							  "/7_theseventhfloor.png"));
 
 	// constructor for the floor class
 	public Floor(int floorNum) {

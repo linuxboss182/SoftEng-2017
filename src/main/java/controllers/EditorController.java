@@ -122,12 +122,21 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	private void logoutBtnClicked() {
-		try {
-			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-			this.botPane.getScene().setRoot(userUI);
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+//			this.botPane.getScene().setRoot(userUI);
+//		} catch(IOException e) {
+//			e.printStackTrace();
+//		}
+
+		this.changeFloor(++floor%7+1);
+	}
+
+	private void changeFloor(int floor) {
+		this.switchFloors(floor);
+		this.imageViewMap.setImage(map);
+		this.displayNodes(directory.getNodesOnFloor(floor));
+		this.redrawLines();
 	}
 
 	@FXML
@@ -343,7 +352,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	public void redrawLines() {
 		this.botPane.getChildren().clear();
-		this.directory.getNodes().forEach(node -> {
+		this.directory.getNodesOnFloor(floor).forEach(node -> {
 				node.getNeighbors().forEach(Neighbor -> {
 					this.paintLine(node,Neighbor);
 				});

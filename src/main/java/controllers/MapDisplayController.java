@@ -66,8 +66,6 @@ public abstract class MapDisplayController
 	protected Pane topPane;
 
 	protected int floor = 4;
-	protected FloorProxy floorProxy = new FloorProxy(floor); // Default to the fourth floor because that's the only image we have in our resources
-
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
@@ -102,6 +100,7 @@ public abstract class MapDisplayController
 	 * @param floor the floor we want to swtich to
 	 */
 	public void switchFloors(int floor) {
+		this.floor = floor;
 		this.map = new FloorProxy(floor).display();
 	}
 

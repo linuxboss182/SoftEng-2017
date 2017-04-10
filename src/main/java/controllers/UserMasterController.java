@@ -220,5 +220,10 @@ public abstract class UserMasterController extends MapDisplayController
 
 	}
 
+	private void changeFloor(int floor) {
+		this.switchFloors(floor);
+		this.imageViewMap.setImage(map);
+		this.displayRooms(directory.getRoomsOnFloor(floor));
+	}
 
 }
