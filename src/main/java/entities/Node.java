@@ -87,7 +87,7 @@ public class Node
 
 	public void setRoom(Room room) {
 		// if this function throws NullPointerException, you passed it a null value
-		// Don't do that.
+		// Don't do that, use unsetRoom instead
 		this.room = Optional.of(room);
 	}
 
@@ -233,7 +233,7 @@ public class Node
 
 	/** @deprecated Use applyToRoom instead */
 	@Deprecated
-	public boolean containsRoom(){
+	public boolean containsRoom() {
 		if (this.room == null) {
 			return false;
 		} else {
