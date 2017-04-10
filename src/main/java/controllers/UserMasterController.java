@@ -175,25 +175,20 @@ public abstract class UserMasterController extends MapDisplayController
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
 			r.getShape().setOnContextMenuRequested(e->{
-						ContextMenu optionsMenu = new ContextMenu();
 
-						MenuItem startRoomItem = new MenuItem("Set as starting location");
-						startRoomItem.setOnAction(new EventHandler<ActionEvent>() {
-							public void handle(ActionEvent e) {
-								startRoom = r;
-							}
-						});
-						MenuItem endRoomItem = new MenuItem("Set as destination");
-						endRoomItem.setOnAction(new EventHandler<ActionEvent>() {
-							public void handle(ActionEvent e) {
-								endRoom = r;
-							}
-						});
-						optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-						optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+				ContextMenu optionsMenu = new ContextMenu();
 
-
+				MenuItem startRoomItem = new MenuItem("Set as starting location");
+				startRoomItem.setOnAction(e1 -> {
+						startRoom = r;
 				});
+				MenuItem endRoomItem = new MenuItem("Set as destination");
+				endRoomItem.setOnAction(e2-> {
+						endRoom = r;
+				});
+				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
 	}
