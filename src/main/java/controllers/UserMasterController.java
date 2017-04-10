@@ -67,6 +67,9 @@ public abstract class UserMasterController extends MapDisplayController
 	private double clickedX, clickedY;
 	protected static Room startRoom;
 	protected static Room endRoom;
+	protected static boolean choosingStart = false;
+	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
+
 
 	public void initialize() {
 		//Set the panes
@@ -184,30 +187,39 @@ public abstract class UserMasterController extends MapDisplayController
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
-				List<Node> ret;
-				if(kiosk != null) {
-					ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
-					paintPath(new ArrayList<>(ret));
-				} else {
-
+				// Commented this out because we are not going to want to get directions as soon as they click on the list view
+//				List<Node> ret;
+//				if(kiosk != null) {
+//					ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
+//					paintPath(new ArrayList<>(ret));
+//				} else {
+//
+//				}
+				// These variables are set in the controllers when the scene is switched...
+				if(choosingEnd) {
+					endRoom = directoryView.getSelectionModel().getSelectedItem();
+				} else if(choosingStart) {
+					startRoom = directoryView.getSelectionModel().getSelectedItem();
 				}
 			}
 		});
-		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
-		this.directoryView.setOnMousePressed(e->{
-			switch (e.getButton()) {
-				case PRIMARY:
-					endRoom = directoryView.getSelectionModel().getSelectedItem();
-					System.out.println(endRoom);
-					break;
-				case SECONDARY:
-					startRoom = directoryView.getSelectionModel().getSelectedItem();
-					System.out.println(startRoom);
-					break;
-				default:
-					break;
-			}
-		});
+
+		// Commented out because we have a separate tab for choosing the start and the end, and left/right clicking is somewhat confusing for this sort of menu
+//		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
+//		this.directoryView.setOnMousePressed(e->{
+//			switch (e.getButton()) {
+//				case PRIMARY:
+//					endRoom = directoryView.getSelectionModel().getSelectedItem();
+//					System.out.println(endRoom);
+//					break;
+//				case SECONDARY:
+//					startRoom = directoryView.getSelectionModel().getSelectedItem();
+//					System.out.println(startRoom);
+//					break;
+//				default:
+//					break;
+//			}
+//		});
 		}
 
 	@FXML

@@ -41,6 +41,8 @@ public class UserStartController extends UserMasterController implements Initial
 	public void backBtnClicked() throws IOException, InvocationTargetException {
 		Parent userDest = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.sideGridPane.getScene().setRoot(userDest);
+		this.choosingEnd = true;
+		this.choosingStart = false;
 	}
 
 
