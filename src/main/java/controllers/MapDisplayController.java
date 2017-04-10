@@ -29,7 +29,7 @@ public abstract class MapDisplayController
 
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
-	protected Directory directory;
+	protected static Directory directory;
 	protected Room kiosk;
 
 	protected Node selectedNode; // you select a node by double clicking
@@ -65,7 +65,7 @@ public abstract class MapDisplayController
 	protected Pane botPane;
 	protected Pane topPane;
 
-	protected int floor = 4;
+	protected static int floor = 4;
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;

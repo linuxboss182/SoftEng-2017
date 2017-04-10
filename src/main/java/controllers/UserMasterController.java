@@ -77,7 +77,7 @@ public abstract class UserMasterController extends MapDisplayController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = new FloorProxy(4).display();
+		this.map = new FloorProxy(floor).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
@@ -263,7 +263,7 @@ public abstract class UserMasterController extends MapDisplayController
 
 	}
 
-	private void changeFloor(int floor) {
+	protected void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms(directory.getRoomsOnFloor(floor));

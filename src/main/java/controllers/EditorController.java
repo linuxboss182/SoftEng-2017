@@ -74,6 +74,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	protected Pane nodePane;
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
+	@FXML
+	public ChoiceBox floorChoiceBox;
 
 	AddProfessionalController addProController = new AddProfessionalController();
 
@@ -88,6 +90,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
+		if(floorChoiceBox != null)
+			initFloorChoiceBox();
 
 		//Init
 		this.populateChoiceBox(); //populate box for professionals
@@ -269,6 +273,33 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
 	}
 
+	/**
+	 * Adds a listener to the choice box.
+	 * Allows you to change floors
+	 */
+	public void initFloorChoiceBox(){
+		this.populateFloorChoiceBox();
+		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if(newValue.intValue() >= 0) {
+					changeFloor(newValue.intValue()+1);
+				}
+
+			}
+		});
+	}
+
+	/**
+	 * Initialize the floor's choice box with 1-7 (the floors)
+	 * Ideally this shouldn't be hard coded
+	 * TODO: Make this not hard coded into our program
+	 */
+	public void populateFloorChoiceBox() {
+		// We are able to change what this list is of.
+		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
+		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+	}
 
 	/**
 	 * Add listeners to the given node

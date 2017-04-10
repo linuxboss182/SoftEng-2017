@@ -37,6 +37,7 @@ public class UserPathController extends UserMasterController implements Initiali
 		initialize();
 		List<Node> ret;
 		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		changeFloor(floor);
 
 		paintPath(new ArrayList<>(ret));
 	}
