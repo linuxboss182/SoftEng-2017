@@ -5,15 +5,13 @@ import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -176,6 +174,26 @@ public abstract class UserMasterController extends MapDisplayController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
+			/**
+			 * This is code to make a context menu appear when you right click on the shape for a room
+			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+			 * that is reallllllllly helpful for a lot of stuff
+			 */
+			r.getShape().setOnContextMenuRequested(e->{
+
+				ContextMenu optionsMenu = new ContextMenu();
+
+				MenuItem startRoomItem = new MenuItem("Set as starting location");
+				startRoomItem.setOnAction(e1 -> {
+						startRoom = r;
+				});
+				MenuItem endRoomItem = new MenuItem("Set as destination");
+				endRoomItem.setOnAction(e2-> {
+						endRoom = r;
+				});
+				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
 	}
