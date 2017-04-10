@@ -122,14 +122,12 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	private void logoutBtnClicked() {
-//		try {
-//			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-//			this.botPane.getScene().setRoot(userUI);
-//		} catch(IOException e) {
-//			e.printStackTrace();
-//		}
-
-		this.changeFloor(++floor%7+1);
+		try {
+			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+			this.botPane.getScene().setRoot(userUI);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void changeFloor(int floor) {

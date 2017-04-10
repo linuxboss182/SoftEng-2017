@@ -99,7 +99,7 @@
                </font>
             </Label>
             <TextField promptText="Enter room or professional" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ListView prefHeight="248.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ListView prefHeight="248.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="directoryView"/>
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="249.0" minWidth="10.0" prefWidth="74.0" />
