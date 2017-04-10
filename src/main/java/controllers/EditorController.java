@@ -3,9 +3,12 @@ package controllers;
 
 import entities.Professional;
 import entities.Room;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +28,7 @@ import javafx.scene.shape.Circle;
 import entities.Node;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import main.ApplicationController;
 import main.DatabaseException;
 
@@ -76,6 +81,12 @@ public class EditorController extends MapDisplayController implements Initializa
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
 	public ChoiceBox floorChoiceBox;
+	@FXML
+	public TableView<ObservableList<String>> roomProfTable;
+	@FXML
+	TableColumn<ObservableList<Room>, String> roomCol;
+	@FXML
+	TableColumn<ObservableList<Professional>, String> profCol;
 
 	AddProfessionalController addProController = new AddProfessionalController();
 
@@ -119,6 +130,38 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
+
+		//Populate the tableview
+		populateTableView();
+	}
+
+	public void populateTableView () {
+		final ObservableList<Professional> data =
+				FXCollections.observableArrayList(directory.getProfessionals());
+
+		//roomCol.setCellValueFactory(new PropertyValueFactory<ObservableList<Room>, String>("name"));
+		profCol.setCellValueFactory(new PropertyValueFactory<ObservableList<Professional>, String>("givenName"));
+
+
+		//roomCol.getColumns().addAll();
+
+//		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Room>,String>, ObservableValue<String>>() {
+//			@Override
+//			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Room>, String> cdf) {
+//				return new SimpleStringProperty(cdf.getValue().get(0).getName());
+//			}
+//		});
+
+		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Professional>,String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Professional>, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().get(1).getGivenName());
+			}
+		});
+
+
+
+
 	}
 
 	@FXML
