@@ -46,7 +46,10 @@ public class Pathfinder
 	 * @return A list of the nodes traversed in the path, in order, or an empty list if
 	 *         no path is found
 	 */
-	public static List<Node> findPath(Node start, Node dest) {
+	public static List<Node> findPath(Node start, Node dest)throws NullPointerException {
+		if(start == null || dest == null){
+			throw(new NullPointerException());
+		}
 		Double inf = Double.POSITIVE_INFINITY;
 		// list of Nodes that have already been visited
 		Set<Node> visitedNodes = new HashSet<>();

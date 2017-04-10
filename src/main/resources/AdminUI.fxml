@@ -125,7 +125,6 @@
           <RowConstraints maxHeight="478.0870361328125" minHeight="10.0" prefHeight="361.8874053955078" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ListView fx:id="roomProfView" prefHeight="188.0" prefWidth="381.0" GridPane.rowIndex="1" />
             <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="2">
               <tabs>
                 <Tab text="Room Editor">
@@ -225,6 +224,12 @@
                   </Label>
                </children>
             </GridPane>
+            <TableView fx:id="roomProfTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+              <columns>
+                <TableColumn fx:id="roomCol" prefWidth="138.0" text="Rooms" />
+                <TableColumn fx:id="profCol" prefWidth="244.0" text="Professionals" />
+              </columns>
+            </TableView>
          </children>
       </GridPane>
    </left>
