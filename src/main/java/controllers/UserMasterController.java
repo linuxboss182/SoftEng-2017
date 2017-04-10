@@ -63,8 +63,8 @@ public abstract class UserMasterController extends MapDisplayController
 
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
-	private Room startRoom;
-	private Room endRoom;
+	protected static Room startRoom;
+	protected static Room endRoom;
 
 	public void initialize() {
 		//Set the panes
@@ -86,8 +86,9 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		}
 		this.displayRooms(directory.getRoomsOnFloor(floor));
-		this.populateListView();
-		//this.populateListView();
+		if(this.directoryView != null) {
+			this.populateListView();
+		}
 
 
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
@@ -164,15 +165,11 @@ public abstract class UserMasterController extends MapDisplayController
 		this.directoryView.setOnMousePressed(e->{
 			switch (e.getButton()) {
 				case PRIMARY:
-					System.out.println(e.getSource());
-					e.getSource();
-					endRoom = tempRooms.get(((ListView<Room>)e.getSource()).getEditingIndex());
+					endRoom = directoryView.getSelectionModel().getSelectedItem();
 					System.out.println(endRoom);
 					break;
 				case SECONDARY:
-					System.out.println(e.getSource());
-					e.getSource();
-					startRoom = tempRooms.get(((ListView<Room>)e.getSource()).getEditingIndex());
+					startRoom = directoryView.getSelectionModel().getSelectedItem();
 					System.out.println(startRoom);
 					break;
 				default:
@@ -188,13 +185,6 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 
-
-	// TODO: There was a bug with rectangles not showing up where they were supposed to.
-	// Because of that bug, we did not find the bug with this code
-	// Since rectangles are not stored based off of their center points,
-	// // and we want to draw based on their center points,
-	// // these lines do not draw onto rectangles properly
-	// Currently, the lines are drawn to the top left of the rectangles
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		this.lines.forEach(line -> {
@@ -211,8 +201,9 @@ public abstract class UserMasterController extends MapDisplayController
 		double destX = directionNodes.get(directionNodes.size() - 1).getX();
 		double destY = directionNodes.get(directionNodes.size() - 1).getY();
 
-		this.destNode = new Node(destX, destY);
-		main.Pathfinder.findPath(this.kiosk.getLocation(), this.destNode);
+		// This is commented out because it is outdated code
+//		this.destNode = new Node(destX, destY);
+//		main.Pathfinder.findPath(this.kiosk.getLocation(), this.destNode);
 
 		for (int i = 0; i < directionNodes.size() - 1; i++) {
 			double nodeX1 = directionNodes.get(i).getX();
