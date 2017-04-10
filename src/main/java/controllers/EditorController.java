@@ -189,6 +189,12 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
 	//	this.refreshBtnClicked();
+
+		// Temporary floor-cycling code
+//		this.switchFloors((++floor)%7+1);
+//		this.imageViewMap.setImage(map);
+//		this.displayNodes(this.directory.getNodesOnFloor(floor));
+//		this.redrawLines();
 	}
 
 
@@ -218,11 +224,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void modifyRoomBtnClicked() { //TODO
 		if(this.selectedNode == null) return;
 
-		if(this.selectedNode.containsRoom()) {
-			this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
-		} else {
-			this.updateSelectedNode(this.readX(), this.readY());
-		}
+		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -310,18 +312,12 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.addNodeListeners(newNode);
 	}
 
-	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
-//		this.selectedNode.moveTo(x, y);
-//		((Room) this.selectedNode).setName(name);
-//		((Room) this.selectedNode).setDescription(description);
-//		Rectangle selectedRectangle = (Rectangle) this.selectedShape;
-//		selectedRectangle.setX(x);
-//		selectedRectangle.setY(y);
+	private void  updateSelectedRoom(double x, double y, String name, String description) { //TODO
 		this.selectedNode.applyToRoom(room -> {
 			room.setName(name);
 			room.setDescription(description);
 		});
-		// TODO: Update the location of the node, whether or not it is a room
+		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
 	private void updateSelectedNode(double x, double y) { //TODO
@@ -347,11 +343,8 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	public void redrawLines() {
 		this.botPane.getChildren().clear();
-		this.directory.getNodesOnFloor(floor).forEach(node -> {
-				node.getNeighbors().forEach(Neighbor -> {
-					this.paintLine(node,Neighbor);
-				});
-		});
+		this.directory.getNodesOnFloor(floor).forEach(node ->
+				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
 	}
 
 
