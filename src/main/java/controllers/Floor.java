@@ -28,9 +28,13 @@ public class Floor implements FloorImage
 	/** takes the String name of the path attribute and loads the image attached to that path
 	 *
  	 * @return an image of the specified path.
+	 * TODO: The image doesn't load sometimes. Having it load in the background prevents it from crashing
 	 */
 	public Image display() {
-		return new Image(getClass().getResourceAsStream(path));
+		Image ret;
+		ret = new Image(path, true);
+
+		return ret;
 	}
 
 

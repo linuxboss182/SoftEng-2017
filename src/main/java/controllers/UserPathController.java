@@ -42,7 +42,6 @@ public class UserPathController extends UserMasterController implements Initiali
 			// change displyaed floor to match the floor that the start node is on
 			int startFloor = startRoom.getLocation().getFloor();
 			changeFloor(startFloor);
-
 			paintPath(new ArrayList<>(ret));
 		} catch (NullPointerException n){
 			System.out.println("start or dest node is null, need to re-choose start and dest.");

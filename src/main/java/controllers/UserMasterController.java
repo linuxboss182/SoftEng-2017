@@ -42,7 +42,7 @@ public abstract class UserMasterController extends MapDisplayController
 	@FXML
 	public Button logAsAdmin;
 	@FXML
-	public ImageView imageViewMap;
+	protected ImageView imageViewMap;
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
