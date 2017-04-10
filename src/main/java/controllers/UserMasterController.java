@@ -356,6 +356,7 @@ public abstract class UserMasterController extends MapDisplayController
 		}
 		startRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
+		startRoom = null;
 	}
 
 	protected void deselectEndRoom() {
@@ -364,6 +365,7 @@ public abstract class UserMasterController extends MapDisplayController
 		}
 		endRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
+		endRoom = null;
 	}
 
 	@FXML
