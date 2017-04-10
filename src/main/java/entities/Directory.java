@@ -48,8 +48,19 @@ public class Directory
 		return new HashSet<>(this.nodes);
 	}
 
+	/**
+	 * Get a copy of this directory's rooms, sorted by name
+	 */
+	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		return new HashSet<>(this.rooms);
+		Set<Room> rooms = new TreeSet<>((r1, r2) -> {
+			int compName = r1.getName().compareTo(r2.getName());
+			if (compName != 0) return compName;
+			return (r1 == r2) ? 0 : 1;
+			// handle identity or SortedSet won't take people with the same name
+		});
+		rooms.addAll(this.rooms);
+		return rooms;
 	}
 
 	public Set<Professional> getProfessionals() {
@@ -173,6 +184,14 @@ public class Directory
 				.collect(Collectors.toSet()); // make the stream back into a set
 	}
 
+	/**
+	 * Gets a set of all of the rooms on a given floor
+	 *
+	 * A room's floor is determined by its associated node
+	 *
+	 * @param floor
+	 * @return
+	 */
 	public Set<Room> getRoomsOnFloor(int floor) {
 		return this.rooms.stream()
 				// Stream::filter removes elements for which the lambda returns false
