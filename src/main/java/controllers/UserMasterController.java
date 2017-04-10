@@ -329,6 +329,13 @@ public abstract class UserMasterController extends MapDisplayController
 		this.displayRooms(directory.getRoomsOnFloor(floor));
 	}
 
+
+	/** Below are helper methods to select and deselect the starting rooms for a path
+	 * These methods rely on two other classes:
+	 * Room -> I modified Room.java to have a setShapeColors method
+	 * ColorScheme -> This is my alternative to COLORS.java, I do not know how to use COLORS.java
+	 */
+
 	protected void selectStartRoom(Room r) {
 		deselectStartRoom();
 		startRoom = r;
