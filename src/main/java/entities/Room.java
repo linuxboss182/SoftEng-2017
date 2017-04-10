@@ -1,7 +1,12 @@
 package entities;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.util.Optional;
 
@@ -29,7 +34,7 @@ public class Room
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
-	private Rectangle rect;
+	private javafx.scene.Node shape;
 
 	/* Constructors */
 	public Room(String name, String description, String image) {
@@ -104,27 +109,38 @@ public class Room
 		return this.name;
 	}
 
-	public Rectangle getShape() {
-		if(this.rect == null) {
+	public javafx.scene.Node getShape() {
+		if(this.shape == null) {
 			this.makeShape(); // maybe move this to the constructor
 		}
-		return this.rect;
+		return this.shape;
 	}
 
 	private void makeShape() {
 		if(this.location.isPresent()) {
 			Node location = this.location.get(); // This is very, very poor use of Optionals
 
-			this.rect = new Rectangle(location.getX(), location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+			Rectangle shape = new Rectangle(location.getX(), location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 
-			this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
-			this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
+			shape.setStroke(DEFAULT_STROKE_COLOR);
+			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 
-			if (this.getName().equalsIgnoreCase(this.KIOSK_NAME)) {
-				this.rect.setFill(this.KIOSK_COLOR);
+			if (this.getName().equalsIgnoreCase(KIOSK_NAME)) {
+				shape.setFill(KIOSK_COLOR);
 			} else {
-				this.rect.setFill(this.DEFAULT_SHAPE_COLOR);
+				shape.setFill(DEFAULT_SHAPE_COLOR);
 			}
+
+			Text text = new Text(location.getX(), location.getY(), this.name);
+			text.setFont(new Font(15));
+
+			// A pane with the text on top of the shape; this is what actually represents the room
+			StackPane stackPane = new StackPane(shape, text);
+			this.shape = stackPane;
+			stackPane.setLayoutX(location.getX());
+			stackPane.setLayoutY(location.getY());
+			stackPane.setAlignment(Pos.TOP_LEFT);
+			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH));
 		}
 	}
 }
