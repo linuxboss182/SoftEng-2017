@@ -19,8 +19,8 @@ public class ColorScheme
 	public static final Color DEFAULT_NODE_STROKE_COLOR = Color.BLACK;
 	public static final Color SELECTED_ROOM_FILL_COLOR = Color.BLACK;
 	public static final Color SELECTED_NODE_FILL_COLOR = Color.BLACK;
-	public static final Color STARTING_ROOM_FILL_COLOR = DEFAULT_ROOM_FILL_COLOR;
-	public static final Color STARTING_ROOM_STROKE_COLOR = Color.GREEN;
-	public static final Color ENDING_ROOM_FILL_COLOR = DEFAULT_ROOM_STROKE_COLOR;
-	public static final Color ENDING_ROOM_STROKE_COLOR = Color.RED;
+	public static final Color STARTING_ROOM_FILL_COLOR = Color.GREEN;
+	public static final Color STARTING_ROOM_STROKE_COLOR = Color.BLACK;
+	public static final Color ENDING_ROOM_FILL_COLOR = Color.RED;
+	public static final Color ENDING_ROOM_STROKE_COLOR = Color.BLACK;
 }

@@ -1,5 +1,7 @@
 package controllers;
 
+import entities.COLORS;
+import entities.ColorScheme;
 import entities.Node;
 import entities.Room;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -212,11 +215,11 @@ public abstract class UserMasterController extends MapDisplayController
 
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
 				startRoomItem.setOnAction(e1 -> {
-						startRoom = r;
+						selectStartRoom(r);
 				});
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> {
-						endRoom = r;
+						selectEndRoom(r);
 				});
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
 				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
@@ -242,9 +245,9 @@ public abstract class UserMasterController extends MapDisplayController
 //				}
 				// These variables are set in the controllers when the scene is switched...
 				if(choosingEnd) {
-					endRoom = directoryView.getSelectionModel().getSelectedItem();
+					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
 				} else if(choosingStart) {
-					startRoom = directoryView.getSelectionModel().getSelectedItem();
+					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
 				}
 			}
 		});
@@ -323,6 +326,36 @@ public abstract class UserMasterController extends MapDisplayController
 	protected void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
+		this.displayRooms(directory.getRoomsOnFloor(floor));
+	}
+
+	protected void selectStartRoom(Room r) {
+		deselectStartRoom();
+		startRoom = r;
+		startRoom.setShapeColors(ColorScheme.STARTING_ROOM_STROKE_COLOR, ColorScheme.STARTING_ROOM_FILL_COLOR);
+		this.displayRooms(directory.getRoomsOnFloor(floor));
+	}
+
+	protected void selectEndRoom(Room r) {
+		deselectEndRoom();
+		endRoom = r;
+		endRoom.setShapeColors(ColorScheme.ENDING_ROOM_STROKE_COLOR, ColorScheme.ENDING_ROOM_FILL_COLOR);
+		this.displayRooms(directory.getRoomsOnFloor(floor));
+	}
+
+	protected void deselectStartRoom() {
+		if(startRoom == null) {
+			return;
+		}
+		startRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+		this.displayRooms(directory.getRoomsOnFloor(floor));
+	}
+
+	protected void deselectEndRoom() {
+		if(endRoom == null) {
+			return;
+		}
+		endRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
 	}
 

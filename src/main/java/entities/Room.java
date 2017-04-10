@@ -117,18 +117,21 @@ public class Room
 	}
 
 	private void makeShape() {
+		makeShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+	}
+
+	private void makeShape(Color stroke, Color fill) {
 		if(this.location.isPresent()) {
 			Node location = this.location.get(); // This is very, very poor use of Optionals
 
 			Rectangle shape = new Rectangle(location.getX(), location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 
-			shape.setStroke(DEFAULT_STROKE_COLOR);
+			shape.setStroke(stroke);
 			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-
 			if (this.getName().equalsIgnoreCase(KIOSK_NAME)) {
 				shape.setFill(KIOSK_COLOR);
 			} else {
-				shape.setFill(DEFAULT_SHAPE_COLOR);
+				shape.setFill(fill);
 			}
 
 			Text text = new Text(location.getX(), location.getY(), this.name);
@@ -142,5 +145,9 @@ public class Room
 			stackPane.setAlignment(Pos.TOP_LEFT);
 			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH));
 		}
+	}
+
+	public void setShapeColors(Color stroke, Color fill) {
+		makeShape(stroke, fill);
 	}
 }

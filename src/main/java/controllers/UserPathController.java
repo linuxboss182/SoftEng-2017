@@ -51,10 +51,12 @@ public class UserPathController extends UserMasterController implements Initiali
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
+		deselectStartRoom();
+		deselectEndRoom();
+		choosingStart = false;
+		choosingEnd = true;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.imageViewMap.getScene().setRoot(userPath);
-		startRoom = null;
-		endRoom = null;
 	}
 	
 

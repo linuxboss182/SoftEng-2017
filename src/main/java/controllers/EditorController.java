@@ -1,6 +1,7 @@
 package controllers;
 
 
+import entities.ColorScheme;
 import entities.Professional;
 import entities.Room;
 import javafx.beans.property.SimpleStringProperty;
@@ -465,7 +466,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 
 			if(this.selectedShape != null) {
-				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
+				this.selectedShape.setFill(ColorScheme.DEFAULT_NODE_FILL_COLOR);
 				selectedShape = null;
 			}
 
