@@ -12,7 +12,7 @@
          <items>
             <Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
             <Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefWidth="200.0" text="Done" textAlignment="CENTER" />
+            <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefWidth="200.0" text="Done" textAlignment="CENTER" />
             <Pane prefHeight="30.0" prefWidth="354.0" />
             <ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
          </items>

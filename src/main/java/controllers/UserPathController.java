@@ -3,15 +3,19 @@ package controllers;
 import entities.Node;
 import entities.Room;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +41,15 @@ public class UserPathController extends UserMasterController implements Initiali
 		initialize();
 		List<Node> ret;
 		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
-		changeFloor(floor);
 
 		paintPath(new ArrayList<>(ret));
 	}
 
-	
+	@FXML
+	public void doneBtnClicked() throws IOException {
+		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		this.imageViewMap.getScene().setRoot(userPath);
+	}
+
 
 }
