@@ -102,8 +102,7 @@ public abstract class MapDisplayController
 	 * @param floor the floor we want to swtich to
 	 */
 	public void switchFloors(int floor) {
-		this.floorProxy.floorProxy(floor);
-		this.map = floorProxy.display();
+		this.map = new FloorProxy(floor).display();
 	}
 
 	public void loadMap() {

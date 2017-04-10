@@ -7,27 +7,23 @@ import javafx.scene.image.Image;
  */
 public class FloorProxy implements FloorImage
 {
+
+	private int floorNum;
+	private Floor floor;
+
 	public FloorProxy(int floor) {
 		this.floorNum = floor;
 	}
 
-	public void floorProxy(int floorNum) {
-		if(floor == null || this.floorNum != floorNum) {
-			this.floorNum = floorNum;
-			floor = new Floor(this.floorNum, floorImages[floorNum - 1]);
-		}
-	}
-
-	/** Ensures that it is loading the correct floor, then returns an image of it
+	/** checks to see if the floor has been loaded, then returns the image attached to that
+	 *  floor.
 	 *
 	 * @return The image of the floor we are asking for
 	 */
 	public Image display() {
-		floorProxy(floorNum);
+		if(this.floor == null){
+			this.floor = new Floor(this.floorNum);
+		}
 		return floor.display();
 	}
-
-	private int floorNum;
-	private Floor floor;
-	private String[] floorImages = {"/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png", "/4_thefourthfloor.png", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"};
 }
