@@ -42,5 +42,6 @@ public class UserPathController extends UserMasterController implements Initiali
 		paintPath(new ArrayList<>(ret));
 	}
 
+	
 
 }
