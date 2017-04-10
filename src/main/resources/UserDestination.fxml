@@ -70,7 +70,7 @@
 								<Font size="19.0" />
 							</font>
 						</Label>
-						<Slider layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" />
+						<Slider layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" fx:id="zoomSlider"/>
 						<Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" />
 						<Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" />
                   <ChoiceBox layoutX="298.0" layoutY="94.0" prefHeight="25.0" prefWidth="227.0" fx:id="floorChoiceBox"/>

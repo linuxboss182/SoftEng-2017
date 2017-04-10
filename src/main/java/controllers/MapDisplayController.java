@@ -6,6 +6,8 @@ import entities.Professional;
 import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.fxml.FXML;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -67,6 +69,9 @@ public abstract class MapDisplayController
 
 	protected static int floor = 4;
 
+	@FXML
+	protected Slider zoomSlider;
+
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
 		this.topPane = topPane;
@@ -107,6 +112,8 @@ public abstract class MapDisplayController
 	public void loadMap() {
 		switchFloors(floor);
 	}
+
+
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
 }

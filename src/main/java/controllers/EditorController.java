@@ -90,7 +90,9 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	AddProfessionalController addProController = new AddProfessionalController();
 
-	final double SCALE_DELTA = 1.1; //The rate to scale
+	final double SCALE_DELTA = 1.1;
+	final protected double zoomMin = 1/SCALE_DELTA;
+	final protected double zoomMax = SCALE_DELTA*5;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
 
@@ -103,6 +105,27 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.imageViewMap.setImage(this.map); //Load background
 		if(floorChoiceBox != null)
 			initFloorChoiceBox();
+
+		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
+		zoomSlider.setValue(2);
+		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+			                    Number oldValue, Number newValue) {
+				/**
+				 * This one was a fun one.
+				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+				 * and when it's at the far right, it will be zoomed in all the way
+				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+				 * the equation is just that
+				 */
+				double zoomPercent = (zoomSlider.getValue()/100);
+				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+				contentAnchor.setScaleX(zoomCoefficient);
+				contentAnchor.setScaleY(zoomCoefficient);
+			}
+		});
 
 		//Init
 		this.populateChoiceBox(); //populate box for professionals
@@ -466,8 +489,10 @@ public class EditorController extends MapDisplayController implements Initializa
 				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
 				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
 				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
-				potentialScaleX = (potentialScaleX < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleX);
-				potentialScaleY = (potentialScaleY < 1/SCALE_DELTA ? 1/SCALE_DELTA:potentialScaleY);
+				potentialScaleX = (potentialScaleX < zoomMin ? zoomMin:potentialScaleX);
+				potentialScaleY = (potentialScaleY < zoomMin ? zoomMin:potentialScaleY);
+				potentialScaleX = (potentialScaleX > zoomMax ? zoomMax:potentialScaleX);
+				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
 				contentAnchor.setScaleX(potentialScaleX);
 				contentAnchor.setScaleY(potentialScaleY);
 			}
