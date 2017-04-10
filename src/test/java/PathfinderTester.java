@@ -139,4 +139,31 @@ public class PathfinderTester
 		Node[] expect = {n[7], n[9], n[14], n[16], n[17], n[23]};
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}
+
+	//Tests the basic functionality of travelling to different floors
+	@Test
+		public void simpleMultiFloorPath() {
+		Node origin = new Node(0, 0, 1); //Create a start node
+		Node dest = new Node(10, 10, 2); //Create a end node
+		Node n1 = new Node(2, 2, 1); //Node between origin and elev1
+		Node n2 = new Node(2, 2, 2); //Node between elev2 and dest
+		Node elev1 = new Node(5, 5, 1);
+		Node elev2 = new Node(5, 5, 2);
+
+		//Connect nodes on same floor
+		origin.connect(n1);
+		n1.connect(elev1);
+		n2.connect(elev2);
+		dest.connect(n2);
+
+		//Connect elevator nodes to eachother
+		elev1.connect(elev2);
+
+		//Create the expected node path array
+		Node[] expect = {origin, n1, elev1, elev2, n2, dest};
+		//Find the shortest path
+		List<Node> result = Pathfinder.findPath(origin, dest);
+		Node[] resultAsArray = result.toArray(new Node[result.size()]);
+		Assert.assertArrayEquals(expect, resultAsArray);
+	}
 }
