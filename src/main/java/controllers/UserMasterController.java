@@ -88,6 +88,7 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		}
 		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.populateListView();
 		//this.populateListView();
 
 
