@@ -15,6 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -31,11 +32,7 @@ import main.Pathfinder;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public abstract class UserMasterController extends MapDisplayController
@@ -66,7 +63,8 @@ public abstract class UserMasterController extends MapDisplayController
 
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
-
+	private Room startRoom;
+	private Room endRoom;
 
 	public void initialize() {
 		//Set the panes
@@ -150,16 +148,37 @@ public abstract class UserMasterController extends MapDisplayController
 		this.directoryView.itemsProperty().bind(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
 
-
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
 				List<Node> ret;
-				ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
-				paintPath(new ArrayList<>(ret));
+				if(kiosk != null) {
+					ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
+					paintPath(new ArrayList<>(ret));
+				} else {
+
+				}
 			}
 		});
-
+		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
+		this.directoryView.setOnMousePressed(e->{
+			switch (e.getButton()) {
+				case PRIMARY:
+					System.out.println(e.getSource());
+					e.getSource();
+					endRoom = tempRooms.get(((ListView<Room>)e.getSource()).getEditingIndex());
+					System.out.println(endRoom);
+					break;
+				case SECONDARY:
+					System.out.println(e.getSource());
+					e.getSource();
+					startRoom = tempRooms.get(((ListView<Room>)e.getSource()).getEditingIndex());
+					System.out.println(startRoom);
+					break;
+				default:
+					break;
+			}
+		});
 		}
 
 	@FXML

@@ -97,7 +97,7 @@ public abstract class MapDisplayController
 
 	/** Switches the map to the given floor
 	 *
-	 * @param floor the floor we want to swtich to
+	 * @param floor the floor we want to switch to
 	 */
 	public void switchFloors(int floor) {
 		this.floor = floor;

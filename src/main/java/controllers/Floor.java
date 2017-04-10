@@ -10,9 +10,10 @@ import java.util.LinkedList;
  */
 public class Floor implements FloorImage
 {
-	// attributes of the floor class
+	// Attributes of the floor class
 	private int floorNum;
 	private String path;
+	// Linked list containing the string names of the different floor images.
 	private LinkedList<String> floorImages = new LinkedList<>(Arrays.asList(
 							  "/1_thefirstfloor.png", "/2_thesecondfloor.png", "/3_thethirdfloor.png",
 							  "/4_thefourthfloor.png", "/5_thefifthfloor.png", "/6_thesixthfloor.png",
