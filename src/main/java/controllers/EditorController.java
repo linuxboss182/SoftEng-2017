@@ -576,4 +576,26 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.beingDragged = false;
 	}
 
+	@FXML
+	protected void increaseZoomButtonPressed() {
+		double zoomPercent = (zoomSlider.getValue()/100);
+		zoomPercent+=.2;
+		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
+		zoomSlider.setValue(zoomPercent*100);
+		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+		contentAnchor.setScaleX(zoomCoefficient);
+		contentAnchor.setScaleY(zoomCoefficient);
+	}
+
+	@FXML
+	protected void decreaseZoomButtonPressed() {
+		double zoomPercent = (zoomSlider.getValue()/100);
+		zoomPercent-=.2;
+		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
+		zoomSlider.setValue(zoomPercent*100);
+		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+		contentAnchor.setScaleX(zoomCoefficient);
+		contentAnchor.setScaleY(zoomCoefficient);
+	}
+
 }

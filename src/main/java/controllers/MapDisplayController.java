@@ -7,6 +7,7 @@ import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -112,8 +113,6 @@ public abstract class MapDisplayController
 	public void loadMap() {
 		switchFloors(floor);
 	}
-
-
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
 }
