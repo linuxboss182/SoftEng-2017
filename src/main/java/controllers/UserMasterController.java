@@ -174,6 +174,11 @@ public abstract class UserMasterController extends MapDisplayController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
+			/**
+			 * This is code to make a context menu appear when you right click on the shape for a room
+			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+			 * that is reallllllllly helpful for a lot of stuff
+			 */
 			r.getShape().setOnContextMenuRequested(e->{
 
 				ContextMenu optionsMenu = new ContextMenu();
