@@ -30,7 +30,7 @@ public class Floor implements FloorImage
  	 * @return an image of the specified path.
 	 */
 	public Image display() {
-		return new Image(path);
+		return new Image(getClass().getResourceAsStream(path));
 	}
 
 
