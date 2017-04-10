@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -59,7 +60,8 @@ public abstract class UserMasterController extends MapDisplayController
 	public TextFlow directionsTextField;
 	@FXML
 	public GridPane sideGridPane;
-
+	@FXML
+	public ChoiceBox floorChoiceBox;
 
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
@@ -79,6 +81,7 @@ public abstract class UserMasterController extends MapDisplayController
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
+		initFloorChoiceBox();
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
@@ -125,6 +128,34 @@ public abstract class UserMasterController extends MapDisplayController
 		});
 
 
+	}
+
+	/**
+	 * Adds a listener to the choice box.
+	 * Allows you to change floors
+	 */
+	public void initFloorChoiceBox(){
+		this.populateFloorChoiceBox();
+		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if(newValue.intValue() >= 0) {
+					changeFloor(newValue.intValue()+1);
+				}
+
+			}
+		});
+	}
+
+	/**
+	 * Initialize the floor's choice box with 1-7 (the floors)
+	 * Ideally this shouldn't be hard coded
+	 * TODO: Make this not hard coded into our program
+	 */
+	public void populateFloorChoiceBox() {
+		// We are able to change what this list is of.
+		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
+		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
 	}
 
 	@FXML
