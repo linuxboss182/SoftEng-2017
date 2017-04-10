@@ -99,6 +99,8 @@ public class Directory
 	}
 
 	public boolean removeProfessional(Professional professional) {
+		// Must check null because naturally-ordered TreeSets can't use nulls
+		if (professional == null) return false;
 		return this.professionals.remove(professional);
 	}
 
