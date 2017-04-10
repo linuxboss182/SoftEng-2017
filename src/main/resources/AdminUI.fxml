@@ -95,15 +95,15 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="304.0" prefWidth="1172.0">
                <children>
-                  <Button layoutX="227.0" layoutY="44.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" />
+                  <Button layoutX="227.0" layoutY="44.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" fx:id="decreaseZoomButton"/>
                   <Slider layoutX="272.0" layoutY="53.0" prefHeight="14.0" prefWidth="264.0" fx:id="zoomSlider"/>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="3.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
                      <font>
                         <Font size="19.0" />
                      </font>
                   </Label>
-                  <Button layoutX="544.0" layoutY="44.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="83.0" prefHeight="17.0" prefWidth="393.0" text="FLOORS" textAlignment="CENTER">
+                  <Button layoutX="544.0" layoutY="44.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" fx:id="increaseZoomButton"/>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="83.0" prefHeight="17.0" prefWidth="393.0" text="FLOORS" textAlignment="CENTER" >
                      <font>
                         <Font size="19.0" />
                      </font>
