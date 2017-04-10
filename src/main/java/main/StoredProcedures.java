@@ -10,9 +10,10 @@ public class StoredProcedures
 
 	private static final List<String> schema = Arrays.asList(
 			"CREATE TABLE Nodes ("
-					+ " nodeID integer PRIMARY KEY"
-					+ " , nodeX  DOUBLE PRECISION "
-					+ ", nodeY  DOUBLE PRECISION"
+					+ " nodeID integer PRIMARY KEY "
+					+ " , nodeX  double precision NOT NULL "
+					+ ", nodeY  double precision NOT NULL "
+					+ ", floor integer NOT NULL "
 					+  ", roomID integer)",/*references Rooms(roomID))",*/ // foreign key would cause drop problems
 			"CREATE TABLE Edges ("
 					+" node1 integer references Nodes(nodeID) ON DELETE CASCADE"
@@ -151,9 +152,9 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int nodeID, double nodeX, double nodeY){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor){
 		//query needs work
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY) VALUES("+nodeID+", "+nodeX+", "+nodeY+")";
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+")";
 	}
 
 	public static String procInsertRoom(int roomID, String roomName, String roomDescription){

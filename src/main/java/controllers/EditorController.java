@@ -211,7 +211,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addRoomBtnClicked() {
-		this.addRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -296,8 +296,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated ith the room.
 	 */
-	private void addRoom(double x, double y, String name, String description) { //TODO
-		Node newNode = this.directory.addNewRoomNode(x, y, name, description);
+	private void addNodeRoom(double x, double y, String name, String description) { //TODO
+		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 		this.displayNodes(this.directory.getNodesOnFloor(floor));
@@ -305,7 +305,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	/** Add a new node to the directory at the given coordinates */
 	private void addNode(double x, double y) {
-		Node newNode = this.directory.addNewNode(x, y);
+		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 	}

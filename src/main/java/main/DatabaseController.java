@@ -295,7 +295,8 @@ public class DatabaseController
 			while (resultNodes.next()) {
 				//PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = new Node(resultNodes.getDouble("nodeX"),
-				                     resultNodes.getDouble("nodeY"));
+				                     resultNodes.getDouble("nodeY"),
+				                     resultNodes.getInt("floor"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 			}
 			resultNodes.close();
@@ -388,7 +389,7 @@ public class DatabaseController
 
 		for (Node n : dir.getNodes()) {
 			//PRINTLN("Saving node "+n.hashCode());
-			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
+			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor());
 			db.executeUpdate(query);
 		}
 

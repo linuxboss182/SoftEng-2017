@@ -137,9 +137,9 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, String name, String desc) {
+	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
 		Room newRoom = new Room(name, desc);
-		Node newNode = new Node(x, y);
+		Node newNode = new Node(x, y, floor);
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
 		this.nodes.add(newNode);
@@ -162,8 +162,8 @@ public class Directory
 	 * Create a new node in this directory
 	 */
 	// TODO: Add "floor" argument
-	public Node addNewNode(double x, double y) {
-		Node newNode = new Node(x, y);
+	public Node addNewNode(double x, double y, int floor) {
+		Node newNode = new Node(x, y, floor);
 		this.nodes.add(newNode);
 		return newNode;
 	}
