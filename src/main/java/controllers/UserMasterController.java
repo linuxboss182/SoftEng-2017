@@ -5,15 +5,13 @@ import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -176,6 +174,35 @@ public abstract class UserMasterController extends MapDisplayController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
+			r.getShape().setOnMousePressed(e->{
+				switch (e.getButton()) {
+					case PRIMARY: // we don't really care if it's the primary
+						break;
+					case SECONDARY: // if it's the secondary, we want to create a new ContextMenu and display the options
+						ContextMenu optionsMenu = new ContextMenu();
+						MenuItem item1 = new MenuItem("About");
+						item1.setOnAction(new EventHandler<ActionEvent>() {
+							public void handle(ActionEvent e) {
+								System.out.println("About");
+							}
+						});
+						MenuItem item2 = new MenuItem("Preferences");
+						item2.setOnAction(new EventHandler<ActionEvent>() {
+							public void handle(ActionEvent e) {
+								System.out.println("Preferences");
+							}
+						});
+						optionsMenu.getItems().addAll(item1, item2);
+						TextField text = new TextField("");
+						text.setContextMenu(optionsMenu);
+						text.setLayoutX(e.getX() + r.getShape().getLayoutX());
+						text.setLayoutY(e.getY() + r.getShape().getLayoutY());
+						topPane.getChildren().add(text);
+						break;
+					default:
+						break;
+				}
+			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
 	}
