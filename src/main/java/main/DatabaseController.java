@@ -391,7 +391,6 @@ public class DatabaseController
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY());
 			db.executeUpdate(query);
 		}
-		System.out.println("nodes saved");
 
 		for (Room r : dir.getRooms()) {
 			//PRINTLN("Saving node "+r.hashCode());
@@ -407,7 +406,6 @@ public class DatabaseController
 			}
 			db.executeUpdate(query);
 		}
-		System.out.println("rooms saved");
 		/* commented out because, again, kiosks are not yet implemented */
 //		if (dir.hasKiosk()) {
 //			Room n = dir.getKiosk();
@@ -424,7 +422,6 @@ public class DatabaseController
 				db.executeUpdate(query);
 			}
 		}
-		System.out.println("edges saved");
 //
 //		for (Room n : dir.getRooms()) {
 //			for (Node m : n.getLocation().getNeighbors()) {
@@ -444,8 +441,6 @@ public class DatabaseController
 				db.executeUpdate(query);
 			}
 		}
-
-		System.out.println("professionals saved");
 		db.close();
 	}
 
