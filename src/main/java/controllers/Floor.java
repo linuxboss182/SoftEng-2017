@@ -24,7 +24,10 @@ public class Floor implements FloorImage
 		this.path = floorImages.get(floorNum - 1);
 	}
 
-	// display returns an image as detailed by the string found in path
+	/** takes the String name of the path attribute and loads the image attached to that path
+	 *
+ 	 * @return an image of the specified path.
+	 */
 	public Image display() {
 		return new Image(path);
 	}
