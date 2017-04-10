@@ -37,18 +37,24 @@ public class UserPathController extends UserMasterController implements Initiali
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
 		List<Node> ret;
-		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
-		// change displyaed floor to match the floor that the start node is on
-		int startFloor = startRoom.getLocation().getFloor();
-		changeFloor(startFloor);
+		try{
+			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+			// change displyaed floor to match the floor that the start node is on
+			int startFloor = startRoom.getLocation().getFloor();
+			changeFloor(startFloor);
 
-		paintPath(new ArrayList<>(ret));
+			paintPath(new ArrayList<>(ret));
+		} catch (NullPointerException n){
+			System.out.println("start or dest node is null, need to re-choose start and dest.");
+		}
 	}
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.imageViewMap.getScene().setRoot(userPath);
+		startRoom = null;
+		endRoom = null;
 	}
 	
 
