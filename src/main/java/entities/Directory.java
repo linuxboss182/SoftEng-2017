@@ -174,8 +174,10 @@ public class Directory
 	}
 
 	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.getRooms(); // TODO: CHANGE THIS
+		return this.rooms.stream()
+				// Stream::filter removes elements for which the lambda returns false
+				.filter(room -> room.getLocation() != null && room.getLocation().getFloor() == floor)
+				.collect(Collectors.toSet()); // make the stream back into a set
 	}
 }
-
 

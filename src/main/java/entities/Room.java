@@ -3,6 +3,8 @@ package entities;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Optional;
+
 /**
  * A class for Room(s).
  *
@@ -23,7 +25,7 @@ public class Room
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
-	private Node location;
+	private Optional<Node> location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
@@ -31,7 +33,7 @@ public class Room
 
 	/* Constructors */
 	public Room(String name, String description, String image) {
-		this.location = null;
+		this.location = Optional.empty();
 		this.name = name;
 		this.description = description;
 		this.image = image;
@@ -46,14 +48,13 @@ public class Room
 	@Deprecated
 	public Room(double x, double y, String name, String description, String image) {
 		this(name, description, image);
-		this.location = new Node(x, y);
+		this.location = Optional.of(new Node(x, y));
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes
 	@Deprecated
 	public Room(double x, double y) {
-		this("Anonymous Room", "A Room with no name or special description.");
-		this.location = new Node(x, y);
+		this(x, y, "Anonymous Room", "A Room with no name or special description.", Room.DEFAULT_IMAGE_PATH);
 	}
 
 	/* Methods */
@@ -71,12 +72,9 @@ public class Room
 	}
 
 	public Node getLocation() {
-		return this.location;
+		return this.location.orElse(null);
 	}
 
-	public void setLocation(Node location) {
-		this.location = location;
-	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -88,6 +86,16 @@ public class Room
 
 	public void setImage(String imagepath) {
 		this.image = imagepath;
+	}
+
+	public void setLocation(Node location) {
+		// if this function throws NullPointerException, you passed it a null value
+		// Don't do that, use unsetRoom instead
+		this.location = Optional.ofNullable(location);
+	}
+
+	public void unsetLocation() {
+		this.location = Optional.empty();
 	}
 
 	// TODO: Remove Room::toString; replace with custom method
@@ -104,8 +112,10 @@ public class Room
 	}
 
 	private void makeShape() {
-		if(this.location != null) {
-			this.rect = new Rectangle(this.location.getX(), this.location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
+		if(this.location.isPresent()) {
+			Node location = this.location.get(); // This is very, very poor use of Optionals
+
+			this.rect = new Rectangle(location.getX(), location.getY(), this.RECTANGLE_WIDTH, this.RECTANGLE_HEIGHT);
 
 			this.rect.setStroke(this.DEFAULT_STROKE_COLOR);
 			this.rect.setStrokeWidth(this.DEFAULT_STROKE_WIDTH);
