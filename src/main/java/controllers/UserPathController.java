@@ -39,11 +39,13 @@ public class UserPathController extends UserMasterController implements Initiali
 		List<Node> ret;
 		try{
 			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
-			// change displyaed floor to match the floor that the start node is on
+			// change displayed floor to match the floor that the start node is on
 			int startFloor = startRoom.getLocation().getFloor();
 			changeFloor(startFloor);
 			paintPath(new ArrayList<>(ret));
 		} catch (NullPointerException n){
+			// TODO: create exception class?
+			// TODO: make pop-up for UI when this happens
 			System.out.println("start or dest node is null, need to re-choose start and dest.");
 		}
 	}
