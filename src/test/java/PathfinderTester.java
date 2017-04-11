@@ -201,7 +201,6 @@ public class PathfinderTester
 		//Connect the nodes
 		O.connect(N1);
 		N1.connect(D);
-		N1.connect(E11);
 		O.connect(E11);
 		E11.connect(E21);
 		E21.connect(E22);
