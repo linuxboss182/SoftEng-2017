@@ -83,11 +83,11 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public ChoiceBox floorChoiceBox;
 	@FXML
-	public TableView<ObservableList<String>> roomProfTable;
+	public TableView<Professional> roomProfTable;
 	@FXML
-	TableColumn<ObservableList<Room>, String> roomCol;
+	private TableColumn<Professional, String> roomCol;
 	@FXML
-	TableColumn<ObservableList<Professional>, String> profCol;
+	private TableColumn<Professional, String> profCol;
 
 	AddProfessionalController addProController = new AddProfessionalController();
 
@@ -156,16 +156,33 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.directory.getNodes().forEach(this::addNodeListeners);
 
 		//Populate the tableview
-		populateTableView();
+		HashSet<Room> locations = new HashSet<>();
+		for (Professional p: directory.getProfessionals()) {
+			locations.addAll(p.getLocations());
+
+		}
+		populateTableView(directory.getProfessionals());
+
+		//Listener for the tableview
+		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (roomProfTable.getSelectionModel().getSelectedItem() != null) {
+				//selectedLocation = newValue;
+
+			}
+
+				}
+
+		);
 	}
 
-	public void populateTableView () {
-		final ObservableList<Professional> data =
-				FXCollections.observableArrayList(directory.getProfessionals());
+	public void populateTableView (Collection<Professional> profs) {
 
-		//roomCol.setCellValueFactory(new PropertyValueFactory<ObservableList<Room>, String>("name"));
-		profCol.setCellValueFactory(new PropertyValueFactory<ObservableList<Professional>, String>("givenName"));
+		roomCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
+		roomProfTable.getSortOrder().add(profCol);
+		roomProfTable.getSortOrder().add(roomCol);
 
+		roomProfTable.getItems().setAll(profs);
 
 		//roomCol.getColumns().addAll();
 
@@ -175,15 +192,13 @@ public class EditorController extends MapDisplayController implements Initializa
 //				return new SimpleStringProperty(cdf.getValue().get(0).getName());
 //			}
 //		});
-
-		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Professional>,String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Professional>, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().get(1).getGivenName());
-			}
-		});
-
-
+//
+//		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Professional>,String>, ObservableValue<String>>() {
+//			@Override
+//			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Professional>, String> cdf) {
+//				return new SimpleStringProperty(cdf.getValue().get(1).getGivenName());
+//			}
+//		});
 
 
 	}
