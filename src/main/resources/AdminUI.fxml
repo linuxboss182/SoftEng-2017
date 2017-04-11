@@ -148,13 +148,13 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" />
+                                    <Text fx:id="roomName" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" />
                                     <TextField fx:id="nameField" GridPane.columnIndex="2" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextArea fx:id="descriptField" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="xPos" />
                                     <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" fx:id="xCoordField" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <TextField fx:id="yCoordField" prefHeight="25.0" prefWidth="284.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                     <GridPane GridPane.columnIndex="2" GridPane.rowIndex="4">
                                       <columnConstraints>

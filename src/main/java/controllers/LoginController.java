@@ -33,13 +33,11 @@ public class LoginController {
 	public void loginClicked() throws IOException, InvocationTargetException {
 		boolean success = true;
 
-		if(usernameField.getText().equals("admin") &&
-				passwordField.getText().equals("password")) {
+		if(success/*usernameField.getText().equals("admin") &&
+				passwordField.getText().equals("password")*/) {
 			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLabel.getScene().setRoot(adminUI);
-
-
 		} else {
 			this.errorLabel.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
