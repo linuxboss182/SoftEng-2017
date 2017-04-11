@@ -412,6 +412,9 @@ public class EditorController extends MapDisplayController implements Initializa
 	 * Also add a new node associated with the room.
 	 */
 	private void addNodeRoom(double x, double y, String name, String description) { //TODO
+		if(x < 0 || y < 0) {
+			return;
+		}
 		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
@@ -420,6 +423,9 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	/** Add a new node to the directory at the given coordinates */
 	private void addNode(double x, double y) {
+		if(x < 0 || y < 0) {
+			return;
+		}
 		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
@@ -430,12 +436,15 @@ public class EditorController extends MapDisplayController implements Initializa
 			room.setName(name);
 			room.setDescription(description);
 		});
-		this.selectedNode.moveTo(x, y);
+		this.updateSelectedNode(x, y);
+		this.redrawLines();
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
 	private void updateSelectedNode(double x, double y) { //TODO
 		this.selectedNode.moveTo(x, y);
+		this.selectedNode.getShape().setCenterX(this.selectedNode.getX());
+		this.selectedNode.getShape().setCenterY(this.selectedNode.getY());
 	}
 
 	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
@@ -544,8 +553,6 @@ public class EditorController extends MapDisplayController implements Initializa
 
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNode(e.getX(), e.getY());
-				this.selectedNode.getShape().setCenterX(e.getX());
-				this.selectedNode.getShape().setCenterY(e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
 			} else if(this.secondaryPressed) {
