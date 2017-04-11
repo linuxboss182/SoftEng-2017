@@ -389,7 +389,11 @@ public class DatabaseController
 
 		for (Node n : dir.getNodes()) {
 			//PRINTLN("Saving node "+n.hashCode());
-			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor());
+			if(n.getRoom() != null) {
+				query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor(), n.getRoom().hashCode());
+			}else{
+				query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor(), 0);
+			}
 			db.executeUpdate(query);
 		}
 
