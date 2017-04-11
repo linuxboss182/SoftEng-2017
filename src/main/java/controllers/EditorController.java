@@ -70,8 +70,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private ChoiceBox<Professional> proChoiceBox;
 	@FXML
-	private Label roomTextLbl;
-	@FXML
 	private Button addCustomProBtn;
 	@FXML
 	private Button deleteProfBtn;
@@ -232,7 +230,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			roomList += r.getName() + ", ";
 		}
 
-		this.roomTextLbl.setText(roomList); //TODO null
+//		this.roomTextLbl.setText(roomList); //TODO populate this in the tableview
 	}
 
 	@FXML
@@ -247,7 +245,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			roomList += r.getName() + ", ";
 		}
 
-		this.roomTextLbl.setText(roomList); //TODO null
+//		this.roomTextLbl.setText(roomList); //TODO populate this in the tableview
 	}
 
 	@FXML
@@ -339,7 +337,7 @@ public class EditorController extends MapDisplayController implements Initializa
 				StringJoiner roomList = new StringJoiner(", ");
 				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
 
-				roomTextLbl.setText(roomList.toString()); //TODO null pointer exception occurs here
+//				roomTextLbl.setText(roomList.toString()); //TODO populate this in the table view
 			}
 		});
 	}
