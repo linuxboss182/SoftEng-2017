@@ -90,6 +90,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	private TableColumn<Professional, String> profCol;
 
 	AddProfessionalController addProController = new AddProfessionalController();
+	protected Node selectedNode; // you select a node by double clicking
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -396,6 +397,20 @@ public class EditorController extends MapDisplayController implements Initializa
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
 		});
+		node.getShape().setOnContextMenuRequested(e->{
+			if(node.equals(this.selectedNode)) {
+				ContextMenu optionsMenu = new ContextMenu();
+
+				MenuItem exItem1 = new MenuItem("Connect to Node...");
+				exItem1.setOnAction(e1 -> {
+				});
+				MenuItem exItem2 = new MenuItem("");
+				exItem2.setOnAction(e2 -> {
+				});
+				optionsMenu.getItems().addAll(exItem1, exItem2);
+				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+			}
+		});
 	}
 
 	private double readX() {
@@ -409,9 +424,12 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	/**
 	 * Add a new room with the given information to the directory.
-	 * Also add a new node associated ith the room.
+	 * Also add a new node associated with the room.
 	 */
 	private void addNodeRoom(double x, double y, String name, String description) { //TODO
+		if(x < 0 || y < 0) {
+			return;
+		}
 		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
@@ -420,6 +438,9 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	/** Add a new node to the directory at the given coordinates */
 	private void addNode(double x, double y) {
+		if(x < 0 || y < 0) {
+			return;
+		}
 		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
@@ -430,15 +451,15 @@ public class EditorController extends MapDisplayController implements Initializa
 			room.setName(name);
 			room.setDescription(description);
 		});
+		this.updateSelectedNode(x, y);
+		this.redrawLines();
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
 	private void updateSelectedNode(double x, double y) { //TODO
 		this.selectedNode.moveTo(x, y);
-
-		Circle selectedCircle = (Circle) this.selectedShape;
-		selectedCircle.setCenterX(x);
-		selectedCircle.setCenterY(y);
+		this.selectedNode.getShape().setCenterX(this.selectedNode.getX());
+		this.selectedNode.getShape().setCenterY(this.selectedNode.getY());
 	}
 
 	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
@@ -447,8 +468,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.directory.removeNodeAndRoom(this.selectedNode);
 		this.selectedNode = null;
 		// now garbage collector has to do its work
-
-		this.selectedShape = null;
 
 		this.displayNodes(this.directory.getNodesOnFloor(floor));
 		this.redrawLines();
@@ -459,14 +478,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.directory.getNodesOnFloor(floor).forEach(node ->
 				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
 	}
-
-
-	public void setFields(double x, double y) {
-		this.xCoordField.setText(x+"");
-		this.yCoordField.setText(y+"");
-	}
-
-
 
 	///////////////////////
 	/////EVENT HANDLERS////
@@ -535,6 +546,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 
 			this.selectNode(n);
+			this.updateFields();
 
 		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
 			// ^ checks if there has been a node selected,
@@ -555,7 +567,6 @@ public class EditorController extends MapDisplayController implements Initializa
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 
 			if(e.isPrimaryButtonDown()) {
-				this.selectedShape = (Shape) e.getSource();
 				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
@@ -626,5 +637,45 @@ public class EditorController extends MapDisplayController implements Initializa
 			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_NODE_STROKE_COLOR);
 		}
 		this.selectedNode = null;
+	}
+
+	private void setXCoordField(double x) {
+		this.xCoordField.setText(x+"");
+	}
+
+	private void setYCoordField(double y) {
+		this.yCoordField.setText(y+"");
+	}
+
+	private void setFields(double x, double y) {
+		this.setXCoordField(x);
+		this.setYCoordField(y);
+	}
+
+	private void setNameField(String name) {
+		this.nameField.setText(name);
+	}
+
+	private void setDescriptField(String desc) {
+		this.descriptField.setText(desc);
+	}
+
+	private void setRoomFields(String name, String desc) {
+		this.setNameField(name);
+		this.setDescriptField(desc);
+	}
+
+	/** Updates the node/room fields based off of the selected node (or room)
+	 *
+	 */
+	private void updateFields() {
+		if(selectedNode == null) {
+			return;
+		}
+		this.setFields(selectedNode.getX(), selectedNode.getY());
+
+		if(selectedNode.containsRoom()) {
+			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
+		}
 	}
 }
