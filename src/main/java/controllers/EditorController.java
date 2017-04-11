@@ -279,6 +279,16 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addRoomBtnClicked() {
+		if(this.yCoordField.getText().isEmpty() || this.xCoordField.getText().isEmpty()){
+			if(this.yCoordField.getText().isEmpty()){
+				yPos.setFill(Color.RED);
+			}
+			if(this.xCoordField.getText().isEmpty()){
+				xPos.setTextFill(Color.RED);
+			}
+			return;
+		}
+		
 		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
