@@ -465,15 +465,9 @@ public class EditorController extends MapDisplayController implements Initializa
 				this.addNode(e.getX(), e.getY());
 			}
 
-			if(this.selectedShape != null) {
-				this.selectedShape.setFill(ColorScheme.DEFAULT_NODE_FILL_COLOR);
-				selectedShape = null;
-			}
+			this.deselectNode();
 
 			this.displayNodes(this.directory.getNodesOnFloor(floor));
-
-			this.selectedNode = null;
-			this.selectedShape = null;
 		});
 
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
@@ -525,14 +519,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 
-			if(this.selectedShape != null) {
-				this.selectedShape.setFill(this.DEFAULT_SHAPE_COLOR);
-				selectedShape = null;
-			}
+			this.selectNode(n);
 
-			this.selectedShape = (Shape) e.getSource();
-			this.selectedNode = n;
-			this.selectedShape.setFill(this.SELECTED_SHAPE_COLOR);
 		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
 			// ^ checks if there has been a node selected,
 			// checks if the node selected is not the node we are clicking on
@@ -598,4 +586,30 @@ public class EditorController extends MapDisplayController implements Initializa
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
+	private void selectNode(Node n){
+		this.deselectNode();
+		this.selectedNode = n;
+		if(this.selectedNode.containsRoom()) {
+			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_ROOM_FILL_COLOR);
+			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_ROOM_STROKE_COLOR);
+		} else {
+			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_NODE_FILL_COLOR);
+			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_NODE_STROKE_COLOR);
+		}
+	}
+
+	private void deselectNode(){
+		if(this.selectedNode == null){
+			return;
+		}
+		System.out.println("this.selectedNode.containsRoom() = " + this.selectedNode.containsRoom());
+		if(this.selectedNode.containsRoom()) {
+			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_ROOM_STROKE_COLOR);
+		} else {
+			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_NODE_FILL_COLOR);
+			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_NODE_STROKE_COLOR);
+		}
+		this.selectedNode = null;
+	}
 }

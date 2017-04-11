@@ -234,7 +234,7 @@ public class Node
 	/** @deprecated Use applyToRoom instead */
 	@Deprecated
 	public boolean containsRoom() {
-		if (this.room == null) {
+		if (!this.room.isPresent()) {
 			return false;
 		} else {
 			return true;
