@@ -26,7 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -35,12 +34,10 @@ import main.DatabaseException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.StringJoiner;
 
 public class EditorController extends MapDisplayController implements Initializable
 {
@@ -482,12 +479,15 @@ public class EditorController extends MapDisplayController implements Initializa
 	 * Recreate and redisplay all lines on this floor
 	 */
 	public void redrawLines() {
-		this.redrawEdges(directory.getNodesOnFloor(floor));
-
-		// old implementation; unecessary steps involved
-//		this.botPane.getChildren().clear();
-//		this.directory.getNodesOnFloor(floor).forEach(node ->
-//				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
+		Set<Line> lines = new HashSet<>();
+		for (Node node : directory.getNodesOnFloor(floor)) {
+			for (Node neighbor : node.getNeighbors()) {
+				if (node.getFloor() == neighbor.getFloor()) {
+					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
+				}
+			}
+		}
+		this.botPane.getChildren().setAll(lines);
 	}
 
 	///////////////////////
