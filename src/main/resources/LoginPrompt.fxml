@@ -4,30 +4,26 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.stage.Screen?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="${screen.visualBounds.height}" prefWidth="${screen.visualBounds.width}" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
-    <fx:define>
-        <Screen fx:factory="getPrimary" fx:id="screen"/>
-    </fx:define>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
    <children>
-      <TextField fx:id="usernameField" layoutX="200.0" layoutY="66.0" promptText="Enter Username" />
-      <Region layoutX="200.0" layoutY="104.0" prefHeight="${screen.visualBounds.height}" prefWidth="149.0" />
-      <Text layoutX="135.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
-      <Text layoutX="137.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-      <Button fx:id="loginBtn" layoutX="251.0" layoutY="163.0" mnemonicParsing="false" onMouseClicked="#loginClicked" text="Login" />
-      <Text layoutX="500" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+      <TextField fx:id="usernameField" layoutX="506.0" layoutY="259.0" promptText="Enter Username" />
+      <Region layoutX="506.0" layoutY="297.0" prefHeight="500" prefWidth="149.0" />
+      <Text layoutX="441.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
+      <Text layoutX="443.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
+      <Button fx:id="loginBtn" layoutX="517.0" layoutY="361.0" mnemonicParsing="false" onMouseClicked="#loginClicked" prefHeight="25.0" prefWidth="129.0" text="Login" />
+      <Text layoutX="457.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login As Admin">
          <font>
             <Font name="Tahoma" size="38.0" />
          </font>
       </Text>
-      <ToolBar layoutY="-40.0" prefHeight="40.0" prefWidth="548.0">
-        <items>
-            <Region prefHeight="30.0" prefWidth="471.0" />
-          <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
-        </items>
+      <ToolBar prefHeight="40.0" prefWidth="1174.0">
+         <items>
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onMouseClicked="#cancelBtnClicked" prefHeight="25.0" prefWidth="64.0" text="Back" />
+         </items>
       </ToolBar>
-      <PasswordField fx:id="passwordField" layoutX="200.0" layoutY="105.0" promptText="Enter Password" />
-      <Label fx:id="errorLabel" layoutX="198.0" layoutY="137.0" prefHeight="17.0" prefWidth="272.0" textFill="RED" />
+      <PasswordField fx:id="passwordField" layoutX="506.0" layoutY="298.0" promptText="Enter Password" />
+      <Label fx:id="errorLabel" layoutX="504.0" layoutY="330.0" prefHeight="17.0" prefWidth="272.0" textFill="RED" />
    </children>
 </AnchorPane>

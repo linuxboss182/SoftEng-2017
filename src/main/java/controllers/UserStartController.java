@@ -34,6 +34,7 @@ public class UserStartController extends UserMasterController implements Initial
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
+		getDirectionsBtn.setDisable(true);
 
 	}
 
@@ -44,6 +45,11 @@ public class UserStartController extends UserMasterController implements Initial
 		Parent userDest = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.sideGridPane.getScene().setRoot(userDest);
 
+	}
+
+	@Override
+	public void setDisable() {
+		getDirectionsBtn.setDisable(false);
 	}
 
 

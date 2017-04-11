@@ -65,6 +65,7 @@ public abstract class MapDisplayController
 	protected Pane botPane;
 	protected Pane topPane;
 
+	// Default floor is the fourth because that's the one we emotionally attached to
 	protected static int floor = 4;
 
 	@FXML

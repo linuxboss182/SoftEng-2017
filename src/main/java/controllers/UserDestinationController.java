@@ -28,6 +28,8 @@ public class UserDestinationController extends UserMasterController implements I
 	public void initialize(URL location, ResourceBundle resources) {
 		//Call initialize from super class
 		initialize();
+		changeStartBtn.setDisable(true);
+		getDirectionsBtn.setDisable(true);
 
 	}
 

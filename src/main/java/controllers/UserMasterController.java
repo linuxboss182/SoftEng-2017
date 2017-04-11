@@ -1,12 +1,11 @@
 package controllers;
 
-import entities.COLORS;
-import entities.ColorScheme;
-import entities.Node;
-import entities.Room;
+import entities.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -35,6 +34,7 @@ import main.Pathfinder;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 
 public abstract class UserMasterController extends MapDisplayController
@@ -162,6 +162,11 @@ public abstract class UserMasterController extends MapDisplayController
 		});
 
 
+
+
+
+
+
 	}
 
 	/**
@@ -179,6 +184,29 @@ public abstract class UserMasterController extends MapDisplayController
 
 			}
 		});
+	}
+
+	public void setSearchBar (HashSet<Room> rooms) {
+		ObservableList<String> data = FXCollections.observableArrayList();
+
+		//IntStream.range(0, 1000).mapToObj(Integer::toString).forEach(rooms::add);
+
+		FilteredList<String> filteredData = new FilteredList<>(data, s -> true);
+
+
+		searchBar.textProperty().addListener(obs->{
+			String filter = searchBar.getText();
+			if(filter == null || filter.length() == 0) {
+				filteredData.setPredicate(s -> true);
+			}
+			else {
+				filteredData.setPredicate(s -> s.contains(filter));
+			}
+		});
+
+
+		BorderPane content = new BorderPane(new ListView<>(filteredData));
+		content.setBottom(searchBar);
 	}
 
 	/**
@@ -247,12 +275,17 @@ public abstract class UserMasterController extends MapDisplayController
 //				}
 				// These variables are set in the controllers when the scene is switched...
 				if(choosingEnd) {
+					setDisable();
 					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
 				} else if(choosingStart) {
+					setDisable();
 					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
+
 				}
 			}
 		});
+
+
 
 		// Commented out because we have a separate tab for choosing the start and the end, and left/right clicking is somewhat confusing for this sort of menu
 //		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
@@ -271,6 +304,10 @@ public abstract class UserMasterController extends MapDisplayController
 //			}
 //		});
 		}
+	public void setDisable() {
+		changeStartBtn.setDisable(false);
+		getDirectionsBtn.setDisable(false);
+	}
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
