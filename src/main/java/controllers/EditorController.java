@@ -124,10 +124,10 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		//Init
 		this.populateChoiceBox(); //populate box for professionals
-		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
-		for (Professional pro: this.directory.getProfessionals()) {
-			this.proList.add(pro);
-		}
+//		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
+//		for (Professional pro: this.directory.getProfessionals()) {
+//			this.proList.add(pro);
+//		}
 		this.selectChoiceBox();
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
@@ -298,19 +298,35 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	public void selectChoiceBox(){
-		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+//		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
+//
+//				if(newValue.intValue() >= 0) {
+////					EditorController.this.selectedProf = proList.get(newValue.intValue());
+//					EditorController.this.selectedProf = directory.getProfessionals().
+//				}
+//
+////				// Build a string listing the names of the professional's rooms
+////				StringJoiner roomList = new StringJoiner(", ");
+////				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
+//
+//				populateTableView(directory.getProfessionals());
+//			}
+//		});
+//		proChoiceBox.getSelectionModel().selectedIndexProperty()
+//				.addListener(new ChangeListener<Professional>() {
+//					@Override
+//					public void changed(ObservableValue<Professional>
+//							                    observable, Object oldValue, Object newValue) {
+//
+//					}
+//				});
+		this.proChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professional>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
-
-				if(proList.size() != 0 && newValue.intValue() >= 0) {
-					EditorController.this.selectedProf = proList.get(newValue.intValue());
-				}
-
-//				// Build a string listing the names of the professional's rooms
-//				StringJoiner roomList = new StringJoiner(", ");
-//				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
-
+			public void changed(ObservableValue<? extends Professional> observable, Professional oldValue, Professional newValue) {
+				EditorController.this.selectedProf = newValue;
 				populateTableView(directory.getProfessionals());
 			}
 		});
