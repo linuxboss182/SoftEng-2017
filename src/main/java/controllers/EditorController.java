@@ -478,14 +478,11 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.redisplayAll();
 	}
 
+	/**
+	 * Recreate and redisplay all lines on this floor
+	 */
 	public void redrawLines() {
-		Set<Line> lines = new HashSet<>();
-		for (Node node : directory.getNodesOnFloor(floor)) {
-			for (Node neighbor : node.getNeighbors()) {
-				lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
-			}
-		}
-		this.botPane.getChildren().setAll(lines);
+		this.redrawEdges(directory.getNodesOnFloor(floor));
 
 		// old implementation; unecessary steps involved
 //		this.botPane.getChildren().clear();

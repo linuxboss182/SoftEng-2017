@@ -78,16 +78,36 @@ public abstract class MapDisplayController
 
 
 	//This function takes in two nodes, displays a
+	@Deprecated
 	public void paintLine(Node start, Node finish) {
-				Line line = new Line();
-				line.setStartX(start.getX());
-				line.setStartY(start.getY());
-				line.setFill(this.CONNECTION_LINE_COLOR);
-				line.setEndX(finish.getX());
-				line.setEndY(finish.getY());
-				this.lines.add(line);
-				this.botPane.getChildren().add(line);
-				line.setVisible(true);
+		if (start.getFloor() == finish.getFloor()) {
+			Line line = new Line();
+			line.setStartX(start.getX());
+			line.setStartY(start.getY());
+			line.setFill(this.CONNECTION_LINE_COLOR);
+			line.setEndX(finish.getX());
+			line.setEndY(finish.getY());
+			this.lines.add(line);
+			this.botPane.getChildren().add(line);
+			line.setVisible(true);
+		}
+	}
+
+	/**
+	 * Display any edges between any of the given nodes
+	 *
+	 * @param nodes A collection of nodes to draw edges between
+	 */
+	public void redrawEdges(Collection<Node> nodes) {
+		Set<Line> lines = new HashSet<>();
+		for (Node node : nodes) {
+			for (Node neighbor : node.getNeighbors()) {
+				if (nodes.contains(neighbor) && node.getFloor() == neighbor.getFloor()) {
+					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
+				}
+			}
+		}
+		this.botPane.getChildren().setAll(lines);
 	}
 
 	/**

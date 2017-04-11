@@ -234,8 +234,7 @@ public abstract class UserMasterController extends MapDisplayController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
-			/**
-			 * This is code to make a context menu appear when you right click on the shape for a room
+			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
@@ -316,44 +315,23 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 
+
+	/**
+	 * Draw a simple path between the nodes in the given list
+	 *
+	 * @param directionNodes A list of the nodes in the path, in order
+	 */
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
-		this.lines.forEach(line -> {
-			this.botPane.getChildren().remove(line);
-		});
 
 		//add kiosk to start of list
 		//directionNodes.add(0, this.kiosk);
-		if(directionNodes.size() <= 0){
+		if(directionNodes.size() <= 0) {
+			// TODO: Give an error message when no path is found
 			return;
 		}
 
-
-		double destX = directionNodes.get(directionNodes.size() - 1).getX();
-		double destY = directionNodes.get(directionNodes.size() - 1).getY();
-
-		// This is commented out because it is outdated code
-//		this.destNode = new Node(destX, destY);
-//		main.Pathfinder.findPath(this.kiosk.getLocation(), this.destNode);
-
-		for (int i = 0; i < directionNodes.size() - 1; i++) {
-			double nodeX1 = directionNodes.get(i).getX();
-			//	System.out.println("X1: " + nodeX1);
-			double nodeY1 = directionNodes.get(i).getY();
-			//	System.out.println("Y1: " + nodeY1);
-			double nodeX2 = directionNodes.get(i+1).getX();
-			//	System.out.println("X2: " + nodeX2);
-			double nodeY2 = directionNodes.get(i+1).getY();
-			//	System.out.println("Y2: " + nodeY2);
-			Line line = new Line();
-			this.lines.add(line);
-			line.setStartX(nodeX1);
-			line.setStartY(nodeY1);
-			line.setEndX(nodeX2);
-			line.setEndY(nodeY2);
-
-			this.botPane.getChildren().add(line);
-		}
+		this.redrawEdges(directionNodes);
 
 		Text textDirections = new Text();
 		textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
