@@ -37,6 +37,7 @@ public class AddProfessionalController implements Initializable
 		addProBtn.getScene().getWindow().hide();
 	}
 
+	@FXML
 	public void onCancelBtnClick(){
 		cancelBtn.getScene().getWindow().hide();
 	}
