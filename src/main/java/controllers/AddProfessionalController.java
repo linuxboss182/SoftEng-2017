@@ -17,15 +17,15 @@ public class AddProfessionalController implements Initializable
 {
 
 	@FXML
-	private Button addProBtn;
+	protected Button addProBtn;
 	@FXML
-	private Button cancelBtn;
+	protected Button cancelBtn;
 	@FXML
-	private TextField givenNameField;
+	protected TextField givenNameField;
 	@FXML
-	private TextField surnameField;
+	protected TextField surnameField;
 	@FXML
-	private TextField titleField;
+	protected TextField titleField;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

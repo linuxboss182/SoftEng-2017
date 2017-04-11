@@ -264,12 +264,12 @@ public class EditorController extends MapDisplayController implements Initializa
 		AddProfessionalController addProController = new AddProfessionalController();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
-		addProController = loader.getController();
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
+		populateTableView(directory.getProfessionals());
 	}
 
 	@FXML
