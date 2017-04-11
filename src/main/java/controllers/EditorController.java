@@ -77,11 +77,11 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public ChoiceBox floorChoiceBox;
 	@FXML
-	public TableView<Room> roomProfTable;
+	public TableView<Professional> roomProfTable;
 	@FXML
-	private TableColumn<Room, String> roomCol;
+	private TableColumn<Professional, String> roomCol;
 	@FXML
-	private TableColumn<Room, String> profCol;
+	private TableColumn<Professional, String> profCol;
 
 	protected Node selectedNode; // you select a node by double clicking
 
@@ -175,34 +175,22 @@ public class EditorController extends MapDisplayController implements Initializa
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(profs.toString()));
 
 
-		roomCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		roomCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 //		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-		roomProfTable.getSortOrder().add(roomCol);
 
-		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Room,
-				String>, ObservableValue<String>>() {
+		profCol.setCellValueFactory(new Callback<TableColumn
+				.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<Room, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getName());
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getLocationNames());
 			}
 		});
 
 		roomProfTable.getSortOrder().add(profCol);
-
-		roomProfTable.getItems().setAll(directory.getRooms());
-
-
-		//roomCol.getColumns().addAll();
-
-//		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Room>,String>, ObservableValue<String>>() {
-//			@Override
-//			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Room>, String> cdf) {
-//				return new SimpleStringProperty(cdf.getValue().get(0).getName());
-//			}
-//		});
-//
+		roomProfTable.getSortOrder().add(roomCol);
 
 
+		roomProfTable.getItems().setAll(profs);
 
 	}
 
@@ -228,14 +216,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		if (this.selectedProf == null || this.selectedNode == null) return;
 
 		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
-		// TODO: Use StringBuilder
-		String roomList = "";
-		for (Room r: this.selectedProf.getLocations()) {
-			roomList += r.getName() + ", ";
-		}
 
-//		this.roomTextLbl.setText(roomList); //TODO populate this in the tableview
-		this.roomCol.setText(roomList);
+		this.populateTableView(directory.getProfessionals());
 	}
 
 	@FXML
@@ -244,13 +226,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		this.selectedNode.applyToRoom(room -> this.selectedProf.removeLocation(room));
 
-		// TODO: Use StringBuilder
-		String roomList = "";
-		for (Room r: this.selectedProf.getLocations()) {
-			roomList += r.getName() + ", ";
-		}
-
-//		this.roomTextLbl.setText(roomList); //TODO populate this in the tableview
+		this.populateTableView(directory.getProfessionals());
 	}
 
 	@FXML
@@ -338,11 +314,11 @@ public class EditorController extends MapDisplayController implements Initializa
 					EditorController.this.selectedProf = proList.get(newValue.intValue());
 				}
 
-				// Build a string listing the names of the professional's rooms
-				StringJoiner roomList = new StringJoiner(", ");
-				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
+//				// Build a string listing the names of the professional's rooms
+//				StringJoiner roomList = new StringJoiner(", ");
+//				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
 
-//				roomTextLbl.setText(roomList.toString()); //TODO populate this in the table view
+				populateTableView(directory.getProfessionals());
 			}
 		});
 	}
