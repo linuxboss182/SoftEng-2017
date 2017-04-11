@@ -231,7 +231,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		for (Room r: this.selectedProf.getLocations()) {
 			roomList += r.getName() + ", ";
 		}
-		this.roomTextLbl.setText(roomList);
+
+		this.roomTextLbl.setText(roomList); //TODO null
 	}
 
 	@FXML
@@ -245,8 +246,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		for (Room r: this.selectedProf.getLocations()) {
 			roomList += r.getName() + ", ";
 		}
-		this.roomTextLbl.setText(roomList);
 
+		this.roomTextLbl.setText(roomList); //TODO null
 	}
 
 	@FXML

@@ -104,6 +104,11 @@ public class Directory
 		return this.professionals.remove(professional);
 	}
 
+	public Professional addNewProfessional(String name,String surname,String title){
+		Professional newPro = new Professional(name, surname, title);
+		this.addProfessional(newPro);
+	}
+
 
 	/** return whether this directory has a kiosk */
 	public boolean hasKiosk() {
