@@ -408,7 +408,6 @@ public class EditorController extends MapDisplayController implements Initializa
 			return;
 		}
 		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
-		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 		this.displayNodes(this.directory.getNodesOnFloor(floor));
 	}
@@ -419,7 +418,6 @@ public class EditorController extends MapDisplayController implements Initializa
 			return;
 		}
 		Node newNode = this.directory.addNewNode(x, y, floor);
-		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
 	}
 
