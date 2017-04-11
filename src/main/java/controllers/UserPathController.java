@@ -45,7 +45,7 @@ public class UserPathController extends UserMasterController implements Initiali
 			// change displayed floor to match the floor that the start node is on
 			int startFloor = startRoom.getLocation().getFloor();
 			changeFloor(startFloor);
-			paintPath(new ArrayList<>(ret));
+			paintPath(getPathOnFloor(startFloor, ret));
 
 			/** The following code/ comments are for drawing the path and or buttons for getting directions between floors.
 			 *
@@ -77,13 +77,18 @@ public class UserPathController extends UserMasterController implements Initiali
 
 	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
 		Button newFloorButton = new Button("" + floor);
-		newFloorButton.setLayoutX(buttonCount*100);
-		newFloorButton.setLayoutY(70);
-//		newFloorButton.setScaleX(75);
-//		newFloorButton.setScaleY(75);
+
+		int buttonWidth = 50;
+		int buttonHeight = 50;
+		int buttonSpread = 60;
+		int buttonY = 95;
+		int centerX = 250;
+
+		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
+		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setMnemonicParsing(false);
-		newFloorButton.setPrefWidth(75);
-		newFloorButton.setPrefHeight(75);
+		newFloorButton.setPrefWidth(buttonWidth);
+		newFloorButton.setPrefHeight(buttonHeight);
 		newFloorButton.setOnAction(e-> {
 			// change to the new floor, and draw the path for that floor
 			changeFloor(floor);
