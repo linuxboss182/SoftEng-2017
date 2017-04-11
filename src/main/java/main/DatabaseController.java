@@ -327,10 +327,8 @@ public class DatabaseController
 				int nodeID = resultNodes.getInt("nodeID");
 				int roomID = resultNodes.getInt("roomID");
 				//PRINTLN("Loading room "+roomID);
-				if(roomID != 0) {
-					if (!resultNodes.wasNull()) {
-						nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
-					}
+				if (!resultNodes.wasNull()) {
+					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
 				}
 			}
 			resultNodes.close();
@@ -391,11 +389,8 @@ public class DatabaseController
 
 		for (Node n : dir.getNodes()) {
 			//PRINTLN("Saving node "+n.hashCode());
-			if(n.getRoom() != null) {
-				query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor(), n.getRoom().hashCode());
-			}else{
-				query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(), n.getFloor(), 0);
-			}
+			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
+			                                        n.getFloor(), n.mapToRoom(r -> r.hashCode()));
 			db.executeUpdate(query);
 		}
 
