@@ -41,7 +41,7 @@
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
 				<Pane prefHeight="30.0" prefWidth="554.0">
                <children>
-                  <Button fx:id="getDirectionsBtn" defaultButton="true" layoutX="-33.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" text="Get Directions" />
+                  <Button fx:id="getDirectionsBtn" defaultButton="true" layoutX="-25.0" layoutY="2.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" text="Get Directions" />
                </children></Pane>
 				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
 			</items>
@@ -101,7 +101,7 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <TextField promptText="Enter room or professional" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="searchBar" promptText="Enter room or professional" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <ListView fx:id="directoryView" prefHeight="248.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
               <columnConstraints>
