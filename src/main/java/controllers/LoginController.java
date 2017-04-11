@@ -33,7 +33,8 @@ public class LoginController {
 	public void loginClicked() throws IOException, InvocationTargetException {
 		boolean success = true;
 
-		if(success) {
+		if(usernameField.getText().equals("admin") &&
+				passwordField.getText().equals("password")) {
 			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLabel.getScene().setRoot(adminUI);
