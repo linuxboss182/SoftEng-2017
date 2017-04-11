@@ -90,6 +90,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	TableColumn<ObservableList<Professional>, String> profCol;
 
 	AddProfessionalController addProController = new AddProfessionalController();
+	protected Node selectedNode; // you select a node by double clicking
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -381,6 +382,20 @@ public class EditorController extends MapDisplayController implements Initializa
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
 		});
+		node.getShape().setOnContextMenuRequested(e->{
+			if(node.equals(this.selectedNode)) {
+				ContextMenu optionsMenu = new ContextMenu();
+
+				MenuItem exItem1 = new MenuItem("Connect to Node...");
+				exItem1.setOnAction(e1 -> {
+				});
+				MenuItem exItem2 = new MenuItem("");
+				exItem2.setOnAction(e2 -> {
+				});
+				optionsMenu.getItems().addAll(exItem1, exItem2);
+				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+			}
+		});
 	}
 
 	private double readX() {
@@ -528,8 +543,9 @@ public class EditorController extends MapDisplayController implements Initializa
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 
 			if(e.isPrimaryButtonDown()) {
-				this.selectedShape = (Shape) e.getSource();
 				this.updateSelectedNode(e.getX(), e.getY());
+				this.selectedNode.getShape().setCenterX(e.getX());
+				this.selectedNode.getShape().setCenterY(e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
 				this.redrawLines();
 			} else if(this.secondaryPressed) {

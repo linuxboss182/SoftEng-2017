@@ -35,9 +35,6 @@ public abstract class MapDisplayController
 	protected static Directory directory;
 	protected Room kiosk;
 
-	protected Node selectedNode; // you select a node by double clicking
-	protected Shape selectedShape; // This and the selectedNode should be set at the same time
-
 	// Primary is left click and secondary is right click
 	// these keep track of which button was pressed last on the mouse
 	protected boolean primaryPressed;
