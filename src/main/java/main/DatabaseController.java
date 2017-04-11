@@ -253,30 +253,36 @@ public class DatabaseController
 	private void retrieveProfessionals(Map<Integer, Room> rooms, Map<Integer, Professional> professionals) throws SQLException{
 		HashMap<Integer, Room> profRooms = new HashMap<>();
 		try {
-			Statement queryProfRooms = this.db_connection.createStatement();
 			Statement queryProfessionals = this.db_connection.createStatement();
-			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
 			ResultSet resultProfessionals = queryProfessionals.executeQuery(StoredProcedures.procRetrieveEmployees());
 
-			//find all them professionals
+			//find all professionals
 			while (resultProfessionals.next()) {
-				Professional professional = new Professional(resultProfessionals.getString("employeeGivenName"),
+				Professional professional = new Professional(
+						resultProfessionals.getString("employeeGivenName"),
 						resultProfessionals.getString("employeeSurname"),
 						resultProfessionals.getString("employeeTitle"));
-				//look for any locations we might have
-				while (resultProfRooms.next()) {
-					if (resultProfessionals.getInt("employeeID") == resultProfRooms.getInt("employeeID")) {
-						//we have at least one room
-						professional.addLocation(rooms.get(resultProfRooms.getInt("nodeID")));
-					}
-				}
 				//add to hashmap
 				professionals.put(resultProfessionals.getInt("employeeID"), professional);
 			}
-			queryProfRooms.close();
-			queryProfessionals.close();
-			resultProfRooms.close();
 			resultProfessionals.close();
+			queryProfessionals.close();
+
+			Statement queryProfRooms = this.db_connection.createStatement();
+			ResultSet resultProfRooms = queryProfRooms.executeQuery(StoredProcedures.procRetrieveEmployeeRooms());
+
+			//look for any locations we might have
+			while (resultProfRooms.next()) {
+				int employeeID = resultProfRooms.getInt("employeeID");
+				Professional professional = professionals.get(employeeID);
+				Room room = rooms.getOrDefault(resultProfRooms.getInt("roomID"), null);
+
+				if (room != null) {
+					professional.addLocation(room);
+				}
+			}
+			resultProfRooms.close();
+			queryProfRooms.close();
 		} catch (SQLException e){
 			throw e;
 		}
