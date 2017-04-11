@@ -172,19 +172,18 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void populateTableView (Collection<Professional> profs) {
 
 
-//		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(profs.toString()));
+//		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
-
-		roomCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-
-		profCol.setCellValueFactory(new Callback<TableColumn
+		roomCol.setCellValueFactory(new Callback<TableColumn
 				.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
 				return new SimpleStringProperty(cdf.getValue().getLocationNames());
 			}
 		});
+
+		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
+
 
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
@@ -246,13 +245,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
-	//	this.refreshBtnClicked();
-
-		// Temporary floor-cycling code
-//		this.switchFloors((++floor)%7+1);
-//		this.imageViewMap.setImage(map);
-//		this.displayNodes(this.directory.getNodesOnFloor(floor));
-//		this.redrawLines();
+		this.populateTableView(directory.getProfessionals());
 	}
 
 
