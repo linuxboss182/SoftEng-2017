@@ -28,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import entities.Node;
 import javafx.scene.shape.Shape;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.ApplicationController;
@@ -89,7 +90,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	private TableColumn<Professional, String> profCol;
 
-	AddProfessionalController addProController = new AddProfessionalController();
 	protected Node selectedNode; // you select a node by double clicking
 
 	final double SCALE_DELTA = 1.1;
@@ -261,14 +261,14 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	@FXML
 	public void addCustomProBtnPressed() throws IOException {
+		AddProfessionalController addProController = new AddProfessionalController();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
-		this.addProController = loader.getController();
-		//this.addProController.setEditorController(this);
+		addProController = loader.getController();
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
-
 		addProStage.showAndWait();
 	}
 

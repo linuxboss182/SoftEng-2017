@@ -27,27 +27,15 @@ public class AddProfessionalController implements Initializable
 	@FXML
 	private TextField titleField;
 
-	private EditorController editorController;
-	private ChoiceBox cb;
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-	}
-	public void setChoiceBox(ChoiceBox cb) {
-		this.cb = cb;
 	}
 
-	public void setEditorController(EditorController editorController){
-		this.editorController = editorController;
-	}
 	@FXML
 	public void onAddProBtnClicked() {
 		Professional newPro = new Professional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
 		getDirectory().addProfessional(newPro);
-		//this.editorController.populateChoiceBox();
-
-
+		addProBtn.getScene().getWindow().hide();
 	}
 
 }
