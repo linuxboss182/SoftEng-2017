@@ -22,8 +22,11 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.ApplicationController;
@@ -82,6 +85,14 @@ public class EditorController extends MapDisplayController implements Initializa
 	private TableColumn<Professional, String> roomCol;
 	@FXML
 	private TableColumn<Professional, String> profCol;
+
+	@FXML
+	private Text roomName;
+	@FXML
+	private Text yPos;
+	@FXML
+	private Label xPos;
+
 
 	protected Node selectedNode; // you select a node by double clicking
 
@@ -404,9 +415,28 @@ public class EditorController extends MapDisplayController implements Initializa
 	 * Also add a new node associated with the room.
 	 */
 	private void addNodeRoom(double x, double y, String name, String description) { //TODO
-		if(x < 0 || y < 0) {
+		// checking to see if x and y are negative or name field is empty. Changes text
+		// next to each textField to red if it breaks the rules.
+		// TODO: set fill back to black if the field if filled or follows the rules.
+		if(x < 0 || y < 0 || name.isEmpty()) {
+			if(x < 0){
+				xPos.setTextFill(Color.RED);
+			} else {
+				xPos.setTextFill(Color.BLACK);
+			} if(y < 0){
+				yPos.setFill(Color.RED);
+			} else {
+				yPos.setFill(Color.BLACK);
+			} if(name.isEmpty()){
+				roomName.setFill(Color.RED);
+			} else {
+				roomName.setFill(Color.BLACK);
+			}
 			return;
 		}
+		xPos.setTextFill(Color.BLACK);
+		yPos.setFill(Color.BLACK);
+		roomName.setFill(Color.BLACK);
 		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
 		this.paintNode(newNode);
 		this.addNodeListeners(newNode);
