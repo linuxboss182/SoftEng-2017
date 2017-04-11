@@ -8,8 +8,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -27,8 +24,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import entities.Node;
-import javafx.scene.shape.Shape;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.ApplicationController;
@@ -82,11 +77,11 @@ public class EditorController extends MapDisplayController implements Initializa
 	@FXML
 	public ChoiceBox floorChoiceBox;
 	@FXML
-	public TableView<Professional> roomProfTable;
+	public TableView<Room> roomProfTable;
 	@FXML
-	private TableColumn<Professional, String> roomCol;
+	private TableColumn<Room, String> roomCol;
 	@FXML
-	private TableColumn<Professional, String> profCol;
+	private TableColumn<Room, String> profCol;
 
 	protected Node selectedNode; // you select a node by double clicking
 
@@ -176,12 +171,26 @@ public class EditorController extends MapDisplayController implements Initializa
 
 	public void populateTableView (Collection<Professional> profs) {
 
+
+//		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(profs.toString()));
+
+
 		roomCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-		roomProfTable.getSortOrder().add(profCol);
+//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 		roomProfTable.getSortOrder().add(roomCol);
 
-		roomProfTable.getItems().setAll(profs);
+		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Room,
+				String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Room, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getName());
+			}
+		});
+
+		roomProfTable.getSortOrder().add(profCol);
+
+		roomProfTable.getItems().setAll(directory.getRooms());
+
 
 		//roomCol.getColumns().addAll();
 
@@ -192,12 +201,7 @@ public class EditorController extends MapDisplayController implements Initializa
 //			}
 //		});
 //
-//		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<Professional>,String>, ObservableValue<String>>() {
-//			@Override
-//			public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList<Professional>, String> cdf) {
-//				return new SimpleStringProperty(cdf.getValue().get(1).getGivenName());
-//			}
-//		});
+
 
 
 	}
@@ -231,6 +235,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 
 //		this.roomTextLbl.setText(roomList); //TODO populate this in the tableview
+		this.roomCol.setText(roomList);
 	}
 
 	@FXML
