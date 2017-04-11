@@ -107,6 +107,7 @@ public class Directory
 	public Professional addNewProfessional(String name,String surname,String title){
 		Professional newPro = new Professional(name, surname, title);
 		this.addProfessional(newPro);
+		return newPro;
 	}
 
 

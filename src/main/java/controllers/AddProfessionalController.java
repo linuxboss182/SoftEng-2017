@@ -33,9 +33,13 @@ public class AddProfessionalController implements Initializable
 
 	@FXML
 	public void onAddProBtnClicked() {
-		Professional newPro = new Professional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
-		getDirectory().addProfessional(newPro);
+		getDirectory().addNewProfessional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
 		addProBtn.getScene().getWindow().hide();
 	}
+
+	public void onCancelBtnClick(){
+		cancelBtn.getScene().getWindow().hide();
+	}
+
 
 }
