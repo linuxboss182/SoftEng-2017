@@ -8,14 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 
-/* DEV NOTES
-This should inherit from javafx.geometry.Point2D.
-
-Todo items in this file: (not all TODOs in this file)
- */
-//TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
-//TODO: clean up Node.angleTo() (reimplement as adjustment for Point2D.angle())
-
 /**
  * Represents a node in the graph, and its adjacencies.
  *
@@ -58,7 +50,6 @@ public class Node
 		return this.floor;
 	}
 
-	// TODO: Refactor Node::getRoom uses to accept an Optional, and return the Optional
 	public Room getRoom() {
 		return this.room;
 	}
@@ -237,6 +228,7 @@ public class Node
 	 *
 	 * @return the angle between the nodes
 	 **/
+	//TODO: clean up Node.angleTo()
 	private double angleTo(Node n) {
 		if ((n.y > this.y) && (n.x > this.x)) {
 			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;

@@ -14,7 +14,6 @@ import java.util.Optional;
  * A class for Room(s).
  *
  */
-//TODO: I wasn't able to tell based on the diagram if the Room would have a node or a node would have a room...
 public class Room
 {
 	// TODO: Fix room shape operations
@@ -30,7 +29,7 @@ public class Room
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 
 	/* Attributes */
-	private Optional<Node> location;
+	private Node location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
@@ -38,7 +37,7 @@ public class Room
 
 	/* Constructors */
 	public Room(String name, String description, String image) {
-		this.location = Optional.empty();
+		this.location = null;
 		this.name = name;
 		this.description = description;
 		this.image = image;
@@ -53,7 +52,7 @@ public class Room
 	@Deprecated
 	public Room(double x, double y, String name, String description, String image) {
 		this(name, description, image);
-		this.location = Optional.of(new Node(x, y));
+		this.location = new Node(x, y);
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes
@@ -77,7 +76,7 @@ public class Room
 	}
 
 	public Node getLocation() {
-		return this.location.orElse(null);
+		return this.location;
 	}
 
 
@@ -94,13 +93,11 @@ public class Room
 	}
 
 	public void setLocation(Node location) {
-		// if this function throws NullPointerException, you passed it a null value
-		// Don't do that, use unsetRoom instead
-		this.location = Optional.ofNullable(location);
+		this.location = location;
 	}
 
 	public void unsetLocation() {
-		this.location = Optional.empty();
+		this.location = null;
 	}
 
 	// TODO: Remove Room::toString; replace with custom method
@@ -121,10 +118,8 @@ public class Room
 	}
 
 	private void makeShape(Color stroke, Color fill) {
-		if(this.location.isPresent()) {
-			Node location = this.location.get(); // This is very, very poor use of Optionals
-
-			Rectangle shape = new Rectangle(location.getX(), location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
+		if(this.location != null) {
+			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 
 			shape.setStroke(stroke);
 			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
@@ -134,20 +129,20 @@ public class Room
 				shape.setFill(fill);
 			}
 
-			Text text = new Text(location.getX(), location.getY(), this.name);
+			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
 			text.setFont(new Font(15));
 
 			// A pane with the text on top of the shape; this is what actually represents the room
 			StackPane stackPane = new StackPane(shape, text);
 			this.shape = stackPane;
-			stackPane.setLayoutX(location.getX());
-			stackPane.setLayoutY(location.getY());
+			stackPane.setLayoutX(this.location.getX());
+			stackPane.setLayoutY(this.location.getY());
 			stackPane.setAlignment(Pos.TOP_LEFT);
 			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH));
 		}
 	}
 
 	public void setShapeColors(Color stroke, Color fill) {
-		makeShape(stroke, fill);
+		this.makeShape(stroke, fill);
 	}
 }
