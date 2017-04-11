@@ -180,13 +180,29 @@ public class Node
 	}
 
 	/**
-	 * Compute the distance between this and the given node
+	 * Compute the 2-dimensional distance between this and the given node
+	 *
+	 * @note Does not account for floor differences.
 	 *
 	 * @param n The node to calculate distance to
 	 *
 	 * @return The distance between this and the given node
 	 */
-	public double distance(Node n) {return (Math.hypot((n.y - this.y), (n.x - this.x)) + (Math.abs(this.floor - n.floor) * 240));
+	public double distance(Node n) {
+		return Math.hypot((n.y - this.y), (n.x - this.x));
+	}
+
+	/**
+	 * Compute the distance between this and the given node, accounting for different floors
+	 *
+	 * @param n The node to calculate distance to
+	 * @param floorHeight The distance to add for each floor between the nodes
+	 *
+	 * @return The distance between this and the given node
+	 */
+	public double distance(Node n, double floorHeight) {
+		return Math.hypot((n.y - this.y), (n.x - this.x))
+				+ (Math.abs(this.floor - n.floor) * floorHeight);
 	}
 
 	/**

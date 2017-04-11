@@ -1,5 +1,6 @@
 package main;
 
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,8 @@ import entities.Node;
  */
 public class Pathfinder
 {
+	private static final double FLOOR_HEIGHT = 240;
+
 	private Node start;
 	private Node destination;
 
@@ -67,7 +70,7 @@ public class Pathfinder
 
 		// map that holds the guessed total distance from a Node to the destination
 		Map<Node, Double> bestGuess = new HashMap<>();
-		bestGuess.put(start, start.distance(dest));
+		bestGuess.put(start, Pathfinder.heuristic(start, dest));
 
 		Node current;
 
@@ -97,7 +100,7 @@ public class Pathfinder
 				}
 
 				// get distance from the start to the neighbor.
-				double guessDist = distFromStart.get(current) + current.distance(neighbor);
+				double guessDist = distFromStart.get(current) + Pathfinder.heuristic(current, neighbor);
 
 				seenNodes.add(neighbor); // make sure the neighbor is marked as seen
 
@@ -110,6 +113,10 @@ public class Pathfinder
 			}
 		}
 		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
+	}
+
+	private static double heuristic(Node current, Node other) {
+		return current.distance(other, Pathfinder.FLOOR_HEIGHT);
 	}
 
 	private static List<Node> makePath(Map<Node, Node> pathHistory,Node current){
