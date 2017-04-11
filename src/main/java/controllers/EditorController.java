@@ -250,16 +250,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	@FXML
-	public void refreshBtnClicked() {
-		this.populateChoiceBox();
-
-		for (Professional pro: this.directory.getProfessionals()) {
-			this.proList.add(pro);
-
-		}
-	}
-
-	@FXML
 	public void addCustomProBtnPressed() throws IOException {
 		AddProfessionalController addProController = new AddProfessionalController();
 		FXMLLoader loader = new FXMLLoader();
@@ -270,6 +260,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
 		populateTableView(directory.getProfessionals());
+		populateChoiceBox();
 	}
 
 	@FXML
@@ -347,7 +338,7 @@ public class EditorController extends MapDisplayController implements Initializa
 				StringJoiner roomList = new StringJoiner(", ");
 				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
 
-				roomTextLbl.setText(roomList.toString());
+				roomTextLbl.setText(roomList.toString()); //TODO null pointer exception occurs here
 			}
 		});
 	}
