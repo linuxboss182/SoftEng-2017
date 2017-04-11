@@ -152,7 +152,7 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, int roomID){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID){
 		//query needs work
 		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+ roomID+")";
 	}

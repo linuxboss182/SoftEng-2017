@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 
 /* DEV NOTES
@@ -81,14 +82,26 @@ public class Node
 //		}
 	}
 
+	/**
+	 * Apply the given function to this node's associated room and return the result
+	 *
+	 * If this node has no room, return null instead.
+	 *
+	 * @param function The function to apply
+	 * @param <T> The return type of the function
+	 *
+	 * @return The result of applying the function to the room, or null if there is no room.
+	 */
+	public <T> T mapToRoom(Function<? super Room, ? extends T> function) {
+		return this.room.map(function).orElse(null);
+	}
+
 	public void setFloor(int floor) {
 		this.floor = floor;
 	}
 
 	public void setRoom(Room room) {
-		// if this function throws NullPointerException, you passed it a null value
-		// Don't do that, use unsetRoom instead
-		this.room = Optional.of(room);
+		this.room = Optional.ofNullable(room);
 	}
 
 	/** Remove this node's association with a room, if any */
