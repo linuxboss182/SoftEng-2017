@@ -101,6 +101,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		if(floorChoiceBox != null)
 			initFloorChoiceBox();
 
+		// TODO: Move zoom initialization to separate function
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		zoomSlider.setValue(2);
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -123,7 +124,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		});
 
 		//Init
-		this.populateChoiceBox(); //populate box for professionals
+		this.populateChoiceBox(directory.getProfessionals()); //populate box for professionals
 //		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
 //		for (Professional pro: this.directory.getProfessionals()) {
 //			this.proList.add(pro);
@@ -160,22 +161,27 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Listener for the tableview
 		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (roomProfTable.getSelectionModel().getSelectedItem() != null) {
+				// TODO: Allow professional selection from the TableView
 				//selectedLocation = newValue;
-
 			}
+		});
+	}
 
-				}
-
-		);
+	/**
+	 * Redraw all elements that need to be redrawn
+	 */
+	// TODO: Use this more often
+	private void redisplayAll() {
+		this.displayNodes(directory.getNodesOnFloor(floor));
+		this.redrawLines();
+		this.populateTableView(directory.getProfessionals());
+		this.populateChoiceBox(directory.getProfessionals());
 	}
 
 	public void populateTableView (Collection<Professional> profs) {
-
-
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
-		roomCol.setCellValueFactory(new Callback<TableColumn
-				.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
+		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
 				return new SimpleStringProperty(cdf.getValue().getLocationNames());
@@ -184,13 +190,10 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 
-
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
 
-
 		roomProfTable.getItems().setAll(profs);
-
 	}
 
 	@FXML
@@ -239,25 +242,23 @@ public class EditorController extends MapDisplayController implements Initializa
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
 		populateTableView(directory.getProfessionals());
-		populateChoiceBox();
+		populateChoiceBox(directory.getProfessionals());
 	}
 
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
 		this.populateTableView(directory.getProfessionals());
+		this.populateChoiceBox(directory.getProfessionals());
 	}
 
 
 	@FXML
 	public void confirmBtnPressed() {
-		this.directory.getRooms().forEach(room -> {
-			System.out.println("Attempting to save room: " + room.getName() + " to database...");
-		});
+		this.directory.getRooms().forEach(room ->
+				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
 
 		try {
-
-
 			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
 		} catch (DatabaseException e) {
 			System.err.println("\n\nDATABASE DAMAGED\n\n");
@@ -293,6 +294,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 		this.topPane.getChildren().setAll(nodeShapes);
 
+		// Does the same thing, but is hellish to read.
 //		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
 	}
 
@@ -332,8 +334,8 @@ public class EditorController extends MapDisplayController implements Initializa
 		});
 	}
 
-	public void populateChoiceBox() {
-		this.proChoiceBox.setItems(FXCollections.observableArrayList(this.directory.getProfessionals()));
+	public void populateChoiceBox(Set<Professional> professionals) {
+		this.proChoiceBox.setItems(FXCollections.observableArrayList(professionals));
 	}
 
 	/**
@@ -342,15 +344,10 @@ public class EditorController extends MapDisplayController implements Initializa
 	 */
 	public void initFloorChoiceBox(){
 		this.populateFloorChoiceBox();
-		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(newValue.intValue() >= 0) {
-					changeFloor(newValue.intValue()+1);
-				}
-
-			}
-		});
+		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+				(observable, oldValue, newValue) -> {
+					if(newValue.intValue() >= 0) changeFloor(newValue.intValue()+1);
+				});
 	}
 
 	/**
@@ -447,10 +444,8 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		this.directory.removeNodeAndRoom(this.selectedNode);
 		this.selectedNode = null;
-		// now garbage collector has to do its work
 
-		this.displayNodes(this.directory.getNodesOnFloor(floor));
-		this.redrawLines();
+		this.redisplayAll();
 	}
 
 	public void redrawLines() {
