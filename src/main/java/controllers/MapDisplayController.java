@@ -77,15 +77,6 @@ public abstract class MapDisplayController
 	}
 
 
-	// TODO: Probably make displayNodes/displayRooms/paintNode non-inherited
-	//Editor
-	public void paintNode(Node n) {
-//		if(!this.topPane.getChildren().contains(n.getShape())) {
-//			this.topPane.getChildren().add(n.getShape());
-//			n.getShape().setVisible(true);
-//		}
-	}
-
 	//This function takes in two nodes, displays a
 	public void paintLine(Node start, Node finish){
 				Line line = new Line();

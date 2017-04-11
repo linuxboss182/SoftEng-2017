@@ -3,19 +3,10 @@ package entities;
 import javafx.scene.shape.Circle;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-
-/* DEV NOTES
-This should inherit from javafx.geometry.Point2D.
-
-Todo items in this file: (not all TODOs in this file)
- */
-//TODO: Inherit from javafx.geometry.Point2D instead of reimplementing
-//TODO: clean up Node.angleTo() (reimplement as adjustment for Point2D.angle())
 
 /**
  * Represents a node in the graph, and its adjacencies.
@@ -27,7 +18,7 @@ public class Node
 	private double y;
 	private int floor;
 	private HashSet<Node> neighbors;
-	private Optional<Room> room;
+	private Room room;
 	private Circle circ;
 
 	/* Default shape parameters */
@@ -39,7 +30,7 @@ public class Node
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
-		this.room = Optional.empty();
+		this.room = null;
 	}
 
 	// TODO: Change default floor to 0 once floor-switching works
@@ -59,9 +50,8 @@ public class Node
 		return this.floor;
 	}
 
-	// TODO: Refactor Node::getRoom uses to accept an Optional, and return the Optional
 	public Room getRoom() {
-		return this.room.orElse(null);
+		return this.room;
 	}
 
 	/**
@@ -74,12 +64,9 @@ public class Node
 	 * @param consumer A function that may take a single Room as its only argument
 	 */
 	public void applyToRoom(Consumer<? super Room> consumer) {
-		this.room.ifPresent(consumer);
-
-		// Non-Optional equivalent
-//		if (this.room != null) {
-//			consumer.accept(this.room);
-//		}
+		if (this.room != null) {
+			consumer.accept(this.room);
+		}
 	}
 
 	/**
@@ -93,7 +80,11 @@ public class Node
 	 * @return The result of applying the function to the room, or null if there is no room.
 	 */
 	public <T> T mapToRoom(Function<? super Room, ? extends T> function) {
-		return this.room.map(function).orElse(null);
+		if (this.room == null) {
+			return null;
+		} else {
+			return function.apply(this.room);
+		}
 	}
 
 	public void setFloor(int floor) {
@@ -101,12 +92,12 @@ public class Node
 	}
 
 	public void setRoom(Room room) {
-		this.room = Optional.ofNullable(room);
+		this.room = room;
 	}
 
 	/** Remove this node's association with a room, if any */
 	public void unsetRoom() {
-		this.room = Optional.empty();
+		this.room = null;
 	}
 
 	/** Set node coordinates */
@@ -237,6 +228,7 @@ public class Node
 	 *
 	 * @return the angle between the nodes
 	 **/
+	//TODO: clean up Node.angleTo()
 	private double angleTo(Node n) {
 		if ((n.y > this.y) && (n.x > this.x)) {
 			return (Math.atan((n.y - this.y)/(n.x - this.x))*180)/Math.PI;
@@ -262,11 +254,7 @@ public class Node
 	/** @deprecated Use applyToRoom instead */
 	@Deprecated
 	public boolean containsRoom() {
-		if (!this.room.isPresent()) {
-			return false;
-		} else {
-			return true;
-		}
+		return this.room != null;
 	}
 
 	/**
@@ -286,11 +274,11 @@ public class Node
 
 	private void makeShape() {
 		this.circ = new Circle(this.x, this.y, Node.CIRCLE_RADIUS);
-		if (this.room.isPresent()) {
+		if (this.room != null) {
 			this.circ.setFill(COLORS.ROOM.bodyColor());
 			this.circ.setStroke(COLORS.ROOM.lineColor());
 			this.circ.setStrokeWidth(COLORS.ROOM.strokeWidth());
-		} else {
+		} else { // no room
 			this.circ.setFill(COLORS.NO_ROOM.bodyColor());
 			this.circ.setStroke(COLORS.NO_ROOM.lineColor());
 			this.circ.setStrokeWidth(COLORS.NO_ROOM.strokeWidth());
