@@ -182,7 +182,7 @@ public class StoredProcedures
 
 	public static String procInsertEmployeeRoom(int employeeID, int roomID){
 		//query needs work
-		return "INSERT INTO EmployeeRooms(employeeID,roomID) VALUES("+employeeID+","+roomID+")";
+		return "INSERT INTO EmployeeRooms(employeeID, roomID) VALUES("+employeeID+","+roomID+")";
 	}
 
 	public static String procInsertKiosk(int nodeID){

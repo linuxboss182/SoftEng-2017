@@ -98,8 +98,9 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
-		if(floorChoiceBox != null)
+		if(floorChoiceBox != null) {
 			initFloorChoiceBox();
+		}
 
 		// TODO: Move zoom initialization to separate function
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
@@ -479,7 +480,6 @@ public class EditorController extends MapDisplayController implements Initializa
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-
 				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
 				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
 				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
@@ -493,14 +493,12 @@ public class EditorController extends MapDisplayController implements Initializa
 				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
 			}
 		});
-
 		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				clickedX = event.getX();
 				clickedY = event.getY();
 			}
 		});
-
 		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				if(!beingDragged) {
@@ -587,7 +585,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
-	private void selectNode(Node n){
+	private void selectNode (Node n){
 		this.deselectNode();
 		this.selectedNode = n;
 		if(this.selectedNode.containsRoom()) {

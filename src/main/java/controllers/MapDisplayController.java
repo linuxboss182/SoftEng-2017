@@ -78,7 +78,7 @@ public abstract class MapDisplayController
 
 
 	//This function takes in two nodes, displays a
-	public void paintLine(Node start, Node finish){
+	public void paintLine(Node start, Node finish) {
 				Line line = new Line();
 				line.setStartX(start.getX());
 				line.setStartY(start.getY());
@@ -90,7 +90,8 @@ public abstract class MapDisplayController
 				line.setVisible(true);
 	}
 
-	/** Switches the map to the given floor
+	/**
+	 * Switches the map to the given floor
 	 *
 	 * @param floor the floor we want to switch to
 	 */
