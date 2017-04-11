@@ -167,6 +167,7 @@ public abstract class UserMasterController extends MapDisplayController
 
 
 
+
 	}
 
 	/**
@@ -186,28 +187,24 @@ public abstract class UserMasterController extends MapDisplayController
 		});
 	}
 
-	public void setSearchBar (HashSet<Room> rooms) {
-		ObservableList<String> data = FXCollections.observableArrayList();
-
-		//IntStream.range(0, 1000).mapToObj(Integer::toString).forEach(rooms::add);
-
-		FilteredList<String> filteredData = new FilteredList<>(data, s -> true);
-
-
-		searchBar.textProperty().addListener(obs->{
-			String filter = searchBar.getText();
-			if(filter == null || filter.length() == 0) {
-				filteredData.setPredicate(s -> true);
+	public void filterRoomList(String oldValue, String newValue) {
+		ObservableList<Room> filteredList = FXCollections.observableArrayList();
+		if(searchBar == null || (newValue.length() < oldValue.length()) || newValue == null) {
+			populateListView();
+		}
+		else {
+			newValue = newValue.toUpperCase();
+			for(Room room : directoryView.getItems()) {
+				Room filterText = room;
+				if(filterText.getName().toUpperCase().contains(newValue)) {
+					filteredList.add(filterText);
+				}
 			}
-			else {
-				filteredData.setPredicate(s -> s.contains(filter));
-			}
-		});
 
-
-		BorderPane content = new BorderPane(new ListView<>(filteredData));
-		content.setBottom(searchBar);
+			directoryView.setItems(filteredList);
+		}
 	}
+
 
 	/**
 	 * Initialize the floor's choice box with 1-7 (the floors)
@@ -259,7 +256,7 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 	public void populateListView() {
-		this.directoryView.itemsProperty().bind(this.listProperty);
+		this.directoryView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
 
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
@@ -275,10 +272,10 @@ public abstract class UserMasterController extends MapDisplayController
 //				}
 				// These variables are set in the controllers when the scene is switched...
 				if(choosingEnd) {
-					setDisable();
+
 					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
 				} else if(choosingStart) {
-					setDisable();
+
 					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
 
 				}
@@ -376,6 +373,7 @@ public abstract class UserMasterController extends MapDisplayController
 	 */
 
 	protected void selectStartRoom(Room r) {
+		setDisable();
 		deselectStartRoom();
 		startRoom = r;
 		startRoom.setShapeColors(ColorScheme.STARTING_ROOM_STROKE_COLOR, ColorScheme.STARTING_ROOM_FILL_COLOR);
@@ -383,6 +381,7 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 	protected void selectEndRoom(Room r) {
+		setDisable();
 		deselectEndRoom();
 		endRoom = r;
 		endRoom.setShapeColors(ColorScheme.ENDING_ROOM_STROKE_COLOR, ColorScheme.ENDING_ROOM_FILL_COLOR);

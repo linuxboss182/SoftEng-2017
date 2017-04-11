@@ -1,6 +1,8 @@
 package controllers;
 
 import entities.Room;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,6 +32,13 @@ public class UserDestinationController extends UserMasterController implements I
 		initialize();
 		changeStartBtn.setDisable(true);
 		getDirectionsBtn.setDisable(true);
+
+		//Listener for search bar
+		searchBar.textProperty().addListener(new ChangeListener() {
+			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+				filterRoomList((String) oldValue, (String) newValue);
+			}
+		});
 
 	}
 

@@ -12,8 +12,10 @@
          <items>
             <Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
             <Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefWidth="200.0" text="Done" textAlignment="CENTER" />
-            <Pane prefHeight="30.0" prefWidth="354.0" />
+            <Pane prefHeight="30.0" prefWidth="557.0">
+               <children>
+                  <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="-25.0" layoutY="3.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefWidth="210.0" text="Done" textAlignment="CENTER" />
+               </children></Pane>
             <ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
          </items>
       </ToolBar>
@@ -45,9 +47,9 @@
                         <Font size="19.0" />
                      </font>
                   </Label>
-                  <Slider layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" fx:id="zoomSlider"/>
-                  <Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" onMouseClicked="#increaseZoomButtonPressed"/>
-                  <Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" onMouseClicked="#decreaseZoomButtonPressed"/>
+                  <Slider fx:id="zoomSlider" layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" />
+                  <Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#increaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="+" />
+                  <Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#decreaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="-" />
                </children>
             </AnchorPane>
          </items>
@@ -57,7 +59,7 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </top>
    <left>
-      <GridPane prefHeight="640.0" prefWidth="332.0" BorderPane.alignment="CENTER">
+      <GridPane prefHeight="640.0" prefWidth="369.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
