@@ -88,13 +88,14 @@ public class Directory
 	}
 
 	public boolean removeRoom(Room room) {
+		this.professionals.forEach(p -> p.removeLocation(room));
 		return this.rooms.remove(room);
 	}
 
 	/** Remove the given node and its associated room from this directory */
 	public boolean removeNodeAndRoom(Node  n) {
 		n.disconnectAll();
-		n.applyToRoom(room -> this.rooms.remove(room));
+		n.applyToRoom(this::removeRoom);
 		return this.nodes.remove(n);
 	}
 
