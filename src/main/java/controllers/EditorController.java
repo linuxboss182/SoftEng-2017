@@ -25,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import entities.Node;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -478,9 +479,18 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	public void redrawLines() {
-		this.botPane.getChildren().clear();
-		this.directory.getNodesOnFloor(floor).forEach(node ->
-				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
+		Set<Line> lines = new HashSet<>();
+		for (Node node : directory.getNodesOnFloor(floor)) {
+			for (Node neighbor : node.getNeighbors()) {
+				lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
+			}
+		}
+		this.botPane.getChildren().setAll(lines);
+
+		// old implementation; unecessary steps involved
+//		this.botPane.getChildren().clear();
+//		this.directory.getNodesOnFloor(floor).forEach(node ->
+//				node.getNeighbors().forEach(neighbor -> this.paintLine(node, neighbor)));
 	}
 
 	///////////////////////
