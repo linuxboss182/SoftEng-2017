@@ -143,6 +143,8 @@ public abstract class UserMasterController extends MapDisplayController
 				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
 				contentAnchor.setScaleX(potentialScaleX);
 				contentAnchor.setScaleY(potentialScaleY);
+				// Update the slider
+				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
 			}
 		});
 		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
