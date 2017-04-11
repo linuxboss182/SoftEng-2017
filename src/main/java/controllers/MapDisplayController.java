@@ -7,23 +7,15 @@ import entities.Room;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-//import userpanel.Window;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public abstract class MapDisplayController
@@ -99,15 +91,6 @@ public abstract class MapDisplayController
 	 * @param nodes A collection of nodes to draw edges between
 	 */
 	public void redrawEdges(Collection<Node> nodes) {
-		Set<Line> lines = new HashSet<>();
-		for (Node node : nodes) {
-			for (Node neighbor : node.getNeighbors()) {
-				if (nodes.contains(neighbor) && node.getFloor() == neighbor.getFloor()) {
-					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
-				}
-			}
-		}
-		this.botPane.getChildren().setAll(lines);
 	}
 
 	/**

@@ -5,36 +5,30 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import main.ApplicationController;
 import main.DirectionsGenerator;
-import main.Pathfinder;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public abstract class UserMasterController extends MapDisplayController
@@ -311,8 +305,6 @@ public abstract class UserMasterController extends MapDisplayController
 		this.imageViewMap.getScene().setRoot(userPath);
 	}
 
-
-
 	/**
 	 * Draw a simple path between the nodes in the given list
 	 *
@@ -328,7 +320,17 @@ public abstract class UserMasterController extends MapDisplayController
 			return;
 		}
 
-		this.redrawEdges(directionNodes);
+		// This can be any collection type;
+		Collection<Line> path = new HashSet<>();
+		for (int i=0; i < directionNodes.size()-1; ++i) {
+			Node here = directionNodes.get(i);
+			Node there = directionNodes.get(i + 1);
+			if (here.getFloor() == floor && here.getFloor() == there.getFloor()) {
+				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
+				path.add(line);
+			}
+		}
+		this.botPane.getChildren().setAll(path);
 
 		Text textDirections = new Text();
 		textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
