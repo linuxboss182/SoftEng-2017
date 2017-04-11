@@ -39,7 +39,10 @@
 			<items>
 				<Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
 				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-				<Pane prefHeight="30.0" prefWidth="554.0" />
+				<Pane prefHeight="30.0" prefWidth="554.0">
+               <children>
+                  <Button fx:id="getDirectionsBtn" defaultButton="true" layoutX="-33.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" text="Get Directions" />
+               </children></Pane>
 				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
 			</items>
 		</ToolBar>
@@ -70,10 +73,10 @@
 								<Font size="19.0" />
 							</font>
 						</Label>
-						<Slider layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" fx:id="zoomSlider"/>
-						<Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="+" onMouseClicked="#increaseZoomButtonPressed"/>
-						<Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="35.0" text="-" onMouseClicked="#decreaseZoomButtonPressed"/>
-                  <ChoiceBox layoutX="298.0" layoutY="94.0" prefHeight="25.0" prefWidth="227.0" fx:id="floorChoiceBox"/>
+						<Slider fx:id="zoomSlider" layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" />
+						<Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#increaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="+" />
+						<Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#decreaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="-" />
+                  <ChoiceBox fx:id="floorChoiceBox" layoutX="298.0" layoutY="94.0" prefHeight="25.0" prefWidth="227.0" />
 					</children>
 				</AnchorPane>
 			</items>
@@ -99,7 +102,7 @@
                </font>
             </Label>
             <TextField promptText="Enter room or professional" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ListView prefHeight="248.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="directoryView"/>
+            <ListView fx:id="directoryView" prefHeight="248.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="249.0" minWidth="10.0" prefWidth="74.0" />
@@ -110,7 +113,6 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="getDirectionsBtn" defaultButton="true" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="98.0" text="Get Directions" GridPane.columnIndex="2" />
                   <Button fx:id="backBtn" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="25.0" prefWidth="68.0" text="Back" />
                </children>
             </GridPane>

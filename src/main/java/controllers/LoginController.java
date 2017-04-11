@@ -41,8 +41,9 @@ public class LoginController {
 	}
 
 	@FXML
-	public void cancelBtnClicked() {
-
+	public void cancelBtnClicked() throws IOException, InvocationTargetException {
+		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		errorLabel.getScene().setRoot(destUI);
 	}
 
 
