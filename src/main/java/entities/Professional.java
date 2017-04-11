@@ -94,6 +94,9 @@ public class Professional
 		for (Room r: this.getLocations()) {
 			roomList += ", " + r.getName();
 		}
+		if(roomList != ""){
+			return roomList.substring(1);
+		}
 		return roomList;
 	}
 
