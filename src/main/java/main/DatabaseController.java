@@ -327,8 +327,10 @@ public class DatabaseController
 				int nodeID = resultNodes.getInt("nodeID");
 				int roomID = resultNodes.getInt("roomID");
 				//PRINTLN("Loading room "+roomID);
-				if (! resultNodes.wasNull()) {
-					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+				if(roomID != 0) {
+					if (!resultNodes.wasNull()) {
+						nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+					}
 				}
 			}
 			resultNodes.close();
