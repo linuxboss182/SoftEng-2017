@@ -496,6 +496,8 @@ public class EditorController extends MapDisplayController implements Initializa
 				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
 				contentAnchor.setScaleX(potentialScaleX);
 				contentAnchor.setScaleY(potentialScaleY);
+				// Update the slider
+				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
 			}
 		});
 
