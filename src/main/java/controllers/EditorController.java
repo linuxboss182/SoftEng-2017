@@ -1,9 +1,5 @@
 package controllers;
 
-
-import entities.ColorScheme;
-import entities.Professional;
-import entities.Room;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -24,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import entities.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -39,9 +33,14 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import entities.ColorController;
+import entities.Node;
+import entities.Professional;
+import entities.Room;
+
 public class EditorController extends MapDisplayController implements Initializable
 {
-	private static final boolean DEBUGGING = true;
+	private static final boolean DEBUGGING = false;
 
 	@FXML
 	private Button addRoomBtn;
@@ -95,6 +94,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	protected Node selectedNode; // you select a node by double clicking
+	private ColorController colorizer;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -106,7 +106,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void initialize(URL location, ResourceBundle resources) {
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
-		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+		this.colorizer = new ColorController(directory);
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
 		if(floorChoiceBox != null) {
@@ -143,6 +144,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 
 		this.redisplayGraph(); // redraw nodes and edges
+		this.colorizer.colorizeAll();
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -425,9 +427,14 @@ public class EditorController extends MapDisplayController implements Initializa
 		xPos.setTextFill(Color.BLACK);
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
-		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
-		this.addNodeListeners(newNode);
-		this.displayNodes(this.directory.getNodesOnFloor(floor));
+
+		if (this.selectedNode != null && this.selectedNode.getRoom() == null) {
+			directory.addNewRoomToNode(this.selectedNode, name, description);
+		} else {
+			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
+			this.addNodeListeners(newNode);
+			this.displayNodes(directory.getNodesOnFloor(floor));
+		}
 	}
 
 	/** Add a new node to the directory at the given coordinates */
@@ -616,30 +623,16 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	private void selectNode (Node n){
-		this.deselectNode();
 		this.selectedNode = n;
-		if(this.selectedNode.containsRoom()) {
-			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_ROOM_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_ROOM_STROKE_COLOR);
-		} else {
-			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_NODE_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_NODE_STROKE_COLOR);
-		}
+
+		this.colorizer.selectSingleNode(n);
+		this.redisplayGraph();
 	}
 
 	private void deselectNode(){
-		if(this.selectedNode == null){
-			return;
-		}
-		System.out.println("this.selectedNode.containsRoom() = " + this.selectedNode.containsRoom());
-		if(this.selectedNode.containsRoom()) {
-			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_ROOM_STROKE_COLOR);
-		} else {
-			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_NODE_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_NODE_STROKE_COLOR);
-		}
 		this.selectedNode = null;
+		this.colorizer.deselectAllNodes();
+		this.redisplayGraph();
 	}
 
 	private void setXCoordField(double x) {
