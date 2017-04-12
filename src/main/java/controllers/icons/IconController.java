@@ -1,11 +1,12 @@
-package entities;
+package controllers.icons;
 
+import entities.Directory;
+import entities.Node;
+import entities.Room;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -23,61 +24,6 @@ public class IconController
 	private static final double ROOM_RECTANGLE_WIDTH = 7;
 	private static final double ROOM_RECTANGLE_HEIGHT = 7;
 
-	/** Interface for shape color schemes */
-	private interface ShapeScheme {
-		public void applyTo(Shape shape);
-	}
-
-	private enum NODE implements ShapeScheme {
-		RESET(Color.BLUE, 1.5, Color.BLACK),
-		DEFAULT(null, 1.5, Color.BLACK),
-		ELEVATOR(Color.FUCHSIA, null, null),
-		ROOM(Color.YELLOW, null, null),
-		SELECTED(null, 2.0, Color.WHITE),
-		; // end of schemes
-		private final Color fill;
-		private final Double strokeWidth;
-		private final Color stroke;
-
-		NODE(Color fill, Double strokeWidth, Color stroke) {
-			this.fill = fill;
-			this.strokeWidth = strokeWidth;
-			this.stroke = stroke;
-		}
-
-		/** Apply this color scheme to the given shape */
-		public void applyTo(Shape shape) {
-			if (this.fill != null) shape.setFill(this.fill);
-			if (this.strokeWidth != null) shape.setStrokeWidth(this.strokeWidth);
-			if (this.stroke != null) shape.setStroke(this.stroke);
-		}
-	}
-
-	private enum ROOM implements ShapeScheme {
-		// User UI schemes
-		DEFAULT(Color.YELLOW, 1.5, Color.BLACK),
-		KIOSK(null, 2.0, Color.RED),
-		START(Color.YELLOW, 1.5, Color.BLACK),
-		END(Color.GREEN, 1.5, Color.BLACK),
-		; // end of schemes
-		private final Color fill;
-		private final Double strokeWidth;
-		private final Color stroke;
-
-		ROOM(Color fill, Double strokeWidth, Color stroke) {
-			this.fill = fill;
-			this.strokeWidth = strokeWidth;
-			this.stroke = stroke;
-		}
-
-		/** Apply this color scheme to the given shape */
-		public void applyTo(Shape shape) {
-			if (this.fill != null) shape.setFill(this.fill);
-			if (this.strokeWidth != null) shape.setStrokeWidth(this.strokeWidth);
-			if (this.stroke != null) shape.setStroke(this.stroke);
-		}
-	}
-
 	private final Directory directory;
 
 	/**
@@ -86,6 +32,9 @@ public class IconController
 	public IconController(Directory dir) {
 		this.directory = dir;
 	}
+
+
+	/* Private methods for nodes */
 
 	/**
 	 * Set the color of the selected node to the default
@@ -111,6 +60,8 @@ public class IconController
 		}
 	}
 
+	/* Public methods for Nodes */
+
 	/**
 	 * Reset the colors of all nodes in the directory
 	 */
@@ -134,6 +85,10 @@ public class IconController
 			this.resetNode(n);
 		}
 	}
+
+
+	/* Methods for Rooms */
+	// (incomplete)
 
 	/**
 	 * Set the shape of the icon for the given room
