@@ -402,16 +402,16 @@ public class DatabaseController
 		for (Room r : dir.getRooms()) {
 			PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
-				System.out.println(this.sanitize(r.getDescription()));
+				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
-																	this.sanitize(r.getName()),
-																	this.sanitize(r.getDescription()));
+																	r.getName(),
+																	r.getDescription());
 			} else {
-				System.out.println(this.sanitize(r.getDescription()));
+				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
-														this.sanitize(r.getName()),
-														this.sanitize(r.getDescription()));
+														r.getName(),
+														r.getDescription());
 			}
 			db.executeUpdate(query);
 		}
@@ -442,7 +442,7 @@ public class DatabaseController
 
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
-					p.hashCode(), this.sanitize(p.getGivenName()), this.sanitize(p.getSurname()), this.sanitize(p.getTitle()));
+					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
 			db.executeUpdate(query);
 
 			for (Room r : p.getLocations()) {
@@ -451,11 +451,6 @@ public class DatabaseController
 			}
 		}
 		db.close();
-	}
-
-	//jesus take the wheel
-	private String sanitize(String str){
-		return str.replace("'", "''");
 	}
 
 	//A test call to the database
