@@ -1,4 +1,4 @@
-package adminpanel;
+package controllers;
 
 
 import javafx.fxml.FXML;
@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -19,6 +21,10 @@ public class LoginController {
 	private Label errorLabel;
 	@FXML
 	private Button cancelBtn;
+	@FXML
+	private TextField usernameField;
+	@FXML
+	private PasswordField passwordField;
 
 
 
@@ -27,15 +33,11 @@ public class LoginController {
 	public void loginClicked() throws IOException, InvocationTargetException {
 		boolean success = true;
 
-		if(success) {
+		if(success/*usernameField.getText().equals("admin") &&
+				passwordField.getText().equals("password")*/) {
+			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
-			System.out.print("Onto the Admin UI");
-			Scene adminScene = new Scene(adminUI);
-			Stage adminStage = new Stage();
-			adminStage.setScene(adminScene);
-
-			adminStage.showAndWait();
-
+			errorLabel.getScene().setRoot(adminUI);
 		} else {
 			this.errorLabel.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
@@ -44,8 +46,9 @@ public class LoginController {
 	}
 
 	@FXML
-	public void cancelBtnClicked() {
-
+	public void cancelBtnClicked() throws IOException, InvocationTargetException {
+		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		errorLabel.getScene().setRoot(destUI);
 	}
 
 

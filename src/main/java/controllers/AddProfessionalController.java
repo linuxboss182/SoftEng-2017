@@ -1,4 +1,4 @@
-package adminpanel;
+package controllers;
 
 import entities.Professional;
 import javafx.fxml.FXML;
@@ -10,14 +10,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.stage.Stage;
-import main.ApplicationController;
+import static main.ApplicationController.getDirectory;
 
-import static main.ApplicationController.directory;
 
-/**
- * Created by s7sal on 4/4/2017.
- */
 public class AddProfessionalController implements Initializable
 {
 
@@ -32,27 +27,20 @@ public class AddProfessionalController implements Initializable
 	@FXML
 	private TextField titleField;
 
-	private EditorController editorController;
-	private ChoiceBox cb;
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-	}
-	public void setChoiceBox(ChoiceBox cb) {
-		this.cb = cb;
 	}
 
-	public void setEditorController(EditorController editorController){
-		this.editorController = editorController;
-	}
 	@FXML
 	public void onAddProBtnClicked() {
-		Professional newPro = new Professional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
-		directory.addProfessional(newPro);
-		//this.editorController.populateChoiceBox();
-
-
+		getDirectory().addNewProfessional(this.givenNameField.getText(), this.surnameField.getText(), this.titleField.getText());
+		addProBtn.getScene().getWindow().hide();
 	}
+
+	@FXML
+	public void onCancelBtnClick(){
+		cancelBtn.getScene().getWindow().hide();
+	}
+
 
 }

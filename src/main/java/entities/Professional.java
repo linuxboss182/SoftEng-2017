@@ -10,6 +10,7 @@ import java.util.Set;
  * A class to represent someone in the hospital's staff
  */
 public class Professional
+		implements Comparable<Professional>
 {
 	/* Attributes */
 	private String givenName;
@@ -45,6 +46,30 @@ public class Professional
 		this("Enter given name", "Enter surname", "Enter title");
 	}
 
+	/* Interface methods */
+
+	/**
+	 * Compare this and another professional
+	 *
+	 * This allows Professionals to be sorted.
+	 *
+	 * Comparison order is surname, then given name, then title, then identity.
+	 *
+	 * @return -1, 0, or 1 if this professional is less than, equal to, or greater than the other
+	 */
+	@Override
+	public int compareTo(Professional other) {
+		int compareSurname = this.surname.compareTo(other.surname);
+		if (compareSurname != 0) return compareSurname;
+
+		int compareGivenName = this.givenName.compareTo(other.givenName);
+		if (compareGivenName != 0) return compareGivenName;
+
+		int compareTitle = this.title.compareTo(other.title);
+		if (compareTitle != 0) return compareTitle;
+
+		return (this == other) ? 0 : 1; // handle identity or SortedSet won't take people with the same name
+	}
 
 	/* Getters and Setters */
 
@@ -64,15 +89,32 @@ public class Professional
 		return new HashSet<>(this.locations);
 	}
 
+	public String getLocationNames() {
+		String roomList = "";
+		for (Room r: this.getLocations()) {
+			roomList += ", " + r.getName();
+		}
+		if(roomList != ""){
+			return roomList.substring(1);
+		}
+		return roomList;
+	}
+
 	public void addLocation(Room room){
 		this.locations.add(room);
 	}
 
-	public String toString() {
+	public String toString(Professional p) {
 		return this.getSurname() + ", " + this.getGivenName();
 	}
 
 	public void removeLocation(Room r) {
 		this.locations.remove(r);
 	}
+
+	@Override
+	public String toString() {
+		return this.givenName;
+	}
+
 }

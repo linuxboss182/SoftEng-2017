@@ -1,5 +1,6 @@
 package main;
 
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
@@ -13,11 +14,13 @@ import entities.Node;
 //TODO: Add documentation
 
 /**
- * Controller class wrapping pathfinding algorithms.
+ * UserController class wrapping pathfinding algorithms.
  * (Currently contains algorithms.)
  */
 public class Pathfinder
 {
+	private static final double FLOOR_HEIGHT = 240;
+
 	private Node start;
 	private Node destination;
 
@@ -46,7 +49,10 @@ public class Pathfinder
 	 * @return A list of the nodes traversed in the path, in order, or an empty list if
 	 *         no path is found
 	 */
-	public static List<Node> findPath(Node start, Node dest) {
+	public static List<Node> findPath(Node start, Node dest)throws NullPointerException {
+		if(start == null || dest == null){
+			throw(new NullPointerException());
+		}
 		Double inf = Double.POSITIVE_INFINITY;
 		// list of Nodes that have already been visited
 		Set<Node> visitedNodes = new HashSet<>();
@@ -64,7 +70,7 @@ public class Pathfinder
 
 		// map that holds the guessed total distance from a Node to the destination
 		Map<Node, Double> bestGuess = new HashMap<>();
-		bestGuess.put(start, start.distance(dest));
+		bestGuess.put(start, Pathfinder.heuristic(start, dest));
 
 		Node current;
 
@@ -94,7 +100,7 @@ public class Pathfinder
 				}
 
 				// get distance from the start to the neighbor.
-				double guessDist = distFromStart.get(current) + current.distance(neighbor);
+				double guessDist = distFromStart.get(current) + Pathfinder.heuristic(current, neighbor);
 
 				seenNodes.add(neighbor); // make sure the neighbor is marked as seen
 
@@ -107,6 +113,10 @@ public class Pathfinder
 			}
 		}
 		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
+	}
+
+	private static double heuristic(Node current, Node other) {
+		return current.distance(other, Pathfinder.FLOOR_HEIGHT);
 	}
 
 	private static List<Node> makePath(Map<Node, Node> pathHistory,Node current){

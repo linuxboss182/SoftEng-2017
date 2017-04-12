@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.Assert;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Michael on 4/4/2017.
@@ -16,15 +17,15 @@ public class ProfessionalTester
 	public void addLocationTester() {
 		Room n = new Room(20, 30); //Create a new node
 		Room n1 = new Room(10, 15); //Create a new node
-		HashSet<Room> DocLoc = new HashSet<>();
-		DocLoc.add(n);
+		HashSet<Room> docLoc = new HashSet<>();
+		docLoc.add(n);
 
 		Professional Doctor = new Professional("FirstName", "LastName",
-				"Dr.", DocLoc); //Create a Professional
+				"Dr.", docLoc); //Create a Professional
 		Doctor.addLocation(n1);
-		HashSet<Room> ExpectDocLoc = new HashSet<>();
-		ExpectDocLoc.add(n);
-		ExpectDocLoc.add(n1);
-		Assert.assertEquals(ExpectDocLoc, Doctor.getLocations());
+		Set<Room> expectDocLoc = new HashSet<>();
+		expectDocLoc.add(n);
+		expectDocLoc.add(n1);
+		Assert.assertEquals(expectDocLoc, Doctor.getLocations());
 	}
 }

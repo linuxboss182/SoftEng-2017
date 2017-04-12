@@ -51,32 +51,32 @@ public class NodeTester
 	*/
 
 	@Test
-    public void testDistanceSame(){
-	    Node a = new Node(0, 0);
-	    Node b = new Node(0, 0);
-	    double result = a.distance(b);
-	    double expected = 0.0;
-	    Assert.assertTrue(result == expected);
-    }
+	public void testDistanceSame(){
+		Node a = new Node(0, 0);
+		Node b = new Node(0, 0);
+		double result = a.distance(b);
+		double expected = 0.0;
+		Assert.assertTrue(result == expected);
+	}
 
-    @Test
-    public void testDistance1(){
-        Node a = new Node(5, 10);
-        Node b = new Node(11, 18);
-        double result = a.distance(b);
-        double expected = 10;
-        Assert.assertTrue(result == expected);
+	@Test
+	public void testDistance1(){
+		Node a = new Node(5, 10);
+		Node b = new Node(11, 18);
+		double result = a.distance(b);
+		double expected = 10;
+		Assert.assertTrue(result == expected);
 
-    }
+	}
 
-    @Test
-    public void testDistanceOnlyY(){
-    	Node a = new Node(10, 15);
-    	Node b = new Node(10, 60);
-    	double result = a.distance(b);
-    	double expected = 45;
-    	Assert.assertTrue(result == expected);
-    }
+	@Test
+	public void testDistanceOnlyY(){
+		Node a = new Node(10, 15);
+		Node b = new Node(10, 60);
+		double result = a.distance(b);
+		double expected = 45;
+		Assert.assertTrue(result == expected);
+	}
 
 	@Test
 	public void testGetNeighborsNone() {
@@ -190,21 +190,22 @@ public class NodeTester
 	// Node a. Note: those are the only edges present in the graph
 	@Test
 	public void testDisconnectAll(){
-    	// setup
-    	Node a = new Node(10, 15);
-    	Node b = new Node(20, 25);
-    	Node c = new Node(30, 35);
-    	Node d = new Node(40, 45);
-    	a.connect(b);
-    	a.connect(c);
-    	a.connect(d);
-    	// carry out test
-    	a.disconnectAll();
-    	boolean t1 = a.areConnected(b);
-    	boolean t2 = a.areConnected(c);
-    	boolean t3 = a.areConnected(d);
-    	boolean result = t1 || t2 || t3;
-    	Assert.assertTrue(!result);
+		// setup
+		Node a = new Node(10, 15);
+		Node b = new Node(20, 25);
+		Node c = new Node(30, 35);
+		Node d = new Node(40, 45);
+		a.connect(b);
+		a.connect(c);
+		a.connect(d);
+		// carry out test
+		a.disconnectAll();
+		Set<Node> neighbors = a.getNeighbors();
+		boolean t1 = neighbors.contains(b);
+		boolean t2 = neighbors.contains(c);
+		boolean t3 = neighbors.contains(d);
+		boolean result = t1 || t2 || t3;
+		Assert.assertTrue(!result);
 	}
 
 	// run test on graph of 4 nodes and run disconnect all on just node a, keep
@@ -225,13 +226,14 @@ public class NodeTester
 		// carry out test
 		a.disconnectAll();
 		// test to make sure node a connections are severed
-		boolean tA1 = !a.areConnected(b);
-		boolean tA2 = !a.areConnected(c);
-		boolean tA3 = !a.areConnected(d);
+		Set<Node> neighbors = a.getNeighbors();
+		boolean tA1 = ! neighbors.contains(b);
+		boolean tA2 = ! neighbors.contains(c);
+		boolean tA3 = ! neighbors.contains(d);
 		// test to make sure nodes b, c, and d are still connected amongst each other
-		boolean t4 = b.areConnected(c);
-		boolean t5 = c.areConnected(d);
-		boolean t6 = d.areConnected(b);
+		boolean t4 = b.getNeighbors().contains(c);
+		boolean t5 = c.getNeighbors().contains(d);
+		boolean t6 = d.getNeighbors().contains(b);
 		boolean result = tA1 && tA2 && tA3 && t4 && t5 && t6;
 		Assert.assertTrue(result);
 	}
