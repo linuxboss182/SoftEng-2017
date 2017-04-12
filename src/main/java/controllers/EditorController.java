@@ -288,7 +288,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 			return;
 		}
-		
+
 		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
