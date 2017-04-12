@@ -41,6 +41,8 @@ import java.util.Set;
 
 public class EditorController extends MapDisplayController implements Initializable
 {
+	private static final boolean DEBUGGING = true;
+
 	@FXML
 	private Button addRoomBtn;
 	@FXML
@@ -147,8 +149,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		}
 
-		this.displayNodes(this.directory.getNodesOnFloor(floor)); //draws the nodes from the directory
-		this.redrawLines();  //deletes all the lines then draws them again from the directory
+		this.redisplayGraph(); // redraw nodes and edges
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -178,14 +179,28 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	/**
-	 * Redraw all elements that need to be redrawn
+	 * Redraw all elements of the map and the professionals' elements
 	 */
 	// TODO: Use this more often
 	private void redisplayAll() {
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines();
+		this.redisplayGraph(); // nodes on this floor and lines between them
 		this.populateTableView(directory.getProfessionals());
 		this.populateChoiceBox(directory.getProfessionals());
+	}
+
+	/**
+	 * Redisplay the nodes on this floor and the lines
+	 *
+	 * If debugging, display all nodes
+	 */
+	private void redisplayGraph() {
+//		if (EditorController.DEBUGGING) {
+//			this.displayNodes(directory.getNodes());
+//			this.redrawLines(directory.getNodes());
+//		} else {
+		this.displayNodes(directory.getNodesOnFloor(floor));
+		this.redrawLines(directory.getNodesOnFloor(floor));
+//		}
 	}
 
 	public void populateTableView (Collection<Professional> profs) {
@@ -219,8 +234,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	private void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines();
+		this.redisplayGraph();
 	}
 
 	@FXML
@@ -288,7 +302,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 			return;
 		}
-		
+
 		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
@@ -466,7 +480,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			room.setDescription(description);
 		});
 		this.updateSelectedNode(x, y);
-		this.redrawLines();
+		this.redrawLines(this.directory.getNodesOnFloor(floor));
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
@@ -488,13 +502,18 @@ public class EditorController extends MapDisplayController implements Initializa
 	/**
 	 * Recreate and redisplay all lines on this floor
 	 */
-	public void redrawLines() {
+	public void redrawLines(Collection<Node> nodes) {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : directory.getNodesOnFloor(floor)) {
+		for (Node node : nodes) {
 			for (Node neighbor : node.getNeighbors()) {
 				if (node.getFloor() == neighbor.getFloor()) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
+//				else if (EditorController.DEBUGGING) {
+//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
+//					ln.setStroke(Color.FUCHSIA);
+//					lines.add(ln);
+//				}
 			}
 		}
 		this.botPane.getChildren().setAll(lines);
@@ -577,7 +596,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
 			this.selectedNode.connectOrDisconnect(n);
-			this.redrawLines();
+			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
 	}
 
@@ -585,12 +604,11 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void onShapeDrag(MouseEvent e, Node n) {
 		this.beingDragged = true;
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
-
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
-				this.redrawLines();
-			} else if(this.secondaryPressed) {
+				this.redrawLines(this.directory.getNodesOnFloor(floor));
+			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
 				// do nothing for now
 			}
