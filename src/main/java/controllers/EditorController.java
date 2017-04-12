@@ -144,7 +144,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 
 		this.redisplayGraph(); // redraw nodes and edges
-		this.colorizer.colorizeAll();
+		this.colorizer.resetAllNodes();
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);

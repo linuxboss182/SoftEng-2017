@@ -6,7 +6,7 @@ import javafx.scene.shape.Shape;
 /**
  * This is the only class that should ever change entities' colors
  *
- * This is a mediocre facade
+ * This is facade and a decorator.
  */
 public class ColorController
 {
@@ -66,6 +66,9 @@ public class ColorController
 
 	private final Directory directory;
 
+	/**
+	 * Create a color controller for the given directory
+	 */
 	public ColorController(Directory dir) {
 		this.directory = dir;
 	}
@@ -80,7 +83,7 @@ public class ColorController
 	 *
 	 * @param node The node to color
 	 */
-	public void resetNodeColor(Node node) {
+	private void resetNode(Node node) {
 		if (node == null) return;
 		NODE.DEFAULT.applyTo(node.getShape());
 
@@ -94,18 +97,27 @@ public class ColorController
 		}
 	}
 
-	public void colorizeAll() {
-		this.directory.getNodes().forEach(this::resetNodeColor);
+	/**
+	 * Reset the colors of all nodes in the directory
+	 */
+	public void resetAllNodes() {
+		this.directory.getNodes().forEach(this::resetNode);
 	}
 
+	/**
+	 * Select one node and deselect all other nodes
+	 */
 	public void selectSingleNode(Node node) {
 		this.deselectAllNodes();
 		NODE.SELECTED.applyTo(node.getShape());
 	}
 
+	/**
+	 * Deselect all nodes in the directory
+	 */
 	public void deselectAllNodes() {
 		for (Node n : this.directory.getNodes()) {
-			this.resetNodeColor(n);
+			this.resetNode(n);
 		}
 	}
 }
