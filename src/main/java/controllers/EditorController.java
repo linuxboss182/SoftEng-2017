@@ -28,12 +28,9 @@ import main.DatabaseException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
-import entities.ColorController;
+import controllers.icons.IconController;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
@@ -94,7 +91,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	protected Node selectedNode; // you select a node by double clicking
-	private ColorController colorizer;
+	private IconController colorizer;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -107,7 +104,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		this.colorizer = new ColorController(directory);
+		this.colorizer = new IconController(directory);
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
 		if(floorChoiceBox != null) {
@@ -670,6 +667,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 		this.setFields(selectedNode.getX(), selectedNode.getY());
 
+		//TODO: Use applyToRoom instead of checking containsRoom
 		if(selectedNode.containsRoom()) {
 			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
 		}
