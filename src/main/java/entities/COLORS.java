@@ -4,10 +4,14 @@ import javafx.scene.paint.Color;
 
 public enum COLORS
 {
-	NO_ROOM(1.5, Color.BLUE, Color.BLACK),
+	// NAME(strokeWidth, bodyColor, lineColor)
+	NODE(1.5, Color.BLUE, Color.BLACK),
+	SELECTED_NODE(2, Color.BLUE, Color.WHITE),
 	ROOM(1.5, Color.YELLOW, Color.BLACK),
-	SELECTED(1.5, Color.BLUE, Color.GREEN),
-	SELECTED_ROOM(1.5, Color.YELLOW, Color.GREEN);
+	SELECTED_ROOM(2, Color.YELLOW, Color.WHITE),
+	ELEVATOR(1.5, Color.FUCHSIA, Color.BLACK),
+	SELECTED_ELEVATOR(2, Color.FUCHSIA, Color.WHITE),
+	;
 
 	// color
 	private final double strokeWidth;
