@@ -204,6 +204,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	public void populateTableView (Collection<Professional> profs) {
+
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
@@ -213,7 +214,14 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		});
 
-		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
+		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getSurname()+", "+cdf.getValue().getGivenName()+" "+cdf.getValue().getTitle());
+			}
+		});
+
+//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
