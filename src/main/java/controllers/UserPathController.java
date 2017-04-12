@@ -76,7 +76,7 @@ public class UserPathController extends UserMasterController implements Initiali
 	}
 
 	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
-		Button newFloorButton = new Button("" + floor);
+		ImageView newFloorButton = new ImageView();
 
 		int buttonWidth = 50;
 		int buttonHeight = 50;
@@ -84,12 +84,16 @@ public class UserPathController extends UserMasterController implements Initiali
 		int buttonY = 95;
 		int centerX = 250;
 
+
 		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
 		newFloorButton.setLayoutY(buttonY);
-		newFloorButton.setMnemonicParsing(false);
-		newFloorButton.setPrefWidth(buttonWidth);
-		newFloorButton.setPrefHeight(buttonHeight);
-		newFloorButton.setOnAction(e-> {
+		newFloorButton.setFitWidth(buttonWidth);
+		newFloorButton.setFitHeight(buttonHeight);
+		FloorProxy map = new FloorProxy(floor);
+
+		newFloorButton.setImage(map.display());
+
+		newFloorButton.setOnMouseClicked(e-> {
 			// change to the new floor, and draw the path for that floor
 			changeFloor(floor);
 			paintPath(path);
