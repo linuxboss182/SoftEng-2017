@@ -326,10 +326,6 @@ public abstract class UserMasterController extends MapDisplayController
 		}
 		this.botPane.getChildren().setAll(path);
 
-		Text textDirections = new Text();
-		textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
-		//Call text directions
-		this.directionsTextField.getChildren().add(textDirections);
 
 	}
 
