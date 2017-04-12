@@ -217,7 +217,6 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 	public void displayRooms(Collection<Room> rooms) {
-		System.out.println("DISPLAYING");
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
