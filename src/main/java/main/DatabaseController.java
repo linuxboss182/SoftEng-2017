@@ -392,7 +392,6 @@ public class DatabaseController
 			throws SQLException {
 		Statement db = this.db_connection.createStatement();
 		String query;
-
 		for (Node n : dir.getNodes()) {
 			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
@@ -403,14 +402,16 @@ public class DatabaseController
 		for (Room r : dir.getRooms()) {
 			PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
+				System.out.println(this.sanitize(r.getDescription()));
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
-																	r.getName(),
-																	r.getDescription());
+																	this.sanitize(r.getName()),
+																	this.sanitize(r.getDescription()));
 			} else {
+				System.out.println(this.sanitize(r.getDescription()));
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
-														r.getName(),
-														r.getDescription());
+														this.sanitize(r.getName()),
+														this.sanitize(r.getDescription()));
 			}
 			db.executeUpdate(query);
 		}
@@ -441,7 +442,7 @@ public class DatabaseController
 
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
-					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
+					p.hashCode(), this.sanitize(p.getGivenName()), this.sanitize(p.getSurname()), this.sanitize(p.getTitle()));
 			db.executeUpdate(query);
 
 			for (Room r : p.getLocations()) {
@@ -452,6 +453,10 @@ public class DatabaseController
 		db.close();
 	}
 
+	//jesus take the wheel
+	private String sanitize(String str){
+		return str.replace("'", "''");
+	}
 
 	//A test call to the database
 	public void exampleQueries() {
