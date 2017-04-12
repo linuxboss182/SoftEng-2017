@@ -65,8 +65,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	private Button deleteRoomBtn;
 	@FXML
 	private Button confirmBtn;
-	@FXML
-	private ChoiceBox<Professional> proChoiceBox;
+//	@FXML
+//	private ChoiceBox<Professional> proChoiceBox;
 	@FXML
 	private Button addCustomProBtn;
 	@FXML
@@ -135,13 +135,6 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		});
 
-		//Init
-		this.populateChoiceBox(directory.getProfessionals()); //populate box for professionals
-//		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
-//		for (Professional pro: this.directory.getProfessionals()) {
-//			this.proList.add(pro);
-//		}
-		this.selectChoiceBox();
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
@@ -185,7 +178,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	private void redisplayAll() {
 		this.redisplayGraph(); // nodes on this floor and lines between them
 		this.populateTableView(directory.getProfessionals());
-		this.populateChoiceBox(directory.getProfessionals());
 	}
 
 	/**
@@ -204,6 +196,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	public void populateTableView (Collection<Professional> profs) {
+
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
@@ -213,12 +206,26 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		});
 
-		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
+		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getSurname()+", "+cdf.getValue().getGivenName()+" "+cdf.getValue().getTitle());
+			}
+		});
+
+//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
 
 		roomProfTable.getItems().setAll(profs);
+
+		this.roomProfTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professional>() {
+			@Override
+			public void changed(ObservableValue<? extends Professional> observable, Professional oldValue, Professional newValue) {
+				selectedProf = newValue;
+			}
+		});
 	}
 
 	@FXML
@@ -266,14 +273,12 @@ public class EditorController extends MapDisplayController implements Initializa
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
 		populateTableView(directory.getProfessionals());
-		populateChoiceBox(directory.getProfessionals());
 	}
 
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
 		this.populateTableView(directory.getProfessionals());
-		this.populateChoiceBox(directory.getProfessionals());
 	}
 
 
@@ -330,46 +335,6 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		// Does the same thing, but is hellish to read.
 //		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
-	}
-
-
-	public void selectChoiceBox(){
-//		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
-//
-//				if(newValue.intValue() >= 0) {
-////					EditorController.this.selectedProf = proList.get(newValue.intValue());
-//					EditorController.this.selectedProf = directory.getProfessionals().
-//				}
-//
-////				// Build a string listing the names of the professional's rooms
-////				StringJoiner roomList = new StringJoiner(", ");
-////				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
-//
-//				populateTableView(directory.getProfessionals());
-//			}
-//		});
-//		proChoiceBox.getSelectionModel().selectedIndexProperty()
-//				.addListener(new ChangeListener<Professional>() {
-//					@Override
-//					public void changed(ObservableValue<Professional>
-//							                    observable, Object oldValue, Object newValue) {
-//
-//					}
-//				});
-		this.proChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professional>() {
-			@Override
-			public void changed(ObservableValue<? extends Professional> observable, Professional oldValue, Professional newValue) {
-				EditorController.this.selectedProf = newValue;
-				populateTableView(directory.getProfessionals());
-			}
-		});
-	}
-
-	public void populateChoiceBox(Set<Professional> professionals) {
-		this.proChoiceBox.setItems(FXCollections.observableArrayList(professionals));
 	}
 
 	/**

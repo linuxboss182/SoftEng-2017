@@ -78,9 +78,9 @@ public class UserPathController extends UserMasterController implements Initiali
 	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
 
-		int buttonWidth = 50;
+		int buttonWidth = 80;
 		int buttonHeight = 50;
-		int buttonSpread = 60;
+		int buttonSpread = 100;
 		int buttonY = 95;
 		int centerX = 250;
 
@@ -91,7 +91,7 @@ public class UserPathController extends UserMasterController implements Initiali
 		newFloorButton.setFitHeight(buttonHeight);
 		FloorProxy map = new FloorProxy(floor);
 
-		newFloorButton.setImage(map.display());
+		newFloorButton.setImage(map.displayThumb());
 
 		newFloorButton.setOnMouseClicked(e-> {
 			// change to the new floor, and draw the path for that floor

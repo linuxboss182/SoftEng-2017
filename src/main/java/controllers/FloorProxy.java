@@ -26,4 +26,11 @@ public class FloorProxy implements FloorImage
 		}
 		return floor.display();
 	}
+
+	public Image displayThumb() {
+		if(this.floor == null){
+			this.floor = new Floor(this.floorNum);
+		}
+		return floor.displayThumb();
+	}
 }
