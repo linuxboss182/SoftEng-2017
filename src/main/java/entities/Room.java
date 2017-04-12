@@ -2,13 +2,15 @@ package entities;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.Optional;
+import javax.swing.text.DefaultTextUI;
+
 
 /**
  * A class for Room(s).
@@ -17,23 +19,20 @@ import java.util.Optional;
 public class Room
 {
 	// TODO: Fix room shape operations
-	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
-	protected static final double RECTANGLE_WIDTH = 7;
-	protected static final double RECTANGLE_HEIGHT = 7;
-	protected static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
-	protected static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
-	protected static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
-	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	protected static final Color KIOSK_COLOR = Color.YELLOW;
-	protected static final String KIOSK_NAME = "You Are Here";
+	private static final double DEFAULT_STROKE_WIDTH = 1.5;
+	private static final double RECTANGLE_WIDTH = 7;
+	private static final double RECTANGLE_HEIGHT = 7;
+	private static final String KIOSK_NAME = "You Are Here";
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
+	private static final int FONT_SIZE = 9;
 
 	/* Attributes */
 	private Node location;
 	private String name;
 	private String description;
 	private String image; // The String path of the image for this room
-	private javafx.scene.Node shape;
+	//TODO: This should be a Node and a Label, not a StackPane
+	private StackPane shape;
 
 	/* Constructors */
 	public Room(String name, String description, String image) {
@@ -79,6 +78,13 @@ public class Room
 		return this.location;
 	}
 
+	/** Get this room's shape, and create it if it does not exist */
+	public javafx.scene.Node getShape() {
+		if(this.shape == null) {
+			this.makeShape(); // maybe move this to the constructor
+		}
+		return this.shape;
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -90,6 +96,10 @@ public class Room
 
 	public void setImage(String imagepath) {
 		this.image = imagepath;
+	}
+
+	public void setShape(StackPane shape) {
+		this.shape = shape;
 	}
 
 	public void setLocation(Node location) {
@@ -106,31 +116,21 @@ public class Room
 		return this.name;
 	}
 
-	public javafx.scene.Node getShape() {
-		if(this.shape == null) {
-			this.makeShape(); // maybe move this to the constructor
-		}
-		return this.shape;
-	}
 
 	private void makeShape() {
-		makeShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+		this.makeShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 	}
 
 	private void makeShape(Color stroke, Color fill) {
-		if(this.location != null) {
+		if (this.location != null) {
 			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
-
+//			this.shape = shape;
 			shape.setStroke(stroke);
 			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-			if (this.getName().equalsIgnoreCase(KIOSK_NAME)) {
-				shape.setFill(KIOSK_COLOR);
-			} else {
-				shape.setFill(fill);
-			}
+			shape.setFill(fill);
 
 			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
-			text.setFont(new Font(15));
+			text.setFont(new Font(FONT_SIZE));
 
 			// A pane with the text on top of the shape; this is what actually represents the room
 			StackPane stackPane = new StackPane(shape, text);
@@ -138,7 +138,7 @@ public class Room
 			stackPane.setLayoutX(this.location.getX());
 			stackPane.setLayoutY(this.location.getY());
 			stackPane.setAlignment(Pos.TOP_LEFT);
-			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH));
+			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
 

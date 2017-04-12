@@ -119,12 +119,18 @@ public class Node
 	 *
 	 * Adds the given node to this node's neighbor set, and vice versa.
 	 *
+	 * A node can not be connected to itself.
+	 * A node without a room can not be connected to a node on a different floor
+	 *
 	 * @param n The node to connect to this node
 	 *
-	 * @return false if the edge already existed or this is the given node
+	 * @return false if the edge already existed or connection otherwise failed
 	 */
 	public boolean connect(Node n) {
-		if (this == n) return false;
+		if (this == n || n == null) return false;
+		// do not connect roomless nodes on different floors
+		if ((this.room == null || n.room == null) && this.floor != n.floor) return false;
+
 		n.neighbors.add(this);
 		return this.neighbors.add(n);
 	}
@@ -274,15 +280,5 @@ public class Node
 
 	private void makeShape() {
 		this.circ = new Circle(this.x, this.y, Node.CIRCLE_RADIUS);
-		if (this.room != null) {
-			this.circ.setFill(COLORS.ROOM.bodyColor());
-			this.circ.setStroke(COLORS.ROOM.lineColor());
-			this.circ.setStrokeWidth(COLORS.ROOM.strokeWidth());
-		} else { // no room
-			this.circ.setFill(COLORS.NO_ROOM.bodyColor());
-			this.circ.setStroke(COLORS.NO_ROOM.lineColor());
-			this.circ.setStrokeWidth(COLORS.NO_ROOM.strokeWidth());
-		}
 	}
-
 }

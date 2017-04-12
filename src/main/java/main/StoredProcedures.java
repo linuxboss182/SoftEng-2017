@@ -158,12 +158,15 @@ public class StoredProcedures
 	}
 
 	public static String procInsertRoom(int roomID, String roomName, String roomDescription){
-		//query needs work
+		roomName = sanitize(roomName);
+		roomDescription = sanitize(roomDescription);
 		return "INSERT INTO Rooms (roomName, roomDescription, roomID) VALUES('"+roomName
 				+"', '"+roomDescription+"', "+roomID+")";
 	}
 
 	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription){
+		roomName = sanitize(roomName);
+		roomDescription = sanitize(roomDescription);
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID) VALUES('"+roomName
 				+"', '"+roomDescription+"', "+nodeID+", "+roomID+")";
 	}
@@ -175,7 +178,9 @@ public class StoredProcedures
 
 	public static String procInsertEmployee(int employeeID, String givenName,
 	                                        String surname, String employeeTitle){
-		//query needs work
+		givenName = sanitize(givenName);
+		surname = sanitize(surname);
+		employeeTitle = sanitize(employeeTitle);
 		return "INSERT INTO Employees(employeeID,employeeGivenName,employeeSurname,employeeTitle) "
 				+ "VALUES("+employeeID+", '"+givenName+"', '"+surname+"', '"+employeeTitle+"')";
 	}
@@ -211,6 +216,7 @@ public class StoredProcedures
 
 	public static String procRetrieveRoomName(String roomName){
 		//query needs work
+		roomName = sanitize(roomName);
 		return "SELECT * FROM Nodes WHERE roomName ='"+roomName+"'";
 	}
 
@@ -246,5 +252,9 @@ public class StoredProcedures
 
 	public static String procRetrieveNodesAndRooms(){
 		return "SELECT * FROM Nodes LEFT OUTER JOIN Rooms on rooms.NODEID = nodes.NODEID";
+	}
+
+	private static String sanitize(String str){
+		return str.replace("'","''");
 	}
 }

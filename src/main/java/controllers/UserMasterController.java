@@ -106,10 +106,10 @@ public abstract class UserMasterController extends MapDisplayController
 
 		if(floorChoiceBox != null)
 			initFloorChoiceBox();
-		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-				this.kiosk = r;
+				kiosk = r;
+				if(startRoom == null) startRoom = kiosk;
 			}
 		}
 		this.displayRooms(directory.getRoomsOnFloor(floor));
@@ -154,13 +154,6 @@ public abstract class UserMasterController extends MapDisplayController
 				event.consume();
 			}
 		});
-
-
-
-
-
-
-
 
 	}
 
@@ -332,10 +325,6 @@ public abstract class UserMasterController extends MapDisplayController
 		}
 		this.botPane.getChildren().setAll(path);
 
-		Text textDirections = new Text();
-		textDirections.setText(DirectionsGenerator.fromPath(directionNodes));
-		//Call text directions
-		this.directionsTextField.getChildren().add(textDirections);
 
 	}
 
@@ -355,6 +344,7 @@ public abstract class UserMasterController extends MapDisplayController
 	protected void selectStartRoom(Room r) {
 		setDisable();
 		deselectStartRoom();
+		if(r == null) return;
 		startRoom = r;
 		startRoom.setShapeColors(ColorScheme.STARTING_ROOM_STROKE_COLOR, ColorScheme.STARTING_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
@@ -363,6 +353,7 @@ public abstract class UserMasterController extends MapDisplayController
 	protected void selectEndRoom(Room r) {
 		setDisable();
 		deselectEndRoom();
+		if(r == null) return;
 		endRoom = r;
 		endRoom.setShapeColors(ColorScheme.ENDING_ROOM_STROKE_COLOR, ColorScheme.ENDING_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
@@ -372,6 +363,7 @@ public abstract class UserMasterController extends MapDisplayController
 		if(startRoom == null) {
 			return;
 		}
+
 		startRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
 		startRoom = null;

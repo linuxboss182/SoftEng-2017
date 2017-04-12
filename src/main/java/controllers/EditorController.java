@@ -1,9 +1,5 @@
 package controllers;
 
-
-import entities.ColorScheme;
-import entities.Professional;
-import entities.Room;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -24,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import entities.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -34,13 +28,17 @@ import main.DatabaseException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+
+import controllers.icons.IconController;
+import entities.Node;
+import entities.Professional;
+import entities.Room;
 
 public class EditorController extends MapDisplayController implements Initializable
 {
+	private static final boolean DEBUGGING = false;
+
 	@FXML
 	private Button addRoomBtn;
 	@FXML
@@ -63,8 +61,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	private Button deleteRoomBtn;
 	@FXML
 	private Button confirmBtn;
-	@FXML
-	private ChoiceBox<Professional> proChoiceBox;
+//	@FXML
+//	private ChoiceBox<Professional> proChoiceBox;
 	@FXML
 	private Button addCustomProBtn;
 	@FXML
@@ -93,6 +91,7 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	protected Node selectedNode; // you select a node by double clicking
+	private IconController colorizer;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -104,7 +103,8 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void initialize(URL location, ResourceBundle resources) {
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
-		this.directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+		this.colorizer = new IconController(directory);
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
 		if(floorChoiceBox != null) {
@@ -133,13 +133,6 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		});
 
-		//Init
-		this.populateChoiceBox(directory.getProfessionals()); //populate box for professionals
-//		this.proList = new ArrayList<>(); //TODO: OBSOLETE, should be in directory
-//		for (Professional pro: this.directory.getProfessionals()) {
-//			this.proList.add(pro);
-//		}
-		this.selectChoiceBox();
 		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
@@ -147,8 +140,8 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		}
 
-		this.displayNodes(this.directory.getNodesOnFloor(floor)); //draws the nodes from the directory
-		this.redrawLines();  //deletes all the lines then draws them again from the directory
+		this.redisplayGraph(); // redraw nodes and edges
+		this.colorizer.resetAllNodes();
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -178,17 +171,31 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	/**
-	 * Redraw all elements that need to be redrawn
+	 * Redraw all elements of the map and the professionals' elements
 	 */
 	// TODO: Use this more often
 	private void redisplayAll() {
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines();
+		this.redisplayGraph(); // nodes on this floor and lines between them
 		this.populateTableView(directory.getProfessionals());
-		this.populateChoiceBox(directory.getProfessionals());
+	}
+
+	/**
+	 * Redisplay the nodes on this floor and the lines
+	 *
+	 * If debugging, display all nodes
+	 */
+	private void redisplayGraph() {
+//		if (EditorController.DEBUGGING) {
+//			this.displayNodes(directory.getNodes());
+//			this.redrawLines(directory.getNodes());
+//		} else {
+		this.displayNodes(directory.getNodesOnFloor(floor));
+		this.redrawLines(directory.getNodesOnFloor(floor));
+//		}
 	}
 
 	public void populateTableView (Collection<Professional> profs) {
+
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
@@ -198,12 +205,26 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 		});
 
-		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
+		profCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getSurname()+", "+cdf.getValue().getGivenName()+" "+cdf.getValue().getTitle());
+			}
+		});
+
+//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
 
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
 
 		roomProfTable.getItems().setAll(profs);
+
+		this.roomProfTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professional>() {
+			@Override
+			public void changed(ObservableValue<? extends Professional> observable, Professional oldValue, Professional newValue) {
+				selectedProf = newValue;
+			}
+		});
 	}
 
 	@FXML
@@ -219,8 +240,7 @@ public class EditorController extends MapDisplayController implements Initializa
 	private void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines();
+		this.redisplayGraph();
 	}
 
 	@FXML
@@ -252,14 +272,12 @@ public class EditorController extends MapDisplayController implements Initializa
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
 		populateTableView(directory.getProfessionals());
-		populateChoiceBox(directory.getProfessionals());
 	}
 
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
 		this.populateTableView(directory.getProfessionals());
-		this.populateChoiceBox(directory.getProfessionals());
 	}
 
 
@@ -288,7 +306,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			}
 			return;
 		}
-		
+
 		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
@@ -316,46 +334,6 @@ public class EditorController extends MapDisplayController implements Initializa
 
 		// Does the same thing, but is hellish to read.
 //		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
-	}
-
-
-	public void selectChoiceBox(){
-//		this.proChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//				//proTextLbl.setText(proList.get(newValue.intValue() - 1).toString());
-//
-//				if(newValue.intValue() >= 0) {
-////					EditorController.this.selectedProf = proList.get(newValue.intValue());
-//					EditorController.this.selectedProf = directory.getProfessionals().
-//				}
-//
-////				// Build a string listing the names of the professional's rooms
-////				StringJoiner roomList = new StringJoiner(", ");
-////				selectedProf.getLocations().forEach(room -> roomList.add(room.getName()));
-//
-//				populateTableView(directory.getProfessionals());
-//			}
-//		});
-//		proChoiceBox.getSelectionModel().selectedIndexProperty()
-//				.addListener(new ChangeListener<Professional>() {
-//					@Override
-//					public void changed(ObservableValue<Professional>
-//							                    observable, Object oldValue, Object newValue) {
-//
-//					}
-//				});
-		this.proChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professional>() {
-			@Override
-			public void changed(ObservableValue<? extends Professional> observable, Professional oldValue, Professional newValue) {
-				EditorController.this.selectedProf = newValue;
-				populateTableView(directory.getProfessionals());
-			}
-		});
-	}
-
-	public void populateChoiceBox(Set<Professional> professionals) {
-		this.proChoiceBox.setItems(FXCollections.observableArrayList(professionals));
 	}
 
 	/**
@@ -446,9 +424,14 @@ public class EditorController extends MapDisplayController implements Initializa
 		xPos.setTextFill(Color.BLACK);
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
-		Node newNode = this.directory.addNewRoomNode(x, y, floor, name, description);
-		this.addNodeListeners(newNode);
-		this.displayNodes(this.directory.getNodesOnFloor(floor));
+
+		if (this.selectedNode != null && this.selectedNode.getRoom() == null) {
+			directory.addNewRoomToNode(this.selectedNode, name, description);
+		} else {
+			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
+			this.addNodeListeners(newNode);
+			this.displayNodes(directory.getNodesOnFloor(floor));
+		}
 	}
 
 	/** Add a new node to the directory at the given coordinates */
@@ -466,7 +449,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			room.setDescription(description);
 		});
 		this.updateSelectedNode(x, y);
-		this.redrawLines();
+		this.redrawLines(this.directory.getNodesOnFloor(floor));
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
@@ -488,13 +471,18 @@ public class EditorController extends MapDisplayController implements Initializa
 	/**
 	 * Recreate and redisplay all lines on this floor
 	 */
-	public void redrawLines() {
+	public void redrawLines(Collection<Node> nodes) {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : directory.getNodesOnFloor(floor)) {
+		for (Node node : nodes) {
 			for (Node neighbor : node.getNeighbors()) {
 				if (node.getFloor() == neighbor.getFloor()) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
+//				else if (EditorController.DEBUGGING) {
+//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
+//					ln.setStroke(Color.FUCHSIA);
+//					lines.add(ln);
+//				}
 			}
 		}
 		this.botPane.getChildren().setAll(lines);
@@ -577,7 +565,7 @@ public class EditorController extends MapDisplayController implements Initializa
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
 			this.selectedNode.connectOrDisconnect(n);
-			this.redrawLines();
+			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
 	}
 
@@ -585,12 +573,11 @@ public class EditorController extends MapDisplayController implements Initializa
 	public void onShapeDrag(MouseEvent e, Node n) {
 		this.beingDragged = true;
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
-
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNode(e.getX(), e.getY());
 				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
-				this.redrawLines();
-			} else if(this.secondaryPressed) {
+				this.redrawLines(this.directory.getNodesOnFloor(floor));
+			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
 				// do nothing for now
 			}
@@ -633,30 +620,16 @@ public class EditorController extends MapDisplayController implements Initializa
 	}
 
 	private void selectNode (Node n){
-		this.deselectNode();
 		this.selectedNode = n;
-		if(this.selectedNode.containsRoom()) {
-			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_ROOM_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_ROOM_STROKE_COLOR);
-		} else {
-			this.selectedNode.getShape().setFill(ColorScheme.SELECTED_NODE_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.SELECTED_NODE_STROKE_COLOR);
-		}
+
+		this.colorizer.selectSingleNode(n);
+		this.redisplayGraph();
 	}
 
 	private void deselectNode(){
-		if(this.selectedNode == null){
-			return;
-		}
-		System.out.println("this.selectedNode.containsRoom() = " + this.selectedNode.containsRoom());
-		if(this.selectedNode.containsRoom()) {
-			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_ROOM_STROKE_COLOR);
-		} else {
-			this.selectedNode.getShape().setFill(ColorScheme.DEFAULT_NODE_FILL_COLOR);
-			this.selectedNode.getShape().setStroke(ColorScheme.DEFAULT_NODE_STROKE_COLOR);
-		}
 		this.selectedNode = null;
+		this.colorizer.deselectAllNodes();
+		this.redisplayGraph();
 	}
 
 	private void setXCoordField(double x) {
@@ -694,6 +667,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 		this.setFields(selectedNode.getX(), selectedNode.getY());
 
+		//TODO: Use applyToRoom instead of checking containsRoom
 		if(selectedNode.containsRoom()) {
 			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
 		}

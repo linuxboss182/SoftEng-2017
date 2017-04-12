@@ -51,6 +51,7 @@ public class DirectionsGenerator
 		return DirectionsGenerator.getTextDirections(asArray);
 	}
 
+	// TODO: Use StringBuilder instead of String concatenation
 	/** Returns a string that tells how to get from start to end
 	 *
 	 * @param path the nodes along the path
@@ -60,13 +61,20 @@ public class DirectionsGenerator
 		String directions = "First, ";
 
 		int leftTurns = 0, rightTurns = 0;
+		if (path.length > 1 && isElevator(path[0], path[1])) {
+			directions += "Take the elevator to the " + path[1].getFloor() + getTurnPostfix(path[1].getFloor()) + " floor\nThen ";
+		}
 		for(int i = 1; i < path.length - 1; i++) {
 			// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
 			// During testing, this method worked how we wanted, but when implementing this code, turns were reversed. (right turns were left turns)
 			double turnAngle = path[i].angle(path[i+1], path[i-1]);
 
 			// Determine the direction of the turn through a bunch of if statements that check which direction the path is traveling
-			if(isRightTurn(turnAngle)) {
+			if (isElevator(path[i],path[i+1])){
+				directions += "go straight and take the elevator to the " + path[i+1].getFloor()
+						+ getTurnPostfix(path[i+1].getFloor()) + " floor\nThen ";
+			}
+			else if(isRightTurn(turnAngle)) {
 				// Right Turn
 				if(rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
@@ -231,6 +239,21 @@ public class DirectionsGenerator
 		return B >= A && B < C;
 	}
 
+	/** Determines whether the user is going to use an elevator of not
+	 * @param node1 the start node
+	 * @param node2 the end node
+	 * @return true: if they are on the same floor
+	 *         false: if they are on the different floor
+	 */
+	private static boolean isElevator(Node node1, Node node2){
+		if (node1.getFloor() != node2.getFloor()) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	/** Gives the postfix for a number
 	 *
 	 * @param turns the number that needs a postfix
@@ -249,5 +272,4 @@ public class DirectionsGenerator
 				return "th";
 		}
 	}
-
 }
