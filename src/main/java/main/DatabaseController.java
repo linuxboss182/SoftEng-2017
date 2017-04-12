@@ -455,7 +455,7 @@ public class DatabaseController
 		db.close();
 	}
 
-
+	//jesus take the wheel
 	private String sanitize(String str){
 		return str.replace("'", "''");
 	}
