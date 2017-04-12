@@ -12,15 +12,15 @@ public class ColorController
 {
 	/** Interface for shape color schemes */
 	private interface ShapeScheme {
-		void applyTo(Shape shape);
+		public void applyTo(Shape shape);
 	}
 
 	private enum NODE implements ShapeScheme {
 		RESET(Color.BLUE, 1.5, Color.BLACK),
 		DEFAULT(null, 1.5, Color.BLACK),
-		SELECTED(null, 2.0, Color.WHITE),
 		ELEVATOR(Color.FUCHSIA, null, null),
 		ROOM(Color.YELLOW, null, null),
+		SELECTED(null, 2.0, Color.WHITE),
 		; // End of schemes
 		private final Color fill;
 		private final Double strokeWidth;
@@ -33,14 +33,14 @@ public class ColorController
 		}
 
 		/** Apply this color scheme to the given shape */
-		void applyTo(Shape shape) {
+		public void applyTo(Shape shape) {
 			if (this.fill != null) shape.setFill(this.fill);
 			if (this.strokeWidth != null) shape.setStrokeWidth(this.strokeWidth);
 			if (this.stroke != null) shape.setStroke(this.stroke);
 		}
 	}
 
-	private enum ROOM implements {
+	private enum ROOM implements ShapeScheme {
 		// User UI schemes
 		DEFAULT(Color.YELLOW, 1.5, Color.BLACK),
 		START(Color.YELLOW, 1.5, Color.BLACK),
@@ -57,13 +57,18 @@ public class ColorController
 		}
 
 		/** Apply this color scheme to the given shape */
-		void applyTo(Shape shape) {
+		public void applyTo(Shape shape) {
 			if (this.fill != null) shape.setFill(this.fill);
 			if (this.strokeWidth != null) shape.setStrokeWidth(this.strokeWidth);
 			if (this.stroke != null) shape.setStroke(this.stroke);
 		}
 	}
 
+	private final Directory directory;
+
+	public ColorController(Directory dir) {
+		this.directory = dir;
+	}
 
 	/**
 	 * Set the color of the selected node to the default
@@ -73,27 +78,34 @@ public class ColorController
 	 * - Nodes with rooms
 	 * - Nodes with connections between floors
 	 *
-	 * @param n The node to color
+	 * @param node The node to color
 	 */
-	public void resetNodeColor(Node n) {
-		if (n == null) return;
-		if (n.getRoom() != null) {
-			NODE.ROOM.applyTo(n.getShape());
+	public void resetNodeColor(Node node) {
+		if (node == null) return;
+		NODE.DEFAULT.applyTo(node.getShape());
+
+		// Set elevator colors
+		if (node.getNeighbors().stream().anyMatch(n -> node.getFloor() != n.getFloor())) {
+			NODE.ELEVATOR.applyTo(node.getShape());
+		} else if (node.getRoom() != null) {
+			NODE.ROOM.applyTo(node.getShape());
 		} else { // no room
-			NODE.DEFAULT.applyTo(n.getShape());
-			n.getShape().setFill(COLORS.NODE.bodyColor());
-			n.getShape().setStroke(COLORS.NODE.lineColor());
-			n.getShape().setStrokeWidth(COLORS.NODE.strokeWidth());
-		}
-
-		if (n.getNeighbors().stream().anyMatch(other -> n.getFloor() != other.getFloor())) {
-			n.getShape().setFill(COLORS.ELEVATOR.bodyColor());
+			// do nothing else
 		}
 	}
 
-	public void setNodeSelected() {
-		if (n == null) return;
-
+	public void colorizeAll() {
+		this.directory.getNodes().forEach(this::resetNodeColor);
 	}
 
+	public void selectSingleNode(Node node) {
+		this.deselectAllNodes();
+		NODE.SELECTED.applyTo(node.getShape());
+	}
+
+	public void deselectAllNodes() {
+		for (Node n : this.directory.getNodes()) {
+			this.resetNodeColor(n);
+		}
+	}
 }
