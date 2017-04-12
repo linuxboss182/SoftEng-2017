@@ -34,7 +34,7 @@ public class UserPathController extends UserMasterController implements Initiali
 	private Button doneBtn;
 	@FXML
 	private AnchorPane floorsTraveledAnchorPane;
-
+	Text textDirections = new Text();
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
@@ -46,6 +46,11 @@ public class UserPathController extends UserMasterController implements Initiali
 			int startFloor = startRoom.getLocation().getFloor();
 			changeFloor(startFloor);
 			paintPath(getPathOnFloor(startFloor, ret));
+			this.directionsTextField.getChildren().clear();
+
+			textDirections.setText(DirectionsGenerator.fromPath(ret));
+			//Call text directions
+			this.directionsTextField.getChildren().add(textDirections);
 
 			/** The following code/ comments are for drawing the path and or buttons for getting directions between floors.
 			 *
@@ -97,6 +102,8 @@ public class UserPathController extends UserMasterController implements Initiali
 			// change to the new floor, and draw the path for that floor
 			changeFloor(floor);
 			paintPath(path);
+			//Call text directions
+			this.directionsTextField.getChildren().add(textDirections);
 		});
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
