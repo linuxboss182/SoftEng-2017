@@ -66,7 +66,10 @@ public class DirectionsGenerator
 			double turnAngle = path[i].angle(path[i+1], path[i-1]);
 
 			// Determine the direction of the turn through a bunch of if statements that check which direction the path is traveling
-			if(isRightTurn(turnAngle)) {
+			if (isElevator(path[i],path[i+1])){
+				directions += "go straight and take the elevator to the " + path[i+1].getFloor() + " floor\nThen ";
+			}
+			else if(isRightTurn(turnAngle)) {
 				// Right Turn
 				if(rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
@@ -231,6 +234,21 @@ public class DirectionsGenerator
 		return B >= A && B < C;
 	}
 
+	/** Determines whether the user is going to use an elevator of not
+	 * @param node1 the start node
+	 * @param node2 the end node
+	 * @return true: if they are on the same floor
+	 *         false: if they are on the different floor
+	 */
+	private static boolean isElevator(Node node1, Node node2){
+		if (node1.getFloor() != node2.getFloor()) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	/** Gives the postfix for a number
 	 *
 	 * @param turns the number that needs a postfix
@@ -249,5 +267,4 @@ public class DirectionsGenerator
 				return "th";
 		}
 	}
-
 }
