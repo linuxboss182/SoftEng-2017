@@ -157,6 +157,15 @@ public class Directory
 	}
 
 	/**
+	 * Add a new room with the given attributes to the given node
+	 */
+	public void addNewRoomToNode(Node node, String name, String desc) {
+		Room room = new Room(name, desc);
+		node.setRoom(room);
+		room.setLocation(node);
+	}
+
+	/**
 	 * Create a new room in this directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
