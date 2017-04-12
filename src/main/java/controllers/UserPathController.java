@@ -1,7 +1,6 @@
 package controllers;
 
 import entities.Node;
-import entities.Room;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -10,17 +9,14 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import controllers.UserMasterController;
+
 import main.DirectionsGenerator;
 import main.Pathfinder;
 
@@ -40,46 +36,62 @@ public class UserPathController extends UserMasterController implements Initiali
 		initialize();
 		List<Node> ret;
 
-		try{
-			System.out.println("UserPathController.initialize");
-			System.out.println("startRoom = " + startRoom);
-			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
-			// change displayed floor to match the floor that the start node is on
-			int startFloor = startRoom.getLocation().getFloor();
-			changeFloor(startFloor);
-			paintPath(getPathOnFloor(startFloor, ret));
-			this.directionsTextField.getChildren().clear();
-
-			textDirections.setText(DirectionsGenerator.fromPath(ret));
-			//Call text directions
-			this.directionsTextField.getChildren().add(textDirections);
-
-			/** The following code/ comments are for drawing the path and or buttons for getting directions between floors.
-			 *
-			 * OK...
-			 * So basically we just scroll through the path and find the floors that the path travels between, count them, and display them in the order that they are traveled in.
-			 * Count floors
-			 * Display buttons in order of path
-			 * Change to the floor of the starting room
-			 * draw the path on that floor
-			 */
-			ArrayList<Integer> floors = new ArrayList<>();
-			for(int i = 0; i < ret.size(); i++) {
-				// add buttons for the floors traveled on
-
-				int floor = ret.get(i).getFloor();
-				if(!floors.contains(floor)) {
-					System.out.println("Adding a floor button");
-					floors.add(floor);
-					createNewFloorButton(floor, getPathOnFloor(floor, ret), floors.size());
-				}
+		// Check if either start or destination is null
+		// TODO: create exception class?
+		// TODO: make pop-up for UI when this happens
+		if (startRoom == null || endRoom == null) {
+			try {
+				this.doneBtnClicked();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Error loading user UserDestination.fxml");
 			}
-		} catch (NullPointerException n){
-			// TODO: create exception class?
-			// TODO: make pop-up for UI when this happens
-			System.out.println("start or dest node is null, need to re-choose start and dest.");
+			return;
 		}
+		System.out.println("UserPathController.initialize");
+		System.out.println("startRoom = " + startRoom);
+		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		// change displayed floor to match the floor that the start node is on
+		int startFloor = startRoom.getLocation().getFloor();
+		changeFloor(startFloor);
+		paintPath(getPathOnFloor(startFloor, ret));
+		this.directionsTextField.getChildren().clear();
 
+		textDirections.setText(DirectionsGenerator.fromPath(ret));
+		//Call text directions
+		this.directionsTextField.getChildren().add(textDirections);
+
+
+		/* Draw the buttons for each floor on a multi-floor path. */
+
+		List<Integer> floors = new ArrayList<>();
+
+		// Set initial values (set next to last in case there are only 1 or 2 steps)
+		int last = 0;
+		int here = ret.get(0).getFloor();
+		int next = ret.get(ret.size()-1).getFloor();
+		// add starting floor
+		floors.add(here);
+		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+		//prints all the floors on the path in order
+// 		System.out.println(ret.stream().map(Node::getFloor).collect(Collectors.toList()).toString());
+
+		for (int i = 1; i < ret.size()-1; ++i) {
+			last = ret.get(i-1).getFloor();
+			here = ret.get(i  ).getFloor();
+			next = ret.get(i+1).getFloor();
+			System.out.println(last+" "+here+" "+next);
+			// Check when there is a floor A -> floor B -> floor B transition and save floor B
+			if (last != here && next == here) {
+				floors.add(here);
+				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+			}
+		}
+		// Check that the last node's floor (which will always be 'next') is in the list
+		if (floors.get(floors.size()-1) != next) {
+			floors.add(next);
+			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
+		}
 	}
 
 	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
@@ -113,7 +125,7 @@ public class UserPathController extends UserMasterController implements Initiali
 	private ArrayList<Node> getPathOnFloor(int floor, List<Node> allPath) {
 		ArrayList<Node> path = new ArrayList<>();
 		for(Node n : allPath) {
-			if(n.getFloor() == floor) path.add(n);
+			if (n.getFloor() == floor) path.add(n);
 		}
 		return path;
 	}
