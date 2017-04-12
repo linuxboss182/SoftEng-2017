@@ -454,7 +454,7 @@ public class DatabaseController
 
 
 	private String sanitize(String str){
-		return str.replace("'", "\"");
+		return str.replace("'", "''");
 	}
 
 	//A test call to the database
