@@ -280,19 +280,5 @@ public class Node
 
 	private void makeShape() {
 		this.circ = new Circle(this.x, this.y, Node.CIRCLE_RADIUS);
-		if (this.room != null) {
-			this.circ.setFill(COLORS.ROOM.bodyColor());
-			this.circ.setStroke(COLORS.ROOM.lineColor());
-			this.circ.setStrokeWidth(COLORS.ROOM.strokeWidth());
-		} else { // no room
-			this.circ.setFill(COLORS.NODE.bodyColor());
-			this.circ.setStroke(COLORS.NODE.lineColor());
-			this.circ.setStrokeWidth(COLORS.NODE.strokeWidth());
-		}
-
-		if (this.neighbors.stream().anyMatch(n -> n.floor != this.floor)) {
-			this.circ.setFill(COLORS.ELEVATOR.bodyColor());
-		}
 	}
-
 }
