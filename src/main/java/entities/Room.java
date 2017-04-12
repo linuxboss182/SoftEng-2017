@@ -9,6 +9,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import javax.swing.text.DefaultTextUI;
+
 
 /**
  * A class for Room(s).
@@ -17,11 +19,12 @@ import javafx.scene.text.Text;
 public class Room
 {
 	// TODO: Fix room shape operations
-	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
-	protected static final double RECTANGLE_WIDTH = 7;
-	protected static final double RECTANGLE_HEIGHT = 7;
-	protected static final String KIOSK_NAME = "You Are Here";
+	private static final double DEFAULT_STROKE_WIDTH = 1.5;
+	private static final double RECTANGLE_WIDTH = 7;
+	private static final double RECTANGLE_HEIGHT = 7;
+	private static final String KIOSK_NAME = "You Are Here";
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
+	private static final int FONT_SIZE = 9;
 
 	/* Attributes */
 	private Node location;
@@ -124,9 +127,10 @@ public class Room
 //			this.shape = shape;
 			shape.setStroke(stroke);
 			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+			shape.setFill(fill);
 
 			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
-			text.setFont(new Font(15));
+			text.setFont(new Font(FONT_SIZE));
 
 			// A pane with the text on top of the shape; this is what actually represents the room
 			StackPane stackPane = new StackPane(shape, text);
@@ -134,7 +138,7 @@ public class Room
 			stackPane.setLayoutX(this.location.getX());
 			stackPane.setLayoutY(this.location.getY());
 			stackPane.setAlignment(Pos.TOP_LEFT);
-			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH));
+			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
 

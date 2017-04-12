@@ -48,7 +48,7 @@ public class IconController
 	 */
 	private void resetNode(Node node) {
 		if (node == null) return;
-		NODE.DEFAULT.applyTo(node.getShape());
+		NODE.RESET.applyTo(node.getShape());
 
 		// Set elevator colors
 		if (node.getNeighbors().stream().anyMatch(n -> node.getFloor() != n.getFloor())) {
