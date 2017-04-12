@@ -403,11 +403,13 @@ public class DatabaseController
 		for (Room r : dir.getRooms()) {
 			PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
+				System.out.println(this.sanitize(r.getDescription()));
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	this.sanitize(r.getName()),
 																	this.sanitize(r.getDescription()));
 			} else {
+				System.out.println(this.sanitize(r.getDescription()));
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														this.sanitize(r.getName()),
 														this.sanitize(r.getDescription()));
