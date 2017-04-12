@@ -405,12 +405,12 @@ public class DatabaseController
 			if(r.getLocation() != null) {
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
-																	r.getName(),
-																	r.getDescription());
+																	this.sanitize(r.getName()),
+																	this.sanitize(r.getDescription()));
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
-														r.getName(),
-														r.getDescription());
+														this.sanitize(r.getName()),
+														this.sanitize(r.getDescription()));
 			}
 			db.executeUpdate(query);
 		}
@@ -452,6 +452,10 @@ public class DatabaseController
 		db.close();
 	}
 
+
+	private String sanitize(String str){
+		return str.replace("'", "\"");
+	}
 
 	//A test call to the database
 	public void exampleQueries() {
