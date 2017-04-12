@@ -390,10 +390,8 @@ public class DatabaseController
 	 */
 	private void saveDirectory(Directory dir)
 			throws SQLException {
-		System.out.println("WE GOT HERE");
 		Statement db = this.db_connection.createStatement();
 		String query;
-		System.out.println("WE GOT A LITTLE FARTHER");
 		for (Node n : dir.getNodes()) {
 			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
@@ -444,7 +442,7 @@ public class DatabaseController
 
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
-					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
+					p.hashCode(), this.sanitize(p.getGivenName()), this.sanitize(p.getSurname()), this.sanitize(p.getTitle()));
 			db.executeUpdate(query);
 
 			for (Room r : p.getLocations()) {
