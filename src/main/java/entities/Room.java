@@ -79,7 +79,7 @@ public class Room
 	}
 
 	/** Get this room's shape, and create it if it does not exist */
-	public javafx.scene.Node getShape() {
+	public StackPane getShape() {
 		if(this.shape == null) {
 			this.makeShape(); // maybe move this to the constructor
 		}
@@ -98,9 +98,9 @@ public class Room
 		this.image = imagepath;
 	}
 
-	public void setShape(StackPane shape) {
-		this.shape = shape;
-	}
+//	public void setShape(StackPane shape) {
+//		this.shape = shape;
+//	}
 
 	public void setLocation(Node location) {
 		this.location = location;

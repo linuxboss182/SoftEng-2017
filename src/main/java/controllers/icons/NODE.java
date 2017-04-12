@@ -9,8 +9,8 @@ import javafx.scene.shape.Shape;
 enum NODE
 		implements ShapeScheme
 {
-	RESET(Color.BLUE, 1.5, Color.BLACK),
-	DEFAULT(null, 1.5, Color.BLACK),
+	DESELECT(null, 1.5, Color.BLACK),
+	DEFAULT(Color.BLUE, 1.5, Color.BLACK),
 	ELEVATOR(Color.FUCHSIA, null, null),
 	ROOM(Color.YELLOW, null, null),
 	SELECTED(null, 2.0, Color.WHITE),

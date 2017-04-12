@@ -75,6 +75,7 @@ public abstract class UserMasterController extends MapDisplayController
 		this.setPanes(linePane, nodePane);
 		//Grab the database controller from main and use it to populate our directory
 		this.directory = ApplicationController.getDirectory();
+		iconController = ApplicationController.getIconController();
 
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
@@ -113,6 +114,7 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		}
 		this.displayRooms(directory.getRoomsOnFloor(floor));
+		iconController.resetAllRooms();
 		if(this.directoryView != null) {
 			this.populateListView();
 		}
@@ -215,6 +217,7 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 	public void displayRooms(Collection<Room> rooms) {
+		System.out.println("DISPLAYING");
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : rooms) {
 			roomShapes.add(r.getShape());
@@ -227,13 +230,9 @@ public abstract class UserMasterController extends MapDisplayController
 				ContextMenu optionsMenu = new ContextMenu();
 
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> {
-						selectStartRoom(r);
-				});
+				startRoomItem.setOnAction(e1 -> selectStartRoom(r));
 				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> {
-						selectEndRoom(r);
-				});
+				endRoomItem.setOnAction(e2-> selectEndRoom(r));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
 				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
 			});
@@ -343,39 +342,18 @@ public abstract class UserMasterController extends MapDisplayController
 
 	protected void selectStartRoom(Room r) {
 		setDisable();
-		deselectStartRoom();
 		if(r == null) return;
 		startRoom = r;
-		startRoom.setShapeColors(ColorScheme.STARTING_ROOM_STROKE_COLOR, ColorScheme.STARTING_ROOM_FILL_COLOR);
+		iconController.selectStartRoom(r);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
 	}
 
 	protected void selectEndRoom(Room r) {
 		setDisable();
-		deselectEndRoom();
 		if(r == null) return;
 		endRoom = r;
-		endRoom.setShapeColors(ColorScheme.ENDING_ROOM_STROKE_COLOR, ColorScheme.ENDING_ROOM_FILL_COLOR);
+		iconController.selectEndRoom(r);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
-	}
-
-	protected void deselectStartRoom() {
-		if(startRoom == null) {
-			return;
-		}
-
-		startRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
-		startRoom = null;
-	}
-
-	protected void deselectEndRoom() {
-		if(endRoom == null) {
-			return;
-		}
-		endRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
-		endRoom = null;
 	}
 
 	@FXML
