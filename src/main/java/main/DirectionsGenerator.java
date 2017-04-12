@@ -51,6 +51,7 @@ public class DirectionsGenerator
 		return DirectionsGenerator.getTextDirections(asArray);
 	}
 
+	// TODO: Use StringBuilder instead of String concatenation
 	/** Returns a string that tells how to get from start to end
 	 *
 	 * @param path the nodes along the path
@@ -60,6 +61,9 @@ public class DirectionsGenerator
 		String directions = "First, ";
 
 		int leftTurns = 0, rightTurns = 0;
+		if (path.length > 1 && isElevator(path[0], path[1])) {
+			directions += "Take the elevator to the " + path[1].getFloor() + getTurnPostfix(path[1].getFloor()) + " floor\nThen ";
+		}
 		for(int i = 1; i < path.length - 1; i++) {
 			// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
 			// During testing, this method worked how we wanted, but when implementing this code, turns were reversed. (right turns were left turns)
@@ -67,7 +71,8 @@ public class DirectionsGenerator
 
 			// Determine the direction of the turn through a bunch of if statements that check which direction the path is traveling
 			if (isElevator(path[i],path[i+1])){
-				directions += "go straight and take the elevator to the " + path[i+1].getFloor() + " floor\nThen ";
+				directions += "go straight and take the elevator to the " + path[i+1].getFloor()
+						+ getTurnPostfix(path[i+1].getFloor()) + " floor\nThen ";
 			}
 			else if(isRightTurn(turnAngle)) {
 				// Right Turn
