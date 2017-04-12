@@ -41,6 +41,8 @@ public class UserPathController extends UserMasterController implements Initiali
 		List<Node> ret;
 
 		try{
+			System.out.println("UserPathController.initialize");
+			System.out.println("startRoom = " + startRoom);
 			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
 			// change displayed floor to match the floor that the start node is on
 			int startFloor = startRoom.getLocation().getFloor();

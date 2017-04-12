@@ -106,11 +106,10 @@ public abstract class UserMasterController extends MapDisplayController
 
 		if(floorChoiceBox != null)
 			initFloorChoiceBox();
-		this.kiosk = null;
 		for (Room r : this.directory.getRooms()) {
 			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-				this.kiosk = r;
-				this.startRoom = kiosk;
+				kiosk = r;
+				if(startRoom == null) startRoom = kiosk;
 			}
 		}
 		this.displayRooms(directory.getRoomsOnFloor(floor));
@@ -364,8 +363,10 @@ public abstract class UserMasterController extends MapDisplayController
 		if(startRoom == null) {
 			return;
 		}
+
 		startRoom.setShapeColors(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 		this.displayRooms(directory.getRoomsOnFloor(floor));
+		startRoom = null;
 	}
 
 	protected void deselectEndRoom() {
