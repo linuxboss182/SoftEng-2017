@@ -1,5 +1,6 @@
 package main;
 
+import controllers.icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
 import javafx.fxml.FXMLLoader;
@@ -13,10 +14,16 @@ public class ApplicationController extends Application
 
 	public static DatabaseController dbc;
 	private static Directory directory;
+	private static IconController iconController;
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
 	}
+
+	public static IconController getIconController() {
+		return ApplicationController.iconController;
+	}
+
 
 	public static void main(String[] args) {
 		ApplicationController.dbc = new DatabaseController();
@@ -29,6 +36,7 @@ public class ApplicationController extends Application
 		}
 
 		ApplicationController.directory = ApplicationController.dbc.getDirectory();
+		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
 

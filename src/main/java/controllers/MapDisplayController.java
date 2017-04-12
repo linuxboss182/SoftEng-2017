@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.icons.IconController;
 import entities.Directory;
 import entities.Node;
 import entities.Professional;
@@ -25,6 +26,7 @@ public abstract class MapDisplayController
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
 	protected static Directory directory;
+	protected static IconController iconController;
 	protected static Room kiosk;
 
 	// Primary is left click and secondary is right click

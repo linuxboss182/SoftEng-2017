@@ -1,14 +1,16 @@
 package controllers.icons;
 
-import entities.Directory;
-import entities.Node;
-import entities.Room;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import entities.Directory;
+import entities.Node;
+import entities.Room;
 
 /**
  * This is the only class that should ever change entities' colors
@@ -26,11 +28,17 @@ public class IconController
 
 	private final Directory directory;
 
+	// Keeping state here is not ideal, but simpliflies usage immensely
+	private Room startRoom;
+	private Room endRoom;
+
 	/**
 	 * Create a color controller for the given directory
 	 */
 	public IconController(Directory dir) {
 		this.directory = dir;
+		this.startRoom = null;
+		this.endRoom = null;
 	}
 
 
@@ -48,7 +56,7 @@ public class IconController
 	 */
 	private void resetNode(Node node) {
 		if (node == null) return;
-		NODE.RESET.applyTo(node.getShape());
+		NODE.DEFAULT.applyTo(node.getShape());
 
 		// Set elevator colors
 		if (node.getNeighbors().stream().anyMatch(n -> node.getFloor() != n.getFloor())) {
@@ -73,7 +81,7 @@ public class IconController
 	 * Select one node and deselect all other nodes
 	 */
 	public void selectSingleNode(Node node) {
-		this.deselectAllNodes();
+		this.resetAllNodes();
 		NODE.SELECTED.applyTo(node.getShape());
 	}
 
@@ -81,66 +89,103 @@ public class IconController
 	 * Deselect all nodes in the directory
 	 */
 	public void deselectAllNodes() {
-		for (Node n : this.directory.getNodes()) {
-			this.resetNode(n);
-		}
+		this.resetAllNodes();
 	}
 
 
 	/* Methods for Rooms */
 	// (incomplete)
 
-	/**
-	 * Set the shape of the icon for the given room
-	 *
-	 * @note This creates a new shape whenever this is called; this is the intended
-	 *       behavior, but is likely to change in future iterations.
-	 */
-	// TODO: Pop some of this out into an IconBuilder class
-	// TODO: Replace StackPane use with ImageView and a Label
-	// TODO: Don't create a new javafx Node every time
-	// TODO: Actually use IconController for Rooms
 	private void resetRoom(Room room) {
 		if (room == null || room.getLocation() == null) return;
 
-		// TODO: Use javafx.scene.control.Label instead of Text
-		Text label = new Text(room.getName());
-		label.setFont(new Font(IconController.LABEL_FONT_SIZE));
+		Shape shape = (Shape) room.getShape().getChildren().get(0);
+		ROOM.DEFAULT.applyTo(shape);
 
-		javafx.scene.Node icon;
 		if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
-			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
-					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
-			ROOM.DEFAULT.applyTo(iconShape);
-			ROOM.KIOSK.applyTo(iconShape);
-			icon = iconShape;
-		} else if (room.getDescription().equalsIgnoreCase("BATHROOM")) {
-			Image iconimg = new Image(IconController.BATHROOM_ICON_PATH);
-			double width = iconimg.getWidth();
-			icon = new ImageView(iconimg);
+			ROOM.KIOSK.applyTo(shape);
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-			Image iconimg = new Image(IconController.ELEVATOR_ICON_PATH);
-			double width = iconimg.getWidth();
-			icon = new ImageView(iconimg);
-		} else {
-			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
-					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
-			ROOM.DEFAULT.applyTo(iconShape);
-			icon = iconShape;
+			ROOM.ELEVATOR.applyTo(shape);
 		}
-		room.setShape(new StackPane(icon, label));
+
+		if (room == this.endRoom) {
+			ROOM.END.applyTo(shape);
+		} else if (room == this.startRoom) {
+			ROOM.START.applyTo(shape);
+		}
 	}
 
 	public void resetAllRooms() {
+		this.startRoom = null;
+		this.endRoom = null;
 		this.directory.getRooms().forEach(this::resetRoom);
 	}
 
-	// TODO: Finish implementation
-	public void selectStartRoom(Room room) {
-		if (room == null) return; // TODO: remove; we shouldn't need this check
-		this.resetAllRooms();
-//		ROOM.START.applyTo(SOMETHING);
+	private void resetAllRoomsExcept(Room keep) {
+		this.directory.getRooms().forEach(r -> {
+			if (r != keep) this.resetRoom(r);
+		});
 	}
+
+	public void selectEndRoom(Room room) {
+		this.endRoom = room;
+		this.resetAllRoomsExcept(this.startRoom);
+		ROOM.END.applyTo((Shape)room.getShape().getChildren().get(0));
+	}
+
+	public void selectStartRoom(Room room) {
+		this.startRoom = room;
+		this.resetAllRoomsExcept(this.endRoom);
+		ROOM.START.applyTo((Shape)room.getShape().getChildren().get(0));
+	}
+
+//	/**
+//	 * Set the shape of the icon for the given room
+//	 *
+//	 * @note This creates a new shape whenever this is called; this is the intended
+//	 *       behavior, but is likely to change in future iterations.
+//	 */
+//	// TODO: Pop some of this out into an IconBuilder class
+//	// TODO: Replace StackPane use with ImageView and a Label
+//	// TODO: Don't create a new javafx Node every time
+//	// TODO: Actually use IconController for Rooms
+//	private void resetRoom(Room room) {
+//		if (room == null || room.getLocation() == null) return;
+//
+//		// TODO: Use javafx.scene.control.Label instead of Text
+//		Text label = new Text(room.getName());
+//		label.setFont(new Font(IconController.LABEL_FONT_SIZE));
+//
+//		javafx.scene.Node icon;
+//		if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
+//			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
+//					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
+//			ROOM.DEFAULT.applyTo(iconShape);
+//			ROOM.KIOSK.applyTo(iconShape);
+//			icon = iconShape;
+//		} else if (room.getDescription().equalsIgnoreCase("BATHROOM")) {
+//			Image iconimg = new Image(IconController.BATHROOM_ICON_PATH);
+//			double width = iconimg.getWidth();
+//			icon = new ImageView(iconimg);
+//		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
+//			Image iconimg = new Image(IconController.ELEVATOR_ICON_PATH);
+//			double width = iconimg.getWidth();
+//			icon = new ImageView(iconimg);
+//		} else {
+//			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
+//					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
+//			ROOM.DEFAULT.applyTo(iconShape);
+//			icon = iconShape;
+//		}
+//		room.setShape(new StackPane(icon, label));
+//	}
+
+//	// TODO: Finish implementation
+//	public void selectStartRoom(Room room) {
+//		if (room == null) return; // TODO: remove; we shouldn't need this check
+//		this.resetAllRooms();
+////		ROOM.START.applyTo(SOMETHING);
+//	}
 
 	public void setElevatorIcon(Room room) {
 		//TODO: Implement in iteration 3

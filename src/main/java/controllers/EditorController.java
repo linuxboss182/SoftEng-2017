@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import controllers.icons.IconController;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
@@ -91,7 +90,6 @@ public class EditorController extends MapDisplayController implements Initializa
 
 
 	protected Node selectedNode; // you select a node by double clicking
-	private IconController colorizer;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -104,7 +102,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		this.colorizer = new IconController(directory);
+		iconController = ApplicationController.getIconController();
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
 		if(floorChoiceBox != null) {
@@ -141,7 +139,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		}
 
 		this.redisplayGraph(); // redraw nodes and edges
-		this.colorizer.resetAllNodes();
+		this.iconController.resetAllNodes();
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -447,6 +445,9 @@ public class EditorController extends MapDisplayController implements Initializa
 		this.selectedNode.applyToRoom(room -> {
 			room.setName(name);
 			room.setDescription(description);
+			// Reset name
+			// TODO: Don't rely on room shapes being a stacked rectangle and text
+			((Text)room.getShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines(this.directory.getNodesOnFloor(floor));
@@ -622,13 +623,13 @@ public class EditorController extends MapDisplayController implements Initializa
 	private void selectNode (Node n){
 		this.selectedNode = n;
 
-		this.colorizer.selectSingleNode(n);
+		this.iconController.selectSingleNode(n);
 		this.redisplayGraph();
 	}
 
 	private void deselectNode(){
 		this.selectedNode = null;
-		this.colorizer.deselectAllNodes();
+		this.iconController.deselectAllNodes();
 		this.redisplayGraph();
 	}
 
