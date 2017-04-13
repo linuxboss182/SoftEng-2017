@@ -40,9 +40,6 @@ public class SMSController implements Initializable
 
 			Twilio.init(accountSid, authToken);
 
-			System.out.println("phoneNumField = " + phoneNumField.getText());
-			System.out.println("this.text = " + this.text);
-
 			Message message = Message.creator(
 					new PhoneNumber(phoneNumField.getText()),  // To number
 					new PhoneNumber("+15086199280"),  // From number
