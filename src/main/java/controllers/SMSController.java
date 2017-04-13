@@ -26,6 +26,7 @@ public class SMSController implements Initializable
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		errorLabel.setVisible(false);
 	}
 
 	@FXML
@@ -46,6 +47,7 @@ public class SMSController implements Initializable
 			System.out.println(message.getSid());
 			SendBtn.getScene().getWindow().hide();
 		} catch(Exception e){
+			errorLabel.setVisible(true);
 			this.errorLabel.setText("Error Sending SMS");
 		}
 	}
