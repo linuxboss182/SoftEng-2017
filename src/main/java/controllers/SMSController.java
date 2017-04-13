@@ -24,6 +24,8 @@ public class SMSController implements Initializable
 	@FXML
 	private Label errorLabel;
 
+	String text;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		errorLabel.setVisible(false);
@@ -38,10 +40,13 @@ public class SMSController implements Initializable
 
 			Twilio.init(accountSid, authToken);
 
+			System.out.println("phoneNumField = " + phoneNumField.getText());
+			System.out.println("this.text = " + this.text);
+
 			Message message = Message.creator(
-					new PhoneNumber("+15086851848"),  // To number
+					new PhoneNumber(phoneNumField.getText()),  // To number
 					new PhoneNumber("+15086199280"),  // From number
-					"Hello world!"                    // SMS body
+					this.text                    // SMS body
 			).create();
 
 			System.out.println(message.getSid());
@@ -57,5 +62,8 @@ public class SMSController implements Initializable
 		cancelBtn.getScene().getWindow().hide();
 	}
 
-
+	public void setText(String text) {
+		System.out.println("text = " + text);
+		this.text = text;
+	}
 }

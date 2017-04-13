@@ -143,11 +143,11 @@ public class UserPathController extends UserMasterController implements Initiali
 
 	@FXML
 	public void sendSMSBtnClicked(){
-		SMSController smsController = new SMSController();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/sms.fxml"));
 		try {
 			Scene smsScene = new Scene(loader.load());
+			((SMSController)loader.getController()).setText(textDirections.getText());
 			Stage smsStage = new Stage();
 			smsStage.initOwner(contentAnchor.getScene().getWindow());
 			smsStage.setScene(smsScene);
