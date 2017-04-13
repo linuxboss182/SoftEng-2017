@@ -1,5 +1,6 @@
 package main;
 
+import controllers.SMSController;
 import controllers.icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
@@ -26,6 +27,8 @@ public class ApplicationController extends Application
 
 
 	public static void main(String[] args) {
+		SMSController sms = new SMSController();
+
 		ApplicationController.dbc = new DatabaseController();
 
 		try {
