@@ -27,8 +27,6 @@ public class ApplicationController extends Application
 
 
 	public static void main(String[] args) {
-		SMSController sms = new SMSController();
-
 		ApplicationController.dbc = new DatabaseController();
 
 		try {

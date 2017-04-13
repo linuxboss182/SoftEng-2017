@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.stage.Stage;
 import main.DirectionsGenerator;
 import main.Pathfinder;
 
@@ -137,6 +139,22 @@ public class UserPathController extends UserMasterController implements Initiali
 		choosingEnd = true;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.imageViewMap.getScene().setRoot(userPath);
+	}
+
+	@FXML
+	public void sendSMSBtnClicked(){
+		SMSController smsController = new SMSController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/sms.fxml"));
+		try {
+			Scene smsScene = new Scene(loader.load());
+			Stage smsStage = new Stage();
+			smsStage.initOwner(contentAnchor.getScene().getWindow());
+			smsStage.setScene(smsScene);
+			smsStage.showAndWait();
+		} catch (Exception e){
+			System.out.println("Error making SMS popup");
+		}
 	}
 
 }
