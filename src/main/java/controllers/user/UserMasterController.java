@@ -113,7 +113,7 @@ public abstract class UserMasterController extends MapDisplayController
 				if(startRoom == null) startRoom = kiosk;
 			}
 		}
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 		iconController.resetAllRooms();
 		if(this.directoryView != null) {
 			this.populateListView();
@@ -216,9 +216,9 @@ public abstract class UserMasterController extends MapDisplayController
 
 	}
 
-	public void displayRooms(Collection<Room> rooms) {
+	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : rooms) {
+		for (Room r : directory.getRoomsOnFloor(floor)) {
 			roomShapes.add(r.getShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
@@ -329,7 +329,7 @@ public abstract class UserMasterController extends MapDisplayController
 	protected void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 
@@ -344,7 +344,7 @@ public abstract class UserMasterController extends MapDisplayController
 		if(r == null) return;
 		startRoom = r;
 		iconController.selectStartRoom(r);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 	protected void selectEndRoom(Room r) {
@@ -352,7 +352,7 @@ public abstract class UserMasterController extends MapDisplayController
 		if(r == null) return;
 		endRoom = r;
 		iconController.selectEndRoom(r);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 	@FXML
