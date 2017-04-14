@@ -1,14 +1,11 @@
 import org.junit.Test;
 import org.junit.Assert;
 
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
 import entities.Node;
-import entities.Directory;
-import main.Pathfinder;
+import main.algorithms.Pathfinder;
 
 /**
  * Created by Michael on 4/2/2017.

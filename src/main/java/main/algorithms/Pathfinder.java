@@ -1,6 +1,5 @@
-package main;
+package main.algorithms;
 
-import java.nio.file.Path;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;

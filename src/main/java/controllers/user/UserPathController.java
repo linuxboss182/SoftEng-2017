@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import main.DirectionsGenerator;
-import main.Pathfinder;
+import main.algorithms.Pathfinder;
 
 public class UserPathController extends UserMasterController implements Initializable
 {
