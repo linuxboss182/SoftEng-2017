@@ -113,6 +113,7 @@ public class UserPathController extends UserMasterController implements Initiali
 		FloorProxy map = new FloorProxy(floor);
 
 		newFloorButton.setImage(map.displayThumb());
+		newFloorButton.setPickOnBounds(true);
 
 		newFloorButton.setOnMouseClicked(e-> {
 			// change to the new floor, and draw the path for that floor

@@ -105,6 +105,7 @@ public class EditorController extends MapDisplayController implements Initializa
 		iconController = ApplicationController.getIconController();
 		this.loadMap();
 		this.imageViewMap.setImage(this.map); //Load background
+		this.imageViewMap.setPickOnBounds(true);
 		if(floorChoiceBox != null) {
 			initFloorChoiceBox();
 		}
