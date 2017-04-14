@@ -14,12 +14,6 @@ public class Pathfinder
 {
 	private static final double FLOOR_HEIGHT = 240;
 
-	private Pathfinder instance = new Pathfinder();
-	private Pathfinder() {}
-	public Pathfinder getInstance() {
-		return this.instance;
-	}
-
 	public static List<Node> findPath(Node a, Node b) {
 		Algorithm alg = new AStar();
 		return alg.findPath(a, b);

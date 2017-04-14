@@ -7,11 +7,11 @@ import java.util.*;
 class AStar
 		implements Algorithm
 {
-	private final String name = "A*";
+	private static final String name = "A*";
 
 	@Override
 	public String getName() {
-		return this.name;
+		return AStar.name;
 	}
 
 	/**
@@ -58,7 +58,7 @@ class AStar
 			}
 
 			if (current == dest) {
-				return makePath(pathHistory, current);
+				return AStar.makePath(pathHistory, current);
 			}
 
 			seenNodes.remove(current); // don't look at this node again later
@@ -86,11 +86,11 @@ class AStar
 		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
 	}
 
-	static double heuristic(Node current, Node other) {
+	private static double heuristic(Node current, Node other) {
 		return current.distance(other, Pathfinder.getFloorHeight());
 	}
 
-	static List<Node> makePath(Map<Node, Node> pathHistory, Node current){
+	private static List<Node> makePath(Map<Node, Node> pathHistory, Node current){
 		List<Node> finalPath = new LinkedList<>();
 		finalPath.add(current);
 		while (pathHistory.containsKey(current)) {
