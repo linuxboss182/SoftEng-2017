@@ -143,18 +143,24 @@ public class UserPathController extends UserMasterController implements Initiali
 
 	@FXML
 	public void sendSMSBtnClicked(){
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/sms.fxml"));
-		try {
-			Scene smsScene = new Scene(loader.load());
-			((SMSController)loader.getController()).setText(textDirections.getText());
-			Stage smsStage = new Stage();
-			smsStage.initOwner(contentAnchor.getScene().getWindow());
-			smsStage.setScene(smsScene);
-			smsStage.showAndWait();
-		} catch (Exception e){
-			System.out.println("Error making SMS popup");
-		}
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Information Dialog");
+		alert.setHeaderText("Feature Unavailable");
+		alert.setContentText("Sorry, SMS is currently unavailable.");
+		alert.showAndWait();
+
+		// FXMLLoader loader = new FXMLLoader();
+		// loader.setLocation(this.getClass().getResource("/sms.fxml"));
+		// try {
+		// 	Scene smsScene = new Scene(loader.load());
+		// 	((SMSController)loader.getController()).setText(textDirections.getText());
+		// 	Stage smsStage = new Stage();
+		// 	smsStage.initOwner(contentAnchor.getScene().getWindow());
+		// 	smsStage.setScene(smsScene);
+		// 	smsStage.showAndWait();
+		// } catch (Exception e){
+		// 	System.out.println("Error making SMS popup");
+		// }
 	}
 
 }
