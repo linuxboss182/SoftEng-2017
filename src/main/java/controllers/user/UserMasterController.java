@@ -1,5 +1,7 @@
-package controllers;
+package controllers.user;
 
+import controllers.shared.FloorProxy;
+import controllers.shared.MapDisplayController;
 import entities.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,10 +20,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import main.ApplicationController;
-import main.DirectionsGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

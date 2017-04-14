@@ -1,5 +1,6 @@
-package controllers;
+package controllers.admin;
 
+import controllers.shared.MapDisplayController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,7 +35,8 @@ import entities.Node;
 import entities.Professional;
 import entities.Room;
 
-public class EditorController extends MapDisplayController implements Initializable
+public class EditorController extends MapDisplayController
+		implements Initializable
 {
 	private static final boolean DEBUGGING = false;
 
@@ -80,7 +82,6 @@ public class EditorController extends MapDisplayController implements Initializa
 	private TableColumn<Professional, String> roomCol;
 	@FXML
 	private TableColumn<Professional, String> profCol;
-
 	@FXML
 	private Text roomName;
 	@FXML

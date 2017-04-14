@@ -1,4 +1,4 @@
-package controllers;
+package controllers.shared;
 
 import javafx.scene.image.Image;
 

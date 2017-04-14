@@ -1,4 +1,4 @@
-package controllers;
+package controllers.shared;
 
 import controllers.icons.IconController;
 import entities.Directory;

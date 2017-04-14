@@ -1,11 +1,11 @@
-package controllers;
+package controllers.user;
 
+import controllers.shared.FloorProxy;
 import entities.Node;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.stage.Stage;
 import main.DirectionsGenerator;
 import main.Pathfinder;
 

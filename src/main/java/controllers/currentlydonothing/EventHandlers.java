@@ -1,4 +1,4 @@
-package controllers;
+package controllers.currentlydonothing;
 
 import entities.Node;
 import entities.Professional;
