@@ -1,11 +1,11 @@
-import org.junit.Test;
-import org.junit.Assert;
-
 import java.util.List;
 import java.util.ArrayList;
 
-import entities.Node;
 import main.algorithms.Pathfinder;
+import org.junit.Test;
+import org.junit.Assert;
+
+import entities.Node;
 
 /**
  * Created by Michael on 4/2/2017.
