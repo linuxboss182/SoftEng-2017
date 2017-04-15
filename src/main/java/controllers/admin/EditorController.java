@@ -625,16 +625,6 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	protected void decreaseZoomButtonPressed() {
-		FileChooser fc = new FileChooser();
-		File f = fc.showOpenDialog(contentAnchor.getScene().getWindow());
-		try {
-			FileParser.parseProfessionals(f, directory);
-		} catch (FileNotFoundException e) {
-			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
-			a.showAndWait();
-			return;
-		}
-
 		double zoomPercent = (zoomSlider.getValue()/100);
 		zoomPercent-=.2;
 		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
@@ -696,5 +686,21 @@ public class EditorController extends MapDisplayController
 		if(selectedNode.containsRoom()) {
 			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
 		}
+	}
+
+	/**
+	 * Upload professonals from a file
+	 */
+	private void loadProfessionalsFile() {
+		FileChooser fc = new FileChooser();
+		File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+		try {
+			FileParser.parseProfessionals(f, directory);
+		} catch (FileNotFoundException e) {
+			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
+			a.showAndWait();
+			return;
+		}
+		this.populateTableView(directory.getProfessionals());
 	}
 }
