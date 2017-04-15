@@ -1,7 +1,5 @@
 package controllers.admin;
 
-import controllers.filereader.ProfessionalTSVReader;
-import controllers.shared.MapDisplayController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,18 +24,22 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import main.ApplicationController;
-import main.DatabaseException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
 
+import main.ApplicationController;
+import main.DatabaseException;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
+import controllers.filereader.FileParser;
+import controllers.shared.MapDisplayController;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -619,16 +621,7 @@ public class EditorController extends MapDisplayController
 	protected void decreaseZoomButtonPressed() {
 		FileChooser fc = new FileChooser();
 		File f = fc.showOpenDialog(contentAnchor.getScene().getWindow());
-		ProfessionalTSVReader reader = new ProfessionalTSVReader(f, directory);
-		try {
-			reader.open();
-		} catch (FileNotFoundException e) {
-			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
-			a.showAndWait();
-			return;
-		}
-		reader.parseToDirectory();
-		reader.close();
+		FileParser.parseProfessionals(f, directory);
 
 		double zoomPercent = (zoomSlider.getValue()/100);
 		zoomPercent-=.2;

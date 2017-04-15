@@ -50,7 +50,7 @@ import entities.Professional;
    <word-char> -> anything that isn't a tab or comma
    <TAB> -> a tab character
  */
-public class ProfessionalTSVReader
+public class ProfessionalTSVParser
 {
 	private static Pattern professionalPattern = Pattern.compile(
 			"^(?<surname>.+?), (?<givenName>.+?), (?<titles>[^\t]+?)\t[^\t]*$");
@@ -65,7 +65,13 @@ public class ProfessionalTSVReader
 	private FileReader fr;
 	private BufferedReader br;
 
-	public ProfessionalTSVReader(File file, Directory directory) {
+	/**
+	 * Make a new parser
+	 *
+	 * @param file The file to read data from
+	 * @param directory The directory to add the parsed data to
+	 */
+	public ProfessionalTSVParser(File file, Directory directory) {
 		this.file = file;
 		this.dir = directory;
 	}
@@ -81,11 +87,17 @@ public class ProfessionalTSVReader
 		}
 	}
 
+	/**
+	 * Open this parser's file for reading
+	 */
 	public void open() throws FileNotFoundException {
 		this.fr = new FileReader(this.file);
 		this.br = new BufferedReader(this.fr);
 	}
 
+	/**
+	 * Close this parser's file
+	 */
 	public void close() {
 		try {
 			this.fr.close();
