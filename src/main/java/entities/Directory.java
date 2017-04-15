@@ -3,6 +3,7 @@ package entities;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,7 @@ public class Directory
 		return rooms;
 	}
 
-	public Set<Professional> getProfessionals() {
+	public SortedSet<Professional> getProfessionals() {
 		return new TreeSet<>(this.professionals);
 	}
 
