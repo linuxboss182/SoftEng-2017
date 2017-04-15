@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import main.ApplicationController;
 import main.DatabaseException;
@@ -207,7 +208,11 @@ public class EditorController extends MapDisplayController
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getLocationNames());
+				StringJoiner roomList = new StringJoiner(", ");
+				for (Room r : cdf.getValue().getLocations()) {
+					roomList.add(r.getName());
+				}
+				return new SimpleStringProperty(roomList.toString());
 			}
 		});
 
