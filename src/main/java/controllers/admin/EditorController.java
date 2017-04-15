@@ -1,5 +1,6 @@
 package controllers.admin;
 
+import controllers.filereader.ProfessionalTSVReader;
 import controllers.shared.MapDisplayController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -22,11 +23,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.ApplicationController;
 import main.DatabaseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -613,6 +617,19 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	protected void decreaseZoomButtonPressed() {
+		FileChooser fc = new FileChooser();
+		File f = fc.showOpenDialog(contentAnchor.getScene().getWindow());
+		ProfessionalTSVReader reader = new ProfessionalTSVReader(f, directory);
+		try {
+			reader.open();
+		} catch (FileNotFoundException e) {
+			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
+			a.showAndWait();
+			return;
+		}
+		reader.parseToDirectory();
+		reader.close();
+
 		double zoomPercent = (zoomSlider.getValue()/100);
 		zoomPercent-=.2;
 		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
