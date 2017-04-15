@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 // TODO: Improve documentation
@@ -197,10 +198,7 @@ public class Directory
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
 	public Set<Node> getNodesOnFloor(int floor) {
-		return this.nodes.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(node -> node.getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterNodes(node -> node.getFloor() == floor);
 	}
 
 	/**
@@ -212,10 +210,22 @@ public class Directory
 	 * @return
 	 */
 	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.rooms.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(room -> room.getLocation() != null && room.getLocation().getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterRooms(room -> room.getLocation() != null && room.getLocation().getFloor() == floor);
 	}
+
+	/**
+	 * Gets all nodes in this directory that match the given predicate
+	 */
+	public Set<Node> filterNodes(Predicate<Node> predicate) {
+		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Gets all rooms in this directory that match the given predicate
+	 */
+	public Set<Room> filterRooms(Predicate<Room> predicate) {
+		return this.rooms.stream().filter(predicate).collect(Collectors.toSet());
+	}
+
 }
 
