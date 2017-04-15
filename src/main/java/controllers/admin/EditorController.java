@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -626,7 +627,13 @@ public class EditorController extends MapDisplayController
 	protected void decreaseZoomButtonPressed() {
 		FileChooser fc = new FileChooser();
 		File f = fc.showOpenDialog(contentAnchor.getScene().getWindow());
-		FileParser.parseProfessionals(f, directory);
+		try {
+			FileParser.parseProfessionals(f, directory);
+		} catch (FileNotFoundException e) {
+			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
+			a.showAndWait();
+			return;
+		}
 
 		double zoomPercent = (zoomSlider.getValue()/100);
 		zoomPercent-=.2;

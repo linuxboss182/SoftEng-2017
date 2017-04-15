@@ -13,15 +13,10 @@ public class FileParser
 	 *
 	 * See {@link ProfessionalTSVParser} for details.
 	 */
-	public static void parseProfessionals(File file, Directory directory) {
+	public static void parseProfessionals(File file, Directory directory)
+			throws FileNotFoundException {
 		ProfessionalTSVParser reader = new ProfessionalTSVParser(file, directory);
-		try {
-			reader.open();
-		} catch (FileNotFoundException e) {
-			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
-			a.showAndWait();
-			return;
-		}
+		reader.open();
 		reader.parseToDirectory();
 		reader.close();
 	}
