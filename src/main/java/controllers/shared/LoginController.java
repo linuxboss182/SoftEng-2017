@@ -32,9 +32,10 @@ public class LoginController {
 	@FXML
 	public void loginClicked() throws IOException, InvocationTargetException {
 		boolean success = true;
+//		boolean success = this.usernameField.getText().equals("admin")
+//		               && this.passwordField.getText().equals("password");
 
-		if(usernameField.getText().equals("admin") &&
-				passwordField.getText().equals("password")) {
+		if(success) {
 			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLabel.getScene().setRoot(adminUI);

@@ -64,10 +64,15 @@ sourceSets {
     }
     test {
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/main/resources', 'src/test/resources']
         }
     }
 }
+
+//test { // show stdout and stderr when running tests
+//    testLogging.showStandardStreams = true
+//}
+
 
 // Use main class for jar
 jar {

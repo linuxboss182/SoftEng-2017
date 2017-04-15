@@ -1,6 +1,5 @@
 package controllers.admin;
 
-import controllers.shared.MapDisplayController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,18 +21,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import main.ApplicationController;
-import main.DatabaseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringJoiner;
 
+import main.ApplicationController;
+import main.DatabaseException;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
+import controllers.filereader.FileParser;
+import controllers.shared.MapDisplayController;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -201,7 +209,11 @@ public class EditorController extends MapDisplayController
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getLocationNames());
+				StringJoiner roomList = new StringJoiner(", ");
+				for (Room r : cdf.getValue().getLocations()) {
+					roomList.add(r.getName());
+				}
+				return new SimpleStringProperty(roomList.toString());
 			}
 		});
 
@@ -674,5 +686,21 @@ public class EditorController extends MapDisplayController
 		if(selectedNode.containsRoom()) {
 			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
 		}
+	}
+
+	/**
+	 * Upload professonals from a file
+	 */
+	private void loadProfessionalsFile() {
+		FileChooser fc = new FileChooser();
+		File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+		try {
+			FileParser.parseProfessionals(f, directory);
+		} catch (FileNotFoundException e) {
+			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
+			a.showAndWait();
+			return;
+		}
+		this.populateTableView(directory.getProfessionals());
 	}
 }

@@ -1,0 +1,40 @@
+	Lines starting with a tab should be ignored as malformed.
+	BE CAREFUL TO KEEP TRAILING SPACES WHEN SAVING THIS FILE
+	(You have to turn the setting off for all of IntelliJ under Settings>Editor>General.)
+	
+
+	1 title, 1 room
+Smith, John, MD	Room 1
+
+	1 title, 2 rooms
+Smith, Jane, MD	Room 1 and Room 2
+
+	1 title, 3 rooms
+Smith, Jose, MD	Room 1, Room 2 and Room 3
+
+	1 title, 4 rooms
+Smith, Jess, MD	Room 1, Room 2, Room 3 and Room 4
+
+	0 titles, 1 room
+Jones, Joan	Room 1
+
+	2 titles, 0 rooms
+Jones, James, RN, CPNP	
+
+	Bad room
+Johnson, John, MD	Room X
+
+	Bad room and 1 room
+Johnson, Jane, MD	Room 1 and Room X
+
+	Bad room and 2 rooms
+Johnson, Jack, MD	Room 1, Room X and Room 2
+
+	3-word name, 2 titles, 3 rooms
+Surname, GivenName Info, Title 1, Title 2	Room 1, Room 2 and Room 3
+
+	No professional, just a room
+	Room 1
+
+	1 name, 1 room (not a professional)
+Not A Person	Room 1
