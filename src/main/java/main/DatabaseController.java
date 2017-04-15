@@ -23,12 +23,12 @@ public class DatabaseController
 	private String connection_string;
 
 	// Debugging functions
-	private static void PRINTLN(Object o) {
-		System.out.println(o);
-	}
-	private static void PRINT(Object o) {
-		System.out.print(o);
-	}
+//	private static void PRINTLN(Object o) {
+//		System.out.println(o);
+//	}
+//	private static void PRINT(Object o) {
+//		System.out.print(o);
+//	}
 
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
@@ -299,7 +299,7 @@ public class DatabaseController
 			Statement queryNodes = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
-				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
+//				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = new Node(resultNodes.getDouble("nodeX"),
 				                     resultNodes.getDouble("nodeY"),
 				                     resultNodes.getInt("floor"));
@@ -311,7 +311,7 @@ public class DatabaseController
 			Statement queryRooms = this.db_connection.createStatement();
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
 			while (resultRooms.next()) {
-				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
+//				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = new Room(resultRooms.getString("roomName"),
 				                     resultRooms.getString("roomDescription"));
 				int nodeID = resultRooms.getInt("nodeID");
@@ -329,10 +329,10 @@ public class DatabaseController
 			//ResultSet resultEdges = null;
 			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
-				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
+//				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
 				int nodeID = resultNodes.getInt("nodeID");
 				int roomID = resultNodes.getInt("roomID");
-				PRINTLN("Loading room "+roomID);
+//				PRINTLN("Loading room "+roomID);
 				if (!resultNodes.wasNull()) {
 					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
 				}
@@ -344,7 +344,7 @@ public class DatabaseController
 			while (resultEdges.next()) {
 				int node1 = resultEdges.getInt("node1");
 				int node2 = resultEdges.getInt("node2");
-				PRINTLN("Loading edge "+node1+" "+node2);
+//				PRINTLN("Loading edge "+node1+" "+node2);
 				nodes.get(node1).connect(nodes.get(node2));
 			}
 			resultEdges.close();
@@ -393,22 +393,20 @@ public class DatabaseController
 		Statement db = this.db_connection.createStatement();
 		String query;
 		for (Node n : dir.getNodes()) {
-			PRINTLN("Saving node "+n.hashCode());
+//			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
 			                                        n.getFloor(), n.mapToRoom(r -> r.hashCode()));
 			db.executeUpdate(query);
 		}
 
 		for (Room r : dir.getRooms()) {
-			PRINTLN("Saving node "+r.hashCode());
+//			PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
-				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	r.getName(),
 																	r.getDescription());
 			} else {
-				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
 														r.getDescription());
@@ -424,9 +422,9 @@ public class DatabaseController
 //		System.out.println("kiosk saved");
 
 		for (Node n : dir.getNodes()) {
-			PRINTLN("Saving edges for node "+n.hashCode());
+//			PRINTLN("Saving edges for node "+n.hashCode());
 			for (Node m : n.getNeighbors()) {
-				PRINTLN("Saving edge to "+m.hashCode());
+//				PRINTLN("Saving edge to "+m.hashCode());
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
