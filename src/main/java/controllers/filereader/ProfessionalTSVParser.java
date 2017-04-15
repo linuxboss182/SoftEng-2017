@@ -56,7 +56,7 @@ import entities.Professional;
 public class ProfessionalTSVParser
 {
 	private static Pattern professionalPattern = Pattern.compile(
-			"^(?<surname>.+?), (?<givenName>.+?), (?<titles>[^\t]+?)\t[^\t]*$");
+			"^(?<surname>.+?), (?<givenName>.+?)(, (?<titles>[^\t]+?))?\t[^\t]*$");
 	private static Pattern roomPattern = Pattern.compile(
 			"^[^\t]*\t(?<locations>.*?)( and (?<last>.*))?$"
 	);
@@ -130,9 +130,10 @@ public class ProfessionalTSVParser
 			Matcher match = professionalPattern.matcher(line);
 			if (match.matches()) {
 				// make a professionalfg
+				String titles = match.group("titles");
 				prof = new Professional(match.group("givenName"),
 						match.group("surname"),
-						match.group("titles"));
+						(titles==null) ? "" : titles);
 				this.dir.addProfessional(prof);
 
 				this.addLocationsToProfessional(line, prof);
