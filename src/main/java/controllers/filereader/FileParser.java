@@ -8,6 +8,11 @@ import entities.Directory;
 
 public class FileParser
 {
+	/**
+	 * Parse professionals from the given file into the given directory
+	 *
+	 * See {@link ProfessionalTSVParser} for details.
+	 */
 	public static void parseProfessionals(File file, Directory directory) {
 		ProfessionalTSVParser reader = new ProfessionalTSVParser(file, directory);
 		try {

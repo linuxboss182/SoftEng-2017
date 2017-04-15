@@ -33,6 +33,9 @@ import entities.Professional;
  *
  * <p>* If a room name containing "and" appears as one of the final two elements of a
  * list of rooms, it is ambiguous and may not be registered correctly.</p>
+ *
+ * <p>Note that this class does not validate the file; if the file is poorly-formatted,
+ * unexpected results may occur.</p>
  */
 /*
    <line> -> <name> <TAB> <rooms> | <TAB>
