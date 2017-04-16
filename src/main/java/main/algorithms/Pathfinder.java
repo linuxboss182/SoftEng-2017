@@ -16,20 +16,6 @@ public class Pathfinder
 	private static Algorithm strategy;
 
 	/**
-	 * An enum representing the context of the operations.
-	 */
-	public static enum ALGORTHMS
-	{
-		AStar,
-		BFS,
-		DFS,
-		;
-		Algorithm getAlgorithm() {
-			return this.getAlgorithm();
-		}
-	}
-
-	/**
 	 * Set the current pathfinding strategy.
 	 *
 	 * @param strategy An instance of the algorithm to get.
@@ -46,12 +32,8 @@ public class Pathfinder
 	 *   
 	 * @return A list of nodes representing the path
 	 */
-	public static List<Node> findPath(Node a, Node b)  {
-		try {
-			System.out.println(a+" "+b);
-			return Pathfinder.strategy.findPath(a, b);
-		} catch (PathNotFoundException e) {
-			return null;
-		}
+	public static List<Node> findPath(Node a, Node b) throws PathNotFoundException {
+		Pathfinder.setStrategy(AStar.instance);
+		return Pathfinder.strategy.findPath(a, b);
 	}
 }
