@@ -51,7 +51,7 @@ public class Room
 	@Deprecated
 	public Room(double x, double y, String name, String description, String image) {
 		this(name, description, image);
-		this.location = new Node(x, y);
+		this.location = new Node(x, y, 0);
 	}
 
 	// TODO: Remove this constructor in favor of association with existing nodes

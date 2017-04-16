@@ -39,21 +39,21 @@ public class NodeTester
 	/* These two tests be needed later.
 	@Test
 	public void testGetX() {
-		Node n = new Node(20, 30);
+		Node n = new Node(20, 30, 0);
 		Assert.assertTrue(n.getX() == 20);
 	}
 
 	@Test
 	public void testGetY() {
-		Node n = new Node(20, 30);
+		Node n = new Node(20, 30, 0);
 		Assert.assertTrue(n.getY() == 30);
 	}
 	*/
 
 	@Test
 	public void testDistanceSame(){
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 0);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 0, 0);
 		double result = a.distance(b);
 		double expected = 0.0;
 		Assert.assertTrue(result == expected);
@@ -61,8 +61,8 @@ public class NodeTester
 
 	@Test
 	public void testDistance1(){
-		Node a = new Node(5, 10);
-		Node b = new Node(11, 18);
+		Node a = new Node(5, 10, 0);
+		Node b = new Node(11, 18, 0);
 		double result = a.distance(b);
 		double expected = 10;
 		Assert.assertTrue(result == expected);
@@ -71,8 +71,8 @@ public class NodeTester
 
 	@Test
 	public void testDistanceOnlyY(){
-		Node a = new Node(10, 15);
-		Node b = new Node(10, 60);
+		Node a = new Node(10, 15, 0);
+		Node b = new Node(10, 60, 0);
 		double result = a.distance(b);
 		double expected = 45;
 		Assert.assertTrue(result == expected);
@@ -80,7 +80,7 @@ public class NodeTester
 
 	@Test
 	public void testGetNeighborsNone() {
-		Node a = new Node(0, 0);
+		Node a = new Node(0, 0, 0);
 		Set<Node> result = a.getNeighbors();
 		Set<Node> expect = new HashSet<>();
 		Assert.assertEquals(result, expect);
@@ -88,8 +88,8 @@ public class NodeTester
 
 	@Test
 	public void testGetNeighborsOne() {
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 0);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 0, 0);
 		a.connect(b);
 		Set<Node> resultA = a.getNeighbors();
 		Set<Node> resultB = b.getNeighbors();
@@ -111,45 +111,45 @@ public class NodeTester
 
 	@Test
 	public void testAngleZero() {
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 1);
-		Node c = new Node(1, 1);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 1, 0);
+		Node c = new Node(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 0 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleOneEighty() {
-		Node a = new Node(0, 0);
-		Node b = new Node(1, 0);
-		Node c = new Node(1, 1);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(1, 0, 0);
+		Node c = new Node(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 180 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleNinety() {
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 1);
-		Node c = new Node(0, 2);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 1, 0);
+		Node c = new Node(0, 2, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 90 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleTwoSeventy() {
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 1);
-		Node c = new Node(0, 0);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 1, 0);
+		Node c = new Node(0, 0, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 270 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleSlightRight() {
-		Node a = new Node(0, 0);
-		Node b = new Node(0, 1);
-		Node c = new Node(1, 2);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(0, 1, 0);
+		Node c = new Node(1, 2, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 45 , b.angle(a, c), delta);
 	}
@@ -158,9 +158,9 @@ public class NodeTester
 		// fixed the code from this one
 		// turns out java does modulo operations before addition
 		// sooo a + 450 % 360 is equivalent to a + 90;
-		Node a = new Node(0, 0);
-		Node b = new Node(1, -1);
-		Node c = new Node(1, 1);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(1, -1, 0);
+		Node c = new Node(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 225, b.angle(a, c), delta);
 	}
@@ -170,16 +170,16 @@ public class NodeTester
 		// fixed the code from this one
 		// turns out java does modulo operations before addition
 		// sooo a + 450 % 360 is equivalent to a + 90;
-		Node a = new Node(0, 0);
-		Node b = new Node(1, -1);
-		Node c = new Node(1, 1);
+		Node a = new Node(0, 0, 0);
+		Node b = new Node(1, -1, 0);
+		Node c = new Node(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 315, c.angle(a, b), delta);
 	}
 
 	@Test
 	public void testAngleNoMove() {
-		Node a = new Node(0,0);
+		Node a = new Node(0,0, 0);
 		double delta = 0.001;
 		Assert.assertEquals(Double.NaN, a.angle(a, a), delta);
 	}
@@ -191,10 +191,10 @@ public class NodeTester
 	@Test
 	public void testDisconnectAll(){
 		// setup
-		Node a = new Node(10, 15);
-		Node b = new Node(20, 25);
-		Node c = new Node(30, 35);
-		Node d = new Node(40, 45);
+		Node a = new Node(10, 15, 0);
+		Node b = new Node(20, 25, 0);
+		Node c = new Node(30, 35, 0);
+		Node d = new Node(40, 45, 0);
 		a.connect(b);
 		a.connect(c);
 		a.connect(d);
@@ -213,10 +213,10 @@ public class NodeTester
 	@Test
 	public void testDiconnectAllAtA(){
 		// setup connected node graph
-		Node a = new Node(10, 15);
-		Node b = new Node(20, 25);
-		Node c = new Node(30, 35);
-		Node d = new Node(40, 45);
+		Node a = new Node(10, 15, 0);
+		Node b = new Node(20, 25, 0);
+		Node c = new Node(30, 35, 0);
+		Node d = new Node(40, 45, 0);
 		a.connect(b);
 		a.connect(c);
 		a.connect(d);

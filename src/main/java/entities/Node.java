@@ -33,11 +33,6 @@ public class Node
 		this.room = null;
 	}
 
-	// TODO: Change default floor to 0 once floor-switching works
-	public Node(double x, double y) {
-		this(x, y, 4);
-	}
-
 	public double getX() {
 		return this.x;
 	}
