@@ -1,27 +1,23 @@
-package controllers;
+package controllers.user;
 
-import entities.Room;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import entities.Room;
 
-public class UserStartController extends UserMasterController implements Initializable
+
+public class UserStartController
+		extends UserMasterController
+		implements Initializable
 {
 
 
@@ -35,15 +31,10 @@ public class UserStartController extends UserMasterController implements Initial
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		initialize();
-		getDirectionsBtn.setDisable(true);
+		this.initialize();
 
 		//Listener for search bar
-		searchBar.textProperty().addListener(new ChangeListener() {
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				filterRoomList((String) oldValue, (String) newValue);
-			}
-		});
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
 	}
 
@@ -52,15 +43,15 @@ public class UserStartController extends UserMasterController implements Initial
 		choosingStart = false;
 		choosingEnd = true;
 		Parent userDest = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.sideGridPane.getScene().setRoot(userDest);
+		this.getScene().setRoot(userDest);
 
 	}
 
+	/**
+	 * When selecting a starting point, left clicking a room should select it
+	 */
 	@Override
-	public void setDisable() {
-		getDirectionsBtn.setDisable(false);
+	protected void clickRoomAction(Room room) {
+		this.selectStartRoom(room);
 	}
-
-
-
 }

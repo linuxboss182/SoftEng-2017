@@ -47,19 +47,6 @@ public class Room
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
-	// TODO: Remove this constructor in favor of association with existing nodes
-	@Deprecated
-	public Room(double x, double y, String name, String description, String image) {
-		this(name, description, image);
-		this.location = new Node(x, y);
-	}
-
-	// TODO: Remove this constructor in favor of association with existing nodes
-	@Deprecated
-	public Room(double x, double y) {
-		this(x, y, "Anonymous Room", "A Room with no name or special description.", Room.DEFAULT_IMAGE_PATH);
-	}
-
 	/* Methods */
 
 	public String getName() {
@@ -140,9 +127,5 @@ public class Room
 			stackPane.setAlignment(Pos.TOP_LEFT);
 			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
-	}
-
-	public void setShapeColors(Color stroke, Color fill) {
-		this.makeShape(stroke, fill);
 	}
 }

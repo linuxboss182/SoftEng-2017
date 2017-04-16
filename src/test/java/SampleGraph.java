@@ -28,13 +28,13 @@ class SampleGraph
 	 a=26, b=24, c=10, e=30, f=51, g=40
 	 */
 	SampleGraph() {
-		this.a = new Node(0, 0);
-		this.b = new Node(10, 0);
-		this.c = new Node(0, 24);
-		this.d = new Node(10, 24);
-		this.e = new Node(28, 0);
-		this.f = new Node(55, 0);
-		this.g = new Node(-15, 0);
+		this.a = new Node(0, 0, 0);
+		this.b = new Node(10, 0, 0);
+		this.c = new Node(0, 24, 0);
+		this.d = new Node(10, 24, 0);
+		this.e = new Node(28, 0, 0);
+		this.f = new Node(55, 0, 0);
+		this.g = new Node(-15, 0, 0);
 
 		this.a.connect(this.b);
 		this.a.connect(this.c);
@@ -48,31 +48,31 @@ class SampleGraph
 
 
 		this.nodes = new Node[] {
-			new Node(0, 0),
-			new Node(0, 9),
-			new Node(2.5, 4),
-			new Node(3, 17),
-			new Node(4, 19),
-			new Node(5, 8),
-			new Node(5, 13),
-			new Node(5, 23),
-			new Node(6.3, 21),
-			new Node(7, 0),
-			new Node(7, 2),
-			new Node(7, 4),
-			new Node(7, 6),
-			new Node(7, 23),
-			new Node(8, 3),
-			new Node(8, 19),
-			new Node(9, 6),
-			new Node(10, 9),
-			new Node(10, 14.5),
-			new Node(11, 12),
-			new Node(12, 15),
-			new Node(12, 19.5),
-			new Node(13, 18),
-			new Node(14, 12),
-			new Node(14, 18.5)
+			new Node(0, 0, 0),
+			new Node(0, 9, 0),
+			new Node(2.5, 4, 0),
+			new Node(3, 17, 0),
+			new Node(4, 19, 0),
+			new Node(5, 8, 0),
+			new Node(5, 13, 0),
+			new Node(5, 23, 0),
+			new Node(6.3, 21, 0),
+			new Node(7, 0, 0),
+			new Node(7, 2, 0),
+			new Node(7, 4, 0),
+			new Node(7, 6, 0),
+			new Node(7, 23, 0),
+			new Node(8, 3, 0),
+			new Node(8, 19, 0),
+			new Node(9, 6, 0),
+			new Node(10, 9, 0),
+			new Node(10, 14.5, 0),
+			new Node(11, 12, 0),
+			new Node(12, 15, 0),
+			new Node(12, 19.5, 0),
+			new Node(13, 18, 0),
+			new Node(14, 12, 0),
+			new Node(14, 18., 0)
 		};
 
 		Node[] n = this.nodes;

@@ -1,16 +1,19 @@
-package controllers;
+package controllers.user;
 
-import entities.*;
+import controllers.shared.FloorProxy;
+import controllers.shared.MapDisplayController;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -18,45 +21,49 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import main.ApplicationController;
-import main.DirectionsGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.Collator;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import entities.Node;
+import entities.Room;
+import main.ApplicationController;
 
-public abstract class UserMasterController extends MapDisplayController
+
+public abstract class UserMasterController
+		extends MapDisplayController
 {
 	@FXML
-	public Button logAsAdmin;
+	private Button logAsAdmin;
 	@FXML
-	protected ImageView imageViewMap;
+	private ImageView imageViewMap;
 	@FXML
-	public AnchorPane contentAnchor = new AnchorPane();
+	private AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ListView<Room> directoryView;
+	private ListView<Room> directoryView;
 	@FXML
-	public Button changeStartBtn;
+	private Button getDirectionsBtn;
 	@FXML
-	public Button getDirectionsBtn;
+	private Button changeStartBtn;
 	@FXML
-	public Pane linePane;
+	private Pane linePane;
 	@FXML
-	public TextField searchBar;
+	protected TextField searchBar;
 	@FXML
-	public Pane nodePane;
+	private Pane nodePane;
 	@FXML
-	public TextFlow directionsTextField;
+	protected TextFlow directionsTextField;
 	@FXML
-	public GridPane sideGridPane;
+	private GridPane sideGridPane;
 	@FXML
-	public ChoiceBox floorChoiceBox;
+	private ChoiceBox floorChoiceBox;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -69,6 +76,23 @@ public abstract class UserMasterController extends MapDisplayController
 	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
 
 
+	/* ABSTRACT METHODS */
+	/**
+	 * Function called when a room is left clicked on the map
+	 * @param room
+	 */
+	protected abstract void clickRoomAction(Room room);
+
+
+	/* NON-ABSTRACT METHODS */
+
+	/**
+	 * Get the scene this is working on
+	 */
+	protected Scene getScene() {
+		// The contentAnchor should alays exist, so use it to get the scene
+		return this.contentAnchor.getScene();
+	}
 
 	public void initialize() {
 		//Set the panes
@@ -83,6 +107,9 @@ public abstract class UserMasterController extends MapDisplayController
 		this.map = new FloorProxy(floor).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
+
+		// Set buttons to default
+		this.enableOrDisableNavigationButtons();
 
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		zoomSlider.setValue(2);
@@ -105,15 +132,11 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		});
 
-		if(floorChoiceBox != null)
+		if(floorChoiceBox != null) {
 			initFloorChoiceBox();
-		for (Room r : this.directory.getRooms()) {
-			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-				kiosk = r;
-				if(startRoom == null) startRoom = kiosk;
-			}
 		}
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+
+		this.displayRooms();
 		iconController.resetAllRooms();
 		if(this.directoryView != null) {
 			this.populateListView();
@@ -176,21 +199,30 @@ public abstract class UserMasterController extends MapDisplayController
 		});
 	}
 
-	public void filterRoomList(String oldValue, String newValue) {
-		ObservableList<Room> filteredList = FXCollections.observableArrayList();
-		if(searchBar == null || (newValue.length() < oldValue.length()) || newValue == null) {
-			populateListView();
-		}
-		else {
-			newValue = newValue.toUpperCase();
-			for(Room room : directoryView.getItems()) {
-				Room filterText = room;
-				if(filterText.getName().toUpperCase().contains(newValue)) {
-					filteredList.add(filterText);
-				}
-			}
+	/**
+	 * Filter the room list for the search bar
+	 *
+	 * @param searchString The new string in the search bar
+	 */
+	public void filterRoomsByName(String searchString) {
+		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+			this.populateListView();
+		} else {
+			// The Collator allows case-insensitie comparison
+			Collator coll = Collator.getInstance();
+			coll.setStrength(Collator.PRIMARY);
+			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
 
-			directoryView.setItems(filteredList);
+			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
+			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
+					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
+
+			Set<Room> roomSet = directory.filterRooms(room ->
+					(room.getLocation() != null) && // false if room has no location
+					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
+					          .contains(normed)); // check with unicode normalization
+
+			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
 
@@ -210,30 +242,36 @@ public abstract class UserMasterController extends MapDisplayController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		// TODO: Review
+		// Unset navigation targets for after logout
+		startRoom = null;
+		endRoom = null;
 		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.contentAnchor.getScene().setRoot(loginPrompt);
+		this.getScene().setRoot(loginPrompt);
 
 
 	}
 
-	public void displayRooms(Collection<Room> rooms) {
+	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : rooms) {
-			roomShapes.add(r.getShape());
+		for (Room room : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(room.getShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			r.getShape().setOnContextMenuRequested(e->{
+			room.getShape().setOnMouseClicked((MouseEvent e) -> {
+				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
+			});
+			room.getShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(r));
+				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
 				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(r));
+				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
@@ -241,7 +279,7 @@ public abstract class UserMasterController extends MapDisplayController
 
 	public void populateListView() {
 		this.directoryView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
+		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
 			@Override
@@ -265,94 +303,66 @@ public abstract class UserMasterController extends MapDisplayController
 				}
 			}
 		});
-
-
-
-		// Commented out because we have a separate tab for choosing the start and the end, and left/right clicking is somewhat confusing for this sort of menu
-//		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
-//		this.directoryView.setOnMousePressed(e->{
-//			switch (e.getButton()) {
-//				case PRIMARY:
-//					endRoom = directoryView.getSelectionModel().getSelectedItem();
-//					System.out.println(endRoom);
-//					break;
-//				case SECONDARY:
-//					startRoom = directoryView.getSelectionModel().getSelectedItem();
-//					System.out.println(startRoom);
-//					break;
-//				default:
-//					break;
-//			}
-//		});
-		}
-	public void setDisable() {
-		changeStartBtn.setDisable(false);
-		getDirectionsBtn.setDisable(false);
 	}
+
+	/**
+	 * Enable or disable the "get directions" and "set starting location" buttons
+	 * 
+	 * If both start and end locations are set, enable the "get directions" button
+	 * 
+	 * If The end room is set, enable the "set starting location" button
+	 */
+	protected void enableOrDisableNavigationButtons() {
+		if (this.getDirectionsBtn != null) {
+			if (endRoom == null || startRoom == null) {
+				this.getDirectionsBtn.setDisable(true);
+			} else {
+				this.getDirectionsBtn.setDisable(false);
+			}
+		}
+		if (this.changeStartBtn != null) {
+			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
+		}
+	}
+
+
+
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.imageViewMap.getScene().setRoot(userPath);
+		this.getScene().setRoot(userPath);
 	}
 
-	/**
-	 * Draw a simple path between the nodes in the given list
-	 *
-	 * @param directionNodes A list of the nodes in the path, in order
-	 */
-	public void paintPath(List<Node> directionNodes) {
-		this.directionsTextField.getChildren().clear();
-
-		//add kiosk to start of list
-		//directionNodes.add(0, this.kiosk);
-		if(directionNodes.size() <= 0) {
-			// TODO: Give an error message when no path is found
-			return;
-		}
-
-		// This can be any collection type;
-		Collection<Line> path = new HashSet<>();
-		for (int i=0; i < directionNodes.size()-1; ++i) {
-			Node here = directionNodes.get(i);
-			Node there = directionNodes.get(i + 1);
-			if (here.getFloor() == floor && here.getFloor() == there.getFloor()) {
-				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
-				path.add(line);
-			}
-		}
-		this.botPane.getChildren().setAll(path);
-
-
-	}
 
 	protected void changeFloor(int floor) {
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 
-	/** Below are helper methods to select and deselect the starting rooms for a path
-	 * These methods rely on two other classes:
-	 * Room -> I modified Room.java to have a setShapeColors method
-	 * ColorScheme -> This is my alternative to COLORS.java, I do not know how to use COLORS.java
+	/**
+	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
 
 	protected void selectStartRoom(Room r) {
-		setDisable();
 		if(r == null) return;
 		startRoom = r;
+		this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
 		iconController.selectStartRoom(r);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 	protected void selectEndRoom(Room r) {
-		setDisable();
 		if(r == null) return;
 		endRoom = r;
+		this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
+//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
-		this.displayRooms(directory.getRoomsOnFloor(floor));
+		this.displayRooms();
 	}
 
 	@FXML

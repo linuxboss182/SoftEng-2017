@@ -12,7 +12,7 @@ enum ROOM
 	// User UI schemes
 	DEFAULT(Color.YELLOW, 1.5, Color.BLACK),
 	KIOSK(null, 2.0, Color.RED),
-	START(Color.GREEN, null, null),
+	START(Color.BLUE, null, null),
 	END(Color.RED, null, null),
 	ELEVATOR(Color.FUCHSIA, null, null),
 	; // end of schemes

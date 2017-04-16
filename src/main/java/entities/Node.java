@@ -33,11 +33,6 @@ public class Node
 		this.room = null;
 	}
 
-	// TODO: Change default floor to 0 once floor-switching works
-	public Node(double x, double y) {
-		this(x, y, 4);
-	}
-
 	public double getX() {
 		return this.x;
 	}
@@ -128,8 +123,8 @@ public class Node
 	 */
 	public boolean connect(Node n) {
 		if (this == n || n == null) return false;
-		// do not connect roomless nodes on different floors
-		if ((this.room == null || n.room == null) && this.floor != n.floor) return false;
+		// do not connect roomless nodes on different floors~
+		//if ((this.room == null || n.room == null) && this.floor != n.floor) return false;
 
 		n.neighbors.add(this);
 		return this.neighbors.add(n);

@@ -53,7 +53,7 @@ public class DirectoryTester
 	@Test
 	public void testRemoveNode() {
 		Directory d = new Directory(); //Create a new directory
-		Node n = new Node(20, 30); //Create a new node
+		Node n = new Node(20, 30, 0); //Create a new node
 		d.addNode(n); //Add the node to the list
 		Assert.assertEquals(1, d.getNodes().size()); //Make sure node is added
 		d.removeNode(n); //Remove the node from the list

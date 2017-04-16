@@ -89,17 +89,6 @@ public class Professional
 		return new HashSet<>(this.locations);
 	}
 
-	public String getLocationNames() {
-		String roomList = "";
-		for (Room r: this.getLocations()) {
-			roomList += ", " + r.getName();
-		}
-		if(roomList != ""){
-			return roomList.substring(1);
-		}
-		return roomList;
-	}
-
 	public void addLocation(Room room){
 		this.locations.add(room);
 	}
