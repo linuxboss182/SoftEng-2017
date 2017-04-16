@@ -378,9 +378,9 @@ public class EditorController extends MapDisplayController
 	 * @note No other function should add the base listeners to nodes.
 	 */
 	private void addNodeListeners(Node node) {
-		node.getShape().setOnMouseClicked(event -> this.onShapeClick(event, node));
-		node.getShape().setOnMouseDragged(event -> this.onShapeDrag(event, node));
-		node.getShape().setOnMouseReleased(event -> this.onShapeReleased(event, node));
+		node.getShape().setOnMouseClicked(event -> this.selectOrConnectNodeListener(event, node));
+		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
+		node.getShape().setOnMouseReleased(event -> this.deleteNodeIfOffMapListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
@@ -561,7 +561,7 @@ public class EditorController extends MapDisplayController
 		});
 	}
 
-	public void onShapeClick(MouseEvent e, Node n) {
+	public void selectOrConnectNodeListener(MouseEvent e, Node n) {
 		// update text fields
 		this.setFields(n.getX(), n.getY());
 
@@ -586,7 +586,7 @@ public class EditorController extends MapDisplayController
 	}
 
 	// This is going to allow us to drag a node!!!
-	public void onShapeDrag(MouseEvent e, Node n) {
+	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
 		if(this.selectedNode != null && this.selectedNode.equals(n)) {
 			if(e.isPrimaryButtonDown()) {
@@ -600,7 +600,7 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
-	public void onShapeReleased(MouseEvent e, Node n) {
+	public void deleteNodeIfOffMapListener(MouseEvent e, Node n) {
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
