@@ -319,6 +319,10 @@ public class DatabaseController
 					//we have a location in the room
 					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
 				}
+				Blob blob = resultRooms.getBlob("image");
+				if (! resultRooms.wasNull()) {
+					room.setImage(blob.getBinaryStream());
+				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
 			}
 			resultRooms.close();
@@ -401,17 +405,21 @@ public class DatabaseController
 
 		for (Room r : dir.getRooms()) {
 //			PRINTLN("Saving node "+r.hashCode());
-			if(r.getLocation() != null) {
-				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
-																	r.getLocation().hashCode(),
-																	r.getName(),
-																	r.getDescription());
-			} else {
+			if(r.getLocation() != null && r.getImage() == null) {
+				query = StoredProcedures.procInsertRoom(r.hashCode(),
+														r.getLocation().hashCode(),
+														r.getName(),
+														r.getDescription());
+				db.executeUpdate(query);
+			} else if (r.getImage() == null) {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
 														r.getDescription());
+				db.executeUpdate(query);
+			} else if (r.getLocation() != null) {
+				StoredProcedures.saveRoom(this.db_connection, r.hashCode(), r.getName(),
+						r.getDescription(), r.getLocation().hashCode(), r.getImage());
 			}
-			db.executeUpdate(query);
 		}
 		/* commented out because, again, kiosks are not yet implemented */
 //		if (dir.hasKiosk()) {

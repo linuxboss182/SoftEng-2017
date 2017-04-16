@@ -175,7 +175,7 @@ public class StoredProcedures
 				+"', '"+roomDescription+"', "+roomID+")";
 	}
 
-	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription){
+	public static String procInsertRoom(int roomID, int nodeID, String roomName, String roomDescription){
 		roomName = sanitize(roomName);
 		roomDescription = sanitize(roomDescription);
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID) VALUES('"+roomName
