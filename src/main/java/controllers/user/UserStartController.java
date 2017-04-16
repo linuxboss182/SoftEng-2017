@@ -32,11 +32,7 @@ public class UserStartController extends UserMasterController implements Initial
 		initialize();
 
 		//Listener for search bar
-		searchBar.textProperty().addListener(new ChangeListener() {
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				filterRoomList((String) oldValue, (String) newValue);
-			}
-		});
+		searchBar.textProperty().addListener((ignored, old, newer) -> filterRoomList(old, newer));
 
 	}
 

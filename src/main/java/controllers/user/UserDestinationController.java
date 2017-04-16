@@ -39,11 +39,7 @@ public class UserDestinationController extends UserMasterController implements I
 		if (startRoom == null) startRoom = kiosk;
 
 		//Listener for search bar
-		searchBar.textProperty().addListener(new ChangeListener() {
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				filterRoomList((String) oldValue, (String) newValue);
-			}
-		});
+		searchBar.textProperty().addListener((ignored, oldValue, newValue) -> filterRoomList(oldValue, newValue));
 
 	}
 
