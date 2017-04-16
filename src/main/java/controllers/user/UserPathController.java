@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 
 import entities.Room;
 import main.DirectionsGenerator;
-import main.Pathfinder;
+import main.algorithms.Pathfinder;
 
 public class UserPathController
 		extends UserMasterController
@@ -58,6 +58,9 @@ public class UserPathController
 		System.out.println("UserPathController.initialize");
 		System.out.println("startRoom = " + startRoom);
 		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		if (ret.isEmpty()) {
+			// TODO: Handle impossible paths
+		}
 		// change displayed floor to match the floor that the start node is on
 		int startFloor = startRoom.getLocation().getFloor();
 		changeFloor(startFloor);
