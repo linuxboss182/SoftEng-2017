@@ -693,15 +693,23 @@ public class EditorController extends MapDisplayController
 	 * Upload professonals from a file
 	 */
 	private void loadProfessionalsFile() {
-		FileChooser fc = new FileChooser();
-		File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
-		try {
-			FileParser.parseProfessionals(f, directory);
-		} catch (FileNotFoundException e) {
-			Alert a = new Alert(Alert.AlertType.ERROR, e.getMessage());
-			a.showAndWait();
-			return;
+		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
+				+ "contains people who are already in the application, they will be duplicated.");
+
+		// true if and only if the button pressed in the alert said "OK"
+		if (ask.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
+			FileChooser fc = new FileChooser();
+			File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+			if (f != null) {
+				try {
+					FileParser.parseProfessionals(f, directory);
+				} catch (FileNotFoundException e) {
+					Alert a = new Alert(Alert.AlertType.ERROR, "Unable to read file");
+					a.showAndWait();
+					return;
+				}
+				this.populateTableView();
+			}
 		}
-		this.populateTableView(directory.getProfessionals());
 	}
 }
