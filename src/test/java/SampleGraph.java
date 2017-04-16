@@ -72,7 +72,7 @@ class SampleGraph
 			new Node(12, 19.5, 0),
 			new Node(13, 18, 0),
 			new Node(14, 12, 0),
-			new Node(14, 18., 05)
+			new Node(14, 18., 0)
 		};
 
 		Node[] n = this.nodes;

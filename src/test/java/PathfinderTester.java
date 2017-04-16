@@ -16,6 +16,8 @@ import main.Pathfinder;
  */
 public class PathfinderTester
 {
+	@Test
+	public void pathfindTester() {
 	/* Does a simple test on the pathfinder algorithm
 	 * Nodes are organized in a square as shown below
 	 *   n2-----d
@@ -25,8 +27,6 @@ public class PathfinderTester
 	 *   o------n3
 	 *   Correct path is to go through the center
 	 */
-	@Test
-	public void pathfindTester() {
 		Node origin = new Node(0, 0, 0); //Create a new node
 		Node dest = new Node(10, 10, 0); //Create a new node
 		//Create the nodes
@@ -131,7 +131,7 @@ public class PathfinderTester
 
 	//	n[7] -> n[23]: 7, 9, 14, 16, 17, 23
 	@Test
-		public void complexPath7to23() {
+	public void complexPath7to23() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 		List<Node> result = Pathfinder.findPath(n[7], n[23]);
@@ -142,7 +142,27 @@ public class PathfinderTester
 
 	//Tests the basic functionality of travelling to different floors
 	@Test
-		public void simpleMultiFloorPath() {
+	public void simpleMultiFloorPath() {
+/*
+  X = floor 1
+  O = floor 2
+  Z = both floors
+  E = elevator
+
+   01234567890
+  0X          
+  1           
+  2  Z        
+  3           
+  4           
+  5     E     
+  6           
+  7           
+  8           
+  9           
+  0          O
+
+ */
 		Node origin = new Node(0, 0, 1); //Create a start node
 		Node dest = new Node(10, 10, 2); //Create a end node
 		Node n1 = new Node(2, 2, 1); //Node between origin and elev1
@@ -156,20 +176,26 @@ public class PathfinderTester
 		n2.connect(elev2);
 		dest.connect(n2);
 
-		//Connect elevator nodes to eachother
+		//Connect elevator nodes to each other
 		elev1.connect(elev2);
+		System.out.println(origin.getNeighbors());
+		System.out.println(n1.getNeighbors());
+		System.out.println(elev1.getNeighbors());
 
 		//Create the expected node path array
 		Node[] expect = {origin, n1, elev1, elev2, n2, dest};
 		//Find the shortest path
 		List<Node> result = Pathfinder.findPath(origin, dest);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
+		System.out.println(Arrays.asList(expect));
+		System.out.println(result);
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}
 
-	//Test elevator penalty
-	//If destination is on the same floor, Pathfinder should use the path on the same
-	//floor rather than try to find a shorter route via an elevator
+	@Test
+	public void testElevatorPenalty() {
+		//If destination is on the same floor, Pathfinder should use the path on the same
+		//floor rather than try to find a shorter route via an elevator
 	/*
 	 * Floor 1                      Floor 2
 	 * _______________________      ________________________
@@ -186,8 +212,6 @@ public class PathfinderTester
 	 * Path should be [O, N1, D] not [O, E11, E21, E22, E12, D] even though it may appear
 	 * shorter
 	 */
-	@Test
-	public void testElevatorPenalty() {
 
 		//Create the nodes
 		Node O = new Node(0, 20, 1);
