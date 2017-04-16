@@ -76,6 +76,17 @@ public abstract class UserMasterController
 	protected static boolean choosingStart = false;
 	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
 
+
+	/* ABSTRACT METHODS */
+	/**
+	 * Function called when a room is left clicked on the map
+	 * @param room
+	 */
+	protected abstract void clickRoomAction(Room room);
+
+
+	/* NON-ABSTRACT METHODS */
+
 	/**
 	 * Get the scene this is working on
 	 */
@@ -240,12 +251,6 @@ public abstract class UserMasterController
 
 
 	}
-
-	/**
-	 * Function called when a room is left clicked on the map
-	 * @param room
-	 */
-	protected abstract void clickRoomAction(Room room);
 
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
