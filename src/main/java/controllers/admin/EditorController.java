@@ -167,7 +167,7 @@ public class EditorController extends MapDisplayController
 			locations.addAll(p.getLocations());
 
 		}
-		populateTableView(directory.getProfessionals());
+		populateTableView();
 
 		//Listener for the tableview
 		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -184,7 +184,7 @@ public class EditorController extends MapDisplayController
 	// TODO: Use this more often
 	private void redisplayAll() {
 		this.redisplayGraph(); // nodes on this floor and lines between them
-		this.populateTableView(directory.getProfessionals());
+		this.populateTableView();
 	}
 
 	/**
@@ -202,7 +202,8 @@ public class EditorController extends MapDisplayController
 //		}
 	}
 
-	public void populateTableView (Collection<Professional> profs) {
+	public void populateTableView() {
+		Collection<Professional> profs = directory.getProfessionals();
 
 //		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
 
@@ -261,7 +262,7 @@ public class EditorController extends MapDisplayController
 
 		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
 
-		this.populateTableView(directory.getProfessionals());
+		this.populateTableView();
 	}
 
 	@FXML
@@ -270,7 +271,7 @@ public class EditorController extends MapDisplayController
 
 		this.selectedNode.applyToRoom(room -> this.selectedProf.removeLocation(room));
 
-		this.populateTableView(directory.getProfessionals());
+		this.populateTableView();
 	}
 
 	@FXML
@@ -283,13 +284,13 @@ public class EditorController extends MapDisplayController
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
-		populateTableView(directory.getProfessionals());
+		populateTableView();
 	}
 
 	@FXML
 	public void deleteProfBtnClicked () {
 		this.directory.removeProfessional(this.selectedProf);
-		this.populateTableView(directory.getProfessionals());
+		this.populateTableView();
 	}
 
 
