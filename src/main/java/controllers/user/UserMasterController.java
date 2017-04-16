@@ -294,28 +294,6 @@ public abstract class UserMasterController extends MapDisplayController
 
 
 
-		// Commented out because we have a separate tab for choosing the start and the end, and left/right clicking is somewhat confusing for this sort of menu
-//		ArrayList<Room> tempRooms = new ArrayList<>(this.directory.getRooms());
-//		this.directoryView.setOnMousePressed(e->{
-//			switch (e.getButton()) {
-//				case PRIMARY:
-//					endRoom = directoryView.getSelectionModel().getSelectedItem();
-//					System.out.println(endRoom);
-//					break;
-//				case SECONDARY:
-//					startRoom = directoryView.getSelectionModel().getSelectedItem();
-//					System.out.println(startRoom);
-//					break;
-//				default:
-//					break;
-//			}
-//		});
-		}
-	public void setDisable() {
-		changeStartBtn.setDisable(false);
-		getDirectionsBtn.setDisable(false);
-	}
-
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
