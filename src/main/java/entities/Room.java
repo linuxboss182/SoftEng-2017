@@ -2,6 +2,7 @@ package entities;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -10,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javax.swing.text.DefaultTextUI;
+import java.io.InputStream;
 
 
 /**
@@ -30,12 +32,12 @@ public class Room
 	private Node location;
 	private String name;
 	private String description;
-	private String image; // The String path of the image for this room
+	private Image image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private StackPane shape;
 
 	/* Constructors */
-	public Room(String name, String description, String image) {
+	public Room(String name, String description, Image image) {
 		this.location = null;
 		this.name = name;
 		this.description = description;
@@ -44,7 +46,7 @@ public class Room
 	}
 
 	public Room(String name, String description) {
-		this(name, description, Room.DEFAULT_IMAGE_PATH);
+		this(name, description, null);
 	}
 
 	/* Methods */
@@ -57,7 +59,7 @@ public class Room
 		return this.description;
 	}
 
-	public String getImage() {
+	public Image getImage() {
 		return this.image;
 	}
 
@@ -82,7 +84,11 @@ public class Room
 	}
 
 	public void setImage(String imagepath) {
-		this.image = imagepath;
+		this.image = new Image(imagepath);
+	}
+	
+	public void setImage(InputStream is) {
+		this.image = new Image(is);
 	}
 
 //	public void setShape(StackPane shape) {
