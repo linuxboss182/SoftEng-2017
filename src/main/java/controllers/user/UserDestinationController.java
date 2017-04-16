@@ -24,8 +24,9 @@ public class UserDestinationController extends UserMasterController implements I
 	public void initialize(URL location, ResourceBundle resources) {
 		//Call initialize from super class
 		initialize();
-		changeStartBtn.setDisable(true);
-		getDirectionsBtn.setDisable(true);
+		this.enableOrDisableNavigationButtons();
+//		this.disableDirectionsBtn();
+//		this.disableChangeStartBtn();
 
 		// TODO: Save the kiosk in a more sane manner, and load it faster
 		if (kiosk == null) {;

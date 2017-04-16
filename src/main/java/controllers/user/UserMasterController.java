@@ -268,6 +268,22 @@ public abstract class UserMasterController extends MapDisplayController
 				}
 			}
 		});
+	}
+	
+	
+	protected void enableOrDisableNavigationButtons() {
+		if (this.getDirectionsBtn != null) {
+			if (endRoom == null || startRoom == null) {
+				this.getDirectionsBtn.setDisable(true);
+			} else {
+				this.getDirectionsBtn.setDisable(false);
+			}
+		}
+		if (this.changeStartBtn != null) {
+			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
+		}
+	}
+
 
 
 
@@ -336,24 +352,25 @@ public abstract class UserMasterController extends MapDisplayController
 	}
 
 
-	/** Below are helper methods to select and deselect the starting rooms for a path
-	 * These methods rely on two other classes:
-	 * Room -> I modified Room.java to have a setShapeColors method
-	 * ColorScheme -> This is my alternative to COLORS.java, I do not know how to use COLORS.java
+	/**
+	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
 
 	protected void selectStartRoom(Room r) {
-		setDisable();
 		if(r == null) return;
 		startRoom = r;
+		this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
 		iconController.selectStartRoom(r);
 		this.displayRooms();
 	}
 
 	protected void selectEndRoom(Room r) {
-		setDisable();
 		if(r == null) return;
 		endRoom = r;
+		this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
+//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
 		this.displayRooms();
 	}

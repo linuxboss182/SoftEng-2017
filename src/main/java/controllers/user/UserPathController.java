@@ -137,6 +137,8 @@ public class UserPathController extends UserMasterController implements Initiali
 		iconController.resetAllRooms();
 		choosingStart = false;
 		choosingEnd = true;
+		startRoom = null;
+		endRoom = null;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.getScene().setRoot(userPath);
 	}

@@ -30,7 +30,6 @@ public class UserStartController extends UserMasterController implements Initial
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
-		getDirectionsBtn.setDisable(true);
 
 		//Listener for search bar
 		searchBar.textProperty().addListener(new ChangeListener() {
@@ -49,12 +48,5 @@ public class UserStartController extends UserMasterController implements Initial
 		this.getScene().setRoot(userDest);
 
 	}
-
-	@Override
-	public void setDisable() {
-		getDirectionsBtn.setDisable(false);
-	}
-
-
 
 }
