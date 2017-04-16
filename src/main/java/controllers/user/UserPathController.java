@@ -10,11 +10,14 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -27,7 +30,7 @@ public class UserPathController
 		implements Initializable
 {
 
-
+	private static final double PATH_WIDTH = 2.0;
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
 	@FXML
@@ -166,6 +169,36 @@ public class UserPathController
 		// } catch (Exception e){
 		// 	System.out.println("Error making SMS popup");
 		// }
+	}
+
+
+	/**
+	 * Draw a simple path between the nodes in the given list
+	 *
+	 * @param directionNodes A list of the nodes in the path, in order
+	 */
+	public void paintPath(List<Node> directionNodes) {
+		this.directionsTextField.getChildren().clear();
+
+		//add kiosk to start of list
+		//directionNodes.add(0, this.kiosk);
+		if(directionNodes.size() <= 0) {
+			// TODO: Give an error message when no path is found
+			return;
+		}
+
+		// This can be any collection type;
+		Collection<Line> path = new HashSet<>();
+		for (int i=0; i < directionNodes.size()-1; ++i) {
+			Node here = directionNodes.get(i);
+			Node there = directionNodes.get(i + 1);
+			if (here.getFloor() == floor && here.getFloor() == there.getFloor()) {
+				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
+				line.setStrokeWidth(PATH_WIDTH);
+				path.add(line);
+			}
+		}
+		this.botPane.getChildren().setAll(path);
 	}
 
 	/**
