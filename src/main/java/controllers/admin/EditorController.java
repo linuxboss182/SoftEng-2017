@@ -28,6 +28,7 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -702,6 +703,25 @@ public class EditorController extends MapDisplayController
 				}
 				this.populateTableView();
 			}
+		}
+	}
+
+	/**
+	 * Upload an image for the selected room
+	 * 
+	 * If no room is selected, do nothing
+	 */
+	private void loadRoomImage() {
+		if (this.selectedNode != null) {
+			this.selectedNode.applyToRoom(room -> {
+				FileChooser fc = new FileChooser();
+				File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+				try {
+					room.setImage(f.toURI().toURL().toExternalForm());
+				} catch (MalformedURLException e) {
+					throw new RuntimeException("Sorry, something has gone horrily wrong choosing your file.");
+				}
+			});
 		}
 	}
 }
