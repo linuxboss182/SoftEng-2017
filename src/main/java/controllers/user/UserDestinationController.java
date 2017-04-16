@@ -13,12 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Created by s7sal on 4/8/2017.
- */
+import entities.Room;
+
+
 public class UserDestinationController extends UserMasterController implements Initializable
 {
-
+	protected Room kiosk = null;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -26,6 +26,16 @@ public class UserDestinationController extends UserMasterController implements I
 		initialize();
 		changeStartBtn.setDisable(true);
 		getDirectionsBtn.setDisable(true);
+
+		// TODO: Save the kiosk in a more sane manner, and load it faster
+		if (kiosk == null) {;
+			for (Room r : directory.getRooms()) {
+				if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
+					kiosk = r;
+				}
+			}
+		}
+		if (startRoom == null) startRoom = kiosk;
 
 		//Listener for search bar
 		searchBar.textProperty().addListener(new ChangeListener() {
@@ -43,8 +53,5 @@ public class UserDestinationController extends UserMasterController implements I
 		choosingEnd = false;
 		choosingStart = true;
 	}
-
-
-
 
 }

@@ -27,7 +27,6 @@ public abstract class MapDisplayController
 	protected List<Line> lines = new ArrayList<Line>();
 	protected static Directory directory;
 	protected static IconController iconController;
-	protected static Room kiosk;
 
 	// Primary is left click and secondary is right click
 	// these keep track of which button was pressed last on the mouse

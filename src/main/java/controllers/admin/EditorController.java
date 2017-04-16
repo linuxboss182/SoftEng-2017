@@ -141,13 +141,6 @@ public class EditorController extends MapDisplayController
 			}
 		});
 
-		this.kiosk = null;
-		for (Room r : this.directory.getRooms()) {
-			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-				this.kiosk = r;
-			}
-		}
-
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
 

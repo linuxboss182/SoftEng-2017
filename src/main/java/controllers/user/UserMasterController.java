@@ -105,14 +105,10 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		});
 
-		if(floorChoiceBox != null)
+		if(floorChoiceBox != null) {
 			initFloorChoiceBox();
-		for (Room r : this.directory.getRooms()) {
-			if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-				kiosk = r;
-				if(startRoom == null) startRoom = kiosk;
-			}
 		}
+
 		this.displayRooms();
 		iconController.resetAllRooms();
 		if(this.directoryView != null) {
