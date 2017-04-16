@@ -6,11 +6,11 @@ import entities.Node;
 
 /**
  * Interface for algorithms.
- *
- * Beyond what is shown here
  */
 interface Algorithm
 {
+	static final double FLOOR_HEIGHT = 240;
+
 	String getName();
 	List<Node> findPath(Node start, Node dest);
 }

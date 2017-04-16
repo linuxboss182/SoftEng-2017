@@ -12,14 +12,9 @@ import entities.Node;
  */
 public class Pathfinder
 {
-	private static final double FLOOR_HEIGHT = 240;
 
 	public static List<Node> findPath(Node a, Node b) {
 		Algorithm alg = new AStar();
 		return alg.findPath(a, b);
-	}
-
-	static double getFloorHeight() {
-		return Pathfinder.FLOOR_HEIGHT;
 	}
 }

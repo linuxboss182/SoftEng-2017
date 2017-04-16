@@ -87,7 +87,7 @@ class AStar
 	}
 
 	private static double heuristic(Node current, Node other) {
-		return current.distance(other, Pathfinder.getFloorHeight());
+		return current.distance(other, Algorithm.FLOOR_HEIGHT);
 	}
 
 	private static List<Node> makePath(Map<Node, Node> pathHistory, Node current){
