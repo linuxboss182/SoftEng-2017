@@ -14,7 +14,9 @@ import java.util.ResourceBundle;
 import entities.Room;
 
 
-public class UserDestinationController extends UserMasterController implements Initializable
+public class UserDestinationController
+		extends UserMasterController
+		implements Initializable
 {
 	protected Room kiosk = null;
 
@@ -51,4 +53,11 @@ public class UserDestinationController extends UserMasterController implements I
 		choosingStart = true;
 	}
 
+	/**
+	 * When selecting a destination, left clicking a room should select it
+	 */
+	@Override
+	protected void clickRoomAction(Room room) {
+		this.selectEndRoom(room);
+	}
 }

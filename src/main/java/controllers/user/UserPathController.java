@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import entities.Room;
 import main.DirectionsGenerator;
 import main.Pathfinder;
 
-public class UserPathController extends UserMasterController implements Initializable
+public class UserPathController
+		extends UserMasterController
+		implements Initializable
 {
 
 
@@ -165,4 +168,12 @@ public class UserPathController extends UserMasterController implements Initiali
 		// }
 	}
 
+	/**
+	 * When a path has been drawn, clicking a room doesn't do anythng
+	 */
+	// TODO: Make clicking a room after getting directions highlight the room in the directions, maybe?
+	@Override
+	protected void clickRoomAction(Room room) {
+		return;
+	}
 }

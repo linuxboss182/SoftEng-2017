@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -37,7 +38,8 @@ import entities.Room;
 import main.ApplicationController;
 
 
-public abstract class UserMasterController extends MapDisplayController
+public abstract class UserMasterController
+		extends MapDisplayController
 {
 	@FXML
 	private Button logAsAdmin;
@@ -239,24 +241,33 @@ public abstract class UserMasterController extends MapDisplayController
 
 	}
 
+	/**
+	 * Function called when a room is left clicked on the map
+	 * @param room
+	 */
+	protected abstract void clickRoomAction(Room room);
+
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getShape());
+		for (Room room : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(room.getShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			r.getShape().setOnContextMenuRequested(e->{
+			room.getShape().setOnMouseClicked((MouseEvent e) -> {
+				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
+			});
+			room.getShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(r));
+				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
 				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(r));
+				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(r.getShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
@@ -289,8 +300,14 @@ public abstract class UserMasterController extends MapDisplayController
 			}
 		});
 	}
-	
-	
+
+	/**
+	 * Enable or disable the "get directions" and "set starting location" buttons
+	 * 
+	 * If both start and end locations are set, enable the "get directions" button
+	 * 
+	 * If The end room is set, enable the "set starting location" button
+	 */
 	protected void enableOrDisableNavigationButtons() {
 		if (this.getDirectionsBtn != null) {
 			if (endRoom == null || startRoom == null) {

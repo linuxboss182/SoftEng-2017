@@ -12,8 +12,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import entities.Room;
 
-public class UserStartController extends UserMasterController implements Initializable
+
+public class UserStartController
+		extends UserMasterController
+		implements Initializable
 {
 
 
@@ -43,4 +47,11 @@ public class UserStartController extends UserMasterController implements Initial
 
 	}
 
+	/**
+	 * When selecting a starting point, left clicking a room should select it
+	 */
+	@Override
+	protected void clickRoomAction(Room room) {
+		this.selectStartRoom(room);
+	}
 }
