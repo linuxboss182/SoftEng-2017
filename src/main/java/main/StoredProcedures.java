@@ -1,7 +1,17 @@
 package main;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Arrays;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 
 public class StoredProcedures
 {
@@ -23,7 +33,8 @@ public class StoredProcedures
 					+" roomID             integer PRIMARY KEY"
 					+" , roomName           varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
-					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL)",
+					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL"
+					+" , image blob)",
 			"CREATE TABLE Employees ("
 					+" employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
@@ -169,6 +180,29 @@ public class StoredProcedures
 		roomDescription = sanitize(roomDescription);
 		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID) VALUES('"+roomName
 				+"', '"+roomDescription+"', "+nodeID+", "+roomID+")";
+	}
+
+	// TODO: Move this to DatabaseController, probably
+	// TODO: Fix the entire DB setup
+	public static void saveRoom(Connection conn, int roomID, String roomName, String roomDescription, int nodeID, Image image)
+			throws SQLException {
+		PreparedStatement prep = conn.prepareStatement("INSERT INTO Rooms (roomID, roomName, roomDescription, nodeID, image) values (?, ?, ?, ?, ?)");
+		prep.setInt(1, 1);
+		prep.setString(2, roomName);
+		prep.setString(3, roomDescription);
+		prep.setInt(4, nodeID);
+		BufferedImage bufimg = SwingFXUtils.fromFXImage(image, null);
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(bufimg, "png", bout);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to convert image to blob, sorry; everything may be broken now.");
+		}
+		byte[] blob = bout.toByteArray();
+		ByteArrayInputStream blobout = new ByteArrayInputStream(blob);
+		prep.setBlob(5, blobout);
+		prep.execute();
+		prep.close();
 	}
 
 	public static String procInsertEdge(int node1, int node2){
