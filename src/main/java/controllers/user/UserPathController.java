@@ -138,7 +138,7 @@ public class UserPathController extends UserMasterController implements Initiali
 		choosingStart = false;
 		choosingEnd = true;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.imageViewMap.getScene().setRoot(userPath);
+		this.getScene().setRoot(userPath);
 	}
 
 	@FXML

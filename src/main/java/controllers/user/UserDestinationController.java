@@ -49,7 +49,7 @@ public class UserDestinationController extends UserMasterController implements I
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
 		Parent userStart = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserStart.fxml"));
-		this.changeStartBtn.getScene().setRoot(userStart);
+		this.getScene().setRoot(userStart);
 		choosingEnd = false;
 		choosingStart = true;
 	}

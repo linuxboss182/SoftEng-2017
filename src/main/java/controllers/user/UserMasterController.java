@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -68,7 +69,13 @@ public abstract class UserMasterController extends MapDisplayController
 	protected static boolean choosingStart = false;
 	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
 
-
+	/**
+	 * Get the scene this is working on
+	 */
+	protected Scene getScene() {
+		// The contentAnchor should alays exist, so use it to get the scene
+		return this.contentAnchor.getScene();
+	}
 
 	public void initialize() {
 		//Set the panes
@@ -207,7 +214,7 @@ public abstract class UserMasterController extends MapDisplayController
 			throws IOException, InvocationTargetException {
 		// TODO: Review
 		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.contentAnchor.getScene().setRoot(loginPrompt);
+		this.getScene().setRoot(loginPrompt);
 
 
 	}
@@ -289,7 +296,7 @@ public abstract class UserMasterController extends MapDisplayController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.imageViewMap.getScene().setRoot(userPath);
+		this.getScene().setRoot(userPath);
 	}
 
 	/**

@@ -46,7 +46,7 @@ public class UserStartController extends UserMasterController implements Initial
 		choosingStart = false;
 		choosingEnd = true;
 		Parent userDest = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.sideGridPane.getScene().setRoot(userDest);
+		this.getScene().setRoot(userDest);
 
 	}
 
