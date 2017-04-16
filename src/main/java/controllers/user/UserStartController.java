@@ -1,7 +1,5 @@
 package controllers.user;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,10 +27,10 @@ public class UserStartController extends UserMasterController implements Initial
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		initialize();
+		this.initialize();
 
 		//Listener for search bar
-		searchBar.textProperty().addListener((ignored, old, newer) -> filterRoomList(old, newer));
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
 	}
 

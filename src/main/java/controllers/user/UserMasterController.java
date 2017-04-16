@@ -6,7 +6,6 @@ import controllers.shared.MapDisplayController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -188,21 +187,19 @@ public abstract class UserMasterController extends MapDisplayController
 	/**
 	 * Filter the room list for the search bar
 	 *
-	 * @param oldValue The previous string in the search bar
-	 * @param newValue The new string in the search bar
+	 * @param searchString The new string in the search bar
 	 */
-	// TODO: DOCUMENT THIS URGENTLY; (it can be made simpler)
-	public void filterRoomList(String oldValue, String newValue) {
-		ObservableList<Room> filteredList = FXCollections.observableArrayList();
-		if((searchBar == null) || (newValue == null) /*| (newValue.length() < oldValue.length())*/) {
-			populateListView();
+	public void filterRoomsByName(String searchString) {
+		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+			this.populateListView();
 		} else {
+			// The Collator allows case-insensitie comparison
 			Collator coll = Collator.getInstance();
 			coll.setStrength(Collator.PRIMARY);
-			coll.setDecomposition(Collator.FULL_DECOMPOSITION);
+			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
 
 			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(newValue, Normalizer.Form.NFD).toLowerCase()
+			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
 					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
 
 			Set<Room> roomSet = directory.filterRooms(room ->
@@ -210,9 +207,7 @@ public abstract class UserMasterController extends MapDisplayController
 					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
 					          .contains(normed)); // check with unicode normalization
 
-			List<Room> roomList = new ArrayList<>(roomSet);
-
-			this.directoryView.setItems(FXCollections.observableList(roomList));
+			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
 
@@ -263,7 +258,7 @@ public abstract class UserMasterController extends MapDisplayController
 
 	public void populateListView() {
 		this.directoryView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(this.directory.getRooms()));
+		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
 			@Override

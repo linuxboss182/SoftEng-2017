@@ -1,7 +1,5 @@
 package controllers.user;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,23 +21,23 @@ public class UserDestinationController extends UserMasterController implements I
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Call initialize from super class
-		initialize();
+		this.initialize();
 		this.enableOrDisableNavigationButtons();
 //		this.disableDirectionsBtn();
 //		this.disableChangeStartBtn();
 
 		// TODO: Save the kiosk in a more sane manner, and load it faster
-		if (kiosk == null) {;
+		if (this.kiosk == null) {;
 			for (Room r : directory.getRooms()) {
 				if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-					kiosk = r;
+					this.kiosk = r;
 				}
 			}
 		}
-		if (startRoom == null) startRoom = kiosk;
+		if (startRoom == null) startRoom = this.kiosk;
 
 		//Listener for search bar
-		searchBar.textProperty().addListener((ignored, oldValue, newValue) -> filterRoomList(oldValue, newValue));
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
 	}
 
