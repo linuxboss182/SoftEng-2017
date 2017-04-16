@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,14 +25,14 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private Optional<Room> kiosk;
+	
+	/** Comparator to allow comparing rooms by name */
+	private static Comparator<Room> roomComparator = (r1, r2) -> {
+		int compName = r1.getName().compareTo(r2.getName());
+		if (compName != 0) return compName;
+		return (r1 == r2) ? 0 : 1;
+	};
 
-	/*
-	addNode, addRoom
-	removeNode, removeRoom
-	addProf, removeProf
-
-	getProfessionals, getRooms, getNodes
-	 */
 
 	/* Constructors */
 
@@ -55,12 +56,7 @@ public class Directory
 	 */
 	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>((r1, r2) -> {
-			int compName = r1.getName().compareTo(r2.getName());
-			if (compName != 0) return compName;
-			return (r1 == r2) ? 0 : 1;
-			// handle identity or SortedSet won't take people with the same name
-		});
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
@@ -224,7 +220,9 @@ public class Directory
 	 * Gets all rooms in this directory that match the given predicate
 	 */
 	public Set<Room> filterRooms(Predicate<Room> predicate) {
-		return this.rooms.stream().filter(predicate).collect(Collectors.toSet());
+		return this.rooms.stream().filter(predicate)
+				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
+		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
 	}
 
 }
