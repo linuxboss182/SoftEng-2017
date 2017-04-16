@@ -126,11 +126,6 @@ public class Directory
 //		return this.kiosk.orElse(null);
 //	}
 
-	// TODO: We probably don't need this.
-	private int getHeight() {
-		return 4;
-	}
-
 	/**
 	 * Create a Room and an associated Node in this directory
 	 *
@@ -161,6 +156,7 @@ public class Directory
 		Room room = new Room(name, desc);
 		node.setRoom(room);
 		room.setLocation(node);
+		this.addRoom(room);
 	}
 
 	/**
