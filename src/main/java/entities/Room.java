@@ -47,19 +47,6 @@ public class Room
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
-	// TODO: Remove this constructor in favor of association with existing nodes
-	@Deprecated
-	public Room(double x, double y, String name, String description, String image) {
-		this(name, description, image);
-		this.location = new Node(x, y, 0);
-	}
-
-	// TODO: Remove this constructor in favor of association with existing nodes
-	@Deprecated
-	public Room(double x, double y) {
-		this(x, y, "Anonymous Room", "A Room with no name or special description.", Room.DEFAULT_IMAGE_PATH);
-	}
-
 	/* Methods */
 
 	public String getName() {
