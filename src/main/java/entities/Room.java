@@ -141,8 +141,4 @@ public class Room
 			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
-
-	public void setShapeColors(Color stroke, Color fill) {
-		this.makeShape(stroke, fill);
-	}
 }

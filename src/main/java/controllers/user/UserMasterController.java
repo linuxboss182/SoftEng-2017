@@ -35,29 +35,29 @@ import java.util.Set;
 public abstract class UserMasterController extends MapDisplayController
 {
 	@FXML
-	public Button logAsAdmin;
+	private Button logAsAdmin;
 	@FXML
-	protected ImageView imageViewMap;
+	private ImageView imageViewMap;
 	@FXML
-	public AnchorPane contentAnchor = new AnchorPane();
+	private AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ListView<Room> directoryView;
+	private ListView<Room> directoryView;
 	@FXML
-	public Button changeStartBtn;
+	private Button getDirectionsBtn;
 	@FXML
-	public Button getDirectionsBtn;
+	private Button changeStartBtn;
 	@FXML
-	public Pane linePane;
+	private Pane linePane;
 	@FXML
-	public TextField searchBar;
+	protected TextField searchBar;
 	@FXML
-	public Pane nodePane;
+	private Pane nodePane;
 	@FXML
-	public TextFlow directionsTextField;
+	protected TextFlow directionsTextField;
 	@FXML
-	public GridPane sideGridPane;
+	private GridPane sideGridPane;
 	@FXML
-	public ChoiceBox floorChoiceBox;
+	private ChoiceBox floorChoiceBox;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -179,9 +179,16 @@ public abstract class UserMasterController extends MapDisplayController
 		});
 	}
 
+	/**
+	 * Filter the room list for the search bar
+	 *
+	 * @param oldValue The previous string in the search bar
+	 * @param newValue The new string in the search bar
+	 */
+	// TODO: DOCUMENT THIS URGENTLY; (it can be made simpler)
 	public void filterRoomList(String oldValue, String newValue) {
 		ObservableList<Room> filteredList = FXCollections.observableArrayList();
-		if(searchBar == null || (newValue.length() < oldValue.length()) || newValue == null) {
+		if((searchBar == null) || (newValue == null) || (newValue.length() < oldValue.length())) {
 			populateListView();
 		}
 		else {
