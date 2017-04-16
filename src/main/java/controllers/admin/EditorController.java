@@ -167,7 +167,7 @@ public class EditorController extends MapDisplayController
 			locations.addAll(p.getLocations());
 
 		}
-		populateTableView();
+		this.populateTableView();
 
 		//Listener for the tableview
 		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -284,7 +284,7 @@ public class EditorController extends MapDisplayController
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.showAndWait();
-		populateTableView();
+		this.populateTableView();
 	}
 
 	@FXML
@@ -296,9 +296,8 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void confirmBtnPressed() {
-		this.directory.getRooms().forEach(room ->
-				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-
+//		this.directory.getRooms().forEach(room ->
+//				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
 		try {
 			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
 		} catch (DatabaseException e) {
