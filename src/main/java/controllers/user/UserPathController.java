@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -26,19 +27,33 @@ public class UserPathController
 		extends UserMasterController
 		implements Initializable
 {
-
-
-	final double SCALE_DELTA = 1.1;
-	private double clickedX, clickedY;
 	@FXML
 	private Button doneBtn;
 	@FXML
 	private AnchorPane floorsTraveledAnchorPane;
-	Text textDirections = new Text();
+
+	@FXML
+	private AnchorPane destinationTab;
+
+	private Text textDirections;
+
+
+	final double SCALE_DELTA = 1.1;
+	private double clickedX, clickedY;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
 		List<Node> ret;
+
+		this.textDirections = new Text();
+
+		if (endRoom.getImage() != null) {
+			ImageView destinationImage = new ImageView(endRoom.getImage());
+			destinationImage.setLayoutX(100);
+			destinationImage.setLayoutY(100);
+			this.destinationTab.getChildren().add(destinationImage);
+		}
 
 		// Check if either start or destination is null
 		// TODO: create exception class?
