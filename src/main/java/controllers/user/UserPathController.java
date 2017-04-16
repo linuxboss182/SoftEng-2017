@@ -53,6 +53,9 @@ public class UserPathController
 			destinationImage.setLayoutX(100);
 			destinationImage.setLayoutY(100);
 			this.destinationTab.getChildren().add(destinationImage);
+		} else {
+			Text altText = new Text("No image available");
+			this.destinationTab.getChildren().add(altText);
 		}
 
 		// Check if either start or destination is null
