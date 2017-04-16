@@ -22,9 +22,6 @@ public class UserDestinationController extends UserMasterController implements I
 	public void initialize(URL location, ResourceBundle resources) {
 		//Call initialize from super class
 		this.initialize();
-		this.enableOrDisableNavigationButtons();
-//		this.disableDirectionsBtn();
-//		this.disableChangeStartBtn();
 
 		// TODO: Save the kiosk in a more sane manner, and load it faster
 		if (this.kiosk == null) {;
@@ -35,6 +32,11 @@ public class UserDestinationController extends UserMasterController implements I
 			}
 		}
 		if (startRoom == null) startRoom = this.kiosk;
+
+		// This has to be done after setting the kiosk
+		this.enableOrDisableNavigationButtons();
+//		this.disableDirectionsBtn();
+//		this.disableChangeStartBtn();
 
 		//Listener for search bar
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));

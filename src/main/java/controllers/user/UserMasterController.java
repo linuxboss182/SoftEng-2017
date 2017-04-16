@@ -96,6 +96,9 @@ public abstract class UserMasterController extends MapDisplayController
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
+		// Set buttons to default
+		this.enableOrDisableNavigationButtons();
+
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		zoomSlider.setValue(2);
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -227,6 +230,9 @@ public abstract class UserMasterController extends MapDisplayController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		// TODO: Review
+		// Unset navigation targets for after logout
+		startRoom = null;
+		endRoom = null;
 		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
 
