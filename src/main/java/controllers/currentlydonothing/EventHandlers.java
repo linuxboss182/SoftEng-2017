@@ -83,7 +83,7 @@ public class EventHandlers
 //		@Override
 //	public void addRoomListener(Room r){
 //		r.getShape().setOnMouseClicked((MouseEvent e) ->{
-//			EditorController.this.onShapeClick(e, r);
+//			EditorController.this.selectOrConnectNodeListener(e, r);
 //			this.nameField.setText(r.getName());
 //			this.descriptField.setText((r.getDescription()));
 //		});
@@ -102,14 +102,14 @@ public class EventHandlers
 //
 //		r.getShape().setOnMouseReleased(e->{
 //			beingDragged = false;
-//			EditorController.this.onShapeReleased(e, r);
+//			EditorController.this.deleteNodeIfOffMapListener(e, r);
 //		});
 //	}
 
 
 
 
-//	public void onShapeClick(MouseEvent e, Node n) {
+//	public void selectOrConnectNodeListener(MouseEvent e, Node n) {
 //
 //		// update text fields
 //		this.setFields(n.getX(), n.getY());
@@ -164,7 +164,7 @@ public class EventHandlers
 //		}
 //	}
 //
-//	public void onShapeReleased(MouseEvent e, Node n) {
+//	public void deleteNodeIfOffMapListener(MouseEvent e, Node n) {
 //		this.releasedX = e.getX();
 //		this.releasedY = e.getY();
 //
