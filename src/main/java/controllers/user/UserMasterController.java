@@ -2,7 +2,7 @@ package controllers.user;
 
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
-import entities.*;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,14 +22,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
-import main.ApplicationController;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.Collator;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import entities.Node;
+import entities.Room;
+import main.ApplicationController;
 
 
 public abstract class UserMasterController extends MapDisplayController
@@ -188,19 +194,25 @@ public abstract class UserMasterController extends MapDisplayController
 	// TODO: DOCUMENT THIS URGENTLY; (it can be made simpler)
 	public void filterRoomList(String oldValue, String newValue) {
 		ObservableList<Room> filteredList = FXCollections.observableArrayList();
-		if((searchBar == null) || (newValue == null) || (newValue.length() < oldValue.length())) {
+		if((searchBar == null) || (newValue == null) /*| (newValue.length() < oldValue.length())*/) {
 			populateListView();
-		}
-		else {
-			newValue = newValue.toUpperCase();
-			for(Room room : directoryView.getItems()) {
-				Room filterText = room;
-				if(filterText.getName().toUpperCase().contains(newValue)) {
-					filteredList.add(filterText);
-				}
-			}
+		} else {
+			Collator coll = Collator.getInstance();
+			coll.setStrength(Collator.PRIMARY);
+			coll.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-			directoryView.setItems(filteredList);
+			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
+			String normed = Normalizer.normalize(newValue, Normalizer.Form.NFD).toLowerCase()
+					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
+
+			Set<Room> roomSet = directory.filterRooms(room ->
+					(room.getLocation() != null) && // false if room has no location
+					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
+					          .contains(normed)); // check with unicode normalization
+
+			List<Room> roomList = new ArrayList<>(roomSet);
+
+			this.directoryView.setItems(FXCollections.observableList(roomList));
 		}
 	}
 
