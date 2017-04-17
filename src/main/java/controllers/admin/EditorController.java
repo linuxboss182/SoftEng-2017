@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -97,6 +98,10 @@ public class EditorController extends MapDisplayController
 	protected Node selectedNode; // you select a node by double clicking
 	protected ArrayList<Node> selectedNodes = new ArrayList<>();
 	protected boolean shiftPressed = false;
+	protected double selectionStartX;
+	protected double selectionStartY;
+	protected double selectionEndX;
+	protected double selectionEndY;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -590,15 +595,41 @@ public class EditorController extends MapDisplayController
 			this.shiftPressed = e.isShiftDown();
 			if(this.shiftPressed) {
 				this.beingDragged = true;
+				this.selectionStartX = e.getX();
+				this.selectionStartY = e.getY();
 			} else {
 				this.beingDragged = false;
 			}
 		});
 		contentAnchor.setOnMouseDragged(e-> {
-			this.shiftPressed = e.isShiftDown();
+//			this.shiftPressed = e.isShiftDown();
+//			if(this.shiftPressed) {
+//				this.beingDragged = true;
+//			}
+
 			if(this.shiftPressed) {
-				this.beingDragged = true;
+				Rectangle r = new Rectangle();
+				if(e.getX() > selectionStartX) {
+					r.setX(selectionStartX);
+					r.setWidth(e.getX() - selectionStartX);
+				} else {
+					r.setX(e.getX());
+					r.setWidth(selectionStartX - e.getX());
+				}
+				if(e.getY() > selectionStartY) {
+					r.setY(selectionStartY);
+					r.setHeight(e.getY() - selectionStartY);
+				} else {
+					r.setY(e.getY());
+					r.setHeight(selectionStartY - e.getY());
+				}
+				r.setFill(Color.SKYBLUE);
+				r.setStroke(Color.BLUE);
+				r.setOpacity(0.5);
+				this.redisplayAll();
+				this.botPane.getChildren().add(r);
 			}
+
 			if(!beingDragged) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
@@ -606,9 +637,40 @@ public class EditorController extends MapDisplayController
 			e.consume();
 		});
 		contentAnchor.setOnMouseReleased(e->{
+			if(this.shiftPressed) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+				this.selectionEndX = e.getX();
+				this.selectionEndY = e.getY();
+				this.redisplayAll(); // this is to clear the rectangle off of the pane
+
+				// These are the bounds of the selection
+				double topLeftX;
+				double topLeftY;
+				double botRightX;
+				double botRightY;
+				if(this.selectionStartX < this.selectionEndX) {
+					topLeftX = this.selectionStartX;
+					botRightX = this.selectionEndX;
+				} else {
+					topLeftX = this.selectionEndX;
+					botRightX = this.selectionStartX;
+				}
+				if(this.selectionStartY < this.selectionEndY) {
+					topLeftY = this.selectionStartY;
+					botRightY = this.selectionEndY;
+				} else {
+					topLeftY = this.selectionEndY;
+					botRightY = this.selectionStartY;
+				}
+				// Loop through and select/deselect all nodes in the bounds
+				this.directory.getNodesOnFloor(floor).forEach(n -> {
+					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
+						// Within the bounds, select or deselect it
+						this.selectOrDeselectNode(n);
+					}
+				});
+			}
 			this.shiftPressed = e.isShiftDown();
 			this.beingDragged = this.shiftPressed;
-			
 		});
 	}
 
