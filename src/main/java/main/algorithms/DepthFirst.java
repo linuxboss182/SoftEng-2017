@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public enum DepthFirst
+enum DepthFirst
 		implements Algorithm
 {
 	instance;
@@ -25,7 +25,7 @@ public enum DepthFirst
 	public List<Node> findPath(Node start, Node dest)
 			throws PathNotFoundException {
 		Set<Node> visited = new HashSet<>();
-		LinkedList<Node> path = recurse(start, dest, visited);
+		LinkedList<Node> path = this.recurse(start, dest, visited);
 		path.addFirst(start);
 		return path;
 		//throw new PathNotFoundException("No path found between the two given nodes.");
@@ -43,7 +43,7 @@ public enum DepthFirst
 			LinkedList<Node> list = new LinkedList<>();
 			for(Node n: current.getNeighbors()) {
 				if(!visited.contains(n)) {
-					list = recurse(n, dest, visited);
+					list = this.recurse(n, dest, visited);
 				}
 				if (!list.isEmpty()) {
 					list.push(n);

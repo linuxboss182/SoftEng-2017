@@ -2,6 +2,8 @@ package main.algorithms;
 
 import java.util.List;
 
+import javafx.util.StringConverter;
+
 import entities.Node;
 
 /**
@@ -9,9 +11,22 @@ import entities.Node;
  * 
  * Besides the 
  */
-interface Algorithm
+public interface Algorithm
 {
-	static final double FLOOR_HEIGHT = 240;
+	double FLOOR_HEIGHT = 240;
+	
+	StringConverter<Algorithm> ALGORITHM_STRING_CONVERTER = new StringConverter<Algorithm>()
+	{
+		@Override
+		public String toString(Algorithm alg) {
+			return alg.getName();
+		}
+
+		@Override
+		public Algorithm fromString(String string) {
+			return null;
+		}
+	};
 
 	String getName(); // Algorithms need a display name.
 	List<Node> findPath(Node start, Node dest) throws PathNotFoundException; // Strategy execution.

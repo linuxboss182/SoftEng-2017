@@ -1,6 +1,6 @@
 package main.algorithms;
 
-import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import entities.Node;
@@ -15,6 +15,17 @@ public class Pathfinder
 
 	private static Algorithm strategy = AStar.instance;
 
+	// List of all available algorithms
+	private static Algorithm[] algorithmList = {
+			AStar.instance,
+			DepthFirst.instance,
+			BreadthFirst.instance,
+	};
+
+	public static Algorithm[] getAlgorithmList() {
+		return Arrays.copyOf(Pathfinder.algorithmList, Pathfinder.algorithmList.length);
+	}
+
 	/**
 	 * Set the current pathfinding strategy.
 	 *
@@ -22,6 +33,13 @@ public class Pathfinder
 	 */
 	public static void setStrategy(Algorithm strategy) {
 		Pathfinder.strategy = strategy;
+	}
+
+	/**
+	 * Get the currently active strategy
+	 */
+	public static Algorithm getStrategy() {
+		return Pathfinder.strategy;
 	}
 
 	/**

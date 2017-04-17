@@ -42,6 +42,8 @@ import entities.Professional;
 import entities.Room;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
+import main.algorithms.Pathfinder;
+import main.algorithms.Algorithm;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -701,5 +703,17 @@ public class EditorController extends MapDisplayController
 				this.populateTableView();
 			}
 		}
+	}
+
+	/**
+	 * Get a choice box that sets the active algorithm
+	 */
+	private ChoiceBox<Algorithm> makeAlgorithmChoiceBox() {
+		ChoiceBox<Algorithm> algorithmChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
+		algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
+		return algorithmChoiceBox;
 	}
 }

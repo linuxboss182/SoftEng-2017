@@ -5,7 +5,7 @@ import entities.Node;
 import java.util.*;
 
 
-public enum BreadthFirst
+enum BreadthFirst
 		implements Algorithm
 {
 	instance;
