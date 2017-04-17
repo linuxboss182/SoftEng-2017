@@ -438,7 +438,11 @@ public class EditorController extends MapDisplayController
 		} else {
 			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
 			this.addNodeListeners(newNode);
-			this.displayNodes(directory.getNodesOnFloor(floor));
+			this.selectedNodes.forEach(n -> {
+				n.connectOrDisconnect(newNode);
+			});
+//			this.displayNodes(directory.getNodesOnFloor(floor));
+			this.redisplayAll();
 		}
 	}
 
@@ -449,6 +453,14 @@ public class EditorController extends MapDisplayController
 		}
 		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.addNodeListeners(newNode);
+
+		int size = this.selectedNodes.size();
+		if(size > 0) {
+			this.selectedNodes.get(size - 1).connectOrDisconnect(newNode);
+		}
+		if(this.shiftPressed) {
+			this.selectOrDeselectNode(newNode);
+		}
 	}
 
 	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
@@ -542,8 +554,10 @@ public class EditorController extends MapDisplayController
 			if(e.getClickCount() == 2) {
 				this.addNode(e.getX(), e.getY());
 			}
+			if(!this.shiftPressed) {
+				this.deselectNodes();
 
-			this.deselectNodes();
+			}
 
 			this.displayNodes(this.directory.getNodesOnFloor(floor));
 		});
