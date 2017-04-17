@@ -445,7 +445,7 @@ public class EditorController extends MapDisplayController
 		} else {
 			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
 			this.addNodeListeners(newNode);
-			this.displayNodes(directory.getNodesOnFloor(floor));
+			this.redisplayGraph();
 		}
 	}
 
@@ -520,7 +520,7 @@ public class EditorController extends MapDisplayController
 
 			this.deselectNode();
 
-			this.displayNodes(this.directory.getNodesOnFloor(floor));
+			this.redisplayGraph();
 		});
 
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
