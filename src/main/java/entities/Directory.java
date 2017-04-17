@@ -49,6 +49,8 @@ public class Directory
 
 	/* Methods */
 
+	/* Getters */
+
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
 	}
@@ -67,6 +69,16 @@ public class Directory
 		return new TreeSet<>(this.professionals);
 	}
 
+	public Room getKiosk() {
+		return this.kiosk;
+	}
+
+	public void setKiosk(Room k) {
+		this.kiosk = k;
+	}
+
+	/* Element addition methods */
+
 	public void addNode(Node node) {
 		this.nodes.add(node);
 	}
@@ -79,15 +91,16 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void setKiosk(Room k) {
-		this.kiosk = k;
-	}
+	/* Element removal methods */
 
-	public boolean removeNode(Node node) {
+	/** @deprecated May be restored once nodeless rooms are possible */
+	@Deprecated
+	private boolean removeNode(Node node) {
+		node.disconnectAll();
 		return this.nodes.remove(node);
 	}
 
-	public boolean removeRoom(Room room) {
+	private boolean removeRoom(Room room) {
 		this.professionals.forEach(p -> p.removeLocation(room));
 		return this.rooms.remove(room);
 	}
@@ -105,24 +118,12 @@ public class Directory
 		return this.professionals.remove(professional);
 	}
 
-	public Professional addNewProfessional(String name,String surname,String title){
+	public Professional addNewProfessional(String name, String surname, String title){
 		Professional newPro = new Professional(name, surname, title);
 		this.addProfessional(newPro);
 		return newPro;
 	}
 
-
-	/** return whether this directory has a kiosk */
-	public boolean hasKiosk() {
-		return this.kiosk != null;
-	}
-
-	/**
-	 * Get kiosk if present, or null otherwise.
-	 */
-	public Room getKiosk() {
-		return this.kiosk;
-	}
 
 	/**
 	 * Create a Room and an associated Node in this directory
@@ -171,15 +172,15 @@ public class Directory
 	/**
 	 * Create a new node in this directory
 	 */
-	// TODO: Add "floor" argument
 	public Node addNewNode(double x, double y, int floor) {
 		Node newNode = new Node(x, y, floor);
 		this.nodes.add(newNode);
 		return newNode;
 	}
 
-	// TODO: Add test cases for new Directory methods like getNodesOnFloor
+	// TODO: Add test cases for new Directory methods
 
+	/* Filtered getters */
 	/**
 	 * Get a set of the nodes on the given floor
 	 *
@@ -219,11 +220,20 @@ public class Directory
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
 	}
 
+	/* Entity modification functions */
+
 	/**
 	 * Toggle the edge between the given nodes
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
+	}
+
+	/* Program logic functions */
+
+	/** return whether this directory has a kiosk */
+	public boolean hasKiosk() {
+		return this.kiosk != null;
 	}
 
 	/**

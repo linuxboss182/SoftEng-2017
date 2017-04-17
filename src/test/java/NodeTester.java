@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
 
+import entities.Directory;
 import entities.Node;
 /**
  * This is a class to test the Node class.
@@ -199,7 +200,10 @@ public class NodeTester
 		a.connect(c);
 		a.connect(d);
 		// carry out test
-		a.disconnectAll();
+		Directory dir = new Directory();
+		dir.addNode(a);
+		dir.removeNodeAndRoom(a); // calls a.disconnectAll()
+
 		Set<Node> neighbors = a.getNeighbors();
 		boolean t1 = neighbors.contains(b);
 		boolean t2 = neighbors.contains(c);
@@ -224,7 +228,10 @@ public class NodeTester
 		c.connect(d);
 		d.connect(b);
 		// carry out test
-		a.disconnectAll();
+		Directory dir = new Directory();
+		dir.addNode(a);
+		dir.removeNodeAndRoom(a); // calls a.disconnectAll();
+
 		// test to make sure node a connections are severed
 		Set<Node> neighbors = a.getNeighbors();
 		boolean tA1 = ! neighbors.contains(b);

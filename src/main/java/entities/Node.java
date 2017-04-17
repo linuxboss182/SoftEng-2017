@@ -168,11 +168,8 @@ public class Node
 	 *
 	 * Remove this node from the neighbor set of all nodes adjacent to it,
 	 * and empty this node's neighbor set
-	 * 
-	 * @deprecated This isn't actually deprecated, but should be package-private.
 	 */
-	@Deprecated
-	public void disconnectAll() { // void only because HashSet.clear() is void-typed
+	void disconnectAll() { // void only because HashSet.clear() is void-typed
 		this.neighbors.forEach(node -> node.neighbors.remove(this));
 		this.neighbors.clear();
 	}

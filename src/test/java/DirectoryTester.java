@@ -50,28 +50,30 @@ public class DirectoryTester
 		Assert.assertEquals(true, d.getRooms().contains(r));
 	}
 
-	@Test
-	public void testRemoveNode() {
-		Directory d = new Directory(); //Create a new directory
-		Node n = new Node(20, 30, 0); //Create a new node
-		d.addNode(n); //Add the node to the list
-		Assert.assertEquals(1, d.getNodes().size()); //Make sure node is added
-		d.removeNode(n); //Remove the node from the list
-		Assert.assertEquals(false, d.getNodes().contains(n));
-	}
+	// Removed because Directory::removeNode is private
+//	@Test
+//	public void testRemoveNode() {
+//		Directory d = new Directory(); //Create a new directory
+//		Node n = new Node(20, 30, 0); //Create a new node
+//		d.addNode(n); //Add the node to the list
+//		Assert.assertEquals(1, d.getNodes().size()); //Make sure node is added
+//		d.removeNode(n); //Remove the node from the list
+//		Assert.assertEquals(false, d.getNodes().contains(n));
+//	}
 
-	@Test
-	public void testRemoveRoom() {
-		Directory d = new Directory(); //Create a new directory
-		Node n = new Node(20, 30, 4);
-		Room r = new Room("aRoom", "desc"); //Create a new node
-		r.setLocation(n);
-		n.setRoom(r);
-		d.addRoom(r); //Add the room to the list
-		Assert.assertEquals(1, d.getRooms().size()); //Make sure room is added
-		d.removeRoom(r); //Remove the room from the list
-		Assert.assertEquals(false, d.getRooms().contains(r));
-	}
+	// Removed because Directory::removeRoom is private
+//	@Test
+//	public void testRemoveRoom() {
+//		Directory d = new Directory(); //Create a new directory
+//		Node n = new Node(20, 30, 4);
+//		Room r = new Room("aRoom", "desc"); //Create a new node
+//		r.setLocation(n);
+//		n.setRoom(r);
+//		d.addRoom(r); //Add the room to the list
+//		Assert.assertEquals(1, d.getRooms().size()); //Make sure room is added
+//		d.removeRoom(r); //Remove the room from the list
+//		Assert.assertEquals(false, d.getRooms().contains(r));
+//	}
 
 	@Test
 	public void testRemoveProfessional() {
