@@ -3,13 +3,13 @@ package controllers.user;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class UserAboutPage
 {
-	public void initialize(URL location, ResourceBundle resources) {
-		
-		};
+	@FXML
+	private Button ParrotTest;
+
 }
