@@ -252,12 +252,6 @@ public class Node
 		}
 	}
 
-	/** @deprecated Use applyToRoom instead */
-	@Deprecated
-	public boolean containsRoom() {
-		return this.room != null;
-	}
-
 	/**
 	 * Get the this node's shape
 	 *

@@ -676,9 +676,7 @@ public class EditorController extends MapDisplayController
 		this.setFields(selectedNode.getX(), selectedNode.getY());
 
 		//TODO: Use applyToRoom instead of checking containsRoom
-		if(selectedNode.containsRoom()) {
-			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
-		}
+		selectedNode.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
 	}
 
 	/**
