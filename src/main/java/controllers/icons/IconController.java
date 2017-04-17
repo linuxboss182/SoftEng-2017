@@ -78,6 +78,13 @@ public class IconController
 	}
 
 	/**
+	 * Reset the colors of a single node
+	 */
+	public void resetSingleNode(Node node) {
+		this.resetNode(node);
+	}
+
+	/**
 	 * Select one node and deselect all other nodes
 	 */
 	public void selectSingleNode(Node node) {

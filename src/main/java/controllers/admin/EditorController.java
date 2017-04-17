@@ -470,6 +470,18 @@ public class EditorController extends MapDisplayController
 		this.selectedNode.getShape().setCenterY(this.selectedNode.getY());
 	}
 
+	private void updateSelectedNodes(double x, double y) {
+		this.selectedNodes.forEach(n -> {
+			double newX = n.getX() - this.clickedX + x;
+			double newY = n.getY() - this.clickedY + y;
+			n.moveTo(newX, newY);
+			n.getShape().setCenterX(newX);
+			n.getShape().setCenterY(newY);
+		});
+		this.clickedX = x;
+		this.clickedY = y;
+	}
+
 	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
 		if(this.selectedNode == null) return;
 
@@ -511,7 +523,7 @@ public class EditorController extends MapDisplayController
 				this.addNode(e.getX(), e.getY());
 			}
 
-			this.deselectNode();
+			this.deselectNodes();
 
 			this.displayNodes(this.directory.getNodesOnFloor(floor));
 		});
@@ -543,11 +555,15 @@ public class EditorController extends MapDisplayController
 			clickedX = e.getX();
 			clickedY = e.getY();
 			this.shiftPressed = e.isShiftDown();
-			beingDragged = shiftPressed;
+			if(this.shiftPressed) {
+				this.beingDragged = true;
+			}
 		});
 		contentAnchor.setOnMouseDragged(e-> {
 			this.shiftPressed = e.isShiftDown();
-			beingDragged = shiftPressed;
+			if(this.shiftPressed) {
+				this.beingDragged = true;
+			}
 			if(!beingDragged) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
@@ -566,13 +582,14 @@ public class EditorController extends MapDisplayController
 			if(!this.shiftPressed) {
 				this.deselectNodes();
 			}
-			this.addNodeToSelection(n);
+			this.selectOrDeselectNode(n);
 			this.updateFields();
 
 		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
 			/**
 			 * Connect all of the nodes selected to the one that you have clicked on
 			 */
+			// TODO: Make all the nodes either connect or disconnect to the node as a group -- not together
 			this.selectedNodes.forEach(nodes->{
 				nodes.connectOrDisconnect(n);
 			});
@@ -583,11 +600,12 @@ public class EditorController extends MapDisplayController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
-		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
 			if(e.isPrimaryButtonDown()) {
-				this.updateSelectedNode(e.getX(), e.getY());
-				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
+				this.updateSelectedNodes(e.getX(), e.getY());
+				this.setFields(n.getX(), n.getY());
 				this.redrawLines(this.directory.getNodesOnFloor(floor));
+
 			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
 				// do nothing for now
@@ -630,11 +648,20 @@ public class EditorController extends MapDisplayController
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
-	private void addNodeToSelection(Node n) {
-		this.selectedNodes.add(n);
-		this.iconController.selectAnotherNode(n);
+	/**
+	 * Adds or removes the node from the selection pool
+	 * @param n - The Node being selected or deselected
+	 */
+	private void selectOrDeselectNode(Node n) {
+		if(this.selectedNodes.contains(n)) {
+			this.selectedNodes.remove(n);
+			this.iconController.resetSingleNode(n);
+		} else {
+			this.selectedNodes.add(n);
+			this.iconController.selectAnotherNode(n);
+		}
 		this.redisplayGraph();
-		System.out.println(this.selectedNodes.size());
+		System.out.println(this.selectedNodes.size()); // For debugging
 	}
 
 	private void deselectNodes() {
