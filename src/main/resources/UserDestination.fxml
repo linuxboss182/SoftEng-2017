@@ -31,6 +31,7 @@
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
 			<Region prefHeight="30.0" prefWidth="530.0" />
+						<Slider fx:id="zoomSlider" prefHeight="14.0" prefWidth="264.0" />
 			</items>
 		</ToolBar>
 	</top>
@@ -43,40 +44,17 @@
                <children>
                   <Button fx:id="getDirectionsBtn" defaultButton="true" layoutX="-25.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" text="Get Directions" />
                </children></Pane>
-				<ToggleButton mnemonicParsing="false" text="Text-to-Speech" />
 			</items>
 		</ToolBar>
 	</bottom>
 	<center>
-		<SplitPane dividerPositions="0.7671875" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
+		<SplitPane orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
 			<items>
 				<AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
 					<children>
 						<ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
                   <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
-                  <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0">
-                     <children>
-                        <Accordion layoutX="14.0" layoutY="26.0" />
-                     </children></Pane>
-					</children>
-				</AnchorPane>
-				<AnchorPane>
-					<children>
-						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="216.0" layoutY="66.0" prefHeight="17.0" prefWidth="393.0" text="FLOOR" textAlignment="CENTER">
-							<font>
-								<Font size="19.0" />
-							</font>
-						</Label>
-						<Separator layoutX="170.0" layoutY="59.0" prefHeight="13.0" prefWidth="490.0" />
-						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
-							<font>
-								<Font size="19.0" />
-							</font>
-						</Label>
-						<Slider fx:id="zoomSlider" layoutX="276.0" layoutY="35.0" prefHeight="14.0" prefWidth="264.0" />
-						<Button layoutX="552.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#increaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="+" />
-						<Button layoutX="227.0" layoutY="26.0" mnemonicParsing="false" onMouseClicked="#decreaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="-" />
-                  <ChoiceBox fx:id="floorChoiceBox" layoutX="298.0" layoutY="94.0" prefHeight="25.0" prefWidth="227.0" />
+                  <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
 					</children>
 				</AnchorPane>
 			</items>
@@ -117,7 +95,7 @@
                   <Button fx:id="changeStartBtn" mnemonicParsing="false" onAction="#changeStartClicked" prefHeight="25.0" prefWidth="157.0" text="Change Starting Location" />
                </children>
             </GridPane>
-            <Label text="Destination is:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ChoiceBox fx:id="floorChoiceBox" prefHeight="25.0" prefWidth="227.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </left>
