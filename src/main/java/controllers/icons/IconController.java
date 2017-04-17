@@ -102,7 +102,8 @@ public class IconController
 		Shape shape = (Shape) room.getShape().getChildren().get(0);
 		ROOM.DEFAULT.applyTo(shape);
 
-		if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
+		//if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
+		if (room == this.directory.getKiosk()) {
 			ROOM.KIOSK.applyTo(shape);
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
 			ROOM.ELEVATOR.applyTo(shape);
