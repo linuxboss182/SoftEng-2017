@@ -2,6 +2,8 @@ package entities;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -231,6 +233,43 @@ public class Directory
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
+	}
+
+	/**
+	 * Determine if the rooms accessibly to the user are all connected
+	 * 
+	 * This only considers rooms that have locations
+	 *
+	 * @return Whether all rooms are connected
+	 */
+	public boolean roomsAreConnected() {
+		// targets = all rooms with nodes
+		Set<Node> targets = this.rooms.stream()
+				.filter(room -> room.getLocation() != null)
+				.map(Room::getLocation)
+				.collect(Collectors.toSet());
+		if (targets.isEmpty()) return true; // no rooms, so all are connected
+
+		Node start = targets.stream().findAny().orElse(null);
+		if (start == null) throw new RuntimeException("Impossible: had rooms, but couldn't get any from the stream");
+
+		Set<Node> visited = new HashSet<>();
+		List<Node> toVisit = new LinkedList<>();
+
+		toVisit.add(start);
+
+		while (! toVisit.isEmpty()) {
+			Node current = toVisit.remove(0);
+			visited.add(current);
+			for (Node n : current.getNeighbors()) {
+				if (! visited.contains(n)) {
+					toVisit.add(n);
+				}
+			}
+		}
+
+		targets.removeAll(visited);
+		return targets.isEmpty();
 	}
 }
 
