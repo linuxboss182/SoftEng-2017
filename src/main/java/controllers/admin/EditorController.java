@@ -173,30 +173,6 @@ public class EditorController extends MapDisplayController
 		});
 	}
 
-	/**
-	 * Redraw all elements of the map and the professionals' elements
-	 */
-	// TODO: Use this more often
-	private void redisplayAll() {
-		this.redisplayGraph(); // nodes on this floor and lines between them
-		this.populateTableView();
-	}
-
-	/**
-	 * Redisplay the nodes on this floor and the lines
-	 *
-	 * If debugging, display all nodes
-	 */
-	private void redisplayGraph() {
-//		if (EditorController.DEBUGGING) {
-//			this.displayNodes(directory.getNodes());
-//			this.redrawLines(directory.getNodes());
-//		} else {
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines(directory.getNodesOnFloor(floor));
-//		}
-	}
-
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
 
@@ -337,7 +313,32 @@ public class EditorController extends MapDisplayController
 		this.deleteSelectedNode();
 	}
 
+
 	/* **** Non-FXML functions **** */
+
+	/**
+	 * Redraw all elements of the map and the professionals' elements
+	 */
+	// TODO: Use this more often
+	private void redisplayAll() {
+		this.redisplayGraph(); // nodes on this floor and lines between them
+		this.populateTableView();
+	}
+
+	/**
+	 * Redisplay the nodes on this floor and the lines
+	 *
+	 * If debugging, display all nodes
+	 */
+	private void redisplayGraph() {
+//		if (EditorController.DEBUGGING) {
+//			this.displayNodes(directory.getNodes());
+//			this.redrawLines(directory.getNodes());
+//		} else {
+		this.displayNodes(directory.getNodesOnFloor(floor));
+		this.redrawLines(directory.getNodesOnFloor(floor));
+//		}
+	}
 
 	//Editor
 	public void displayNodes(Collection<Node> nodes) {
