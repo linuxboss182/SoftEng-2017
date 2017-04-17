@@ -13,7 +13,7 @@ public class Pathfinder
 {
 	private Pathfinder() {} // Pathfinder can not be instantiated
 
-	private static Algorithm strategy = AStar.instance;
+	private static Algorithm strategy = BreadthFirst.instance;
 
 	/**
 	 * Set the current pathfinding strategy.
