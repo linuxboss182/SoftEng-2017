@@ -2,7 +2,9 @@ package entities;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -10,6 +12,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javax.swing.text.DefaultTextUI;
+
+import controllers.icons.Icon;
 
 
 /**
@@ -32,7 +36,7 @@ public class Room
 	private String description;
 	private String image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
-	private StackPane shape;
+	private Icon shape;
 
 	/* Constructors */
 	public Room(String name, String description, String image) {
@@ -66,7 +70,7 @@ public class Room
 	}
 
 	/** Get this room's shape, and create it if it does not exist */
-	public StackPane getShape() {
+	public Icon getShape() {
 		if(this.shape == null) {
 			this.makeShape(); // maybe move this to the constructor
 		}
@@ -120,12 +124,12 @@ public class Room
 			text.setFont(new Font(FONT_SIZE));
 
 			// A pane with the text on top of the shape; this is what actually represents the room
-			StackPane stackPane = new StackPane(shape, text);
-			this.shape = stackPane;
-			stackPane.setLayoutX(this.location.getX());
-			stackPane.setLayoutY(this.location.getY());
-			stackPane.setAlignment(Pos.TOP_LEFT);
-			stackPane.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
+			Icon icon = new Icon(shape, text);
+			this.shape = icon;
+//			icon.setLayoutX(this.location.getX());
+//			icon.setLayoutY(this.location.getY());
+			//icon.setAlignment(Pos.TOP_LEFT);
+		//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
 }
