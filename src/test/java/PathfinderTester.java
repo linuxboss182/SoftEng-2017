@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,8 +64,8 @@ public class PathfinderTester
 	Test a scenario where the destination node is unreachable (no adjacent nodes)
 	Should return an empty list
 	 */
-	@Test
-	public void unreachableNodeTest() {
+	@Test(expected = PathNotFoundException.class)
+	public void unreachableNodeTest() throws PathNotFoundException {
 		Node origin = new Node(0, 0, 0); //Create a new node
 		Node dest = new Node(10, 10, 0); //Create a new node
 		//Create the nodes
@@ -78,7 +79,7 @@ public class PathfinderTester
 		origin.connect(n3);
 
 		List<Node> shortestDist = new ArrayList<>(); //The empty list
-		Assert.assertEquals(findPathSafely(origin, dest), shortestDist);
+		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist);
 	}
 
 	// 	n[9] -> n[13]: 9, 10, 11, 12, 5, 6, 15, 13
