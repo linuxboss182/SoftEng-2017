@@ -36,7 +36,6 @@ public enum BreadthFirst
 			}
 			for (Node neighbor: current.getNeighbors()){
 				if (!visited.contains(neighbor)) {
-					neighbor.applyToRoom(r -> System.out.println(r.getName()));
 					pathHistory.put(neighbor, current);
 					next.add(neighbor);
 				}

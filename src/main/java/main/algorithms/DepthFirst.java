@@ -7,9 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by rober on 4/16/2017.
- */
+
 public enum DepthFirst
 		implements Algorithm
 {
@@ -27,28 +25,32 @@ public enum DepthFirst
 	public List<Node> findPath(Node start, Node dest)
 			throws PathNotFoundException {
 		Set<Node> visited = new HashSet<>();
-		LinkedList<Node> path = new LinkedList<>();
-		path.push(start);
-		while(path.peek() != dest){
-//			recurse;
+		LinkedList<Node> path = recurse(start, dest, visited);
+		path.addFirst(start);
+		return path;
+		//throw new PathNotFoundException("No path found between the two given nodes.");
+	}
+
+
+	public LinkedList<Node> recurse(Node current, Node dest, Set<Node> visited) {
+		if(current == dest) {
+			LinkedList<Node> output = new LinkedList<>();
+			output.add(current);
+			return output;
 		}
-		throw new PathNotFoundException("todo: add ebtter error message");
+		else{
+			visited.add(current);
+			LinkedList<Node> list = new LinkedList<>();
+			for(Node n: current.getNeighbors()) {
+				if(!visited.contains(n)) {
+					list = recurse(n, dest, visited);
+				}
+				if (!list.isEmpty()) {
+					list.push(n);
+					return list;
+				}
+			}
+		}
+		return new LinkedList<>();
 	}
-	/*
-	public list recurse(current, dest, visited) {
-		if current == dest:
-			output = [current]
-			return output
-		else:
-			visited.add(current)
-			Node n = null;
-			for n in current.getNeighbors():
-				if n not in visited:
-					list = recurse(n, dest, visited)
-					if list not empty:
-						list.push(n)
-						return list
-			return empty list
-	}
-	*/
 }
