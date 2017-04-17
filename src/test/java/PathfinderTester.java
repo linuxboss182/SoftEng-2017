@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
@@ -14,6 +15,17 @@ import entities.Node;
  */
 public class PathfinderTester
 {
+	/** use this to find paths without worrying about missing paths */
+	private static List<Node> findPathSafely(Node n1, Node n2) {
+		List<Node> path = null;
+		try {
+			 path = Pathfinder.findPath(n1, n2);
+		} catch (PathNotFoundException e) {
+			Assert.fail("Path not found, but expected");
+		}
+		return path;
+	}
+
 	@Test
 	public void pathfindTester() {
 	/* Does a simple test on the pathfinder algorithm
@@ -44,7 +56,7 @@ public class PathfinderTester
 		shortestDist.add(origin);
 		shortestDist.add(n1);
 		shortestDist.add(dest);
-		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist); //Make sure the node has been
+		Assert.assertEquals(findPathSafely(origin, dest), shortestDist); //Make sure the node has been
 	}
 
 	/*
@@ -66,7 +78,7 @@ public class PathfinderTester
 		origin.connect(n3);
 
 		List<Node> shortestDist = new ArrayList<>(); //The empty list
-		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist);
+		Assert.assertEquals(findPathSafely(origin, dest), shortestDist);
 	}
 
 	// 	n[9] -> n[13]: 9, 10, 11, 12, 5, 6, 15, 13
@@ -75,7 +87,8 @@ public class PathfinderTester
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 
-		List<Node> result = Pathfinder.findPath(n[9], n[13]);
+		List<Node> result = findPathSafely(n[9], n[13]);
+
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 // uncomment in case of error
 		/* also, add this to build.gradle:
@@ -99,7 +112,7 @@ public class PathfinderTester
 	public void complexPath9to22() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[9], n[22]);
+		List<Node> result = findPathSafely(n[9], n[22]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[9], n[10], n[11], n[12], n[5], n[18], n[21], n[24], n[22]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -110,7 +123,7 @@ public class PathfinderTester
 	public void complexPath19to22() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[19], n[22]);
+		List<Node> result = findPathSafely(n[19], n[22]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[19], n[17], n[23], n[18], n[21], n[24], n[22]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -121,7 +134,7 @@ public class PathfinderTester
 	public void complexPath1to13() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[1], n[13]);
+		List<Node> result = findPathSafely(n[1], n[13]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[1], n[3], n[4], n[8], n[13]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -132,7 +145,7 @@ public class PathfinderTester
 	public void complexPath7to23() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[7], n[23]);
+		List<Node> result = findPathSafely(n[7], n[23]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[7], n[9], n[14], n[16], n[17], n[23]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -183,7 +196,7 @@ public class PathfinderTester
 		//Create the expected node path array
 		Node[] expect = {origin, n1, elev1, elev2, n2, dest};
 		//Find the shortest path
-		List<Node> result = Pathfinder.findPath(origin, dest);
+		List<Node> result = findPathSafely(origin, dest);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		System.out.println(Arrays.asList(expect));
 		System.out.println(result);
@@ -232,7 +245,7 @@ public class PathfinderTester
 		//Expected shortest path
 		Node[] expect = {O, N1, D};
 		//Find the shortest path
-		List<Node> result = Pathfinder.findPath(O, D);
+		List<Node> result = findPathSafely(O, D);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}
