@@ -161,6 +161,7 @@ public class Directory
 		Room room = new Room(name, desc);
 		node.setRoom(room);
 		room.setLocation(node);
+		this.rooms.add(room);
 	}
 
 	/**

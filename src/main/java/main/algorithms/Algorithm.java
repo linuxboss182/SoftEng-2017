@@ -6,11 +6,13 @@ import entities.Node;
 
 /**
  * Interface for algorithms.
- *
- * Beyond what is shown here
+ * 
+ * Besides the 
  */
 interface Algorithm
 {
-	String getName();
-	List<Node> findPath(Node start, Node dest);
+	static final double FLOOR_HEIGHT = 240;
+
+	String getName(); // Algorithms need a display name.
+	List<Node> findPath(Node start, Node dest) throws PathNotFoundException; // Strategy execution.
 }

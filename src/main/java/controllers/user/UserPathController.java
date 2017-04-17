@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 
 import entities.Room;
 import main.DirectionsGenerator;
+import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 
 public class UserPathController
@@ -57,7 +58,14 @@ public class UserPathController
 		}
 		System.out.println("UserPathController.initialize");
 		System.out.println("startRoom = " + startRoom);
-		ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		try {
+			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		} catch (PathNotFoundException e) {
+			// TODO: URGENT Handle PathNotFoundException (with a popup)
+			// TODO: Move the pathfinding (and the error handling) to UserMasterController
+			System.err.println("ERROR, NO PATH FOUND: MUST HANDLE");
+			return;
+		}
 		if (ret.isEmpty()) {
 			// TODO: Handle impossible paths
 		}

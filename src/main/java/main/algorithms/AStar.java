@@ -4,14 +4,19 @@ import entities.Node;
 
 import java.util.*;
 
-class AStar
+public enum AStar
 		implements Algorithm
 {
-	private static final String name = "A*";
+	/** The instance of this singleton */
+	instance; // Access with AStar.instance
+	private AStar() {}
+
+	private static final String NAME = "A*";
+
 
 	@Override
 	public String getName() {
-		return AStar.name;
+		return AStar.NAME;
 	}
 
 	/**
@@ -23,7 +28,7 @@ class AStar
 	 * @return A list of the nodes traversed in the path, in order, or an empty list if
 	 *         no path is found
 	 */
-	public List<Node> findPath(Node start, Node dest) {
+	public List<Node> findPath(Node start, Node dest) throws PathNotFoundException {
 		Double inf = Double.POSITIVE_INFINITY;
 		// list of Nodes that have already been visited
 		Set<Node> visitedNodes = new HashSet<>();
@@ -83,11 +88,12 @@ class AStar
 				}
 			}
 		}
-		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
+		throw new PathNotFoundException("No path exists between the given locations.");
+		// return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
 	}
 
 	private static double heuristic(Node current, Node other) {
-		return current.distance(other, Pathfinder.getFloorHeight());
+		return current.distance(other, Algorithm.FLOOR_HEIGHT);
 	}
 
 	private static List<Node> makePath(Map<Node, Node> pathHistory, Node current){
