@@ -102,6 +102,7 @@ public class EditorController extends MapDisplayController
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
+	protected boolean draggingNode = false;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -379,6 +380,7 @@ public class EditorController extends MapDisplayController
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
+			this.draggingNode = true;
 		});
 
 		/** I commented this out for now because it does not have functionality in our program
@@ -510,20 +512,28 @@ public class EditorController extends MapDisplayController
 	 * Delete All of the Nodes selected
 	 */
 	private void deleteSelectedNodes() { // TODO: Separate this from a function that deletes both room and node
-		this.selectedNodes.forEach(n -> {
-			this.deleteNode(n);
-		});
+		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
+		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
+			Node n = this.selectedNodes.get(i);
+			deleteNode(n);
+			this.selectedNodes.remove(n);
+		}
+		this.selectedNodes.clear();
 		this.redisplayAll();
 	}
 
 	/** Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
 	 */
 	private void deleteOutOfBoundNodes() {
-		this.selectedNodes.forEach(n-> {
+
+		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
+		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
+			Node n = this.selectedNodes.get(i);
 			if(n.getX() < 0 || n.getY() < 0) {
 				deleteNode(n);
+				this.selectedNodes.remove(n);
 			}
-		});
+		}
 		this.redisplayAll();
 	}
 
@@ -606,8 +616,7 @@ public class EditorController extends MapDisplayController
 //			if(this.shiftPressed) {
 //				this.beingDragged = true;
 //			}
-
-			if(this.shiftPressed) {
+			if(this.shiftPressed && !draggingNode) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -637,7 +646,7 @@ public class EditorController extends MapDisplayController
 			e.consume();
 		});
 		contentAnchor.setOnMouseReleased(e->{
-			if(this.shiftPressed) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+			if(this.shiftPressed && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
 				this.redisplayAll(); // this is to clear the rectangle off of the pane
@@ -671,6 +680,7 @@ public class EditorController extends MapDisplayController
 			}
 			this.shiftPressed = e.isShiftDown();
 			this.beingDragged = this.shiftPressed;
+			this.draggingNode = false;
 		});
 	}
 
@@ -704,6 +714,7 @@ public class EditorController extends MapDisplayController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
+		this.draggingNode = true;
 		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
