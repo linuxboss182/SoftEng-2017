@@ -353,6 +353,26 @@ public class EditorController extends MapDisplayController
 	}
 
 	/**
+	 * Recreate and redisplay all lines on this floor
+	 */
+	public void redrawLines(Collection<Node> nodes) {
+		Set<Line> lines = new HashSet<>();
+		for (Node node : nodes) {
+			for (Node neighbor : node.getNeighbors()) {
+				if (node.getFloor() == neighbor.getFloor()) {
+					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
+				}
+//				else if (EditorController.DEBUGGING) {
+//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
+//					ln.setStroke(Color.FUCHSIA);
+//					lines.add(ln);
+//				}
+			}
+		}
+		this.botPane.getChildren().setAll(lines);
+	}	
+
+	/**
 	 * Adds a listener to the choice box.
 	 * Allows you to change floors
 	 */
@@ -487,25 +507,6 @@ public class EditorController extends MapDisplayController
 		this.redisplayAll();
 	}
 
-	/**
-	 * Recreate and redisplay all lines on this floor
-	 */
-	public void redrawLines(Collection<Node> nodes) {
-		Set<Line> lines = new HashSet<>();
-		for (Node node : nodes) {
-			for (Node neighbor : node.getNeighbors()) {
-				if (node.getFloor() == neighbor.getFloor()) {
-					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
-				}
-//				else if (EditorController.DEBUGGING) {
-//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
-//					ln.setStroke(Color.FUCHSIA);
-//					lines.add(ln);
-//				}
-			}
-		}
-		this.botPane.getChildren().setAll(lines);
-	}
 
 	///////////////////////
 	/////EVENT HANDLERS////
