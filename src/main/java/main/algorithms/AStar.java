@@ -4,7 +4,7 @@ import entities.Node;
 
 import java.util.*;
 
-enum AStar
+public enum AStar
 		implements Algorithm
 {
 	/** The instance of this singleton */
