@@ -36,6 +36,13 @@ public class Pathfinder
 	}
 
 	/**
+	 * Get the currently active strategy
+	 */
+	public static Algorithm getStrategy() {
+		return Pathfinder.strategy;
+	}
+
+	/**
 	 * Run the current algorithm to find a path between the given nodes
 	 *
 	 * @param a The node to start the path from
