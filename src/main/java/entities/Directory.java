@@ -26,7 +26,7 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
-	private Optional<Room> kiosk;
+	private Room kiosk;
 	
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
@@ -43,7 +43,7 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
-		this.kiosk = Optional.empty();
+		this.kiosk = null;
 	}
 
 
@@ -79,9 +79,9 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-//	public void setKiosk(Room k) {
-//		this.kiosk = Optional.of(k);
-//	}
+	public void setKiosk(Room k) {
+		this.kiosk = k;
+	}
 
 	public boolean removeNode(Node node) {
 		return this.nodes.remove(node);
@@ -114,23 +114,14 @@ public class Directory
 
 	/** return whether this directory has a kiosk */
 	public boolean hasKiosk() {
-		return this.kiosk.isPresent();
+		return this.kiosk != null;
 	}
 
-//	/**
-//	 * Get kiosk if present, or null otherwise.
-//	 *
-//	 * If kiosk is not present, return null
-//	 *
-//	 * @todo This should return Optional&lt;Room&rt;, not Room.
-//	 */
-//	public Room getKiosk() {
-//		return this.kiosk.orElse(null);
-//	}
-
-	// TODO: We probably don't need this.
-	private int getHeight() {
-		return 4;
+	/**
+	 * Get kiosk if present, or null otherwise.
+	 */
+	public Room getKiosk() {
+		return this.kiosk;
 	}
 
 	/**

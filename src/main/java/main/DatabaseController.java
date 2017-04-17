@@ -2,10 +2,6 @@ package main;
 
 import java.sql.*;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.HashMap;
 
 import entities.Directory;
@@ -204,11 +200,13 @@ public class DatabaseController
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
-			this.retrieveNodes(nodes, rooms);
+			this.retrieveNodesAndRooms(nodes, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(rooms, professionals);
-//			kioskID = this.retrieveKiosk(); // Not using kiosks at the moment
+			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
+			e.printStackTrace();
+			System.err.println("A SQL Exception occured");
 			return false;
 		}
 		//add all to directory
@@ -222,26 +220,24 @@ public class DatabaseController
 			directory.addProfessional(p);
 		}
 		// commented out because we don't have a defined kiosk location at the moment
-//		if (kioskID != null) {
-//			directory.setKiosk(rooms.get(kioskID));
-//		}
+		System.out.println("Kiosk is " + kioskID);
+		if (kioskID != null) {
+			directory.setKiosk(rooms.get(kioskID));
+		}
 
 		return true;
 	}
 
 	/** This method is not in use because we are not using kiosks at the moment */
 	private Integer retrieveKiosk() throws SQLException { // (should return Optional<Integer>)
+		System.out.println("Getting kiosk");
 		Statement query = this.db_connection.createStatement();
 		ResultSet result = query.executeQuery(StoredProcedures.procRetrieveKiosk());
 		if (result.next()) {
-			int i = result.getInt("nodeID");
-			if (result.wasNull()) {
-				return null;
-			} else {
-				return i;
-			}
+			return result.getInt("roomID");
+			// no null check needed because column is "NOT NULL"
 		} else {
-			return null;
+			return null; // empty kiosk table
 		}
 	}
 
@@ -293,7 +289,7 @@ public class DatabaseController
 	 * @param nodes The map of nodes to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
+	private void retrieveNodesAndRooms(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
 		try {
 			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
@@ -395,7 +391,7 @@ public class DatabaseController
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
-			                                        n.getFloor(), n.mapToRoom(r -> r.hashCode()));
+			                                        n.getFloor(), n.mapToRoom(Object::hashCode));
 			db.executeUpdate(query);
 		}
 
@@ -414,11 +410,10 @@ public class DatabaseController
 			db.executeUpdate(query);
 		}
 		/* commented out because, again, kiosks are not yet implemented */
-//		if (dir.hasKiosk()) {
-//			Room n = dir.getKiosk();
-//			query = StoredProcedures.procInsertKiosk(n.hashCode());
-//			db.executeUpdate(query);
-//		}
+		if (dir.hasKiosk()) {
+			query = StoredProcedures.procInsertKiosk(dir.getKiosk().hashCode());
+			db.executeUpdate(query);
+		}
 //		System.out.println("kiosk saved");
 
 		for (Node n : dir.getNodes()) {
