@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import main.algorithms.Pathfinder;
 import org.junit.Test;
