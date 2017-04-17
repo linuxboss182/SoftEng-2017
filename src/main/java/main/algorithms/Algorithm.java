@@ -9,7 +9,7 @@ import entities.Node;
  * 
  * Besides the 
  */
-interface Algorithm
+public interface Algorithm
 {
 	static final double FLOOR_HEIGHT = 240;
 
