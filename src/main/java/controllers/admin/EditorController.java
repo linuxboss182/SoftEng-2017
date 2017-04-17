@@ -29,11 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 import main.ApplicationController;
 import main.DatabaseException;
@@ -99,6 +95,8 @@ public class EditorController extends MapDisplayController
 
 
 	protected Node selectedNode; // you select a node by double clicking
+	protected ArrayList<Node> selectedNodes = new ArrayList<>();
+	protected boolean shiftPressed = false;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -370,27 +368,32 @@ public class EditorController extends MapDisplayController
 	 * @note No other function should add the base listeners to nodes.
 	 */
 	private void addNodeListeners(Node node) {
-		node.getShape().setOnMouseClicked(event -> this.selectOrConnectNodeListener(event, node));
+		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
-		node.getShape().setOnMouseReleased(event -> this.deleteNodeIfOffMapListener(event, node));
+		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
 		});
-		node.getShape().setOnContextMenuRequested(e->{
-			if(node.equals(this.selectedNode)) {
-				ContextMenu optionsMenu = new ContextMenu();
 
-				MenuItem exItem1 = new MenuItem("Connect to Node...");
-				exItem1.setOnAction(e1 -> {
-				});
-				MenuItem exItem2 = new MenuItem("");
-				exItem2.setOnAction(e2 -> {
-				});
-				optionsMenu.getItems().addAll(exItem1, exItem2);
-				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
-			}
-		});
+		/** I commented this out for now because it does not have functionality in our program
+		 * But keep it here because it may be useful in the future
+		 *
+		 */
+//		node.getShape().setOnContextMenuRequested(e->{
+//			if(node.equals(this.selectedNode)) {
+//				ContextMenu optionsMenu = new ContextMenu();
+//
+//				MenuItem exItem1 = new MenuItem("Connect to Node...");
+//				exItem1.setOnAction(e1 -> {
+//				});
+//				MenuItem exItem2 = new MenuItem("");
+//				exItem2.setOnAction(e2 -> {
+//				});
+//				optionsMenu.getItems().addAll(exItem1, exItem2);
+//				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+//			}
+//		});
 	}
 
 	private double readX() {
@@ -536,43 +539,43 @@ public class EditorController extends MapDisplayController
 				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
 			}
 		});
-		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				clickedX = event.getX();
-				clickedY = event.getY();
-			}
+		contentAnchor.setOnMousePressed(e->{
+			clickedX = e.getX();
+			clickedY = e.getY();
+			this.shiftPressed = e.isShiftDown();
+			beingDragged = shiftPressed;
 		});
-		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				if(!beingDragged) {
-					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-				}
-				event.consume();
+		contentAnchor.setOnMouseDragged(e-> {
+			this.shiftPressed = e.isShiftDown();
+			beingDragged = shiftPressed;
+			if(!beingDragged) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
 			}
+			e.consume();
 		});
 	}
 
-	public void selectOrConnectNodeListener(MouseEvent e, Node n) {
+	public void clickNodeListener(MouseEvent e, Node n) {
 		// update text fields
 		this.setFields(n.getX(), n.getY());
 
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-
-			this.selectNode(n);
+			if(!this.shiftPressed) {
+				this.deselectNodes();
+			}
+			this.addNodeToSelection(n);
 			this.updateFields();
 
-		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
-			// ^ checks if there has been a node selected,
-			// checks if the node selected is not the node we are clicking on
-			// and checks if the button pressed is the right mouse button (secondary)
-
-			// finally check if they are connected or not
-			// if they are connected, remove the connection
-			// if they are not connected, add a connection
-			this.selectedNode.connectOrDisconnect(n);
+		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
+			/**
+			 * Connect all of the nodes selected to the one that you have clicked on
+			 */
+			this.selectedNodes.forEach(nodes->{
+				nodes.connectOrDisconnect(n);
+			});
 			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
 	}
@@ -592,7 +595,7 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
-	public void deleteNodeIfOffMapListener(MouseEvent e, Node n) {
+	public void releaseNodeListener(MouseEvent e, Node n) {
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
@@ -627,11 +630,17 @@ public class EditorController extends MapDisplayController
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
-	private void selectNode (Node n){
-		this.selectedNode = n;
-
-		this.iconController.selectSingleNode(n);
+	private void addNodeToSelection(Node n) {
+		this.selectedNodes.add(n);
+		this.iconController.selectAnotherNode(n);
 		this.redisplayGraph();
+		System.out.println(this.selectedNodes.size());
+	}
+
+	private void deselectNodes() {
+		this.iconController.deselectAllNodes();
+		this.selectedNodes.clear();
+		System.out.println(this.selectedNodes.size());
 	}
 
 	private void deselectNode(){

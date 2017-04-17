@@ -86,6 +86,13 @@ public class IconController
 	}
 
 	/**
+	 * Select one node without deselection other nodes
+	 */
+	public void selectAnotherNode(Node node) {
+		NODE.SELECTED.applyTo(node.getShape());
+	}
+
+	/**
 	 * Deselect all nodes in the directory
 	 */
 	public void deselectAllNodes() {
