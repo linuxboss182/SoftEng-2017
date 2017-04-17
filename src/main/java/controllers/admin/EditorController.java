@@ -441,7 +441,6 @@ public class EditorController extends MapDisplayController
 			this.selectedNodes.forEach(n -> {
 				n.connectOrDisconnect(newNode);
 			});
-//			this.displayNodes(directory.getNodesOnFloor(floor));
 			this.redisplayAll();
 		}
 	}
@@ -591,6 +590,8 @@ public class EditorController extends MapDisplayController
 			this.shiftPressed = e.isShiftDown();
 			if(this.shiftPressed) {
 				this.beingDragged = true;
+			} else {
+				this.beingDragged = false;
 			}
 		});
 		contentAnchor.setOnMouseDragged(e-> {
@@ -603,6 +604,11 @@ public class EditorController extends MapDisplayController
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
 			}
 			e.consume();
+		});
+		contentAnchor.setOnMouseReleased(e->{
+			this.shiftPressed = e.isShiftDown();
+			this.beingDragged = this.shiftPressed;
+			
 		});
 	}
 
