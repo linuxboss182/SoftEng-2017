@@ -85,7 +85,7 @@ public class Room
 		this.description = description;
 	}
 
-	public void setImage(String imagepath) {
+	void setImage(String imagepath) {
 		this.image = imagepath;
 	}
 
