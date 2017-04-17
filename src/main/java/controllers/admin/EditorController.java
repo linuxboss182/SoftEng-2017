@@ -340,6 +340,26 @@ public class EditorController extends MapDisplayController
 //		}
 	}
 
+	/**
+	 * This function is currently for testing purposes only
+	 * Using it will modifier listeners that the user can access; be careful
+	 */
+	public void displayRoomsOnFloor() {
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+		for (Room r : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(r.getShape());
+			r.getShape().setOnMouseClicked(event -> {});
+			r.getShape().setOnContextMenuRequested(event -> {});
+			Text label = r.getShape().getLabel();
+			label.setOnMouseDragged(event -> {
+				this.beingDragged = true;
+				label.relocate(event.getX(), event.getY());
+			});
+			label.setOnMouseReleased(event -> this.beingDragged = false);
+		}
+		this.topPane.getChildren().setAll(roomShapes);
+	}
+
 	//Editor
 	public void displayNodes(Collection<Node> nodes) {
 		Set<Circle> nodeShapes = new HashSet<>();
