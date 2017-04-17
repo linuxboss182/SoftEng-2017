@@ -322,7 +322,7 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void deleteRoomBtnClicked() {
-		this.deleteSelectedNode();
+		this.deleteSelectedNodes();
 	}
 
 	/* **** Non-FXML functions **** */
@@ -451,7 +451,7 @@ public class EditorController extends MapDisplayController
 		this.addNodeListeners(newNode);
 	}
 
-	private void  updateSelectedRoom(double x, double y, String name, String description) { //TODO
+	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
 		this.selectedNode.applyToRoom(room -> {
 			room.setName(name);
 			room.setDescription(description);
@@ -482,12 +482,32 @@ public class EditorController extends MapDisplayController
 		this.clickedY = y;
 	}
 
-	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
-		if(this.selectedNode == null) return;
+	/**
+	 * Deletes the node from EVERYTHING
+	 * @param n
+	 */
+	private void deleteNode(Node n) {
+		this.directory.removeNodeAndRoom(n);
+	}
 
-		this.directory.removeNodeAndRoom(this.selectedNode);
-		this.selectedNode = null;
+	/**
+	 * Delete All of the Nodes selected
+	 */
+	private void deleteSelectedNodes() { // TODO: Separate this from a function that deletes both room and node
+		this.selectedNodes.forEach(n -> {
+			this.deleteNode(n);
+		});
+		this.redisplayAll();
+	}
 
+	/** Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
+	 */
+	private void deleteOutOfBoundNodes() {
+		this.selectedNodes.forEach(n-> {
+			if(n.getX() < 0 || n.getY() < 0) {
+				deleteNode(n);
+			}
+		});
 		this.redisplayAll();
 	}
 
@@ -589,7 +609,9 @@ public class EditorController extends MapDisplayController
 			/**
 			 * Connect all of the nodes selected to the one that you have clicked on
 			 */
-			// TODO: Make all the nodes either connect or disconnect to the node as a group -- not together
+
+
+
 			this.selectedNodes.forEach(nodes->{
 				nodes.connectOrDisconnect(n);
 			});
@@ -619,9 +641,8 @@ public class EditorController extends MapDisplayController
 
 		// if the releasedX or Y is negative we want to remove the node
 
-		if(this.releasedX < 0 || this.releasedY < 0) {
-			this.deleteSelectedNode();
-		}
+		// Delete any nodes that were dragged out of bounds
+		this.deleteOutOfBoundNodes();
 
 		this.beingDragged = false;
 	}
