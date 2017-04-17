@@ -33,7 +33,6 @@ public class Pathfinder
 	 * @return A list of nodes representing the path
 	 */
 	public static List<Node> findPath(Node a, Node b) throws PathNotFoundException {
-		Pathfinder.setStrategy(AStar.instance);
 		return Pathfinder.strategy.findPath(a, b);
 	}
 }
