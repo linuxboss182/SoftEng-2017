@@ -724,4 +724,9 @@ public class EditorController extends MapDisplayController
 		algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
 		return algorithmChoiceBox;
 	}
+	
+	/*
+	To set the kiosk, bind this line to a "set kiosk" button:
+	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
+	 */
 }
