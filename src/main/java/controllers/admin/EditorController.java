@@ -237,6 +237,14 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	private void logoutBtnClicked() {
+		if (! directory.roomsAreConnected()) {
+			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
+			// true if and only if the button pressed in the alert did not say "OK"
+			if (! warn.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
+				return;
+			}
+		}
+
 		try {
 			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.botPane.getScene().setRoot(userUI);
