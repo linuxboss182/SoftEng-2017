@@ -120,7 +120,10 @@ public class Node
 	 * @param n The node to connect to this node
 	 *
 	 * @return false if the edge already existed or connection otherwise failed
+	 * 
+	 * @deprecated This isn't actually deprecated, but it should be private.
 	 */
+	@Deprecated
 	public boolean connect(Node n) {
 		if (this == n || n == null) return false;
 		// do not connect roomless nodes on different floors~
@@ -139,7 +142,7 @@ public class Node
 	 *
 	 * @return false if the nodes were not connected
 	 */
-	public boolean disconnect(Node n) {
+	private boolean disconnect(Node n) {
 		n.neighbors.remove(this);
 		return this.neighbors.remove(n);
 	}
@@ -152,7 +155,7 @@ public class Node
 	 *
 	 * @param n The node to connect or disconnect.
 	 */
-	public void connectOrDisconnect(Node n) {
+	void connectOrDisconnect(Node n) {
 		if (this.neighbors.contains(n)) {
 			this.disconnect(n);
 		} else {
@@ -165,7 +168,10 @@ public class Node
 	 *
 	 * Remove this node from the neighbor set of all nodes adjacent to it,
 	 * and empty this node's neighbor set
+	 * 
+	 * @deprecated This isn't actually deprecated, but should be package-private.
 	 */
+	@Deprecated
 	public void disconnectAll() { // void only because HashSet.clear() is void-typed
 		this.neighbors.forEach(node -> node.neighbors.remove(this));
 		this.neighbors.clear();

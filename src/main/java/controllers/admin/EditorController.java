@@ -572,7 +572,7 @@ public class EditorController extends MapDisplayController
 			// finally check if they are connected or not
 			// if they are connected, remove the connection
 			// if they are not connected, add a connection
-			this.selectedNode.connectOrDisconnect(n);
+			directory.connectOrDisconnectNodes(selectedNode, n);
 			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
 	}

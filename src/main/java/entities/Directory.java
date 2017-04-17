@@ -225,5 +225,11 @@ public class Directory
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
 	}
 
+	/**
+	 * Toggle the edge between the given nodes
+	 */
+	public void connectOrDisconnectNodes(Node n1, Node n2) {
+		n1.connectOrDisconnect(n2);
+	}
 }
 
