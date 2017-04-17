@@ -62,8 +62,15 @@ public class UserPathController
 			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
 		} catch (PathNotFoundException e) {
 			// TODO: URGENT Handle PathNotFoundException (with a popup)
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("No Path Found");
+			alert.setHeaderText(null);
+			alert.setContentText("There is no existing path to your destination. \n" +
+					"Please check your start and end location and try again");
+			alert.showAndWait();
+			// TODO: Find a way to close the pathfinding screen (ie press the done button)
 			// TODO: Move the pathfinding (and the error handling) to UserMasterController
-			System.err.println("ERROR, NO PATH FOUND: MUST HANDLE");
+			//System.err.println("ERROR, NO PATH FOUND: MUST HANDLE");
 			return;
 		}
 		if (ret.isEmpty()) {
