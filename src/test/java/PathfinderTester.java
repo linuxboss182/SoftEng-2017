@@ -1,14 +1,14 @@
+import java.nio.file.Path;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import main.algorithms.PathNotFoundException;
+import main.algorithms.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-
 import entities.Node;
-import entities.Directory;
-import main.Pathfinder;
 
 /**
  * Created by Michael on 4/2/2017.
@@ -16,6 +16,19 @@ import main.Pathfinder;
  */
 public class PathfinderTester
 {
+	/** use this to find paths without worrying about missing paths */
+	private static List<Node> findPathSafely(Node n1, Node n2) {
+		List<Node> path = null;
+		try {
+			 path = Pathfinder.findPath(n1, n2);
+		} catch (PathNotFoundException e) {
+			Assert.fail("Path not found, but expected");
+		}
+		return path;
+	}
+
+	@Test
+	public void pathfindTester() {
 	/* Does a simple test on the pathfinder algorithm
 	 * Nodes are organized in a square as shown below
 	 *   n2-----d
@@ -25,14 +38,12 @@ public class PathfinderTester
 	 *   o------n3
 	 *   Correct path is to go through the center
 	 */
-	@Test
-	public void pathfindTester() {
-		Node origin = new Node(0, 0); //Create a new node
-		Node dest = new Node(10, 10); //Create a new node
+		Node origin = new Node(0, 0, 0); //Create a new node
+		Node dest = new Node(10, 10, 0); //Create a new node
 		//Create the nodes
-		Node n1 = new Node (5, 5);
-		Node n2 = new Node (10, 0);
-		Node n3 = new Node (0, 10);
+		Node n1 = new Node (5, 5, 0);
+		Node n2 = new Node (10, 0, 0);
+		Node n3 = new Node (0, 10, 0);
 
 		//Link Adjacencies
 		origin.connect(n1);
@@ -46,24 +57,24 @@ public class PathfinderTester
 		shortestDist.add(origin);
 		shortestDist.add(n1);
 		shortestDist.add(dest);
-		Assert.assertEquals(Pathfinder.findPath(origin, dest), shortestDist); //Make sure the node has been
+		Assert.assertEquals(findPathSafely(origin, dest), shortestDist); //Make sure the node has been
 	}
 
 	/*
 	Test a scenario where the destination node is unreachable (no adjacent nodes)
 	Should return an empty list
 	 */
-	@Test
-	public void unreachableNodeTest() {
-		Node origin = new Node(0, 0); //Create a new node
-		Node dest = new Node(10, 10); //Create a new node
+	@Test(expected = PathNotFoundException.class)
+	public void unreachableNodeTest() throws PathNotFoundException {
+		Node origin = new Node(0, 0, 0); //Create a new node
+		Node dest = new Node(10, 10, 0); //Create a new node
 		//Create the nodes
-		Node n1 = new Node (5, 5);
-		Node n2 = new Node (10, 0);
-		Node n3 = new Node (0, 10);
+		Node n1 = new Node (5, 5, 0);
+		Node n2 = new Node (10, 0, 0);
+		Node n3 = new Node (0, 10, 0);
 
 		//Link Adjacencies
-		origin.connect(n1);
+		origin.connect(n1); 
 		origin.connect(n2);
 		origin.connect(n3);
 
@@ -77,7 +88,8 @@ public class PathfinderTester
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 
-		List<Node> result = Pathfinder.findPath(n[9], n[13]);
+		List<Node> result = findPathSafely(n[9], n[13]);
+
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 // uncomment in case of error
 		/* also, add this to build.gradle:
@@ -101,7 +113,7 @@ public class PathfinderTester
 	public void complexPath9to22() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[9], n[22]);
+		List<Node> result = findPathSafely(n[9], n[22]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[9], n[10], n[11], n[12], n[5], n[18], n[21], n[24], n[22]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -112,7 +124,7 @@ public class PathfinderTester
 	public void complexPath19to22() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[19], n[22]);
+		List<Node> result = findPathSafely(n[19], n[22]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[19], n[17], n[23], n[18], n[21], n[24], n[22]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -123,7 +135,7 @@ public class PathfinderTester
 	public void complexPath1to13() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[1], n[13]);
+		List<Node> result = findPathSafely(n[1], n[13]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[1], n[3], n[4], n[8], n[13]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -131,10 +143,10 @@ public class PathfinderTester
 
 	//	n[7] -> n[23]: 7, 9, 14, 16, 17, 23
 	@Test
-		public void complexPath7to23() {
+	public void complexPath7to23() {
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
-		List<Node> result = Pathfinder.findPath(n[7], n[23]);
+		List<Node> result = findPathSafely(n[7], n[23]);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Node[] expect = {n[7], n[9], n[14], n[16], n[17], n[23]};
 		Assert.assertArrayEquals(expect, resultAsArray);
@@ -142,7 +154,27 @@ public class PathfinderTester
 
 	//Tests the basic functionality of travelling to different floors
 	@Test
-		public void simpleMultiFloorPath() {
+	public void simpleMultiFloorPath() {
+/*
+  X = floor 1
+  O = floor 2
+  Z = both floors
+  E = elevator
+
+   01234567890
+  0X          
+  1           
+  2  Z        
+  3           
+  4           
+  5     E     
+  6           
+  7           
+  8           
+  9           
+  0          O
+
+ */
 		Node origin = new Node(0, 0, 1); //Create a start node
 		Node dest = new Node(10, 10, 2); //Create a end node
 		Node n1 = new Node(2, 2, 1); //Node between origin and elev1
@@ -156,20 +188,26 @@ public class PathfinderTester
 		n2.connect(elev2);
 		dest.connect(n2);
 
-		//Connect elevator nodes to eachother
+		//Connect elevator nodes to each other
 		elev1.connect(elev2);
+		System.out.println(origin.getNeighbors());
+		System.out.println(n1.getNeighbors());
+		System.out.println(elev1.getNeighbors());
 
 		//Create the expected node path array
 		Node[] expect = {origin, n1, elev1, elev2, n2, dest};
 		//Find the shortest path
-		List<Node> result = Pathfinder.findPath(origin, dest);
+		List<Node> result = findPathSafely(origin, dest);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
+		System.out.println(Arrays.asList(expect));
+		System.out.println(result);
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}
 
-	//Test elevator penalty
-	//If destination is on the same floor, Pathfinder should use the path on the same
-	//floor rather than try to find a shorter route via an elevator
+	@Test
+	public void testElevatorPenalty() {
+		//If destination is on the same floor, Pathfinder should use the path on the same
+		//floor rather than try to find a shorter route via an elevator
 	/*
 	 * Floor 1                      Floor 2
 	 * _______________________      ________________________
@@ -186,8 +224,6 @@ public class PathfinderTester
 	 * Path should be [O, N1, D] not [O, E11, E21, E22, E12, D] even though it may appear
 	 * shorter
 	 */
-	@Test
-	public void testElevatorPenalty() {
 
 		//Create the nodes
 		Node O = new Node(0, 20, 1);
@@ -210,7 +246,7 @@ public class PathfinderTester
 		//Expected shortest path
 		Node[] expect = {O, N1, D};
 		//Find the shortest path
-		List<Node> result = Pathfinder.findPath(O, D);
+		List<Node> result = findPathSafely(O, D);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}

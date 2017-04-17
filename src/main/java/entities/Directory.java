@@ -1,9 +1,12 @@
 package entities;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 // TODO: Improve documentation
@@ -22,14 +25,14 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private Optional<Room> kiosk;
+	
+	/** Comparator to allow comparing rooms by name */
+	private static Comparator<Room> roomComparator = (r1, r2) -> {
+		int compName = r1.getName().compareTo(r2.getName());
+		if (compName != 0) return compName;
+		return (r1 == r2) ? 0 : 1;
+	};
 
-	/*
-	addNode, addRoom
-	removeNode, removeRoom
-	addProf, removeProf
-
-	getProfessionals, getRooms, getNodes
-	 */
 
 	/* Constructors */
 
@@ -53,17 +56,12 @@ public class Directory
 	 */
 	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>((r1, r2) -> {
-			int compName = r1.getName().compareTo(r2.getName());
-			if (compName != 0) return compName;
-			return (r1 == r2) ? 0 : 1;
-			// handle identity or SortedSet won't take people with the same name
-		});
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
 
-	public Set<Professional> getProfessionals() {
+	public SortedSet<Professional> getProfessionals() {
 		return new TreeSet<>(this.professionals);
 	}
 
@@ -163,6 +161,7 @@ public class Directory
 		Room room = new Room(name, desc);
 		node.setRoom(room);
 		room.setLocation(node);
+		this.rooms.add(room);
 	}
 
 	/**
@@ -196,10 +195,7 @@ public class Directory
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
 	public Set<Node> getNodesOnFloor(int floor) {
-		return this.nodes.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(node -> node.getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterNodes(node -> node.getFloor() == floor);
 	}
 
 	/**
@@ -211,10 +207,30 @@ public class Directory
 	 * @return
 	 */
 	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.rooms.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(room -> room.getLocation() != null && room.getLocation().getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterRooms(room -> room.getLocation() != null && room.getLocation().getFloor() == floor);
+	}
+
+	/**
+	 * Gets all nodes in this directory that match the given predicate
+	 */
+	public Set<Node> filterNodes(Predicate<Node> predicate) {
+		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Gets all rooms in this directory that match the given predicate
+	 */
+	public Set<Room> filterRooms(Predicate<Room> predicate) {
+		return this.rooms.stream().filter(predicate)
+				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
+		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
+	}
+
+	/**
+	 * Toggle the edge between the given nodes
+	 */
+	public void connectOrDisconnectNodes(Node n1, Node n2) {
+		n1.connectOrDisconnect(n2);
 	}
 }
 
