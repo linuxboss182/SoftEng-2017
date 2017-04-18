@@ -95,7 +95,7 @@ public class EditorController extends MapDisplayController
 	private Label xPos;
 
 
-	protected Node selectedNode; // you select a node by double clicking
+//	protected Node selectedNode; // you select a node by double clicking
 	protected ArrayList<Node> selectedNodes = new ArrayList<>();
 	protected boolean shiftPressed = false;
 	protected double selectionStartX;
@@ -256,18 +256,18 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedProf == null || this.selectedNode == null) return;
+		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
 
-		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> this.selectedProf.addLocation(room)));
 
 		this.populateTableView();
 	}
 
 	@FXML
 	public void delProfFromRoom() {
-		if (this.selectedNode == null || this.selectedProf == null) return;
+		if (this.selectedNodes.size() == 0 || this.selectedProf == null) return;
 
-		this.selectedNode.applyToRoom(room -> this.selectedProf.removeLocation(room));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> this.selectedProf.removeLocation(room)));
 
 		this.populateTableView();
 	}
@@ -322,7 +322,7 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void modifyRoomBtnClicked() { //TODO
-		if(this.selectedNode == null) return;
+		if(this.selectedNodes.size() != 1) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
@@ -441,8 +441,10 @@ public class EditorController extends MapDisplayController
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
-		if (this.selectedNode != null && this.selectedNode.getRoom() == null) {
-			directory.addNewRoomToNode(this.selectedNode, name, description);
+		// This first condition requires that there has only been one node selected\
+		// TODO: Review this assumption
+		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
+			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
 			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
 			this.addNodeListeners(newNode);
@@ -470,8 +472,15 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
+	/**
+	 * This should only be called by the modify room button
+	 *
+	 * it runs with the assumption that it has been guaranteed a room is in the selected Nodes list at index 0
+	 *
+	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
+	 */
 	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
-		this.selectedNode.applyToRoom(room -> {
+		this.selectedNodes.get(0).applyToRoom(room -> {
 			room.setName(name);
 			room.setDescription(description);
 			// Reset name
@@ -483,10 +492,17 @@ public class EditorController extends MapDisplayController
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
-	private void updateSelectedNode(double x, double y) { //TODO
-		this.selectedNode.moveTo(x, y);
-		this.selectedNode.getShape().setCenterX(this.selectedNode.getX());
-		this.selectedNode.getShape().setCenterY(this.selectedNode.getY());
+	/**
+	 * This should only be called in theory by the method called by the modify room button.
+	 *
+	 * It runs with the assumption that it has been guaranteed that a node is in the selectedNodes list at index 0
+	 *
+	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
+	 */
+	private void updateSelectedNode(double x, double y) {
+		this.selectedNodes.get(0).moveTo(x, y);
+		this.selectedNodes.get(0).getShape().setCenterX(this.selectedNodes.get(0).getX());
+		this.selectedNodes.get(0).getShape().setCenterY(this.selectedNodes.get(0).getY());
 	}
 
 	private void updateSelectedNodes(double x, double y) {
@@ -699,6 +715,8 @@ public class EditorController extends MapDisplayController
 			if(!this.shiftPressed) {
 				if(this.selectedNodes.size() > 1) {
 					this.deselectNodes();
+				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
+					this.deselectNodes();
 				}
 			}
 			this.selectOrDeselectNode(n);
@@ -791,11 +809,13 @@ public class EditorController extends MapDisplayController
 		System.out.println(this.selectedNodes.size());
 	}
 
-	private void deselectNode(){
-		this.selectedNode = null;
-		this.iconController.deselectAllNodes();
-		this.redisplayGraph();
-	}
+	// This method is commented out because it is outdated and was only used when there was singular node selection
+	// In the current implementation it is not needed
+//	private void deselectNode(){
+//		this.selectedNode = null;
+//		this.iconController.deselectAllNodes();
+//		this.redisplayGraph();
+//	}
 
 	private void setXCoordField(double x) {
 		this.xCoordField.setText(x+"");
@@ -823,18 +843,18 @@ public class EditorController extends MapDisplayController
 		this.setDescriptField(desc);
 	}
 
-	/** Updates the node/room fields based off of the selected node (or room)
+	/** Updates the node/room fields based off of the most recently selected node (or room)
 	 *
 	 */
 	private void updateFields() {
-		if(selectedNode == null) {
+		if(selectedNodes.size() == 0) {
 			return;
 		}
-		this.setFields(selectedNode.getX(), selectedNode.getY());
+		this.setFields(selectedNodes.get(this.selectedNodes.size() - 1).getX(), selectedNodes.get(this.selectedNodes.size() - 1).getY());
 
 		//TODO: Use applyToRoom instead of checking containsRoom
-		if(selectedNode.containsRoom()) {
-			this.setRoomFields(selectedNode.getRoom().getName(), selectedNode.getRoom().getDescription());
+		if(selectedNodes.get(this.selectedNodes.size() - 1).containsRoom()) {
+			this.setRoomFields(selectedNodes.get(this.selectedNodes.size() - 1).getRoom().getName(), selectedNodes.get(this.selectedNodes.size() - 1).getRoom().getDescription());
 		}
 	}
 
