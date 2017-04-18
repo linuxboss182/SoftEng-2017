@@ -1,9 +1,8 @@
 import entities.Directory;
 import entities.Node;
-import entities.Professional;
 import entities.Room;
-import main.DatabaseController;
-import main.DatabaseException;
+import main.database.DatabaseController;
+import main.database.DatabaseException;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -58,7 +57,7 @@ public class DatabaseTester
 		try{
 			controller.init();
 		}
-		catch (main.DatabaseException e){
+		catch (DatabaseException e){
 			System.out.println("Database did not init");
 			Assert.fail();
 		}

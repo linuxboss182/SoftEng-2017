@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.*;
 
 import main.ApplicationController;
-import main.DatabaseException;
+import main.database.DatabaseException;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
