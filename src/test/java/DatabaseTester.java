@@ -1,9 +1,8 @@
 import entities.Directory;
 import entities.Node;
-import entities.Professional;
 import entities.Room;
-import main.DatabaseController;
-import main.DatabaseException;
+import main.database.DatabaseWrapper;
+import main.database.DatabaseException;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -41,7 +40,7 @@ public class DatabaseTester
 		Node nodeA = new Node(1,2, 4);
 		Node nodeB = new Node(2,3, 4);
 
-		DatabaseController controller = new DatabaseController();
+		DatabaseWrapper controller = new DatabaseWrapper();
 		Directory oldDirectory = new Directory();
 
 		oldDirectory.addRoom(roomA);
@@ -58,18 +57,12 @@ public class DatabaseTester
 		try{
 			controller.init();
 		}
-		catch (main.DatabaseException e){
+		catch (DatabaseException e){
 			System.out.println("Database did not init");
 			Assert.fail();
 		}
 
-		try {
-			controller.destructiveSaveDirectory(oldDirectory);
-		} catch (DatabaseException e) {
-			System.out.println(e.getMessage());
-			Assert.fail();
-			e.printStackTrace();
-		}
+		controller.saveDirectory(oldDirectory);
 
 		Directory newDirectory = controller.getDirectory();
 

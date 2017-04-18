@@ -16,10 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
@@ -72,6 +69,12 @@ public abstract class UserMasterController
 	private ToolBar bottomToolbar;
 	@FXML
 	private BorderPane parentBorderPane;
+	@FXML
+	private SplitPane mapSplitPane;
+	@FXML
+	private GridPane destGridPane;
+	@FXML
+	private GridPane bottomGridPane;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -343,8 +346,6 @@ public abstract class UserMasterController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		System.out.println("userPath = " + userPath);
-		System.out.println("this.getScene() = " + this.getScene());
 		this.getScene().setRoot(userPath);
 	}
 
@@ -402,20 +403,29 @@ public abstract class UserMasterController
 	}
 
 	public void scaleElements() {
-		System.out.println("this.bottomToolbar = " + this.bottomToolbar);
-		System.out.println("this.parentBorderPane = " + this.parentBorderPane);
 		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
-		this.contentAnchor.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+		this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
 		System.out.println("half of window: " + parentBorderPane.getWidth() / 2);
 		System.out.println("this.getDirectionsBtn = " + this.getDirectionsBtn);
 		if(this.getDirectionsBtn != null) {
 			this.getDirectionsBtn.relocate((parentBorderPane.getWidth() / 2), (bottomToolbar.getHeight() / 2));
 		}
+		this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
+		double windowWidth = parentBorderPane.getWidth();
+		//destGridPane.setPrefWidth(windowWidth / 4);
+
+		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
+		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
+		bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth()-100);
+		for (ColumnConstraints c: bottomGridPane.getColumnConstraints()) {
+			c.setPrefWidth(bottomToolbar.getWidth()/3);
+		}
+
 		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
 	}
 
 	public void windowResized() {
-		System.out.println("this.parentBorderPane = " + this.parentBorderPane);
+
 		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 				System.out.println("Width: " + newSceneWidth);

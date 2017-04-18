@@ -1,4 +1,4 @@
-package main;
+package main.database;
 
 import java.sql.*;
 import java.util.Map;
@@ -11,12 +11,22 @@ import entities.Room;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
-public class DatabaseController
+/**
+ * Class for saving to and loading from the database
+ * 
+ * Package methods:
+ * - DatabaseLoader(): Constructor
+ * - getDirectory(): 
+ * - populateDirectory(): builds a directory by loading from the database
+ * - destructiveSaveDirectory(Directory): empties the database, then saves the directory
+ *                                        to the database
+ */
+class DatabaseLoader
 {
 	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
+	private DatabaseConnector dbConn;
 	private Connection db_connection;
-	private String connection_string;
 
 	// Debugging functions
 //	private static void PRINTLN(Object o) {
@@ -26,162 +36,12 @@ public class DatabaseController
 //		System.out.print(o);
 //	}
 
-	public DatabaseController(String connection_string) {
-		this.connection_string = connection_string;
+	DatabaseLoader(DatabaseConnector dbConn) {
+		this.dbConn = dbConn;
+		this.db_connection = dbConn.getConnection();
 	}
 
-	public DatabaseController(){
-		this("jdbc:derby:DB;create=true");
-	}
-
-	/**
-	 * Attempt to connect to the database
-	 *
-	 * If the database does not exist, it is created and the tables are created.
-	 *
-	 * @throws DatabaseException if the connection fails
-	 */
-	public void init()
-			throws DatabaseException {
-		boolean flag = this.initDB();
-		if (! flag) {
-			throw new DatabaseException("Connection failed");
-		}
-
-		SQLWarning warning;
-		try {
-			// db warning was issued if db existed before this function was called
-			warning = this.db_connection.getWarnings();
-			// if null, no warning = new database
-		} catch (SQLException e) {
-			throw new DatabaseException("Failed to check connecton warnings", e);
-		}
-
-		if (warning == null) { //if null, DB does not exist
-			flag = this.reInitSchema();
-			if (! flag) {
-				throw new DatabaseException("Failed to initialize database schema");
-			}
-		}
-	}
-
-	//initialize the database
-	//returns true if success, false if failure
-	// (do not add db calls after the line indicated below)
-	private boolean initDB() {
-		try {
-			Class.forName(DatabaseController.driver);
-		} catch(ClassNotFoundException e) {
-			System.err.println("Java DB Driver not found. Add the classpath to your module.");
-			return false;
-		}
-		System.out.println("Connected to database");
-
-		try {
-			this.db_connection = DriverManager.getConnection(this.connection_string);
-			// MAKE NO MORE DB CALLS AFTER THIS POINT (they could break this.init())
-		} catch (SQLException e) {
-			System.err.println("Connection failed. Check output console.");
-			e.printStackTrace();
-			return false;
-		}
-		System.out.println("Java DB connection established!");
-		return true;
-	}
-
-	//initializes the database empty with the desired schema
-	//returns true if success, false if error
-
-	/**
-	 * Initialize the database schema
-	 *
-	 * Deletes and recreates all tables in the database
-	 *
-	 * @return true if successful
-	 */
-	// TODO: Refactor so reInitSchema throws SQLException to be handled elsewhere in the class
-	private boolean reInitSchema() {
-		boolean result;
-		Statement initSchema = null;
-		try {
-			initSchema = this.db_connection.createStatement();
-		} catch (SQLException e) {
-			//something's really bad if we get here. like "we don't have a database" bad
-			e.printStackTrace();
-			return false;
-		}
-
-		for (String dropStatement : StoredProcedures.getDrops()) {
-			//drop the table if it exists
-			try {
-				initSchema.executeUpdate(dropStatement);
-			} catch (SQLException e) {
-				System.err.println("Failed statement: " + dropStatement);
-				System.err.println(e.getMessage());
-			}
-		}
-
-		for (String table : StoredProcedures.getSchema()) {
-			try {
-				initSchema.executeUpdate(table);
-			} catch (SQLException e) {
-				System.err.println("Failed statement: " + table);
-				System.err.println(e.getMessage());
-			}
-		}
-
-		/**  Code below wasn't working and was replaced with for loops above. Keeping just
-		 *   in case we want to use it again. */
-		/*
-		String[] schema = StoredProcedures.getSchema();
-		//find our tables in the schema
-		for (int i=0; i < schema.length; i++) {
-			Pattern matchTable = Pattern.compile("\\bCREATE\\b\\s\\bTABLE\\b\\s(\\w*)");
-			Matcher matcher = matchTable.matcher(schema[i]);
-			boolean found = false;
-			while (matcher.find() && found == false) {
-				//we're making a table
-				String table = matcher.group(1); //group zero = entire expression
-
-				//make the table if it doesn't exist
-				try {
-					initSchema.executeUpdate(schema[i]);
-				} catch (SQLException e) {
-					System.err.println("Failed to create table " + table + ". Continuing...");
-					System.err.println(e.getMessage());
-				}
-
-				found = true;
-			}
-		}
-		*/
-		//close connection via statement
-		try {
-			initSchema.close();
-		} catch (SQLException e) {
-			System.err.println("Failed to close connection");
-			e.printStackTrace();
-			return false;
-		}
-
-		//stop once we find the first match(assume one create statement per string)
-		return true;
-	}
-
-	// close the connection to the database
-	// returns true if success, false if failure
-	public boolean close() {
-		try {
-			this.db_connection.close();
-			return true;
-		} catch (SQLException e) {
-			System.err.println("Failed to close connection");
-			e.printStackTrace();
-		 	return false;
-		}
-	}
-
-	public Directory getDirectory() {
+	Directory getDirectory() {
 		Directory dir = new Directory();
 		this.populateDirectory(dir);
 		return dir;
@@ -193,7 +53,7 @@ public class DatabaseController
 	 * @param directory The directory to populate
 	 * @return True if success, false if failure
 	 */
-	public boolean populateDirectory(Directory directory) {
+	private boolean populateDirectory(Directory directory) {
 		Map<Integer, Node> nodes = new HashMap<>();
 		Map<Integer, Room> rooms = new HashMap<>();
 		Map<Integer, Professional> professionals = new HashMap<>();
@@ -369,9 +229,9 @@ public class DatabaseController
 	 */
 	// TODO: manually create a backup of the database before destroying it
 	// (i.e. copy the db directory, then operate, and remove it if successful)
-	public void destructiveSaveDirectory(Directory dir)
+	void destructiveSaveDirectory(Directory dir)
 			throws DatabaseException {
-		this.reInitSchema(); // drop tables, then recreate tables
+		this.dbConn.reInitSchema(); // drop tables, then recreate tables
 		System.out.println("START SAVING");
 		try {
 			this.saveDirectory(dir); // insert directory info into tables
@@ -449,7 +309,8 @@ public class DatabaseController
 	}
 
 	//A test call to the database
-	public void exampleQueries() {
+	@Deprecated
+	private void exampleQueries() {
 		try {
 			Statement statement = this.db_connection.createStatement();
 			ResultSet results = statement.executeQuery("SELECT employeeSurname FROM Employees WHERE employeeTitle='Dr.'");

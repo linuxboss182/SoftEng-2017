@@ -1,4 +1,4 @@
-package main;
+package main.database;
 
 public class DatabaseException
 		extends Exception
