@@ -197,7 +197,7 @@ class DatabaseLoader
 				int node1 = resultEdges.getInt("node1");
 				int node2 = resultEdges.getInt("node2");
 //				PRINTLN("Loading edge "+node1+" "+node2);
-				directory.connectNodes(nodes.get(node1), nodes.get(node1));
+				directory.connectNodes(nodes.get(node1), nodes.get(node2));
 			}
 			resultEdges.close();
 
