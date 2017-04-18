@@ -101,7 +101,7 @@ public class UserPathController
 		int next = ret.get(ret.size()-1).getFloor();
 		// add starting floor
 		floors.add(here);
-		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+		this.createNewFloorButton(ret.get(here).getBuildingName(), here, this.getPathOnFloor(here, ret), floors.size());
 		//prints all the floors on the path in order
 // 		System.out.println(ret.stream().map(Node::getFloor).collect(Collectors.toList()).toString());
 
@@ -113,17 +113,17 @@ public class UserPathController
 			// Check when there is a floor A -> floor B -> floor B transition and save floor B
 			if (last != here && next == here) {
 				floors.add(here);
-				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+				this.createNewFloorButton(ret.get(here).getBuildingName(), here, this.getPathOnFloor(here, ret), floors.size());
 			}
 		}
 		// Check that the last node's floor (which will always be 'next') is in the list
 		if (floors.get(floors.size()-1) != next) {
 			floors.add(next);
-			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
+			this.createNewFloorButton(ret.get(next).getBuildingName(), next, this.getPathOnFloor(next, ret), floors.size());
 		}
 	}
 
-	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
+	private void createNewFloorButton(String building, int floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
 
 		int buttonWidth = 80;
@@ -137,7 +137,7 @@ public class UserPathController
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
-		FloorProxy map = FloorProxy.maps.get(floor - 1);
+		FloorProxy map = FloorProxy.getFloorMaps().get(building).get(floor - 1);
 
 		newFloorButton.setImage(map.displayThumb());
 		newFloorButton.setPickOnBounds(true);

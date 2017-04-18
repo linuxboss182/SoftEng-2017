@@ -242,8 +242,8 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
-	private void changeFloor(int floor) {
-		this.switchFloors(floor);
+	private void changeFloor(String building, int floor) {
+		this.switchFloors(building, floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayGraph();
 	}
@@ -407,7 +407,7 @@ public class EditorController extends MapDisplayController
 		this.populateFloorChoiceBox();
 		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
 				(observable, oldValue, newValue) -> {
-					if(newValue.intValue() >= 0) changeFloor(newValue.intValue()+1);
+					if(newValue.intValue() >= 0) changeFloor(building, newValue.intValue()+1);
 				});
 	}
 
@@ -499,7 +499,7 @@ public class EditorController extends MapDisplayController
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
-			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
+			Node newNode = directory.addNewRoomNode(x, y, floor, name, description, building);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
@@ -514,7 +514,7 @@ public class EditorController extends MapDisplayController
 		if(x < 0 || y < 0) {
 			return;
 		}
-		Node newNode = this.directory.addNewNode(x, y, floor);
+		Node newNode = this.directory.addNewNode(x, y, floor, building);
 		this.addNodeListeners(newNode);
 
 		int size = this.selectedNodes.size();
