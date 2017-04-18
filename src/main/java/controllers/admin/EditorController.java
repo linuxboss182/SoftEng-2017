@@ -161,6 +161,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.setPickOnBounds(false);
 
 		this.installPaneListeners();
+		this.setUpAlgorithmChoiceBox();
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
@@ -924,13 +925,12 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Get a choice box that sets the active algorithm
 	 */
-	private ChoiceBox<Algorithm> makeAlgorithmChoiceBox() {
+	private void setUpAlgorithmChoiceBox() {
 		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
 		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
 		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
 		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
-		return this.algorithmChoiceBox;
 	}
 
 	/*
