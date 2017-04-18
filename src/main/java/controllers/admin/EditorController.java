@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -98,7 +99,8 @@ public class EditorController extends MapDisplayController
 	private Label xPos;
 	@FXML
 	private ChoiceBox<Algorithm> algorithmChoiceBox;
-
+	@FXML
+	private BorderPane parentBorderPane;
 
 //	protected Node selectedNode; // you select a node by double clicking
 	protected ArrayList<Node> selectedNodes = new ArrayList<>();
@@ -180,6 +182,16 @@ public class EditorController extends MapDisplayController
 				// TODO: Allow professional selection from the TableView
 				//selectedLocation = newValue;
 			}
+		});
+
+
+		/** This is the section for key listeners.
+		 *
+		 *
+		 */
+		parentBorderPane.setOnKeyPressed(e-> {
+//			System.out.println(e); // Prints out key statements
+			
 		});
 
 	}
