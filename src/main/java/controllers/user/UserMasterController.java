@@ -69,6 +69,8 @@ public abstract class UserMasterController
 	@FXML
 	private ComboBox floorChoiceBox;
 	@FXML
+	private ComboBox buildingChoiceBox;
+	@FXML
 	private ToolBar bottomToolbar;
 	@FXML
 	private BorderPane parentBorderPane;
@@ -265,7 +267,7 @@ public abstract class UserMasterController
 		// Unset navigation targets for after logout
 		startRoom = null;
 		endRoom = null;
-		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
 
 
@@ -408,23 +410,23 @@ public abstract class UserMasterController
 	}
 
 	public void scaleElements() {
-		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
-		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
-		if(this.getDirectionsBtn != null) {
-			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
-		}
-
-		double windowWidth = parentBorderPane.getWidth();
-		//destGridPane.setPrefWidth(windowWidth / 4);
-
-		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
-		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
-		if(this.bottomGridPane != null) {
-			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
-			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
-				c.setPrefWidth(bottomToolbar.getWidth() / 3);
-			}
-		}
+//		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+//		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
+//		if(this.getDirectionsBtn != null) {
+//			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
+//		}
+//
+//		double windowWidth = parentBorderPane.getWidth();
+//		//destGridPane.setPrefWidth(windowWidth / 4);
+//
+//		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
+//		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
+//		if(this.bottomGridPane != null) {
+//			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
+//			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
+//				c.setPrefWidth(bottomToolbar.getWidth() / 3);
+//			}
+//		}
 
 		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
 	}
