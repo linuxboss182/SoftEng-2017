@@ -98,7 +98,7 @@ public class NodeTester
 		Directory dir = new Directory();
 		Node a = dir.addNewNode(0, 0, 0);
 		Node b = dir.addNewNode(0, 0, 0);
-		a.connect(b);
+		dir.connectNodes(a, b);
 		Set<Node> resultA = a.getNeighbors();
 		Set<Node> resultB = b.getNeighbors();
 		Set<Node> expectA = new HashSet<>();
@@ -222,11 +222,9 @@ public class NodeTester
 		dir2.removeNodeAndRoom(a); // calls a.disconnectAll()
 
 		Set<Node> neighbors = a.getNeighbors();
-		boolean t1 = neighbors.contains(b);
-		boolean t2 = neighbors.contains(c);
-		boolean t3 = neighbors.contains(d);
-		boolean result = t1 || t2 || t3;
-		Assert.assertTrue(!result);
+		Assert.assertTrue("t1", ! neighbors.contains(b));
+		Assert.assertTrue("t2", ! neighbors.contains(c));
+		Assert.assertTrue("t3", ! neighbors.contains(d));
 	}
 
 	// run test on graph of 4 nodes and run disconnect all on just node a, keep
@@ -244,7 +242,7 @@ public class NodeTester
 		dir.connectNodes(a, d);
 		dir.connectNodes(b, c);
 		dir.connectNodes(c, d);
-		dir.connectNodes(b, b);
+		dir.connectNodes(d, b);
 		// carry out test
 		Directory dir2 = new Directory();
 		dir2.addNode(a);
@@ -252,15 +250,13 @@ public class NodeTester
 
 		// test to make sure node a connections are severed
 		Set<Node> neighbors = a.getNeighbors();
-		boolean tA1 = ! neighbors.contains(b);
-		boolean tA2 = ! neighbors.contains(c);
-		boolean tA3 = ! neighbors.contains(d);
+		Assert.assertTrue("tA1", ! neighbors.contains(b));
+		Assert.assertTrue("tA2", ! neighbors.contains(c));
+		Assert.assertTrue("tA3", ! neighbors.contains(d));
 		// test to make sure nodes b, c, and d are still connected amongst each other
-		boolean t4 = b.getNeighbors().contains(c);
-		boolean t5 = c.getNeighbors().contains(d);
-		boolean t6 = d.getNeighbors().contains(b);
-		boolean result = tA1 && tA2 && tA3 && t4 && t5 && t6;
-		Assert.assertTrue(result);
+		Assert.assertTrue("t4", b.getNeighbors().contains(c));
+		Assert.assertTrue("t5", c.getNeighbors().contains(d));
+		Assert.assertTrue("t6", d.getNeighbors().contains(b));
 	}
 
 }

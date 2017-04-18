@@ -18,27 +18,25 @@ public class DatabaseTester
 {
 	@Test
 	public void tester(){
+		Directory dir = new Directory();
 		//Create 3 Rooms
-		Room roomA = new Room("A", "A", "A");
-		Room roomB = new Room("B", "B", "B");
-		Room roomC = new Room("C", "C", "C");
+		Room roomA = dir.addNewRoom("A", "A");
+		Room roomB = dir.addNewRoom("B", "B");
+		Room roomC = dir.addNewRoom("C", "C");
 
 		//Create Nodes attached to Rooms
-		Node roomNodeA = new Node(1, 1, 4);
-		Node roomNodeB = new Node(2, 2, 4);
-		Node roomNodeC = new Node(3, 3,4);
+		Node roomNodeA = dir.addNewNode(1, 1, 4);
+		Node roomNodeB = dir.addNewNode(2, 2, 4);
+		Node roomNodeC = dir.addNewNode(3, 3,4);
 
 		//Attach the node to the room
-		roomA.setLocation(roomNodeA);
-		roomNodeA.setRoom(roomA);
-		roomB.setLocation(roomNodeB);
-		roomNodeB.setRoom(roomB);
-		roomC.setLocation(roomNodeC);
-		roomNodeC.setRoom(roomC);
+		dir.setRoomLocation(roomA, roomNodeA);
+		dir.setRoomLocation(roomB, roomNodeB);
+		dir.setRoomLocation(roomC, roomNodeC);
 
 		//Create 2 navigation Nodes
-		Node nodeA = new Node(1,2, 4);
-		Node nodeB = new Node(2,3, 4);
+		Node nodeA = dir.addNewNode(1,2, 4);
+		Node nodeB = dir.addNewNode(2,3, 4);
 
 		DatabaseWrapper controller = new DatabaseWrapper();
 		Directory oldDirectory = new Directory();
@@ -62,7 +60,7 @@ public class DatabaseTester
 			Assert.fail();
 		}
 
-		controller.saveDirectory(oldDirectory);
+		// controller.saveDirectory(oldDirectory);
 
 		Directory newDirectory = controller.getDirectory();
 
