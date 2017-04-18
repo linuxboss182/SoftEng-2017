@@ -104,6 +104,7 @@ public class EditorController extends MapDisplayController
 	protected double selectionEndY;
 	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
 	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
+	protected boolean ctrlClicked = false;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -718,6 +719,13 @@ public class EditorController extends MapDisplayController
 				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
 					this.deselectNodes();
 				}
+			}
+			// This ctrls stuff for pressing ctrl when you clicked
+			// SELECTS ALL OF THE NODE's NEIGHBORS
+			if(e.isControlDown()) {
+				n.getNeighbors().forEach(neighbor-> {
+					this.selectOrDeselectNode(neighbor);
+				});
 			}
 			this.selectOrDeselectNode(n);
 			this.updateFields();
