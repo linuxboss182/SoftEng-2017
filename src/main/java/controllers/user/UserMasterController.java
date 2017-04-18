@@ -1,5 +1,6 @@
 package controllers.user;
 
+import com.jfoenix.controls.JFXButton;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -9,6 +10,8 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -42,7 +45,7 @@ public abstract class UserMasterController
 		extends MapDisplayController
 {
 	@FXML
-	private Button logAsAdmin;
+	private JFXButton logAsAdmin;
 	@FXML
 	private ImageView imageViewMap;
 	@FXML
@@ -64,7 +67,7 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ChoiceBox floorChoiceBox;
+	private ComboBox floorChoiceBox;
 	@FXML
 	private ToolBar bottomToolbar;
 	@FXML
@@ -118,6 +121,7 @@ public abstract class UserMasterController
 		this.map = FloorProxy.maps.get(floor - 1).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
+
 
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
@@ -193,6 +197,7 @@ public abstract class UserMasterController
 
 		//Call listeners for window resizing
 		windowResized();
+
 
 
 	}
@@ -404,7 +409,7 @@ public abstract class UserMasterController
 
 	public void scaleElements() {
 		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
-		this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
+		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
 		if(this.getDirectionsBtn != null) {
 			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
 		}
