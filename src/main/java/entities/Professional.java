@@ -5,6 +5,7 @@ package entities;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * A class to represent someone in the hospital's staff
@@ -91,17 +92,17 @@ public class Professional
 		this.locations.add(room);
 	}
 
-	public String toString(Professional p) {
-		return this.getSurname() + ", " + this.getGivenName();
-	}
-
 	void removeLocation(Room r) {
 		this.locations.remove(r);
 	}
 
 	@Override
 	public String toString() {
-		return this.givenName;
+		StringJoiner sj = new StringJoiner(", ");
+		if (! "".equals(this.surname)) sj.add(this.surname);
+		if (! "".equals(this.givenName)) sj.add(this.givenName);
+		if (! "".equals(this.title)) sj.add(this.title);
+		return sj.toString();
 	}
 
 }
