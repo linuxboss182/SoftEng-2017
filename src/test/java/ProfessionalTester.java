@@ -15,8 +15,8 @@ public class ProfessionalTester
 {
 	@Test
 	public void addLocationTester() {
-		Room n = new Room(20, 30); //Create a new node
-		Room n1 = new Room(10, 15); //Create a new node
+		Room n = new Room("Room 1", "the first room");
+		Room n1 = new Room("Room 2", "the second room");
 		HashSet<Room> docLoc = new HashSet<>();
 		docLoc.add(n);
 

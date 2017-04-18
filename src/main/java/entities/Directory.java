@@ -1,9 +1,14 @@
 package entities;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 // TODO: Improve documentation
@@ -21,15 +26,15 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
-	private Optional<Room> kiosk;
+	private Room kiosk;
+	
+	/** Comparator to allow comparing rooms by name */
+	private static Comparator<Room> roomComparator = (r1, r2) -> {
+		int compName = r1.getName().compareTo(r2.getName());
+		if (compName != 0) return compName;
+		return (r1 == r2) ? 0 : 1;
+	};
 
-	/*
-	addNode, addRoom
-	removeNode, removeRoom
-	addProf, removeProf
-
-	getProfessionals, getRooms, getNodes
-	 */
 
 	/* Constructors */
 
@@ -38,11 +43,13 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
-		this.kiosk = Optional.empty();
+		this.kiosk = null;
 	}
 
 
 	/* Methods */
+
+	/* Getters */
 
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
@@ -53,19 +60,24 @@ public class Directory
 	 */
 	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>((r1, r2) -> {
-			int compName = r1.getName().compareTo(r2.getName());
-			if (compName != 0) return compName;
-			return (r1 == r2) ? 0 : 1;
-			// handle identity or SortedSet won't take people with the same name
-		});
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
 
-	public Set<Professional> getProfessionals() {
+	public SortedSet<Professional> getProfessionals() {
 		return new TreeSet<>(this.professionals);
 	}
+
+	public Room getKiosk() {
+		return this.kiosk;
+	}
+
+	public void setKiosk(Room k) {
+		this.kiosk = k;
+	}
+
+	/* Element addition methods */
 
 	public void addNode(Node node) {
 		this.nodes.add(node);
@@ -79,15 +91,16 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-//	public void setKiosk(Room k) {
-//		this.kiosk = Optional.of(k);
-//	}
+	/* Element removal methods */
 
-	public boolean removeNode(Node node) {
+	/** @deprecated May be restored once nodeless rooms are possible */
+	@Deprecated
+	private boolean removeNode(Node node) {
+		node.disconnectAll();
 		return this.nodes.remove(node);
 	}
 
-	public boolean removeRoom(Room room) {
+	private boolean removeRoom(Room room) {
 		this.professionals.forEach(p -> p.removeLocation(room));
 		return this.rooms.remove(room);
 	}
@@ -105,33 +118,12 @@ public class Directory
 		return this.professionals.remove(professional);
 	}
 
-	public Professional addNewProfessional(String name,String surname,String title){
+	public Professional addNewProfessional(String name, String surname, String title){
 		Professional newPro = new Professional(name, surname, title);
 		this.addProfessional(newPro);
 		return newPro;
 	}
 
-
-	/** return whether this directory has a kiosk */
-	public boolean hasKiosk() {
-		return this.kiosk.isPresent();
-	}
-
-//	/**
-//	 * Get kiosk if present, or null otherwise.
-//	 *
-//	 * If kiosk is not present, return null
-//	 *
-//	 * @todo This should return Optional&lt;Room&rt;, not Room.
-//	 */
-//	public Room getKiosk() {
-//		return this.kiosk.orElse(null);
-//	}
-
-	// TODO: We probably don't need this.
-	private int getHeight() {
-		return 4;
-	}
 
 	/**
 	 * Create a Room and an associated Node in this directory
@@ -163,6 +155,7 @@ public class Directory
 		Room room = new Room(name, desc);
 		node.setRoom(room);
 		room.setLocation(node);
+		this.rooms.add(room);
 	}
 
 	/**
@@ -179,15 +172,15 @@ public class Directory
 	/**
 	 * Create a new node in this directory
 	 */
-	// TODO: Add "floor" argument
 	public Node addNewNode(double x, double y, int floor) {
 		Node newNode = new Node(x, y, floor);
 		this.nodes.add(newNode);
 		return newNode;
 	}
 
-	// TODO: Add test cases for new Directory methods like getNodesOnFloor
+	// TODO: Add test cases for new Directory methods
 
+	/* Filtered getters */
 	/**
 	 * Get a set of the nodes on the given floor
 	 *
@@ -196,10 +189,7 @@ public class Directory
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
 	public Set<Node> getNodesOnFloor(int floor) {
-		return this.nodes.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(node -> node.getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterNodes(node -> node.getFloor() == floor);
 	}
 
 	/**
@@ -211,10 +201,76 @@ public class Directory
 	 * @return
 	 */
 	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.rooms.stream()
-				// Stream::filter removes elements for which the lambda returns false
-				.filter(room -> room.getLocation() != null && room.getLocation().getFloor() == floor)
-				.collect(Collectors.toSet()); // make the stream back into a set
+		return this.filterRooms(room -> room.getLocation() != null && room.getLocation().getFloor() == floor);
+	}
+
+	/**
+	 * Gets all nodes in this directory that match the given predicate
+	 */
+	public Set<Node> filterNodes(Predicate<Node> predicate) {
+		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Gets all rooms in this directory that match the given predicate
+	 */
+	public Set<Room> filterRooms(Predicate<Room> predicate) {
+		return this.rooms.stream().filter(predicate)
+				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
+		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
+	}
+
+	/* Entity modification functions */
+
+	/**
+	 * Toggle the edge between the given nodes
+	 */
+	public void connectOrDisconnectNodes(Node n1, Node n2) {
+		n1.connectOrDisconnect(n2);
+	}
+
+	/* Program logic functions */
+
+	/** return whether this directory has a kiosk */
+	public boolean hasKiosk() {
+		return this.kiosk != null;
+	}
+
+	/**
+	 * Determine if the rooms accessibly to the user are all connected
+	 * 
+	 * This only considers rooms that have locations
+	 *
+	 * @return Whether all rooms are connected
+	 */
+	public boolean roomsAreConnected() {
+		// targets = all rooms with nodes
+		Set<Node> targets = this.rooms.stream()
+				.filter(room -> room.getLocation() != null)
+				.map(Room::getLocation)
+				.collect(Collectors.toSet());
+		if (targets.isEmpty()) return true; // no rooms, so all are connected
+
+		Node start = targets.stream().findAny().orElse(null);
+		if (start == null) throw new RuntimeException("Impossible: had rooms, but couldn't get any from the stream");
+
+		Set<Node> visited = new HashSet<>();
+		List<Node> toVisit = new LinkedList<>();
+
+		toVisit.add(start);
+
+		while (! toVisit.isEmpty()) {
+			Node current = toVisit.remove(0);
+			visited.add(current);
+			for (Node n : current.getNeighbors()) {
+				if (! visited.contains(n)) {
+					toVisit.add(n);
+				}
+			}
+		}
+
+		targets.removeAll(visited);
+		return targets.isEmpty();
 	}
 }
 

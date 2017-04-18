@@ -32,12 +32,12 @@ public class StoredProcedures
 			"CREATE TABLE EmployeeRooms ("
 					+"roomID   integer references Rooms(roomID) ON DELETE CASCADE"
 					+" , employeeID integer references Employees(employeeID) ON DELETE CASCADE"
-					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))"
-	); // TODO: Remove Kiosk table from database
-	//"CREATE TABLE Kiosk (nodeID integer references Nodes(nodeID) NOT NULL)"
-	//"DROP TABLE Kiosk"
+					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))",
+			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)"
+	);
 
 	private static final List<String> drops = Arrays.asList(
+			"DROP TABLE Kiosk",
 			"DROP TABLE EmployeeRooms",
 			"DROP TABLE Employees",
 			"DROP TABLE Rooms",
@@ -190,14 +190,10 @@ public class StoredProcedures
 		return "INSERT INTO EmployeeRooms(employeeID, roomID) VALUES("+employeeID+","+roomID+")";
 	}
 
-	public static String procInsertKiosk(int nodeID){
-		return "INSERT INTO Kiosk (nodeID) VALUES (" + nodeID + ")";
+	public static String procInsertKiosk(int roomID){
+		return "INSERT INTO Kiosk (roomID) VALUES (" + roomID + ")";
 	}
 	/* **** Retrieval procedures **** */
-
-	public static String procRetrieveKiosk(){
-		return "SELECT * FROM Kiosk";
-	}
 
 	public static String procRetrieveNodes(){
 		//query needs work
@@ -256,5 +252,9 @@ public class StoredProcedures
 
 	private static String sanitize(String str){
 		return str.replace("'","''");
+	}
+	
+	public static String procRetrieveKiosk() {
+		return "SELECT roomID FROM Kiosk";
 	}
 }

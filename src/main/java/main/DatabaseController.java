@@ -2,10 +2,6 @@ package main;
 
 import java.sql.*;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.HashMap;
 
 import entities.Directory;
@@ -23,12 +19,12 @@ public class DatabaseController
 	private String connection_string;
 
 	// Debugging functions
-	private static void PRINTLN(Object o) {
-		System.out.println(o);
-	}
-	private static void PRINT(Object o) {
-		System.out.print(o);
-	}
+//	private static void PRINTLN(Object o) {
+//		System.out.println(o);
+//	}
+//	private static void PRINT(Object o) {
+//		System.out.print(o);
+//	}
 
 	public DatabaseController(String connection_string) {
 		this.connection_string = connection_string;
@@ -204,11 +200,13 @@ public class DatabaseController
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
-			this.retrieveNodes(nodes, rooms);
+			this.retrieveNodesAndRooms(nodes, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(rooms, professionals);
-//			kioskID = this.retrieveKiosk(); // Not using kiosks at the moment
+			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
+			e.printStackTrace();
+			System.err.println("A SQL Exception occured");
 			return false;
 		}
 		//add all to directory
@@ -222,26 +220,24 @@ public class DatabaseController
 			directory.addProfessional(p);
 		}
 		// commented out because we don't have a defined kiosk location at the moment
-//		if (kioskID != null) {
-//			directory.setKiosk(rooms.get(kioskID));
-//		}
+		System.out.println("Kiosk is " + kioskID);
+		if (kioskID != null) {
+			directory.setKiosk(rooms.get(kioskID));
+		}
 
 		return true;
 	}
 
 	/** This method is not in use because we are not using kiosks at the moment */
 	private Integer retrieveKiosk() throws SQLException { // (should return Optional<Integer>)
+		System.out.println("Getting kiosk");
 		Statement query = this.db_connection.createStatement();
 		ResultSet result = query.executeQuery(StoredProcedures.procRetrieveKiosk());
 		if (result.next()) {
-			int i = result.getInt("nodeID");
-			if (result.wasNull()) {
-				return null;
-			} else {
-				return i;
-			}
+			return result.getInt("roomID");
+			// no null check needed because column is "NOT NULL"
 		} else {
-			return null;
+			return null; // empty kiosk table
 		}
 	}
 
@@ -293,13 +289,13 @@ public class DatabaseController
 	 * @param nodes The map of nodes to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodes(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
+	private void retrieveNodesAndRooms(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
 		try {
 			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
-				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
+//				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = new Node(resultNodes.getDouble("nodeX"),
 				                     resultNodes.getDouble("nodeY"),
 				                     resultNodes.getInt("floor"));
@@ -311,7 +307,7 @@ public class DatabaseController
 			Statement queryRooms = this.db_connection.createStatement();
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
 			while (resultRooms.next()) {
-				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
+//				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = new Room(resultRooms.getString("roomName"),
 				                     resultRooms.getString("roomDescription"));
 				int nodeID = resultRooms.getInt("nodeID");
@@ -329,10 +325,10 @@ public class DatabaseController
 			//ResultSet resultEdges = null;
 			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
-				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
+//				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
 				int nodeID = resultNodes.getInt("nodeID");
 				int roomID = resultNodes.getInt("roomID");
-				PRINTLN("Loading room "+roomID);
+//				PRINTLN("Loading room "+roomID);
 				if (!resultNodes.wasNull()) {
 					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
 				}
@@ -344,7 +340,7 @@ public class DatabaseController
 			while (resultEdges.next()) {
 				int node1 = resultEdges.getInt("node1");
 				int node2 = resultEdges.getInt("node2");
-				PRINTLN("Loading edge "+node1+" "+node2);
+//				PRINTLN("Loading edge "+node1+" "+node2);
 				nodes.get(node1).connect(nodes.get(node2));
 			}
 			resultEdges.close();
@@ -393,22 +389,20 @@ public class DatabaseController
 		Statement db = this.db_connection.createStatement();
 		String query;
 		for (Node n : dir.getNodes()) {
-			PRINTLN("Saving node "+n.hashCode());
+//			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
-			                                        n.getFloor(), n.mapToRoom(r -> r.hashCode()));
+			                                        n.getFloor(), n.mapToRoom(Object::hashCode));
 			db.executeUpdate(query);
 		}
 
 		for (Room r : dir.getRooms()) {
-			PRINTLN("Saving node "+r.hashCode());
+//			PRINTLN("Saving node "+r.hashCode());
 			if(r.getLocation() != null) {
-				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	r.getName(),
 																	r.getDescription());
 			} else {
-				System.out.println(r.getDescription());
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
 														r.getDescription());
@@ -416,17 +410,16 @@ public class DatabaseController
 			db.executeUpdate(query);
 		}
 		/* commented out because, again, kiosks are not yet implemented */
-//		if (dir.hasKiosk()) {
-//			Room n = dir.getKiosk();
-//			query = StoredProcedures.procInsertKiosk(n.hashCode());
-//			db.executeUpdate(query);
-//		}
+		if (dir.hasKiosk()) {
+			query = StoredProcedures.procInsertKiosk(dir.getKiosk().hashCode());
+			db.executeUpdate(query);
+		}
 //		System.out.println("kiosk saved");
 
 		for (Node n : dir.getNodes()) {
-			PRINTLN("Saving edges for node "+n.hashCode());
+//			PRINTLN("Saving edges for node "+n.hashCode());
 			for (Node m : n.getNeighbors()) {
-				PRINTLN("Saving edge to "+m.hashCode());
+//				PRINTLN("Saving edge to "+m.hashCode());
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}

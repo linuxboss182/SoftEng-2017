@@ -1,43 +1,22 @@
-package main;
-
-import java.nio.file.Path;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
+package main.algorithms;
 
 import entities.Node;
 
-//TODO: Add documentation
+import java.util.*;
 
-/**
- * UserController class wrapping pathfinding algorithms.
- * (Currently contains algorithms.)
- */
-public class Pathfinder
+enum AStar
+		implements Algorithm
 {
-	private static final double FLOOR_HEIGHT = 240;
+	/** The instance of this singleton */
+	instance; // Access with AStar.instance
+	private AStar() {}
 
-	private Node start;
-	private Node destination;
+	private static final String NAME = "A*";
 
-	public void setOrigin(Node start) {
-		this.start = start;
-	}
 
-	public void setDestination(Node destination) {
-		this.destination = destination;
-	}
-
-	public List<Node> findPath() {
-		return Pathfinder.findPath(this.start, this.destination);
-	}
-
-	public List<Node> findPath(Node destination) {
-		return Pathfinder.findPath(this.start, destination);
+	@Override
+	public String getName() {
+		return AStar.NAME;
 	}
 
 	/**
@@ -49,10 +28,7 @@ public class Pathfinder
 	 * @return A list of the nodes traversed in the path, in order, or an empty list if
 	 *         no path is found
 	 */
-	public static List<Node> findPath(Node start, Node dest)throws NullPointerException {
-		if(start == null || dest == null){
-			throw(new NullPointerException());
-		}
+	public List<Node> findPath(Node start, Node dest) throws PathNotFoundException {
 		Double inf = Double.POSITIVE_INFINITY;
 		// list of Nodes that have already been visited
 		Set<Node> visitedNodes = new HashSet<>();
@@ -70,7 +46,7 @@ public class Pathfinder
 
 		// map that holds the guessed total distance from a Node to the destination
 		Map<Node, Double> bestGuess = new HashMap<>();
-		bestGuess.put(start, Pathfinder.heuristic(start, dest));
+		bestGuess.put(start, heuristic(start, dest));
 
 		Node current;
 
@@ -87,7 +63,7 @@ public class Pathfinder
 			}
 
 			if (current == dest) {
-				return Pathfinder.makePath(pathHistory, current);
+				return AStar.makePath(pathHistory, current);
 			}
 
 			seenNodes.remove(current); // don't look at this node again later
@@ -100,7 +76,7 @@ public class Pathfinder
 				}
 
 				// get distance from the start to the neighbor.
-				double guessDist = distFromStart.get(current) + Pathfinder.heuristic(current, neighbor);
+				double guessDist = distFromStart.get(current) + heuristic(current, neighbor);
 
 				seenNodes.add(neighbor); // make sure the neighbor is marked as seen
 
@@ -112,14 +88,15 @@ public class Pathfinder
 				}
 			}
 		}
-		return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
+		throw new PathNotFoundException("No path exists between the given locations.");
+		// return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
 	}
 
 	private static double heuristic(Node current, Node other) {
-		return current.distance(other, Pathfinder.FLOOR_HEIGHT);
+		return current.distance(other, Algorithm.FLOOR_HEIGHT);
 	}
 
-	private static List<Node> makePath(Map<Node, Node> pathHistory,Node current){
+	private static List<Node> makePath(Map<Node, Node> pathHistory, Node current){
 		List<Node> finalPath = new LinkedList<>();
 		finalPath.add(current);
 		while (pathHistory.containsKey(current)) {
