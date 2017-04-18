@@ -60,7 +60,7 @@ public class DatabaseTester
 			Assert.fail();
 		}
 
-		// controller.saveDirectory(oldDirectory);
+		controller.saveDirectory(oldDirectory);
 
 		Directory newDirectory = controller.getDirectory();
 
