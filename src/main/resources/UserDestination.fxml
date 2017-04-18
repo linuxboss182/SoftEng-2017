@@ -90,6 +90,9 @@
          <left>
             <JFXButton buttonType="RAISED" onMouseClicked="#logAsAdminClicked" prefHeight="25.0" prefWidth="137.0" style="-fx-background-color: #5087b4;" text="Login As Admin" textFill="WHITE" BorderPane.alignment="CENTER" />
          </left>
+         <right>
+            <JFXButton fx:id="aboutBtn" buttonType="RAISED" onMouseClicked="#aboutBtnClicked" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #5087b4;" text="About" textFill="WHITE" BorderPane.alignment="CENTER" />
+         </right>
       </JFXToolbar>
    </bottom>
    <top>

@@ -80,6 +80,8 @@ public abstract class UserMasterController
 	private GridPane destGridPane;
 	@FXML
 	private GridPane bottomGridPane;
+	@FXML
+	private Button aboutBtn;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -446,5 +448,11 @@ public abstract class UserMasterController
 			}
 		});
 	}
+
+	@FXML
+	public void aboutBtnClicked () {
+
+	}
+
 
 }
