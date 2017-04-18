@@ -41,6 +41,7 @@ import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
+import main.database.DatabaseWrapper;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -285,13 +286,7 @@ public class EditorController extends MapDisplayController
 	public void confirmBtnPressed() {
 //		this.directory.getRooms().forEach(room ->
 //				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-		try {
-			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
-		} catch (DatabaseException e) {
-			System.err.println("\n\nDATABASE DAMAGED\n\n");
-			e.printStackTrace();
-			System.err.println("\n\nDATABASE DAMAGED\n\n");
-		}
+		DatabaseWrapper.saveDirectory(this.directory);
 	}
 
 	@FXML

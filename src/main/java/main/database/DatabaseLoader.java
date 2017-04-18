@@ -14,20 +14,19 @@ import entities.Room;
 /**
  * Class for saving to and loading from the database
  * 
- * Public methods:
+ * Package methods:
  * - DatabaseLoader(): Constructor
  * - getDirectory(): 
  * - populateDirectory(): builds a directory by loading from the database
  * - destructiveSaveDirectory(Directory): empties the database, then saves the directory
  *                                        to the database
  */
-public class DatabaseLoader
+class DatabaseLoader
 {
 	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private DatabaseConnector dbConn;
 	private Connection db_connection;
-	private String connection_string;
 
 	// Debugging functions
 //	private static void PRINTLN(Object o) {
@@ -37,13 +36,12 @@ public class DatabaseLoader
 //		System.out.print(o);
 //	}
 
-	public DatabaseLoader(DatabaseConnector dbConn) {
+	DatabaseLoader(DatabaseConnector dbConn) {
 		this.dbConn = dbConn;
 		this.db_connection = dbConn.getConnection();
-		this.connection_string = "jdbc:derby:DB;create=true";
 	}
 
-	public Directory getDirectory() {
+	Directory getDirectory() {
 		Directory dir = new Directory();
 		this.populateDirectory(dir);
 		return dir;
@@ -229,7 +227,7 @@ public class DatabaseLoader
 	 */
 	// TODO: manually create a backup of the database before destroying it
 	// (i.e. copy the db directory, then operate, and remove it if successful)
-	public void destructiveSaveDirectory(Directory dir)
+	void destructiveSaveDirectory(Directory dir)
 			throws DatabaseException {
 		this.dbConn.reInitSchema(); // drop tables, then recreate tables
 		System.out.println("START SAVING");

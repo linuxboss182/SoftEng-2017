@@ -9,13 +9,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import main.database.DatabaseController;
+import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
 
 public class ApplicationController extends Application
 {
 
-	public static DatabaseController dbc;
 	private static Directory directory;
 	private static IconController iconController;
 
@@ -29,21 +28,20 @@ public class ApplicationController extends Application
 
 
 	public static void main(String[] args) {
-		ApplicationController.dbc = new DatabaseController();
 
 		try {
-			ApplicationController.dbc.init();
+			DatabaseWrapper.init();
 		} catch (DatabaseException e) {
 			System.out.println("ERROR IN DATABASE INITIALIZATION:\n" + e.getMessage());
 			return;
 		}
 
-		ApplicationController.directory = ApplicationController.dbc.getDirectory();
+		ApplicationController.directory = DatabaseWrapper.getDirectory();
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
 
-		ApplicationController.dbc.close();
+		DatabaseWrapper.close();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/

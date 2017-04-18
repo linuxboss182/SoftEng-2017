@@ -8,14 +8,19 @@ import java.sql.*;
  * - init(): Creates a connection
  * - close(): closes the connection
  */
-public class DatabaseConnector
+class DatabaseConnector
 {
 	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private Connection db_connection;
 	private String connection_string;
 
-	public Connection getConnection() {
+	DatabaseConnector() throws DatabaseException {
+		this.connection_string = "jdbc:derby:DB;create=true";
+		this.init();
+	}
+
+	Connection getConnection() {
 		return this.db_connection;
 	}
 
@@ -26,7 +31,7 @@ public class DatabaseConnector
 	 *
 	 * @throws DatabaseException if the connection fails
 	 */
-	public void init()
+	void init()
 			throws DatabaseException {
 		boolean flag = this.initDB();
 		if (! flag) {
@@ -55,7 +60,7 @@ public class DatabaseConnector
 	 *
 	 * @return true if successful
 	 */
-	public boolean close() {
+	boolean close() {
 		try {
 			this.db_connection.close();
 			return true;
