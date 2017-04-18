@@ -43,7 +43,7 @@
       </ToolBar>
    </bottom>
    <center>
-      <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="mapSplitPane" dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <items>
             <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
                <children>

@@ -405,20 +405,20 @@ public abstract class UserMasterController
 	public void scaleElements() {
 		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
 		this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
-		System.out.println("half of window: " + parentBorderPane.getWidth() / 2);
-		System.out.println("this.getDirectionsBtn = " + this.getDirectionsBtn);
 		if(this.getDirectionsBtn != null) {
-			this.getDirectionsBtn.relocate((parentBorderPane.getWidth() / 2), (bottomToolbar.getHeight() / 2));
+			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
 		}
-		this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
+
 		double windowWidth = parentBorderPane.getWidth();
 		//destGridPane.setPrefWidth(windowWidth / 4);
 
 		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
 		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
-		bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth()-100);
-		for (ColumnConstraints c: bottomGridPane.getColumnConstraints()) {
-			c.setPrefWidth(bottomToolbar.getWidth()/3);
+		if(this.bottomGridPane != null) {
+			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
+			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
+				c.setPrefWidth(bottomToolbar.getWidth() / 3);
+			}
 		}
 
 		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
