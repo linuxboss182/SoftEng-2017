@@ -108,7 +108,7 @@ class DatabaseLoader
 
 			//find all professionals
 			while (resultProfessionals.next()) {
-				Professional professional = new Professional(
+				Professional professional = directory.addNewProfessional(
 						resultProfessionals.getString("employeeGivenName"),
 						resultProfessionals.getString("employeeSurname"),
 						resultProfessionals.getString("employeeTitle"));
@@ -149,9 +149,9 @@ class DatabaseLoader
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
 //				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
-				Node node = new Node(resultNodes.getDouble("nodeX"),
-				                     resultNodes.getDouble("nodeY"),
-				                     resultNodes.getInt("floor"));
+				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
+				                                 resultNodes.getDouble("nodeY"),
+				                                 resultNodes.getInt("floor"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 				directory.addNode(node);
 			}
@@ -162,8 +162,8 @@ class DatabaseLoader
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
 			while (resultRooms.next()) {
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
-				Room room = new Room(resultRooms.getString("roomName"),
-				                     resultRooms.getString("roomDescription"));
+				Room room = directory.addNewRoom(resultRooms.getString("roomName"),
+				                                 resultRooms.getString("roomDescription"));
 				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
