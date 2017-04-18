@@ -191,7 +191,7 @@ public class EditorController extends MapDisplayController
 		 */
 		parentBorderPane.setOnKeyPressed(e-> {
 //			System.out.println(e); // Prints out key statements
-			
+
 		});
 
 	}
