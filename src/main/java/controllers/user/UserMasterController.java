@@ -15,6 +15,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -23,6 +26,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
@@ -82,6 +86,8 @@ public abstract class UserMasterController
 	private GridPane bottomGridPane;
 	@FXML
 	private Button aboutBtn;
+	@FXML
+	private ImageView logoImageView;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -125,6 +131,12 @@ public abstract class UserMasterController
 		this.map = FloorProxy.maps.get(floor - 1).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
+
+
+		//Load logo
+//		Image logo;
+//		logo = new Image("/bwhLogo.png");
+//		logoImageView.setImage(logo);
 
 
 		// Set buttons to default

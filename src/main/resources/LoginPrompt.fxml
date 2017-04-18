@@ -20,7 +20,7 @@
                   <ColumnConstraints />
                </columnConstraints>
                <children>
-                  <JFXButton fx:id="cancelBtn" onMouseClicked="#cancelBtnClicked" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #5087b4;" text="Back" textFill="WHITE" />
+                  <JFXButton fx:id="cancelBtn" onMouseClicked="#cancelBtnClicked" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #82b6e7;" text="Back" textFill="WHITE" />
                </children>
             </GridPane>
          </center>

@@ -84,7 +84,9 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ChoiceBox floorChoiceBox;
+	public ComboBox floorChoiceBox;
+	@FXML
+	public ComboBox buildingChoiceBox;
 	@FXML
 	public TableView<Professional> roomProfTable;
 	@FXML
@@ -98,7 +100,7 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private Label xPos;
 	@FXML
-	private ChoiceBox<Algorithm> algorithmChoiceBox;
+	private ComboBox<Algorithm> algorithmChoiceBox;
 	@FXML
 	private BorderPane parentBorderPane;
 
