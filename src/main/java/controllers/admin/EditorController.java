@@ -177,6 +177,7 @@ public class EditorController extends MapDisplayController
 				//selectedLocation = newValue;
 			}
 		});
+
 	}
 
 	public void populateTableView() {

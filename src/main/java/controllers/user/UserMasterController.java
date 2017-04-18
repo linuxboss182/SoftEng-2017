@@ -343,6 +343,8 @@ public abstract class UserMasterController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
+		System.out.println("userPath = " + userPath);
+		System.out.println("this.getScene() = " + this.getScene());
 		this.getScene().setRoot(userPath);
 	}
 
@@ -400,15 +402,20 @@ public abstract class UserMasterController
 	}
 
 	public void scaleElements() {
+		System.out.println("this.bottomToolbar = " + this.bottomToolbar);
+		System.out.println("this.parentBorderPane = " + this.parentBorderPane);
 		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
 		this.contentAnchor.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
 		System.out.println("half of window: " + parentBorderPane.getWidth() / 2);
-		this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), (bottomToolbar.getHeight()/2));
+		System.out.println("this.getDirectionsBtn = " + this.getDirectionsBtn);
+		if(this.getDirectionsBtn != null) {
+			this.getDirectionsBtn.relocate((parentBorderPane.getWidth() / 2), (bottomToolbar.getHeight() / 2));
+		}
 		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
 	}
 
 	public void windowResized() {
-
+		System.out.println("this.parentBorderPane = " + this.parentBorderPane);
 		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 				System.out.println("Width: " + newSceneWidth);
