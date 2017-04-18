@@ -44,7 +44,7 @@ public class Room
 	private Icon shape;
 
 	/* Constructors */
-	public Room(String name, String description, String image) {
+	Room(String name, String description, String image) {
 		this.location = null;
 		this.name = name;
 		this.description = description;
@@ -53,7 +53,7 @@ public class Room
 		this.makeShape();
 	}
 
-	public Room(String name, String description) {
+	Room(String name, String description) {
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 

@@ -21,7 +21,9 @@ public class Professional
 
 	/* Constructors */
 
-	public Professional(String givenName, String surname,
+	/** @deprecated Access and modify professionals through the database instead */
+	@Deprecated
+	Professional(String givenName, String surname,
 	                    String title, Collection<Room> locations) {
 		// for anyone who didn't know:
 		// Room... locations allows infinite parameters of type Room
@@ -32,7 +34,7 @@ public class Professional
 		this.locations = new HashSet<>(locations);
 	}
 
-	public Professional(String givenName, String surname, String title) {
+	Professional(String givenName, String surname, String title) {
 		// for anyone who didn't know:
 		// Room... locations allows infinite parameters of type Room
 		// and it condenses them into type Room[]
@@ -40,10 +42,6 @@ public class Professional
 		this.surname = surname;
 		this.title = title;
 		this.locations = new HashSet<>();
-	}
-
-	public Professional() {
-		this("Enter given name", "Enter surname", "Enter title");
 	}
 
 	/* Interface methods */

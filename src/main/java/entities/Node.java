@@ -25,7 +25,7 @@ public class Node
 	// TODO: Fix all Node shape operations
 	private static final double CIRCLE_RADIUS = 5;
 
-	public Node(double x, double y, int floor) {
+	Node(double x, double y, int floor) {
 		this.x = x;
 		this.y = y;
 		this.floor = floor;
@@ -126,8 +126,6 @@ public class Node
 	@Deprecated
 	public boolean connect(Node n) {
 		if (this == n || n == null) return false;
-		// do not connect roomless nodes on different floors~
-		//if ((this.room == null || n.room == null) && this.floor != n.floor) return false;
 
 		n.neighbors.add(this);
 		return this.neighbors.add(n);
