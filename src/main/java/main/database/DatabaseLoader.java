@@ -168,7 +168,6 @@ class DatabaseLoader
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
 					//we have a location in the room
-					room.setLocation(nodes.get(nodeID));
 					directory.setRoomLocation(room, nodes.get(nodeID));
 				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?

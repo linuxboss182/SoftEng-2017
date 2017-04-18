@@ -83,10 +83,12 @@ public class Room
 		return this.shape;
 	}
 
+	// TODO: Encapsulate to Directory
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	// TODO: Encapsulate to Directory
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -99,11 +101,11 @@ public class Room
 //		this.shape = shape;
 //	}
 
-	public void setLocation(Node location) {
+	void setLocation(Node location) {
 		this.location = location;
 	}
 
-	public void unsetLocation() {
+	void unsetLocation() {
 		this.location = null;
 	}
 

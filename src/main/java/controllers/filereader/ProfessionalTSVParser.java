@@ -160,6 +160,8 @@ public class ProfessionalTSVParser
 			roomNames.add(room);
 		}
 
-		this.dir.getRooms().stream().filter(r -> roomNames.contains(r.getName())).forEach(prof::addLocation);
+		this.dir.getRooms().stream()
+				.filter(r -> roomNames.contains(r.getName()))
+				.forEach(room -> this.dir.addRoomToProfessional(room, prof));
 	}
 }

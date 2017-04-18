@@ -87,7 +87,7 @@ public class Professional
 		return new HashSet<>(this.locations);
 	}
 
-	public void addLocation(Room room){
+	void addLocation(Room room){
 		this.locations.add(room);
 	}
 
@@ -95,7 +95,7 @@ public class Professional
 		return this.getSurname() + ", " + this.getGivenName();
 	}
 
-	public void removeLocation(Room r) {
+	void removeLocation(Room r) {
 		this.locations.remove(r);
 	}
 

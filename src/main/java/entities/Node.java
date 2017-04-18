@@ -82,20 +82,18 @@ public class Node
 		}
 	}
 
-	public void setFloor(int floor) {
-		this.floor = floor;
-	}
-
-	public void setRoom(Room room) {
+	// TODO: Encapsulate to Directory
+	void setRoom(Room room) {
 		this.room = room;
 	}
 
 	/** Remove this node's association with a room, if any */
-	public void unsetRoom() {
+	void unsetRoom() {
 		this.room = null;
 	}
 
 	/** Set node coordinates */
+	// TODO: Encapsulate to Directory
 	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -120,11 +118,8 @@ public class Node
 	 * @param n The node to connect to this node
 	 *
 	 * @return false if the edge already existed or connection otherwise failed
-	 * 
-	 * @deprecated This isn't actually deprecated, but it should be package private.
 	 */
-	@Deprecated
-	public boolean connect(Node n) {
+	boolean connect(Node n) {
 		if (this == n || n == null) return false;
 
 		n.neighbors.add(this);
@@ -140,7 +135,7 @@ public class Node
 	 *
 	 * @return false if the nodes were not connected
 	 */
-	private boolean disconnect(Node n) {
+	boolean disconnect(Node n) {
 		n.neighbors.remove(this);
 		return this.neighbors.remove(n);
 	}
