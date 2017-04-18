@@ -15,17 +15,16 @@ public class ProfessionalTester
 {
 	@Test
 	public void addLocationTester() {
-		Room n = new Room("Room 1", "the first room");
-		Room n1 = new Room("Room 2", "the second room");
-		HashSet<Room> docLoc = new HashSet<>();
-		docLoc.add(n);
+		Directory dir = new Directory();
+		Room r = dir.addNewRoom("Room 1", "the first room");
+		Room r1 = dir.addNewRoom("Room 2", "the second room");
 
-		Professional Doctor = new Professional("FirstName", "LastName",
-				"Dr.", docLoc); //Create a Professional
-		Doctor.addLocation(n1);
+		Professional doctor = dir.addNewProfessional("FirstName", "LastName", "Dr.");
+		dir.addRoomToProfessional(r, doctor);
+		dir.addRoomToProfessional(r1, doctor);
 		Set<Room> expectDocLoc = new HashSet<>();
-		expectDocLoc.add(n);
-		expectDocLoc.add(n1);
-		Assert.assertEquals(expectDocLoc, Doctor.getLocations());
+		expectDocLoc.add(r);
+		expectDocLoc.add(r1);
+		Assert.assertEquals(expectDocLoc, doctor.getLocations());
 	}
 }

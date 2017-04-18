@@ -15,37 +15,33 @@ import java.util.HashSet;
 public class DirectoryTester
 {
 	@Test
-	public void testAddNode() {
+	public void testAddNewNode() {
 		Directory d = new Directory(); //Create a new directory
-		Node n = new Node(20, 30, 4); //Create a new node
-		d.addNode(n); //Add the node to the list
+		Node n = d.addNewNode(20, 30, 4); //Create a new node
 		Assert.assertEquals(1, d.getNodes().size()); //Assert Size Equal
 		Assert.assertEquals(true, d.getNodes().contains(n));
 	}
 
 	@Test
 	public void testAddProfessional() {
-		Node n = new Node(20, 30, 4);
-		Room r = new Room("aRoom", "desc"); //Create a new node
-		r.setLocation(n);
-		n.setRoom(r);
 		Directory d = new Directory();
-		d.addRoom(r);
-		Professional Doctor = new Professional("FirstName", "LastName",
-				"Dr.", d.getRooms()); //Create a Professional
-		d.addProfessional(Doctor); //Add the Professional to the list
+		Node n = d.addNewNode(20, 30, 4);
+		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		d.setRoomLocation(r, n);
+		Professional doctor = d.addNewProfessional("FirstName", "LastName", "Dr."); //Create a Professional
+		d.addRoomToProfessional(r, doctor);
+
 		Assert.assertEquals(1, d.getProfessionals().size()); //Assert Size Equal
-		Assert.assertEquals(true, d.getProfessionals().contains(Doctor));
+		Assert.assertEquals(true, d.getProfessionals().contains(doctor));
 	}
 
 	@Test
-	public void testAddRoom() {
+	public void testAddNewRoom() {
 		Directory d = new Directory(); //Create a new directory
-		Node n = new Node(20, 30, 4);
-		Room r = new Room("aRoom", "desc"); //Create a new node
-		r.setLocation(n);
-		n.setRoom(r);
-		d.addRoom(r); //Add the node to the list
+		Node n = d.addNewNode(20, 30, 4);
+		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		d.setRoomLocation(r, n);
+
 		Assert.assertEquals(1, d.getRooms().size());
 		Assert.assertEquals(true, d.getRooms().contains(r));
 	}
@@ -77,17 +73,16 @@ public class DirectoryTester
 
 	@Test
 	public void testRemoveProfessional() {
-		Node n = new Node(20, 30, 4);
-		Room r = new Room("aRoom", "desc"); //Create a new node
-		r.setLocation(n);
-		n.setRoom(r);
 		Directory d = new Directory();
-		d.addRoom(r);
-		Professional Doctor = new Professional("FirstName", "LastName",
-				"Dr.", d.getRooms()); //Create a Professional
-		d.addProfessional(Doctor); //Add the Professional to the list
-		Assert.assertEquals(true, d.getProfessionals().contains(Doctor));
-		d.removeProfessional(Doctor);
-		Assert.assertEquals(false, d.getProfessionals().contains(Doctor));
+		Node n = d.addNewNode(20, 30, 4);
+		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		d.setRoomLocation(r, n);
+
+		Professional doctor = d.addNewProfessional("FirstName", "LastName", "Dr."); //Create a Professional
+		d.addRoomToProfessional(r, doctor);
+		d.addProfessional(doctor); //Add the Professional to the list
+		Assert.assertEquals(true, d.getProfessionals().contains(doctor));
+		d.removeProfessional(doctor);
+		Assert.assertEquals(false, d.getProfessionals().contains(doctor));
 	}
 }

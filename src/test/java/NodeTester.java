@@ -40,21 +40,24 @@ public class NodeTester
 	/* These two tests be needed later.
 	@Test
 	public void testGetX() {
-		Node n = new Node(20, 30, 0);
+		Directory dir = new Directory();
+		Node n = dir.addNewNode(20, 30, 0);
 		Assert.assertTrue(n.getX() == 20);
 	}
 
 	@Test
 	public void testGetY() {
-		Node n = new Node(20, 30, 0);
+		Directory dir = new Directory();
+		Node n = dir.addNewNode(20, 30, 0);
 		Assert.assertTrue(n.getY() == 30);
 	}
 	*/
 
 	@Test
 	public void testDistanceSame(){
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 0, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 0, 0);
 		double result = a.distance(b);
 		double expected = 0.0;
 		Assert.assertTrue(result == expected);
@@ -62,8 +65,9 @@ public class NodeTester
 
 	@Test
 	public void testDistance1(){
-		Node a = new Node(5, 10, 0);
-		Node b = new Node(11, 18, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(5, 10, 0);
+		Node b = dir.addNewNode(11, 18, 0);
 		double result = a.distance(b);
 		double expected = 10;
 		Assert.assertTrue(result == expected);
@@ -72,8 +76,9 @@ public class NodeTester
 
 	@Test
 	public void testDistanceOnlyY(){
-		Node a = new Node(10, 15, 0);
-		Node b = new Node(10, 60, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(10, 15, 0);
+		Node b = dir.addNewNode(10, 60, 0);
 		double result = a.distance(b);
 		double expected = 45;
 		Assert.assertTrue(result == expected);
@@ -81,7 +86,8 @@ public class NodeTester
 
 	@Test
 	public void testGetNeighborsNone() {
-		Node a = new Node(0, 0, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
 		Set<Node> result = a.getNeighbors();
 		Set<Node> expect = new HashSet<>();
 		Assert.assertEquals(result, expect);
@@ -89,9 +95,10 @@ public class NodeTester
 
 	@Test
 	public void testGetNeighborsOne() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 0, 0);
-		a.connect(b);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 0, 0);
+		dir.connectNodes(a, b);
 		Set<Node> resultA = a.getNeighbors();
 		Set<Node> resultB = b.getNeighbors();
 		Set<Node> expectA = new HashSet<>();
@@ -104,6 +111,7 @@ public class NodeTester
 
 	@Test
 	public void testGetNeighborsMany() {
+		Directory dir = new Directory();
 		SampleGraph G = new SampleGraph();
 		Set<Node> result = G.a.getNeighbors();
 		Set<Node> expect = new HashSet<>(Arrays.asList(G.b, G.g, G.d, G.c));
@@ -112,75 +120,83 @@ public class NodeTester
 
 	@Test
 	public void testAngleZero() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 1, 0);
-		Node c = new Node(1, 1, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 1, 0);
+		Node c = dir.addNewNode(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 0 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleOneEighty() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(1, 0, 0);
-		Node c = new Node(1, 1, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(1, 0, 0);
+		Node c = dir.addNewNode(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 180 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleNinety() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 1, 0);
-		Node c = new Node(0, 2, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 1, 0);
+		Node c = dir.addNewNode(0, 2, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 90 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleTwoSeventy() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 1, 0);
-		Node c = new Node(0, 0, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 1, 0);
+		Node c = dir.addNewNode(0, 0, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 270 , b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleSlightRight() {
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(0, 1, 0);
-		Node c = new Node(1, 2, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(0, 1, 0);
+		Node c = dir.addNewNode(1, 2, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 45 , b.angle(a, c), delta);
 	}
 	@Test
 	public void testAngleOddCase() {
+		Directory dir = new Directory();
 		// fixed the code from this one
 		// turns out java does modulo operations before addition
 		// sooo a + 450 % 360 is equivalent to a + 90;
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(1, -1, 0);
-		Node c = new Node(1, 1, 0);
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(1, -1, 0);
+		Node c = dir.addNewNode(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 225, b.angle(a, c), delta);
 	}
 
 	@Test
 	public void testAngleOppositeOddCase() {
+		Directory dir = new Directory();
 		// fixed the code from this one
 		// turns out java does modulo operations before addition
 		// sooo a + 450 % 360 is equivalent to a + 90;
-		Node a = new Node(0, 0, 0);
-		Node b = new Node(1, -1, 0);
-		Node c = new Node(1, 1, 0);
+		Node a = dir.addNewNode(0, 0, 0);
+		Node b = dir.addNewNode(1, -1, 0);
+		Node c = dir.addNewNode(1, 1, 0);
 		double delta = 0.001;
 		Assert.assertEquals((double) 315, c.angle(a, b), delta);
 	}
 
 	@Test
 	public void testAngleNoMove() {
-		Node a = new Node(0,0, 0);
+		Directory dir = new Directory();
+		Node a = dir.addNewNode(0,0, 0);
 		double delta = 0.001;
 		Assert.assertEquals(Double.NaN, a.angle(a, a), delta);
 	}
@@ -192,24 +208,23 @@ public class NodeTester
 	@Test
 	public void testDisconnectAll(){
 		// setup
-		Node a = new Node(10, 15, 0);
-		Node b = new Node(20, 25, 0);
-		Node c = new Node(30, 35, 0);
-		Node d = new Node(40, 45, 0);
-		a.connect(b);
-		a.connect(c);
-		a.connect(d);
-		// carry out test
 		Directory dir = new Directory();
-		dir.addNode(a);
-		dir.removeNodeAndRoom(a); // calls a.disconnectAll()
+		Node a = dir.addNewNode(10, 15, 0);
+		Node b = dir.addNewNode(20, 25, 0);
+		Node c = dir.addNewNode(30, 35, 0);
+		Node d = dir.addNewNode(40, 45, 0);
+		dir.connectNodes(a, b);
+		dir.connectNodes(a, c);
+		dir.connectNodes(a, d);
+		// carry out test
+		Directory dir2 = new Directory();
+		dir2.addNode(a);
+		dir2.removeNodeAndRoom(a); // calls a.disconnectAll()
 
 		Set<Node> neighbors = a.getNeighbors();
-		boolean t1 = neighbors.contains(b);
-		boolean t2 = neighbors.contains(c);
-		boolean t3 = neighbors.contains(d);
-		boolean result = t1 || t2 || t3;
-		Assert.assertTrue(!result);
+		Assert.assertTrue("t1", ! neighbors.contains(b));
+		Assert.assertTrue("t2", ! neighbors.contains(c));
+		Assert.assertTrue("t3", ! neighbors.contains(d));
 	}
 
 	// run test on graph of 4 nodes and run disconnect all on just node a, keep
@@ -217,32 +232,31 @@ public class NodeTester
 	@Test
 	public void testDiconnectAllAtA(){
 		// setup connected node graph
-		Node a = new Node(10, 15, 0);
-		Node b = new Node(20, 25, 0);
-		Node c = new Node(30, 35, 0);
-		Node d = new Node(40, 45, 0);
-		a.connect(b);
-		a.connect(c);
-		a.connect(d);
-		b.connect(c);
-		c.connect(d);
-		d.connect(b);
-		// carry out test
 		Directory dir = new Directory();
-		dir.addNode(a);
-		dir.removeNodeAndRoom(a); // calls a.disconnectAll();
+		Node a = dir.addNewNode(10, 15, 0);
+		Node b = dir.addNewNode(20, 25, 0);
+		Node c = dir.addNewNode(30, 35, 0);
+		Node d = dir.addNewNode(40, 45, 0);
+		dir.connectNodes(a, b);
+		dir.connectNodes(a, c);
+		dir.connectNodes(a, d);
+		dir.connectNodes(b, c);
+		dir.connectNodes(c, d);
+		dir.connectNodes(d, b);
+		// carry out test
+		Directory dir2 = new Directory();
+		dir2.addNode(a);
+		dir2.removeNodeAndRoom(a); // calls a.disconnectAll();
 
 		// test to make sure node a connections are severed
 		Set<Node> neighbors = a.getNeighbors();
-		boolean tA1 = ! neighbors.contains(b);
-		boolean tA2 = ! neighbors.contains(c);
-		boolean tA3 = ! neighbors.contains(d);
+		Assert.assertTrue("tA1", ! neighbors.contains(b));
+		Assert.assertTrue("tA2", ! neighbors.contains(c));
+		Assert.assertTrue("tA3", ! neighbors.contains(d));
 		// test to make sure nodes b, c, and d are still connected amongst each other
-		boolean t4 = b.getNeighbors().contains(c);
-		boolean t5 = c.getNeighbors().contains(d);
-		boolean t6 = d.getNeighbors().contains(b);
-		boolean result = tA1 && tA2 && tA3 && t4 && t5 && t6;
-		Assert.assertTrue(result);
+		Assert.assertTrue("t4", b.getNeighbors().contains(c));
+		Assert.assertTrue("t5", c.getNeighbors().contains(d));
+		Assert.assertTrue("t6", d.getNeighbors().contains(b));
 	}
 
 }
