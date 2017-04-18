@@ -101,7 +101,7 @@ public abstract class MapDisplayController
 	 */
 	public void switchFloors(int floor) {
 		this.floor = floor;
-		this.map = FloorProxy.maps.get(floor - 1).display();
+		this.map = FloorProxy.getMaps().get(floor - 1).display();
 	}
 
 	public void loadMap() {

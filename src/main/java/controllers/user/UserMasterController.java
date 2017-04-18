@@ -112,7 +112,7 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = FloorProxy.maps.get(floor - 1).display();
+		this.map = FloorProxy.getMaps().get(floor - 1).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 

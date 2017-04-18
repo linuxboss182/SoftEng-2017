@@ -7,4 +7,6 @@ public interface FloorImage
 {
 	Image display();
 	Image displayThumb();
+	int getFloorNum();
+	String getBuildingName();
 }

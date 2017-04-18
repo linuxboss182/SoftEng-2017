@@ -1,5 +1,6 @@
 package controllers.user;
 
+import controllers.shared.FloorImage;
 import controllers.shared.FloorProxy;
 import entities.Node;
 import javafx.fxml.FXML;
@@ -133,7 +134,7 @@ public class UserPathController
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
-		FloorProxy map = FloorProxy.maps.get(floor - 1);
+		FloorImage map = FloorProxy.getMaps().get(floor - 1);
 
 		newFloorButton.setImage(map.displayThumb());
 		newFloorButton.setPickOnBounds(true);
