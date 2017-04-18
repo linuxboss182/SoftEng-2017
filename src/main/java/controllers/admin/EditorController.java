@@ -504,7 +504,7 @@ public class EditorController extends MapDisplayController
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
-				n.connectOrDisconnect(newNode);
+				this.directory.connectOrDisconnectNodes(n, newNode);
 			});
 			this.redisplayAll();
 		}
@@ -520,7 +520,7 @@ public class EditorController extends MapDisplayController
 
 		int size = this.selectedNodes.size();
 		if(size > 0) {
-			this.selectedNodes.get(size - 1).connectOrDisconnect(newNode);
+			this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
 		}
 		if(this.shiftPressed) {
 			this.selectOrDeselectNode(newNode);
@@ -773,7 +773,7 @@ public class EditorController extends MapDisplayController
 
 
 			this.selectedNodes.forEach(nodes->{
-				nodes.connectOrDisconnect(n);
+				this.directory.connectOrDisconnectNodes(nodes, n);
 			});
 			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
@@ -895,10 +895,8 @@ public class EditorController extends MapDisplayController
 		}
 		this.setFields(selectedNodes.get(this.selectedNodes.size() - 1).getX(), selectedNodes.get(this.selectedNodes.size() - 1).getY());
 
-		//TODO: Use applyToRoom instead of checking containsRoom
-		if(selectedNodes.get(this.selectedNodes.size() - 1).containsRoom()) {
-			this.setRoomFields(selectedNodes.get(this.selectedNodes.size() - 1).getRoom().getName(), selectedNodes.get(this.selectedNodes.size() - 1).getRoom().getDescription());
-		}
+		selectedNodes.get(this.selectedNodes.size() - 1).applyToRoom(room ->
+				this.setRoomFields(room.getName(), room.getDescription()));
 	}
 
 	/**
