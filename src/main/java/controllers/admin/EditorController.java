@@ -96,6 +96,8 @@ public class EditorController extends MapDisplayController
 	private Text yPos;
 	@FXML
 	private Label xPos;
+	@FXML
+	private ChoiceBox<Algorithm> algorithmChoiceBox;
 
 
 //	protected Node selectedNode; // you select a node by double clicking
@@ -159,6 +161,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.setPickOnBounds(false);
 
 		this.installPaneListeners();
+		this.setUpAlgorithmChoiceBox();
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
@@ -178,6 +181,7 @@ public class EditorController extends MapDisplayController
 				//selectedLocation = newValue;
 			}
 		});
+
 	}
 
 	public void populateTableView() {
@@ -921,13 +925,12 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Get a choice box that sets the active algorithm
 	 */
-	private ChoiceBox<Algorithm> makeAlgorithmChoiceBox() {
-		ChoiceBox<Algorithm> algorithmChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
-		algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+	private void setUpAlgorithmChoiceBox() {
+		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
-		algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
-		algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
-		return algorithmChoiceBox;
+		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
 	}
 
 	/*
