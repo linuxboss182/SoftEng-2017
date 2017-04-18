@@ -96,6 +96,8 @@ public class EditorController extends MapDisplayController
 	private Text yPos;
 	@FXML
 	private Label xPos;
+	@FXML
+	private ChoiceBox algorithmChoiceBox;
 
 
 //	protected Node selectedNode; // you select a node by double clicking
