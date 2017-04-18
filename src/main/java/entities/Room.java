@@ -15,6 +15,10 @@ import javax.swing.text.DefaultTextUI;
 
 import controllers.icons.Icon;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * A class for Room(s).
@@ -34,6 +38,7 @@ public class Room
 	private Node location;
 	private String name;
 	private String description;
+	private Set<Professional> professionals;
 	private String image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
@@ -43,6 +48,7 @@ public class Room
 		this.location = null;
 		this.name = name;
 		this.description = description;
+		this.professionals = new HashSet<Professional>();
 		this.image = image;
 		this.makeShape();
 	}
@@ -83,6 +89,14 @@ public class Room
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void addProfessional(Professional p){
+		this.professionals.add(p);
+	}
+
+	public Collection<Professional> getProfessionals(){
+		return this.professionals;
 	}
 
 	void setImage(String imagepath) {

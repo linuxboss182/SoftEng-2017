@@ -274,7 +274,9 @@ public class DatabaseController
 				Room room = rooms.getOrDefault(resultProfRooms.getInt("roomID"), null);
 
 				if (room != null) {
+					//add the room to the professional, add the professional to the room
 					professional.addLocation(room);
+					room.addProfessional(professional);
 				}
 			}
 			resultProfRooms.close();
