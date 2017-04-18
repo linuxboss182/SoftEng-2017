@@ -18,22 +18,12 @@ public class UserDestinationController
 		extends UserMasterController
 		implements Initializable
 {
-	protected Room kiosk = null;
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//Call initialize from super class
 		this.initialize();
 
-		// TODO: Save the kiosk in a more sane manner, and load it faster
-		if (this.kiosk == null) {;
-			for (Room r : directory.getRooms()) {
-				if (r.getName().equalsIgnoreCase("YOU ARE HERE")) {
-					this.kiosk = r;
-				}
-			}
-		}
-		if (startRoom == null) startRoom = this.kiosk;
+		if (startRoom == null) startRoom = directory.getKiosk();
 
 		// This has to be done after setting the kiosk
 		this.enableOrDisableNavigationButtons();
