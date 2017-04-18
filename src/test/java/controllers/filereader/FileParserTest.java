@@ -21,14 +21,14 @@ way to uniquely describe professionals.
  */
 public class FileParserTest
 {
-	Directory dir = null;
+	Directory dirExpect = null;
 
 	/** Add a professional with the given information and rooms based on the given keys */
 	Professional quickProf(Map<Integer, Room> roomMap, String surname, String givenName,
 	                       String titles, Integer... roomKeys) {
-		Professional p = this.dir.addNewProfessional(givenName, surname, titles);
+		Professional p = this.dirExpect.addNewProfessional(givenName, surname, titles);
 		for (int i : roomKeys) {
-			if (roomMap.containsKey(i)) this.dir.addRoomToProfessional(roomMap.get(i), p);
+			if (roomMap.containsKey(i)) this.dirExpect.addRoomToProfessional(roomMap.get(i), p);
 		}
 		return p;
 	}
@@ -36,14 +36,18 @@ public class FileParserTest
 	@Test
 	public void baseTest()
 			throws FileNotFoundException {
-		this.dir = new Directory();
+		this.dirExpect = new Directory();
+		Directory dirActual = new Directory();
 		Map<Integer, Room> map = new HashMap<>();
-		map.put(2, this.dir.addNewRoom("Room 2", ""));
-		map.put(1, this.dir.addNewRoom("Room 1", ""));
-		map.put(3, this.dir.addNewRoom("Room 3", ""));
-		map.put(4, this.dir.addNewRoom("Room 4", ""));
-		map.put(5, this.dir.addNewRoom("Room 5", ""));
-	
+		map.put(2, this.dirExpect.addNewRoom("Room 2", ""));
+		map.put(1, this.dirExpect.addNewRoom("Room 1", ""));
+		map.put(3, this.dirExpect.addNewRoom("Room 3", ""));
+		map.put(4, this.dirExpect.addNewRoom("Room 4", ""));
+		map.put(5, this.dirExpect.addNewRoom("Room 5", ""));
+		for (Room r : this.dirExpect.getRooms()) {
+			dirActual.addRoom(r);
+		}
+
 		// This should be in alphabetical order
 		SortedSet<Professional> expect = new TreeSet<>(Arrays.asList(
 				this.quickProf(map, "Smith", "John", "MD", 1),
@@ -53,16 +57,16 @@ public class FileParserTest
 				this.quickProf(map, "Jones", "Joan", "", 1),
 				this.quickProf(map, "Jones", "James", "RN, CPNP"),
 				this.quickProf(map, "Johnson", "John", "MD"),
-				this.quickProf(map, "Johnson", "Jane", "MD", 1),
 				this.quickProf(map, "Johnson", "Jack", "MD", 1, 2),
+				this.quickProf(map, "Johnson", "Jane", "MD", 1),
 				this.quickProf(map, "Surname", "GivenName Info", "Title 1, Title 2", 1, 2, 3)
 		));
 
 		/* End setup */
 
 		File f = new File(this.getClass().getResource("/testData1.tsv").getFile());
-		FileParser.parseProfessionals(f, this.dir);
-		SortedSet<Professional> actual = this.dir.getProfessionals();
+		FileParser.parseProfessionals(f, dirActual);
+		SortedSet<Professional> actual = dirActual.getProfessionals();
 
 		while (! actual.isEmpty() && ! expect.isEmpty()) {
 			Professional act = actual.first();
