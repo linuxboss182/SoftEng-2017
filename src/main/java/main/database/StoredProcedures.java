@@ -155,7 +155,8 @@ public class StoredProcedures
 
 	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName){
 		//query needs work
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", "+buildingName+")";
+		buildingName = sanitize(buildingName);
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", '"+buildingName+"')";
 	}
 
 	public static String procInsertRoom(int roomID, String roomName, String roomDescription){
