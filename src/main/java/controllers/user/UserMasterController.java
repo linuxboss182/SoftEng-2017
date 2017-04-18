@@ -23,6 +23,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
@@ -35,6 +37,8 @@ import java.util.Set;
 import entities.Node;
 import entities.Room;
 import main.ApplicationController;
+
+import static com.sun.java.accessibility.util.AWTEventMonitor.addComponentListener;
 
 
 public abstract class UserMasterController
@@ -64,6 +68,10 @@ public abstract class UserMasterController
 	private GridPane sideGridPane;
 	@FXML
 	private ChoiceBox floorChoiceBox;
+	@FXML
+	private ToolBar bottomToolbar;
+	@FXML
+	private BorderPane parentBorderPane;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -91,7 +99,7 @@ public abstract class UserMasterController
 	 */
 	protected Scene getScene() {
 		// The contentAnchor should alays exist, so use it to get the scene
-		return this.contentAnchor.getScene();
+		return this.parentBorderPane.getScene();
 	}
 
 	public void initialize() {
@@ -179,6 +187,10 @@ public abstract class UserMasterController
 				event.consume();
 			}
 		});
+
+		//Call listeners for window resizing
+		windowResized();
+
 
 	}
 
@@ -385,6 +397,30 @@ public abstract class UserMasterController
 		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
 		contentAnchor.setScaleX(zoomCoefficient);
 		contentAnchor.setScaleY(zoomCoefficient);
+	}
+
+	public void scaleElements() {
+		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+		this.contentAnchor.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+		System.out.println("half of window: " + parentBorderPane.getWidth() / 2);
+		this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), (bottomToolbar.getHeight()/2));
+		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
+	}
+
+	public void windowResized() {
+
+		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+				System.out.println("Width: " + newSceneWidth);
+				scaleElements();
+			}
+		});
+		this.parentBorderPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				System.out.println("Height: " + newSceneHeight);
+				scaleElements();
+			}
+		});
 	}
 
 }

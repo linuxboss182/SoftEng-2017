@@ -26,29 +26,25 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserDestinationController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserDestinationController">
 	<top>
-		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+		<ToolBar prefHeight="32.0" prefWidth="1174.0" style="-fx-background-color: 0000ff;" BorderPane.alignment="CENTER">
 			<items>
-			<Region prefHeight="30.0" prefWidth="530.0" />
+			<Region prefHeight="0.0" prefWidth="452.0" />
 						<Slider fx:id="zoomSlider" prefHeight="14.0" prefWidth="264.0" />
 			</items>
 		</ToolBar>
 	</top>
 	<bottom>
-		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+		<ToolBar fx:id="bottomToolbar" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: f0f0f0;" BorderPane.alignment="CENTER">
 			<items>
 				<Button fx:id="logAsAdmin" mnemonicParsing="false" onAction="#logAsAdminClicked" text="Login As Admin" />
-				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS" />
-				<Pane prefHeight="30.0" prefWidth="554.0">
-               <children>
-                  <Button fx:id="getDirectionsBtn" defaultButton="true" layoutX="-25.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" text="Get Directions" />
-               </children></Pane>
+            <Button fx:id="getDirectionsBtn" defaultButton="true" mnemonicParsing="false" onMouseClicked="#getDirectionsClicked" prefHeight="25.0" prefWidth="210.0" style="-fx-background-color: 0058a1;" text="Get Directions" />
 			</items>
 		</ToolBar>
 	</bottom>
 	<center>
-		<SplitPane orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
+		<SplitPane orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" style="-fx-background-color: ffffff;" BorderPane.alignment="CENTER">
 			<items>
 				<AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
 					<children>
@@ -61,7 +57,7 @@
 		</SplitPane>
 	</center>
    <left>
-      <GridPane fx:id="destGridPane" prefHeight="642.0" prefWidth="369.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="destGridPane" prefHeight="642.0" prefWidth="369.0" style="-fx-background-color: f0f0f0;" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="5.0" prefWidth="5.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="348.0" minWidth="10.0" prefWidth="348.0" />
@@ -92,10 +88,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="changeStartBtn" mnemonicParsing="false" onAction="#changeStartClicked" prefHeight="25.0" prefWidth="157.0" text="Change Starting Location" />
+                  <Button fx:id="changeStartBtn" mnemonicParsing="false" onAction="#changeStartClicked" prefHeight="25.0" prefWidth="157.0" style="-fx-background-color: 0059a3;" text="Change Starting Location" />
                </children>
             </GridPane>
-            <ChoiceBox fx:id="floorChoiceBox" prefHeight="25.0" prefWidth="227.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ChoiceBox fx:id="floorChoiceBox" prefHeight="25.0" prefWidth="227.0" style="-fx-background-color: 0058a1;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </left>
