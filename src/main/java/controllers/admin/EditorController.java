@@ -102,7 +102,8 @@ public class EditorController extends MapDisplayController
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
-	protected boolean draggingNode = false;
+	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
+	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -616,6 +617,7 @@ public class EditorController extends MapDisplayController
 //			if(this.shiftPressed) {
 //				this.beingDragged = true;
 //			}
+			this.draggedANode = true;
 			if(this.shiftPressed && !draggingNode) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
@@ -687,12 +689,17 @@ public class EditorController extends MapDisplayController
 	public void clickNodeListener(MouseEvent e, Node n) {
 		// update text fields
 		this.setFields(n.getX(), n.getY());
-
+		if(this.draggedANode) {
+			this.draggedANode = false;
+			return;
+		}
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
 			if(!this.shiftPressed) {
-				this.deselectNodes();
+				if(this.selectedNodes.size() > 1) {
+					this.deselectNodes();
+				}
 			}
 			this.selectOrDeselectNode(n);
 			this.updateFields();
