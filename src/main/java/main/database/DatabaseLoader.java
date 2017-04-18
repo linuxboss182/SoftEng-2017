@@ -8,6 +8,7 @@ import entities.Directory;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
+import main.StoredProcedures;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
@@ -151,7 +152,8 @@ class DatabaseLoader
 //				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
 				                                 resultNodes.getDouble("nodeY"),
-				                                 resultNodes.getInt("floor"));
+				                                 resultNodes.getInt("floor"),
+												 resultNodes.getString("buildingName"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 				directory.addNode(node);
 			}
@@ -246,7 +248,8 @@ class DatabaseLoader
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
-			                                        n.getFloor(), n.mapToRoom(Object::hashCode));
+			                                        n.getFloor(), n.mapToRoom(Object::hashCode),
+													n.getBuildingName());
 			db.executeUpdate(query);
 		}
 

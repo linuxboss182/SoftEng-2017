@@ -18,6 +18,7 @@ public class Node
 	private double y;
 	private int floor;
 	private HashSet<Node> neighbors;
+	private String buildingName;
 	private Room room;
 	private Circle circ;
 
@@ -25,11 +26,12 @@ public class Node
 	// TODO: Fix all Node shape operations
 	private static final double CIRCLE_RADIUS = 5;
 
-	Node(double x, double y, int floor) {
+	Node(double x, double y, int floor, String buildingName) {
 		this.x = x;
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
+		this.buildingName = buildingName;
 		this.room = null;
 	}
 
@@ -47,6 +49,10 @@ public class Node
 
 	public Room getRoom() {
 		return this.room;
+	}
+
+	public String getBuildingName(){
+		return this.buildingName;
 	}
 
 	/**
@@ -85,6 +91,10 @@ public class Node
 	// TODO: Encapsulate to Directory
 	void setRoom(Room room) {
 		this.room = room;
+	}
+
+	void setBuildingName(String buildingName){
+		this.buildingName = buildingName;
 	}
 
 	/** Remove this node's association with a room, if any */

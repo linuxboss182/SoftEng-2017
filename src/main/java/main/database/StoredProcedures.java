@@ -1,4 +1,4 @@
-package main.database;
+package main;
 
 import java.util.List;
 import java.util.Arrays;
@@ -13,6 +13,7 @@ public class StoredProcedures
 					+ " nodeID integer PRIMARY KEY "
 					+ " , nodeX  double precision NOT NULL "
 					+ ", nodeY  double precision NOT NULL "
+					+ ", buildingName varchar(200) NOT NULL "
 					+ ", floor integer NOT NULL "
 					+  ", roomID integer)",/*references Rooms(roomID))",*/ // foreign key would cause drop problems
 			"CREATE TABLE Edges ("
@@ -152,9 +153,9 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName){
 		//query needs work
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+ roomID+")";
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", "+buildingName+")";
 	}
 
 	public static String procInsertRoom(int roomID, String roomName, String roomDescription){
@@ -253,7 +254,7 @@ public class StoredProcedures
 	private static String sanitize(String str){
 		return str.replace("'","''");
 	}
-	
+
 	public static String procRetrieveKiosk() {
 		return "SELECT roomID FROM Kiosk";
 	}
