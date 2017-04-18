@@ -209,6 +209,8 @@ public class EditorController extends MapDisplayController
 				selectedProf = newValue;
 			}
 		});
+
+
 	}
 
 	@FXML
