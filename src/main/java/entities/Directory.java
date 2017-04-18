@@ -229,6 +229,38 @@ public class Directory
 		n1.connectOrDisconnect(n2);
 	}
 
+	public void connectNodes(Node n1, Node n2) {
+		n1.connect(n2);
+	}
+	
+	public void setRoomLocation(Room room, Node node) {
+		room.setLocation(node);
+		node.setRoom(room);
+	}
+
+	public void unsetRoomLocation(Room room) {
+		Node n = room.getLocation();
+		if (n != null) {
+			room.unsetLocation();
+			n.unsetRoom();
+		}
+	}
+
+	public void unsertNodeRoom(Node node) {
+		node.applyToRoom(Room::unsetLocation);
+		node.unsetRoom();
+	}
+
+	public void addRoomToProfessional(Room room, Professional professional) {
+		professional.addLocation(room);
+		room.addProfessional(professional);
+	}
+	
+	public void removeRoomFromProfessional(Room room, Professional professional) {
+		professional.removeLocation(room);
+		room.removeProfessional(professional);
+	}
+
 	/* Program logic functions */
 
 	/** return whether this directory has a kiosk */

@@ -91,14 +91,6 @@ public class Room
 		this.description = description;
 	}
 
-	public void addProfessional(Professional p){
-		this.professionals.add(p);
-	}
-
-	public Collection<Professional> getProfessionals(){
-		return this.professionals;
-	}
-
 	void setImage(String imagepath) {
 		this.image = imagepath;
 	}
@@ -114,6 +106,20 @@ public class Room
 	public void unsetLocation() {
 		this.location = null;
 	}
+
+	void addProfessional(Professional professional) {
+		this.professionals.add(professional);
+	}
+
+	void removeProfessional(Professional professional) {
+		this.professionals.remove(professional);
+	}
+
+	// TODO: Add "getProfessionalsForRoom" to Directory, returning a sorted TreeSet
+	Collection<Professional> getProfessionals() {
+		return new HashSet<>(this.professionals);
+	}
+
 
 	// TODO: Remove Room::toString; replace with custom method
 	@Override

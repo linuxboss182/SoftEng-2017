@@ -252,7 +252,7 @@ public class EditorController extends MapDisplayController
 	public void addProfToRoom() {
 		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
 
-		this.selectedNodes.forEach(n-> n.applyToRoom(room -> this.selectedProf.addLocation(room)));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.addRoomToProfessional(room, this.selectedProf)));
 
 		this.populateTableView();
 	}
@@ -261,7 +261,7 @@ public class EditorController extends MapDisplayController
 	public void delProfFromRoom() {
 		if (this.selectedNodes.size() == 0 || this.selectedProf == null) return;
 
-		this.selectedNodes.forEach(n-> n.applyToRoom(room -> this.selectedProf.removeLocation(room)));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.removeRoomFromProfessional(room, this.selectedProf)));
 
 		this.populateTableView();
 	}

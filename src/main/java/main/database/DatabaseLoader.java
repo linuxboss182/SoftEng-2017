@@ -54,15 +54,14 @@ class DatabaseLoader
 	 * @return True if success, false if failure
 	 */
 	private boolean populateDirectory(Directory directory) {
-		Map<Integer, Node> nodes = new HashMap<>();
 		Map<Integer, Room> rooms = new HashMap<>();
 		Map<Integer, Professional> professionals = new HashMap<>();
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
-			this.retrieveNodesAndRooms(nodes, rooms);
+			this.retrieveNodesAndRooms(directory, rooms);
 			//find all them professionals
-			this.retrieveProfessionals(rooms, professionals);
+			this.retrieveProfessionals(directory, rooms);
 			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -70,12 +69,6 @@ class DatabaseLoader
 			return false;
 		}
 		//add all to directory
-		for(Node n: nodes.values()){
-			directory.addNode(n);
-		}
-		for(Room r: rooms.values()){
-			directory.addRoom(r);
-		}
 		for(Professional p: professionals.values()){
 			directory.addProfessional(p);
 		}
@@ -103,10 +96,11 @@ class DatabaseLoader
 
 	/**Retrieves all employees with their location data populated(among other things)
 	 *
+	 * @param directory The directory to populate
 	 * @param rooms A hash map of all rooms in the database
-	 * @param professionals The hash map of professionals to populate
 	 */
-	private void retrieveProfessionals(Map<Integer, Room> rooms, Map<Integer, Professional> professionals) throws SQLException{
+	private void retrieveProfessionals(Directory directory, Map<Integer, Room> rooms) throws SQLException{
+		HashMap<Integer, Professional> professionals = new HashMap<>();
 		HashMap<Integer, Room> profRooms = new HashMap<>();
 		try {
 			Statement queryProfessionals = this.db_connection.createStatement();
@@ -119,6 +113,7 @@ class DatabaseLoader
 						resultProfessionals.getString("employeeSurname"),
 						resultProfessionals.getString("employeeTitle"));
 				//add to hashmap
+				directory.addProfessional(professional);
 				professionals.put(resultProfessionals.getInt("employeeID"), professional);
 			}
 			resultProfessionals.close();
@@ -132,12 +127,7 @@ class DatabaseLoader
 				int employeeID = resultProfRooms.getInt("employeeID");
 				Professional professional = professionals.get(employeeID);
 				Room room = rooms.getOrDefault(resultProfRooms.getInt("roomID"), null);
-
-				if (room != null) {
-					//add the room to the professional, add the professional to the room
-					professional.addLocation(room);
-					room.addProfessional(professional);
-				}
+				directory.addRoomToProfessional(room, professional);
 			}
 			resultProfRooms.close();
 			queryProfRooms.close();
@@ -148,10 +138,11 @@ class DatabaseLoader
 
 	/**Retrieves nodes and rooms from the database and populates the given hash maps
 	 *
-	 * @param nodes The map of nodes to populate
+	 * @param directory The directory to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodesAndRooms(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
+	private void retrieveNodesAndRooms(Directory directory, Map<Integer, Room> rooms) throws SQLException {
+		Map<Integer, Node> nodes = new HashMap<>();
 		try {
 			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
@@ -162,6 +153,7 @@ class DatabaseLoader
 				                     resultNodes.getDouble("nodeY"),
 				                     resultNodes.getInt("floor"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
+				directory.addNode(node);
 			}
 			resultNodes.close();
 
@@ -172,38 +164,40 @@ class DatabaseLoader
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = new Room(resultRooms.getString("roomName"),
 				                     resultRooms.getString("roomDescription"));
+				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
 					//we have a location in the room
-					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
+					room.setLocation(nodes.get(nodeID));
+					directory.setRoomLocation(room, nodes.get(nodeID));
 				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
 			}
 			resultRooms.close();
 
-			// add rooms to nodes
-			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
-			Statement queryEdges = this.db_connection.createStatement();
-			//ResultSet resultEdges = null;
-			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
-			while (resultNodes.next()) {
-//				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
-				int nodeID = resultNodes.getInt("nodeID");
-				int roomID = resultNodes.getInt("roomID");
-//				PRINTLN("Loading room "+roomID);
-				if (!resultNodes.wasNull()) {
-					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
-				}
-			}
-			resultNodes.close();
+//			// add rooms to nodes
+//			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
+//			//ResultSet resultEdges = null;
+//			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+//			while (resultNodes.next()) {
+////				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
+//				int nodeID = resultNodes.getInt("nodeID");
+//				int roomID = resultNodes.getInt("roomID");
+////				PRINTLN("Loading room "+roomID);
+//				if (!resultNodes.wasNull()) {
+//					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+//				}
+//			}
+//			resultNodes.close();
 
 			// add adjacency lists to nodes
+			Statement queryEdges = this.db_connection.createStatement();
 			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 			while (resultEdges.next()) {
 				int node1 = resultEdges.getInt("node1");
 				int node2 = resultEdges.getInt("node2");
 //				PRINTLN("Loading edge "+node1+" "+node2);
-				nodes.get(node1).connect(nodes.get(node2));
+				directory.connectNodes(nodes.get(node1), nodes.get(node2));
 			}
 			resultEdges.close();
 

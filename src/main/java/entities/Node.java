@@ -121,7 +121,7 @@ public class Node
 	 *
 	 * @return false if the edge already existed or connection otherwise failed
 	 * 
-	 * @deprecated This isn't actually deprecated, but it should be private.
+	 * @deprecated This isn't actually deprecated, but it should be package private.
 	 */
 	@Deprecated
 	public boolean connect(Node n) {
