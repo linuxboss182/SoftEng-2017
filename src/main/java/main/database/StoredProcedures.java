@@ -1,4 +1,4 @@
-package main;
+package main.database;
 
 import java.util.List;
 import java.util.Arrays;

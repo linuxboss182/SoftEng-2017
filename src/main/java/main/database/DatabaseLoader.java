@@ -8,16 +8,15 @@ import entities.Directory;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
-import main.StoredProcedures;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
 /**
  * Class for saving to and loading from the database
- * 
+ *
  * Package methods:
  * - DatabaseLoader(): Constructor
- * - getDirectory(): 
+ * - getDirectory():
  * - populateDirectory(): builds a directory by loading from the database
  * - destructiveSaveDirectory(Directory): empties the database, then saves the directory
  *                                        to the database
