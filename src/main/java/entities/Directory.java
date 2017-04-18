@@ -27,7 +27,7 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private Room kiosk;
-	
+
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
 		int compName = r1.getName().compareTo(r2.getName());
@@ -238,7 +238,12 @@ public class Directory
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
 	}
-	
+
+	public void updateRoom(Room room, String name, String description) {
+		room.setName(name);
+		room.setDescription(description);
+	}
+
 	public void setRoomLocation(Room room, Node node) {
 		room.setLocation(node);
 		node.setRoom(room);
@@ -252,7 +257,7 @@ public class Directory
 		}
 	}
 
-	public void unsertNodeRoom(Node node) {
+	public void unsetNodeRoom(Node node) {
 		node.applyToRoom(Room::unsetLocation);
 		node.unsetRoom();
 	}
@@ -261,7 +266,7 @@ public class Directory
 		professional.addLocation(room);
 		room.addProfessional(professional);
 	}
-	
+
 	public void removeRoomFromProfessional(Room room, Professional professional) {
 		professional.removeLocation(room);
 		room.removeProfessional(professional);
@@ -276,7 +281,7 @@ public class Directory
 
 	/**
 	 * Determine if the rooms accessibly to the user are all connected
-	 * 
+	 *
 	 * This only considers rooms that have locations
 	 *
 	 * @return Whether all rooms are connected

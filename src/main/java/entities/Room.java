@@ -83,13 +83,11 @@ public class Room
 		return this.shape;
 	}
 
-	// TODO: Encapsulate to Directory
-	public void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 
-	// TODO: Encapsulate to Directory
-	public void setDescription(String description) {
+	void setDescription(String description) {
 		this.description = description;
 	}
 

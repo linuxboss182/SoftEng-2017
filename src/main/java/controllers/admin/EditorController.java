@@ -547,9 +547,7 @@ public class EditorController extends MapDisplayController
 	 */
 	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
 		this.selectedNodes.get(0).applyToRoom(room -> {
-			room.setName(name);
-			room.setDescription(description);
-			// Reset name
+			directory.updateRoom(room, name, description);
 			// TODO: Don't rely on room shapes being a stacked rectangle and text
 			((Text)room.getShape().getChildren().get(1)).setText(name);
 		});
