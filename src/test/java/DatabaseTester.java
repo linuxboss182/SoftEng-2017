@@ -62,13 +62,7 @@ public class DatabaseTester
 			Assert.fail();
 		}
 
-		try {
-			controller.saveDirectory(oldDirectory);
-		} catch (DatabaseException e) {
-			System.out.println(e.getMessage());
-			Assert.fail();
-			e.printStackTrace();
-		}
+		controller.saveDirectory(oldDirectory);
 
 		Directory newDirectory = controller.getDirectory();
 
