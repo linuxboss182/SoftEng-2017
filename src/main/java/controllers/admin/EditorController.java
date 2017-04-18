@@ -97,7 +97,7 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private Label xPos;
 	@FXML
-	private ChoiceBox algorithmChoiceBox;
+	private ChoiceBox<Algorithm> algorithmChoiceBox;
 
 
 //	protected Node selectedNode; // you select a node by double clicking
@@ -925,12 +925,12 @@ public class EditorController extends MapDisplayController
 	 * Get a choice box that sets the active algorithm
 	 */
 	private ChoiceBox<Algorithm> makeAlgorithmChoiceBox() {
-		ChoiceBox<Algorithm> algorithmChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
-		algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
-		algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
-		algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
-		return algorithmChoiceBox;
+		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
+		return this.algorithmChoiceBox;
 	}
 
 	/*
