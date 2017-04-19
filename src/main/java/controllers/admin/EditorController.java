@@ -216,49 +216,25 @@ public class EditorController extends MapDisplayController
 		 *  Press Shift + down to move the view to the down
 		 */
 		// TODO: Allow changing of floor without building, then add this back in
-//		parentBorderPane.setOnKeyPressed(e -> {
-////			System.out.println(e); // Prints out key statements
-//			System.out.println(e.getCode());// Prints out key statements
-//			if (e.getCode() == KeyCode.BACK_SPACE) {
-//				this.deleteSelectedNodes();
-//			} else if (e.getCode() == KeyCode.A && e.isControlDown()) {
-//				this.selectAllNodesOnFloor();
-//			} else if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-//				increaseZoomButtonPressed();
-//			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-//				decreaseZoomButtonPressed();
-//			}else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()) {
-//				changeFloor(2);
-//				this.floorComboBox.getSelectionModel().select(1);
-//			}else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()) {
-//				changeFloor(3);
-//				this.floorComboBox.getSelectionModel().select(2);
-//			}else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()) {
-//				changeFloor(4);
-//				this.floorComboBox.getSelectionModel().select(3);
-//			}else if (e.getCode() == KeyCode.DIGIT5 && e.isControlDown()) {
-//				changeFloor(5);
-//				this.floorComboBox.getSelectionModel().select(4);
-//			}else if (e.getCode() == KeyCode.DIGIT6 && e.isControlDown()) {
-//				changeFloor(6);
-//				this.floorComboBox.getSelectionModel().select(5);
-//			}else if (e.getCode() == KeyCode.DIGIT7 && e.isControlDown()) {
-//				changeFloor(7);
-//				this.floorComboBox.getSelectionModel().select(6);
-//			}else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()) {
-//				changeFloor(1);
-//				this.floorComboBox.getSelectionModel().select(0);
-//			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
-//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
-//			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
-//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
-//			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
-//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
-//			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
-//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
-//			}
-//			e.consume();
-//		});
+
+		parentBorderPane.setOnKeyPressed(e -> {
+//			System.out.println(e); // Prints out key statements
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
+		});
 	}
 
 
