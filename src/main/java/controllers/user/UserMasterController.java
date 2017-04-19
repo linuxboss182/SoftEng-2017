@@ -1,5 +1,6 @@
 package controllers.user;
 
+import com.jfoenix.controls.JFXButton;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -9,9 +10,16 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -21,6 +29,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
@@ -43,7 +52,7 @@ public abstract class UserMasterController
 		extends MapDisplayController
 {
 	@FXML
-	private Button logAsAdmin;
+	private JFXButton logAsAdmin;
 	@FXML
 	private ImageView imageViewMap;
 	@FXML
@@ -65,7 +74,9 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ChoiceBox floorChoiceBox;
+	private ComboBox floorChoiceBox;
+	@FXML
+	private ComboBox buildingChoiceBox;
 	@FXML
 	private ToolBar bottomToolbar;
 	@FXML
@@ -76,12 +87,19 @@ public abstract class UserMasterController
 	private GridPane destGridPane;
 	@FXML
 	private GridPane bottomGridPane;
+	@FXML
+	private Button aboutBtn;
+	@FXML
+	private ImageView logoImageView;
+	@FXML
+	private ScrollPane mapScroll = new ScrollPane();
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
 	final protected double zoomMax = SCALE_DELTA*5;
 
 	private double clickedX, clickedY;
+	protected static double SCALE_TOTAL = 1;
 	protected static Room startRoom;
 	protected static Room endRoom;
 	protected static boolean choosingStart = false;
@@ -120,11 +138,18 @@ public abstract class UserMasterController
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
+
+		//Load logo
+//		Image logo;
+//		logo = new Image("/bwhLogo.png");
+//		logoImageView.setImage(logo);
+
+
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
-		zoomSlider.setValue(2);
+		zoomSlider.setValue(0);
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
@@ -139,8 +164,8 @@ public abstract class UserMasterController
 				 */
 				double zoomPercent = (zoomSlider.getValue()/100);
 				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-				contentAnchor.setScaleX(zoomCoefficient);
-				contentAnchor.setScaleY(zoomCoefficient);
+				mapScroll.setScaleX(zoomCoefficient);
+				mapScroll.setScaleY(zoomCoefficient);
 			}
 		});
 
@@ -165,17 +190,38 @@ public abstract class UserMasterController
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
-				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
-				// Pretty much just limit the scaling minimum and maximum
-				potentialScaleX = (potentialScaleX < zoomMin ? zoomMin:potentialScaleX);
-				potentialScaleY = (potentialScaleY < zoomMin ? zoomMin:potentialScaleY);
-				potentialScaleX = (potentialScaleX > zoomMax ? zoomMax:potentialScaleX);
-				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
-				contentAnchor.setScaleX(potentialScaleX);
-				contentAnchor.setScaleY(potentialScaleY);
-				// Update the slider
-				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
+
+				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
+					Bounds viewPort = mapScroll.getViewportBounds();
+					Bounds contentSize = contentAnchor.getBoundsInParent();
+
+					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+
+					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+
+					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+					SCALE_TOTAL *= scaleFactor;
+
+					double newCenterX = centerPosX * scaleFactor;
+					double newCenterY = centerPosY * scaleFactor;
+
+					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+				}
+
+				if (scaleFactor * SCALE_TOTAL <= 1) {
+//					SCALE_TOTAL = 1/scaleFactor;
+					zoomSlider.setValue(0);
+
+				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
+//					SCALE_TOTAL = 6 / scaleFactor;
+					zoomSlider.setValue(100);
+
+				}else {
+					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
+				}
+
 			}
 		});
 		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -252,6 +298,7 @@ public abstract class UserMasterController
 		});
 
 
+
 	}
 
 	/**
@@ -317,7 +364,7 @@ public abstract class UserMasterController
 		// Unset navigation targets for after logout
 		startRoom = null;
 		endRoom = null;
-		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
 
 
@@ -460,23 +507,23 @@ public abstract class UserMasterController
 	}
 
 	public void scaleElements() {
-		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
-		this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
-		if(this.getDirectionsBtn != null) {
-			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
-		}
-
-		double windowWidth = parentBorderPane.getWidth();
-		//destGridPane.setPrefWidth(windowWidth / 4);
-
-		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
-		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
-		if(this.bottomGridPane != null) {
-			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
-			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
-				c.setPrefWidth(bottomToolbar.getWidth() / 3);
-			}
-		}
+//		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+//		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
+//		if(this.getDirectionsBtn != null) {
+//			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
+//		}
+//
+//		double windowWidth = parentBorderPane.getWidth();
+//		//destGridPane.setPrefWidth(windowWidth / 4);
+//
+//		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
+//		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
+//		if(this.bottomGridPane != null) {
+//			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
+//			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
+//				c.setPrefWidth(bottomToolbar.getWidth() / 3);
+//			}
+//		}
 
 		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
 	}
@@ -496,5 +543,11 @@ public abstract class UserMasterController
 			}
 		});
 	}
+
+	@FXML
+	public void aboutBtnClicked () {
+
+	}
+
 
 }

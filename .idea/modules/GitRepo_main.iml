@@ -11,5 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.derby:derby:10.13.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.jfoenix:jfoenix:1.2.0" level="project" />
   </component>
 </module>
