@@ -53,7 +53,8 @@ public class IconController
 		NODE.DEFAULT.applyTo(node.getShape());
 
 		// Set elevator colors
-		if (node.getNeighbors().stream().anyMatch(n -> node.getFloor() != n.getFloor())) {
+		if (node.getNeighbors().stream().anyMatch(n -> (node.getFloor() != n.getFloor())
+				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
 			NODE.ELEVATOR.applyTo(node.getShape());
 		} else if (node.getRoom() != null) {
 			NODE.ROOM.applyTo(node.getShape());
