@@ -98,7 +98,7 @@ public abstract class UserMasterController
 	final protected double zoomMax = SCALE_DELTA*5;
 
 	private double clickedX, clickedY;
-	protected static double SCALE_TOTAL = 1;
+	protected double SCALE_TOTAL = 1;
 	protected static Room startRoom;
 	protected static Room endRoom;
 	protected static boolean choosingStart = false;
@@ -124,6 +124,9 @@ public abstract class UserMasterController
 	}
 
 	public void initialize() {
+		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
 		//Set the panes
 		this.setPanes(linePane, nodePane);
 		//Grab the database controller from main and use it to populate our directory
