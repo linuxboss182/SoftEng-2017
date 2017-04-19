@@ -1,12 +1,6 @@
 package controllers.icons;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import entities.Directory;
 import entities.Node;
@@ -113,7 +107,7 @@ public class IconController
 	private void resetRoom(Room room) {
 		if (room == null || room.getLocation() == null) return;
 
-		Shape shape = (Shape) room.getShape().getChildren().get(0);
+		Shape shape = (Shape) room.getUserSideShape().getChildren().get(0);
 		ROOM.DEFAULT.applyTo(shape);
 
 		//if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
@@ -145,13 +139,13 @@ public class IconController
 	public void selectEndRoom(Room room) {
 		this.endRoom = room;
 		this.resetAllRoomsExcept(this.startRoom);
-		ROOM.END.applyTo((Shape)room.getShape().getChildren().get(0));
+		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
 	}
 
 	public void selectStartRoom(Room room) {
 		this.startRoom = room;
 		this.resetAllRoomsExcept(this.endRoom);
-		ROOM.START.applyTo((Shape)room.getShape().getChildren().get(0));
+		ROOM.START.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
 	}
 
 //	/**

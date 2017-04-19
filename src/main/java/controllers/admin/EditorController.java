@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -120,10 +121,13 @@ public class EditorController extends MapDisplayController
 	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 	protected boolean ctrlClicked = false;
 
+	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
+
+
 	final double SCALE_DELTA = 1.1;
 	protected static double SCALE_TOTAL = 1;
-	final protected double zoomMin = 1/SCALE_DELTA;
-	final protected double zoomMax = SCALE_DELTA*5;
+	final protected double zoomMin = 1;
+	final protected double zoomMax = 6;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
 
@@ -195,15 +199,67 @@ public class EditorController extends MapDisplayController
 
 
 		/** This is the section for key listeners.
-		 *
-		 *
+		 *  Press Back Space for Deleting selected nodes
+		 *  Press Ctrl + A for selecting all nodes
+		 *  Press Ctrl + Open Bracket for zoom in
+		 *  Press Ctrl + Close Bracket for zoom out
+		 *  Press Ctrl + DIGIT1 to view the map for floor 1
+		 *  Press Ctrl + DIGIT2 to view the map for floor 2
+		 *  Press Ctrl + DIGIT3 to view the map for floor 3
+		 *  Press Ctrl + DIGIT4 to view the map for floor 4
+		 *  Press Ctrl + DIGIT5 to view the map for floor 5
+		 *  Press Ctrl + DIGIT6 to view the map for floor 6
+		 *  Press Ctrl + DIGIT7 to view the map for floor 7
+		 *  Press Shift + Right to move the view to the right
+		 *  Press Shift + Left to move the view to the left
+		 *  Press Shift + Up to move the view to the up
+		 *  Press Shift + down to move the view to the down
 		 */
-		parentBorderPane.setOnKeyPressed(e-> {
+		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
-
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.BACK_SPACE) {
+				this.deleteSelectedNodes();
+			} else if (e.getCode() == KeyCode.A && e.isControlDown()) {
+				this.selectAllNodesOnFloor();
+			} else if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()) {
+				changeFloor(2);
+				this.floorChoiceBox.getSelectionModel().select(1);
+			}else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()) {
+				changeFloor(3);
+				this.floorChoiceBox.getSelectionModel().select(2);
+			}else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()) {
+				changeFloor(4);
+				this.floorChoiceBox.getSelectionModel().select(3);
+			}else if (e.getCode() == KeyCode.DIGIT5 && e.isControlDown()) {
+				changeFloor(5);
+				this.floorChoiceBox.getSelectionModel().select(4);
+			}else if (e.getCode() == KeyCode.DIGIT6 && e.isControlDown()) {
+				changeFloor(6);
+				this.floorChoiceBox.getSelectionModel().select(5);
+			}else if (e.getCode() == KeyCode.DIGIT7 && e.isControlDown()) {
+				changeFloor(7);
+				this.floorChoiceBox.getSelectionModel().select(6);
+			}else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()) {
+				changeFloor(1);
+				this.floorChoiceBox.getSelectionModel().select(0);
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
 		});
-
 	}
+
 
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
@@ -374,11 +430,11 @@ public class EditorController extends MapDisplayController
 	 */
 	public void displayRoomsOnFloor() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(getFloor())) {
-			roomShapes.add(r.getShape());
-			r.getShape().setOnMouseClicked(event -> {});
-			r.getShape().setOnContextMenuRequested(event -> {});
-			Text label = r.getShape().getLabel();
+		for (Room r : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(r.getUserSideShape());
+			r.getUserSideShape().setOnMouseClicked(event -> {});
+			r.getUserSideShape().setOnContextMenuRequested(event -> {});
+			Text label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
 				this.beingDragged = true;
 				label.relocate(event.getX(), event.getY());
@@ -397,7 +453,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.getChildren().setAll(nodeShapes);
 
 		// Does the same thing, but is hellish to read.
-//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
+//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUserSideShape).collect(Collectors.toSet()));
 	}
 
 	/**
@@ -428,17 +484,6 @@ public class EditorController extends MapDisplayController
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
-//		this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
-//		this.floorComboBox.setCellFactory(
-//				new Callback<ListView<FloorImage>, ComboBoxListCell<String>>() {
-//					@Override
-//					public ListCell<String> call(ListView<FloorImage> items) {
-//						return new ComboBoxListCell<String>(FloorImage.FLOOR_STRING_CONVERTER,
-//								FXCollections.observableArrayList(FloorProxy.getFloors()));
-//					}
-//				}
-//		);
-//);
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
 	}
@@ -462,7 +507,7 @@ public class EditorController extends MapDisplayController
 		 * But keep it here because it may be useful in the future
 		 *
 		 */
-//		node.getShape().setOnContextMenuRequested(e->{
+//		node.getUserSideShape().setOnContextMenuRequested(e->{
 //			if(node.equals(this.selectedNode)) {
 //				ContextMenu optionsMenu = new ContextMenu();
 //
@@ -473,7 +518,7 @@ public class EditorController extends MapDisplayController
 //				exItem2.setOnAction(e2 -> {
 //				});
 //				optionsMenu.getItems().addAll(exItem1, exItem2);
-//				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+//				optionsMenu.show(node.getUserSideShape(), e.getScreenX(), e.getScreenY());
 //			}
 //		});
 	}
@@ -558,7 +603,7 @@ public class EditorController extends MapDisplayController
 		this.selectedNodes.get(0).applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
 			// TODO: Don't rely on room shapes being a stacked rectangle and text
-			((Text)room.getShape().getChildren().get(1)).setText(name);
+			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
@@ -730,9 +775,12 @@ public class EditorController extends MapDisplayController
 				this.botPane.getChildren().add(r);
 			}
 
-			if(!beingDragged) {
+			if(!beingDragged && !this.toggleShowRooms) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+			} else if(this.toggleShowRooms) {
+
+
 			}
 			e.consume();
 		});
@@ -769,6 +817,9 @@ public class EditorController extends MapDisplayController
 						this.selectOrDeselectNode(n);
 					}
 				});
+			}
+			if(this.toggleShowRooms) {
+				this.displayAdminSideRooms();
 			}
 			this.shiftPressed = e.isShiftDown();
 			this.beingDragged = this.shiftPressed;
@@ -884,6 +935,15 @@ public class EditorController extends MapDisplayController
 		System.out.println(this.selectedNodes.size()); // For debugging
 	}
 
+	private void selectAllNodesOnFloor() {
+		this.directory.getNodesOnFloor(floor).forEach(node -> {
+			if (!this.selectedNodes.contains(node)) {
+				this.selectedNodes.add(node);
+				this.iconController.selectAnotherNode(node);
+			}
+		});
+	}
+
 	private void deselectNodes() {
 		this.iconController.deselectAllNodes();
 		this.selectedNodes.clear();
@@ -940,6 +1000,7 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Upload professonals from a file
 	 */
+	@FXML
 	private void loadProfessionalsFile() {
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains people who are already in the application, they will be duplicated.");
@@ -976,4 +1037,46 @@ public class EditorController extends MapDisplayController
 	To set the kiosk, bind this line to a "set kiosk" button:
 	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
 	 */
+
+	@FXML
+	public void setToggleShowRooms() {
+		this.toggleShowRooms = !toggleShowRooms;
+		if(toggleShowRooms) {
+			// for now, disable dragging
+			this.imageViewMap.setDisable(true);
+			this.botPane.setDisable(true);
+			this.botPane.getChildren().clear();
+			this.topPane.getChildren().clear();
+			this.displayAdminSideRooms();
+
+		} else {
+			// re-enable dragging
+			this.imageViewMap.setDisable(false);
+			this.botPane.setDisable(false);
+			this.redisplayAll();
+		}
+	}
+
+	/**
+	 * Show the rooms with editable labels to the admin
+	 */
+	public void displayAdminSideRooms() {
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+		for (Room room : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(room.getAdminSideShape());
+			/* This is code to make a context menu appear when you right click on the shape for a room
+			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+			 * that is reallllllllly helpful for a lot of stuff
+			 */
+		}
+		this.topPane.getChildren().setAll(roomShapes);
+	}
+
+	/*
+	To set the kiosk, bind this line to a "set kiosk" button
+	*/
+	@FXML
+	public void selectKioskClicked() {
+		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+	}
 }

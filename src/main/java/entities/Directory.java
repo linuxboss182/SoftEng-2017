@@ -187,6 +187,17 @@ public class Directory
 	}
 
 	/**
+	 * Create a new room in this directory
+	 *
+	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 */
+	public Room addNewRoom(String name, String desc, double labelX, double labelY) {
+		Room newRoom = new Room(name, desc, labelX, labelY);
+		this.rooms.add(newRoom);
+		return newRoom;
+	}
+
+	/**
 	 * Create a new node in this directory
 	 */
 	public Node addNewNode(double x, double y, FloorImage floor) {

@@ -34,13 +34,15 @@
       <SplitPane orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
         <items>
             <ScrollPane fx:id="mapScroll">
-                <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-               <children>
-                  <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                  <Pane fx:id="linePane" prefHeight="479.0" prefWidth="825.0" />
-                  <Pane fx:id="nodePane" prefHeight="477.0" prefWidth="885.0"/>
-               </children>
-            </AnchorPane>
+               <content>
+                   <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                  <children>
+                     <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                     <Pane fx:id="linePane" prefHeight="479.0" prefWidth="825.0" />
+                     <Pane fx:id="nodePane" prefHeight="477.0" prefWidth="885.0" />
+                  </children>
+               </AnchorPane>
+               </content>
             </ScrollPane>
         </items>
       </SplitPane>
@@ -62,7 +64,7 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <GridPane layoutX="5.0" layoutY="1.0" prefHeight="325.0" prefWidth="384.0">
+                              <GridPane hgap="2.0" layoutX="5.0" layoutY="1.0" prefHeight="325.0" prefWidth="384.0" vgap="2.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.57555389404297" minWidth="10.0" prefWidth="15.623693466186523" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.37630653381348" minWidth="10.0" prefWidth="96.55294799804688" />
@@ -75,6 +77,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
@@ -106,6 +109,7 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
+                                    <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                  </children>
                               </GridPane>
                            </children>
@@ -133,9 +137,9 @@
                                  <children>
                                     <JFXButton fx:id="addProBtn" buttonType="RAISED" onMouseClicked="#addProfToRoom" style="-fx-background-color: #5087b4;" text="Add Professional to Room" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <JFXButton fx:id="deleteProBtn" buttonType="RAISED" onMouseClicked="#delProfFromRoom" style="-fx-background-color: #5087b4;" text="Delete Professional from Room" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <JFXButton fx:id="deleteProfBtn" buttonType="RAISED" onMouseClicked="#deleteProfBtnClicked" style="-fx-background-color: #5087b4;" text="Delete Professional" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                    <JFXButton fx:id="addCustomProBtn" buttonType="RAISED" onMouseClicked="#addCustomProBtnPressed" style="-fx-background-color: #5087b4;" text="Add Professional" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                    <JFXButton fx:id="importBtn" buttonType="RAISED" style="-fx-background-color: #5087b4;" text="Add from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                                    <JFXButton fx:id="deleteProfBtn" buttonType="RAISED" onMouseClicked="#deleteProfBtnClicked" style="-fx-background-color: #5087b4;" text="Delete Professional" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <JFXButton fx:id="addCustomProBtn" buttonType="RAISED" onMouseClicked="#addCustomProBtnPressed" style="-fx-background-color: #5087b4;" text="Add Professional" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <JFXButton fx:id="importBtn" buttonType="RAISED" onMouseClicked="#loadProfessionalsFile" style="-fx-background-color: #5087b4;" text="Add from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
                                     <Label text="Add/Delete Professionals From Rooms" GridPane.columnIndex="1" GridPane.columnSpan="2">
                                        <font>
                                           <Font size="18.0" />
@@ -167,7 +171,7 @@
                                  </font>
                               </Label>
                               <JFXComboBox fx:id="algorithmComboBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
-                              <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
+                              <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" onMouseClicked="#selectKioskClicked" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
                            </children>
                         </AnchorPane>
                     </content>

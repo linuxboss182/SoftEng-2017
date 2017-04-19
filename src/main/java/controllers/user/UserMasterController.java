@@ -1,6 +1,10 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.admin.AddProfessionalController;
+import controllers.shared.FloorProxy;
+import controllers.shared.MapDisplayController;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -17,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -31,7 +36,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import entities.Room;
+import javafx.stage.Stage;
 import main.ApplicationController;
+
 import controllers.shared.FloorImage;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
@@ -84,11 +91,11 @@ public abstract class UserMasterController
 	private ScrollPane mapScroll = new ScrollPane();
 
 	final double SCALE_DELTA = 1.1;
-	final protected double zoomMin = 1/SCALE_DELTA;
-	final protected double zoomMax = SCALE_DELTA*5;
+	final protected double zoomMin = 1;
+	final protected double zoomMax = 6;
 
 	private double clickedX, clickedY;
-	protected static double SCALE_TOTAL = 1;
+	protected double SCALE_TOTAL = 1;
 	protected static Room startRoom;
 	protected static Room endRoom;
 	protected static boolean choosingStart = false;
@@ -114,6 +121,9 @@ public abstract class UserMasterController
 	}
 
 	public void initialize() {
+		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
 		//Set the panes
 		this.setPanes(linePane, nodePane);
 		//Grab the database controller from main and use it to populate our directory
@@ -229,6 +239,62 @@ public abstract class UserMasterController
 		//Call listeners for window resizing
 		windowResized();
 
+		/** This is the section for key listeners.
+		 *  Press Ctrl + Open Bracket for zoom in
+		 *  Press Ctrl + Close Bracket for zoom out
+		 *  Press Ctrl + DIGIT1 to view the map for floor 1
+		 *  Press Ctrl + DIGIT2 to view the map for floor 2
+		 *  Press Ctrl + DIGIT3 to view the map for floor 3
+		 *  Press Ctrl + DIGIT4 to view the map for floor 4
+		 *  Press Ctrl + DIGIT5 to view the map for floor 5
+		 *  Press Ctrl + DIGIT6 to view the map for floor 6
+		 *  Press Ctrl + DIGIT7 to view the map for floor 7
+		 *  Press Shift + Right to move the view to the right
+		 *  Press Shift + Left to move the view to the left
+		 *  Press Shift + Up to move the view to the up
+		 *  Press Shift + down to move the view to the down
+		 *
+		 */
+		parentBorderPane.setOnKeyPressed(e -> {
+//			System.out.println(e); // Prints out key statements
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()) {
+				changeFloor(2);
+				this.floorChoiceBox.getSelectionModel().select(1);
+			}else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()) {
+				changeFloor(3);
+				this.floorChoiceBox.getSelectionModel().select(2);
+			}else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()) {
+				changeFloor(4);
+				this.floorChoiceBox.getSelectionModel().select(3);
+			}else if (e.getCode() == KeyCode.DIGIT5 && e.isControlDown()) {
+				changeFloor(5);
+				this.floorChoiceBox.getSelectionModel().select(4);
+			}else if (e.getCode() == KeyCode.DIGIT6 && e.isControlDown()) {
+				changeFloor(6);
+				this.floorChoiceBox.getSelectionModel().select(5);
+			}else if (e.getCode() == KeyCode.DIGIT7 && e.isControlDown()) {
+				changeFloor(7);
+				this.floorChoiceBox.getSelectionModel().select(6);
+			}else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()) {
+				changeFloor(1);
+				this.floorChoiceBox.getSelectionModel().select(0);
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
+		});
+
 
 
 	}
@@ -295,15 +361,15 @@ public abstract class UserMasterController
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(getFloor())) {
-			roomShapes.add(room.getShape());
+			roomShapes.add(room.getUserSideShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUserSideShape().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getShape().setOnContextMenuRequested(e -> {
+			room.getUserSideShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
@@ -312,7 +378,7 @@ public abstract class UserMasterController
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
@@ -467,8 +533,15 @@ public abstract class UserMasterController
 	}
 
 	@FXML
-	public void aboutBtnClicked () {
-
+	public void aboutBtnClicked () throws IOException {
+		UserAboutPage aboutPageController = new UserAboutPage();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+		Scene addAboutScene = new Scene(loader.load());
+		Stage addAboutStage = new Stage();
+		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
+		addAboutStage.setScene(addAboutScene);
+		addAboutStage.showAndWait();
 	}
 
 

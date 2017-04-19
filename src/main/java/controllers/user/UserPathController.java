@@ -33,7 +33,7 @@ public class UserPathController
 		implements Initializable
 {
 
-	private static final double PATH_WIDTH = 2.0;
+	private static final double PATH_WIDTH = 4.0;
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
 	@FXML
@@ -80,6 +80,13 @@ public class UserPathController
 		if (ret.isEmpty()) {
 			// TODO: Handle impossible paths
 		}
+
+		startRoom.getUserSideShape().setScaleX(1.5);
+		startRoom.getUserSideShape().setScaleY(1.5);
+
+		endRoom.getUserSideShape().setScaleX(1.5);
+		endRoom.getUserSideShape().setScaleY(1.5);
+
 		// change displayed floor to match the floor that the start node is on
 		Node startNode = startRoom.getLocation();
 		if (startNode == null) {
@@ -178,11 +185,11 @@ public class UserPathController
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
 
-		int buttonWidth = 80;
-		int buttonHeight = 50;
-		int buttonSpread = 100;
-		int buttonY = 95;
-		int centerX = 250;
+		int buttonWidth = 110;
+		int buttonHeight = 70;
+		int buttonSpread = 140;
+		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
+		int centerX = 0;
 
 
 		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
@@ -228,6 +235,11 @@ public class UserPathController
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
+		startRoom.getUserSideShape().setScaleX(1);
+		startRoom.getUserSideShape().setScaleY(1);
+		endRoom.getUserSideShape().setScaleX(1);
+		endRoom.getUserSideShape().setScaleY(1);
+
 		iconController.resetAllRooms();
 		choosingStart = false;
 		choosingEnd = true;
@@ -283,6 +295,7 @@ public class UserPathController
 			if (here.getFloor() == getFloorNum() && here.getFloor() == there.getFloor()) {
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
+				line.setStroke(Color.MEDIUMVIOLETRED);
 				path.add(line);
 			}
 		}
