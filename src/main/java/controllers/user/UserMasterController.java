@@ -8,8 +8,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,22 +21,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import entities.Node;
 import entities.Room;
 import main.ApplicationController;
 import controllers.shared.FloorImage;
@@ -132,8 +123,7 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = FloorProxy.getFloor("FAULKNER", floor).display();
-		this.imageViewMap.setImage(this.map);
+		this.changeFloor(getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
 
@@ -285,7 +275,7 @@ public abstract class UserMasterController
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 		//this.floorChoiceBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
 
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor - 1)); // default the selection to be whichever floor we start on
+		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
 
 	}
 
@@ -304,7 +294,7 @@ public abstract class UserMasterController
 
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(floor)) {
+		for (Room room : directory.getRoomsOnFloor(getFloor())) {
 			roomShapes.add(room.getShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
@@ -386,13 +376,7 @@ public abstract class UserMasterController
 	}
 
 
-	protected void changeFloor(int floor) {
-		this.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.displayRooms();
-	}
-
-	private void changeFloor(FloorImage floor) {
+	protected void changeFloor(FloorImage floor) {
 		Image map = this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms();
