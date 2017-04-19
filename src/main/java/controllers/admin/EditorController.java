@@ -43,8 +43,6 @@ import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 
-import static javafx.scene.input.KeyCode.SHIFT;
-
 public class EditorController extends MapDisplayController
 		implements Initializable
 {
@@ -201,7 +199,7 @@ public class EditorController extends MapDisplayController
 		 */
 		parentBorderPane.setOnKeyPressed(e-> {
 //			System.out.println(e); // Prints out key statements
-			
+
 		});
 
 	}
@@ -1017,5 +1015,13 @@ public class EditorController extends MapDisplayController
 			 */
 		}
 		this.topPane.getChildren().setAll(roomShapes);
+	}
+
+	/*
+	To set the kiosk, bind this line to a "set kiosk" button
+	*/
+	@FXML
+	public void selectKioskClicked() {
+		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
 	}
 }
