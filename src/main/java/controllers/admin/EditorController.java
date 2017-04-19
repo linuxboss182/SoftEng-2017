@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -103,6 +104,9 @@ public class EditorController extends MapDisplayController
 	private ComboBox<Algorithm> algorithmChoiceBox;
 	@FXML
 	private BorderPane parentBorderPane;
+	@FXML
+	private ScrollPane mapScroll = new ScrollPane();
+
 
 //	protected Node selectedNode; // you select a node by double clicking
 	protected ArrayList<Node> selectedNodes = new ArrayList<>();
@@ -116,6 +120,7 @@ public class EditorController extends MapDisplayController
 	protected boolean ctrlClicked = false;
 
 	final double SCALE_DELTA = 1.1;
+	protected static double SCALE_TOTAL = 1;
 	final protected double zoomMin = 1/SCALE_DELTA;
 	final protected double zoomMax = SCALE_DELTA*5;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
@@ -136,25 +141,25 @@ public class EditorController extends MapDisplayController
 
 		// TODO: Move zoom initialization to separate function
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
-		zoomSlider.setValue(2);
-		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-			                    Number oldValue, Number newValue) {
-				/**
-				 * This one was a fun one.
-				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-				 * and when it's at the far right, it will be zoomed in all the way
-				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-				 * the equation is just that
-				 */
-				double zoomPercent = (zoomSlider.getValue()/100);
-				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-				contentAnchor.setScaleX(zoomCoefficient);
-				contentAnchor.setScaleY(zoomCoefficient);
-			}
-		});
+//		zoomSlider.setValue(2);
+//		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> observable,
+//			                    Number oldValue, Number newValue) {
+//				/**
+//				 * This one was a fun one.
+//				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+//				 * and when it's at the far right, it will be zoomed in all the way
+//				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+//				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+//				 * the equation is just that
+//				 */
+//				double zoomPercent = (zoomSlider.getValue()/100);
+//				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+//				contentAnchor.setScaleX(zoomCoefficient);
+//				contentAnchor.setScaleY(zoomCoefficient);
+//			}
+//		});
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
@@ -640,6 +645,36 @@ public class EditorController extends MapDisplayController
 			this.redisplayGraph();
 		});
 
+//		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
+//			@Override public void handle(ScrollEvent event) {
+//				event.consume();
+//				if (event.getDeltaY() == 0) {
+//					return;
+//				}
+//				double scaleFactor =
+//						(event.getDeltaY() > 0)
+//								? SCALE_DELTA
+//								: 1/SCALE_DELTA;
+//				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
+//				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
+//				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
+//				potentialScaleX = (potentialScaleX < zoomMin ? zoomMin:potentialScaleX);
+//				potentialScaleY = (potentialScaleY < zoomMin ? zoomMin:potentialScaleY);
+//				potentialScaleX = (potentialScaleX > zoomMax ? zoomMax:potentialScaleX);
+//				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
+//				contentAnchor.setScaleX(potentialScaleX);
+//				contentAnchor.setScaleY(potentialScaleY);
+//				// Update the slider
+//				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
+//			}
+//		});
+
+
+
+
+
+
+
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
 				event.consume();
@@ -650,66 +685,110 @@ public class EditorController extends MapDisplayController
 						(event.getDeltaY() > 0)
 								? SCALE_DELTA
 								: 1/SCALE_DELTA;
-				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
-				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
-				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
-				potentialScaleX = (potentialScaleX < zoomMin ? zoomMin:potentialScaleX);
-				potentialScaleY = (potentialScaleY < zoomMin ? zoomMin:potentialScaleY);
-				potentialScaleX = (potentialScaleX > zoomMax ? zoomMax:potentialScaleX);
-				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
-				contentAnchor.setScaleX(potentialScaleX);
-				contentAnchor.setScaleY(potentialScaleY);
-				// Update the slider
-				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
+
+				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
+					Bounds viewPort = mapScroll.getViewportBounds();
+					Bounds contentSize = contentAnchor.getBoundsInParent();
+
+					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+
+					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+
+					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+					SCALE_TOTAL *= scaleFactor;
+
+					double newCenterX = centerPosX * scaleFactor;
+					double newCenterY = centerPosY * scaleFactor;
+
+					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+				}
+
+				if (scaleFactor * SCALE_TOTAL <= 1) {
+//					SCALE_TOTAL = 1/scaleFactor;
+					zoomSlider.setValue(0);
+
+				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
+//					SCALE_TOTAL = 6 / scaleFactor;
+					zoomSlider.setValue(100);
+
+				}else {
+					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
+				}
+
 			}
 		});
+//		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
+//			public void handle(MouseEvent event) {
+//				clickedX = event.getX();
+//				clickedY = event.getY();
+//			}
+//		});
+//		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
+//			public void handle(MouseEvent event) {
+//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+//				event.consume();
+//			}
+//		});
+
+
+
+
+
+
+
+
+
+
+
+
 		contentAnchor.setOnMousePressed(e->{
 			clickedX = e.getX();
 			clickedY = e.getY();
-			this.shiftPressed = e.isShiftDown();
-			if(this.shiftPressed) {
-				this.beingDragged = true;
-				this.selectionStartX = e.getX();
-				this.selectionStartY = e.getY();
-			} else {
-				this.beingDragged = false;
-			}
-		});
-		contentAnchor.setOnMouseDragged(e-> {
 //			this.shiftPressed = e.isShiftDown();
 //			if(this.shiftPressed) {
 //				this.beingDragged = true;
+//				this.selectionStartX = e.getX();
+//				this.selectionStartY = e.getY();
+//			} else {
+//				this.beingDragged = false;
 //			}
-			this.draggedANode = true;
-			if(this.shiftPressed && !draggingNode) {
-				Rectangle r = new Rectangle();
-				if(e.getX() > selectionStartX) {
-					r.setX(selectionStartX);
-					r.setWidth(e.getX() - selectionStartX);
-				} else {
-					r.setX(e.getX());
-					r.setWidth(selectionStartX - e.getX());
-				}
-				if(e.getY() > selectionStartY) {
-					r.setY(selectionStartY);
-					r.setHeight(e.getY() - selectionStartY);
-				} else {
-					r.setY(e.getY());
-					r.setHeight(selectionStartY - e.getY());
-				}
-				r.setFill(Color.SKYBLUE);
-				r.setStroke(Color.BLUE);
-				r.setOpacity(0.5);
-				this.redisplayAll();
-				this.botPane.getChildren().add(r);
-			}
+		});
+		contentAnchor.setOnMouseDragged(e-> {
 
-			if(!beingDragged) {
+//			this.draggedANode = true;
+//			if(this.shiftPressed && !draggingNode) {
+//				Rectangle r = new Rectangle();
+//				if(e.getX() > selectionStartX) {
+//					r.setX(selectionStartX);
+//					r.setWidth(e.getX() - selectionStartX);
+//				} else {
+//					r.setX(e.getX());
+//					r.setWidth(selectionStartX - e.getX());
+//				}
+//				if(e.getY() > selectionStartY) {
+//					r.setY(selectionStartY);
+//					r.setHeight(e.getY() - selectionStartY);
+//				} else {
+//					r.setY(e.getY());
+//					r.setHeight(selectionStartY - e.getY());
+//				}
+//				r.setFill(Color.SKYBLUE);
+//				r.setStroke(Color.BLUE);
+//				r.setOpacity(0.5);
+//				this.redisplayAll();
+//				this.botPane.getChildren().add(r);
+//			}
+//
+//			if(!beingDragged) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
-			}
+//			}
 			e.consume();
 		});
+
 		contentAnchor.setOnMouseReleased(e->{
 			if(this.shiftPressed && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
