@@ -148,25 +148,25 @@ public abstract class UserMasterController
 		this.enableOrDisableNavigationButtons();
 
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
-//		zoomSlider.setValue(2);
-//		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable,
-//			                    Number oldValue, Number newValue) {
-//				/**
-//				 * This one was a fun one.
-//				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-//				 * and when it's at the far right, it will be zoomed in all the way
-//				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-//				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-//				 * the equation is just that
-//				 */
-//				double zoomPercent = (zoomSlider.getValue()/100);
-//				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-//				contentAnchor.setScaleX(zoomCoefficient);
-//				contentAnchor.setScaleY(zoomCoefficient);
-//			}
-//		});
+		zoomSlider.setValue(0);
+		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+			                    Number oldValue, Number newValue) {
+				/**
+				 * This one was a fun one.
+				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+				 * and when it's at the far right, it will be zoomed in all the way
+				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+				 * the equation is just that
+				 */
+				double zoomPercent = (zoomSlider.getValue()/100);
+				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+				mapScroll.setScaleX(zoomCoefficient);
+				mapScroll.setScaleY(zoomCoefficient);
+			}
+		});
 
 		if(floorChoiceBox != null) {
 			initFloorChoiceBox();
