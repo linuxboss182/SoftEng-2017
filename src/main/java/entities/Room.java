@@ -53,6 +53,11 @@ public class Room
 
 	/* Methods */
 
+	public void setLabelOffset(double x, double y) {
+		this.labelOffsetX = x;
+		this.labelOffsetY = y;
+	}
+
 	public String getName() {
 		return this.name;
 	}
