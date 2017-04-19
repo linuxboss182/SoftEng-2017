@@ -53,4 +53,10 @@ enum DepthFirst
 		}
 		return new LinkedList<>();
 	}
+
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 }

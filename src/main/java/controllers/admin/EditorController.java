@@ -1,5 +1,6 @@
 package controllers.admin;
 
+import controllers.shared.Floor;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,12 +13,12 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -87,9 +88,9 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ComboBox floorChoiceBox;
+	public ComboBox<FloorProxy> floorComboBox;
 	@FXML
-	public ComboBox buildingChoiceBox;
+	public ComboBox buildingComboBox;
 	@FXML
 	public TableView<Professional> roomProfTable;
 	@FXML
@@ -103,7 +104,7 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private Label xPos;
 	@FXML
-	private ComboBox<Algorithm> algorithmChoiceBox;
+	private ComboBox<Algorithm> algorithmComboBox;
 	@FXML
 	private BorderPane parentBorderPane;
 	@FXML
@@ -137,7 +138,7 @@ public class EditorController extends MapDisplayController
 		this.switchFloors(floor);
 		this.imageViewMap.setImage(this.map); //Load background
 		this.imageViewMap.setPickOnBounds(true);
-		if(floorChoiceBox != null) {
+		if(floorComboBox != null) {
 			initFloorChoiceBox();
 		}
 
@@ -430,12 +431,22 @@ public class EditorController extends MapDisplayController
 	 * Allows you to change floors
 	 */
 	public void initFloorChoiceBox() {
-		this.floorChoiceBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
-		this.floorChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
+		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
-		this.floorChoiceBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+//		this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+//		this.floorComboBox.setCellFactory(
+//				new Callback<ListView<FloorImage>, ComboBoxListCell<String>>() {
+//					@Override
+//					public ListCell<String> call(ListView<FloorImage> items) {
+//						return new ComboBoxListCell<String>(FloorImage.FLOOR_STRING_CONVERTER,
+//								FXCollections.observableArrayList(FloorProxy.getFloors()));
+//					}
+//				}
+//		);
+//);
 
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor - 1)); // default the selection to be whichever floor we start on
 	}
 
 	/**
@@ -960,11 +971,11 @@ public class EditorController extends MapDisplayController
 	 * Get a choice box that sets the active algorithm
 	 */
 	private void setUpAlgorithmChoiceBox() {
-		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
-		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+		this.algorithmComboBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		this.algorithmComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
-		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
-		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
+		// this.algorithmComboBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		this.algorithmComboBox.getSelectionModel().select(Pathfinder.getStrategy());
 	}
 
 	/*

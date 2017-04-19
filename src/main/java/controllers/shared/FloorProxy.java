@@ -99,4 +99,14 @@ public class FloorProxy implements FloorImage
 	public static List<FloorProxy> getFloors() {
 		return new ArrayList<>(FloorProxy.FLOORS);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getName());
+		sb.append(" floor ");
+		sb.append(this.getNumber());
+		return sb.toString();
+	}
+
 }

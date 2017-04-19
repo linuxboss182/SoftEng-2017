@@ -105,4 +105,10 @@ enum AStar
 		}
 		return finalPath;
 	}
+
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 }

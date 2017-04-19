@@ -166,7 +166,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <JFXComboBox fx:id="algorithmChoiceBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
+                              <JFXComboBox fx:id="algorithmComboBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
                               <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
                            </children>
                         </AnchorPane>
@@ -222,7 +222,7 @@
               </rowConstraints>
                <children>
                   <JFXComboBox fx:id="buildingComboBox" prefHeight="25.0" prefWidth="254.0" />
-                  <JFXComboBox fx:id="floorChoiceBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
+                  <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>
          </center>
