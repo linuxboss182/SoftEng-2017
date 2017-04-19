@@ -60,7 +60,7 @@ CREATE TABLE Employees (
 );
 
 CREATE TABLE EmployeeRooms (
-    roomName   varchar(200) references Rooms(roomName)
+    roomName   varchar(200) references label(roomName)
   , employeeID integer references Employees(employeeID)
   , constraint EmployeeRooms_pk PRIMARY KEY (roomName, employeeID)
 );

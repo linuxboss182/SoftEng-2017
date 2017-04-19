@@ -35,6 +35,15 @@ public class Room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
 	private double labelOffsetX;
+
+	public double getLabelOffsetX() {
+		return labelOffsetX;
+	}
+
+	public double getLabelOffsetY() {
+		return labelOffsetY;
+	}
+
 	private double labelOffsetY;
 
 	/* Constructors */
@@ -50,6 +59,13 @@ public class Room
 	Room(String name, String description) {
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
+
+	Room(String name, String description, double x, double y) {
+		this(name, description);
+		this.labelOffsetX=x;
+		this.labelOffsetY=y;
+	}
+
 
 	/* Methods */
 
