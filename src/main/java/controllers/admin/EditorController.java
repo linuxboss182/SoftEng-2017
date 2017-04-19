@@ -435,7 +435,7 @@ public class EditorController extends MapDisplayController
 			roomShapes.add(r.getUserSideShape());
 			r.getUserSideShape().setOnMouseClicked(event -> {});
 			r.getUserSideShape().setOnContextMenuRequested(event -> {});
-			Text label = r.getUserSideShape().getLabel();
+			Label label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
 				this.beingDragged = true;
 				label.relocate(event.getX(), event.getY());

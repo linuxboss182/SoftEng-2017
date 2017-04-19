@@ -367,10 +367,10 @@ public abstract class UserMasterController
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getUserSideShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getUserSideShape().setOnContextMenuRequested(e -> {
+			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
