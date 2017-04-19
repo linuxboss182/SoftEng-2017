@@ -421,7 +421,7 @@ public class EditorController extends MapDisplayController
 //			this.redrawLines(directory.getNodes());
 //		} else {
 		this.displayNodes(directory.getNodesOnFloor(getFloor()));
-		this.redrawLines(directory.getNodesOnFloor(getFloor()));
+		this.redrawLines();
 //		}
 	}
 
@@ -460,11 +460,12 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Recreate and redisplay all lines on this floor
 	 */
-	public void redrawLines(Collection<Node> nodes) {
+	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : nodes) {
+		for (Node node : directory.getNodesOnFloor(getFloor())) {
 			for (Node neighbor : node.getNeighbors()) {
-				if (node.getFloor() == neighbor.getFloor()) {
+				if ((node.getFloor() == neighbor.getFloor()) &&
+						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
 //				else if (EditorController.DEBUGGING) {
@@ -607,7 +608,7 @@ public class EditorController extends MapDisplayController
 			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
-		this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
+		this.redrawLines();
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
@@ -865,7 +866,7 @@ public class EditorController extends MapDisplayController
 			this.selectedNodes.forEach(nodes->{
 				this.directory.connectOrDisconnectNodes(nodes, n);
 			});
-			this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
+			this.redrawLines();
 		}
 	}
 
@@ -877,7 +878,7 @@ public class EditorController extends MapDisplayController
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
-				this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
+				this.redrawLines();
 
 			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
