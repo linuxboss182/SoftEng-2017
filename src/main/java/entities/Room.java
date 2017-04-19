@@ -1,7 +1,11 @@
 package entities;
 
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -29,6 +33,13 @@ public class Room
 	private static final String KIOSK_NAME = "You Are Here";
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 	private static final int FONT_SIZE = 9;
+
+	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
+	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(BACKGROUND_COLOR,
+	                                                      new CornerRadii(0),
+	                                                      new Insets(0, -2, 0, -2));
+	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
+
 
 	/* Attributes */
 	private Node location;
@@ -164,7 +175,8 @@ public class Room
 			label.setLayoutX(shape.getCenterX() + this.labelOffsetX);
 			label.setLayoutY(shape.getCenterY() + this.labelOffsetY);
 			label.setFont(new Font(FONT_SIZE));
-			label.setFont(new Font(FONT_SIZE));
+			label.setTextFill(Color.LIGHTGRAY);
+			label.setBackground(LABEL_BACKGROUND);
 
 			// A pane with the text on top of the shape; this is what actually represents the room
 			Icon icon = new Icon(shape, label);
