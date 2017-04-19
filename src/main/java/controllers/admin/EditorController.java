@@ -972,7 +972,12 @@ public class EditorController extends MapDisplayController
 	}
 
 	/*
-	To set the kiosk, bind this line to a "set kiosk" button:
-	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
-	 */
+	To set the kiosk, bind this line to a "set kiosk" button
+	*/
+	@FXML
+	public void selectKioskClicked() {
+		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+	}
+
+
 }
