@@ -55,7 +55,7 @@
  	}
 
  	@FXML
- 	public void onCancelBtnClick(){
+ 	public void onCancelBtnClicked(){
  		cancelBtn.getScene().getWindow().hide();
  	}
 
