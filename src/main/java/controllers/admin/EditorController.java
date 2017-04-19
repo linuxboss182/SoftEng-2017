@@ -731,9 +731,12 @@ public class EditorController extends MapDisplayController
 				this.botPane.getChildren().add(r);
 			}
 
-			if(!beingDragged) {
+			if(!beingDragged && !this.toggleShowRooms) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+			} else if(this.toggleShowRooms) {
+
+
 			}
 			e.consume();
 		});
@@ -770,6 +773,9 @@ public class EditorController extends MapDisplayController
 						this.selectOrDeselectNode(n);
 					}
 				});
+			}
+			if(this.toggleShowRooms) {
+				this.displayAdminSideRooms();
 			}
 			this.shiftPressed = e.isShiftDown();
 			this.beingDragged = this.shiftPressed;
@@ -941,6 +947,7 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Upload professonals from a file
 	 */
+	@FXML
 	private void loadProfessionalsFile() {
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains people who are already in the application, they will be duplicated.");
@@ -978,18 +985,21 @@ public class EditorController extends MapDisplayController
 	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
 	 */
 
-	private void setToggleShowRooms() {
+	@FXML
+	public void setToggleShowRooms() {
 		this.toggleShowRooms = !toggleShowRooms;
 		if(toggleShowRooms) {
 			// for now, disable dragging
-			this.beingDragged = true;
+			this.imageViewMap.setDisable(true);
+			this.botPane.setDisable(true);
 			this.botPane.getChildren().clear();
 			this.topPane.getChildren().clear();
 			this.displayAdminSideRooms();
 
 		} else {
 			// re-enable dragging
-			this.beingDragged = false;
+			this.imageViewMap.setDisable(false);
+			this.botPane.setDisable(false);
 			this.redisplayAll();
 		}
 	}
