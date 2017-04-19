@@ -1,6 +1,5 @@
 package controllers.admin;
 
-import controllers.shared.Floor;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,7 +12,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -135,8 +133,9 @@ public class EditorController extends MapDisplayController
 		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
-		this.switchFloors(floor);
-		this.imageViewMap.setImage(this.map); //Load background
+
+		this.changeFloor(FloorProxy.getFloor(getFloorName(), getFloorNum()));
+
 		this.imageViewMap.setPickOnBounds(true);
 		if(floorComboBox != null) {
 			initFloorChoiceBox();
@@ -269,11 +268,6 @@ public class EditorController extends MapDisplayController
 		this.imageViewMap.setImage(map);
 		this.redisplayGraph();
 	}
-	private void changeFloor(int floor) {
-		this.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.redisplayGraph();
-	}
 
 	@FXML
 	public void addProfToRoom() {
@@ -369,8 +363,8 @@ public class EditorController extends MapDisplayController
 //			this.displayNodes(directory.getNodes());
 //			this.redrawLines(directory.getNodes());
 //		} else {
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines(directory.getNodesOnFloor(floor));
+		this.displayNodes(directory.getNodesOnFloor(getFloor()));
+		this.redrawLines(directory.getNodesOnFloor(getFloor()));
 //		}
 	}
 
@@ -380,7 +374,7 @@ public class EditorController extends MapDisplayController
 	 */
 	public void displayRoomsOnFloor() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(floor)) {
+		for (Room r : directory.getRoomsOnFloor(getFloor())) {
 			roomShapes.add(r.getShape());
 			r.getShape().setOnMouseClicked(event -> {});
 			r.getShape().setOnContextMenuRequested(event -> {});
@@ -446,7 +440,7 @@ public class EditorController extends MapDisplayController
 //		);
 //);
 
-		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
 	}
 
 	/**
@@ -526,7 +520,7 @@ public class EditorController extends MapDisplayController
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
-			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
+			Node newNode = directory.addNewRoomNode(x, y, getFloor(), name, description);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
@@ -541,7 +535,7 @@ public class EditorController extends MapDisplayController
 		if(x < 0 || y < 0) {
 			return;
 		}
-		Node newNode = this.directory.addNewNode(x, y, floor);
+		Node newNode = this.directory.addNewNode(x, y, getFloor());
 		this.addNodeListeners(newNode);
 
 		int size = this.selectedNodes.size();
@@ -567,7 +561,7 @@ public class EditorController extends MapDisplayController
 			((Text)room.getShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
-		this.redrawLines(this.directory.getNodesOnFloor(floor));
+		this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
@@ -769,7 +763,7 @@ public class EditorController extends MapDisplayController
 					botRightY = this.selectionStartY;
 				}
 				// Loop through and select/deselect all nodes in the bounds
-				this.directory.getNodesOnFloor(floor).forEach(n -> {
+				this.directory.getNodesOnFloor(getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
 						// Within the bounds, select or deselect it
 						this.selectOrDeselectNode(n);
@@ -819,7 +813,7 @@ public class EditorController extends MapDisplayController
 			this.selectedNodes.forEach(nodes->{
 				this.directory.connectOrDisconnectNodes(nodes, n);
 			});
-			this.redrawLines(this.directory.getNodesOnFloor(floor));
+			this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
 		}
 	}
 
@@ -831,7 +825,7 @@ public class EditorController extends MapDisplayController
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
-				this.redrawLines(this.directory.getNodesOnFloor(floor));
+				this.redrawLines(this.directory.getNodesOnFloor(getFloor()));
 
 			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
