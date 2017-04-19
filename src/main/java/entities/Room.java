@@ -1,17 +1,9 @@
 package entities;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
-import javax.swing.text.DefaultTextUI;
 
 import controllers.icons.Icon;
 
@@ -42,6 +34,17 @@ public class Room
 	private String image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
+	private double labelOffsetX;
+
+	public double getLabelOffsetX() {
+		return labelOffsetX;
+	}
+
+	public double getLabelOffsetY() {
+		return labelOffsetY;
+	}
+
+	private double labelOffsetY;
 
 	/* Constructors */
 	Room(String name, String description, String image) {
@@ -50,14 +53,26 @@ public class Room
 		this.description = description;
 		this.professionals = new HashSet<Professional>();
 		this.image = image;
-		this.makeShape();
+		this.makeUserSideShape();
 	}
 
 	Room(String name, String description) {
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
+	Room(String name, String description, double x, double y) {
+		this(name, description);
+		this.labelOffsetX=x;
+		this.labelOffsetY=y;
+	}
+
+
 	/* Methods */
+
+	public void setLabelOffset(double x, double y) {
+		this.labelOffsetX = x;
+		this.labelOffsetY = y;
+	}
 
 	public String getName() {
 		return this.name;
@@ -75,11 +90,9 @@ public class Room
 		return this.location;
 	}
 
-	/** Get this room's shape, and create it if it does not exist */
-	public Icon getShape() {
-		if(this.shape == null) {
-			this.makeShape(); // maybe move this to the constructor
-		}
+	/** Get this room's shape to be displayed to a non-admin, and create it if it does not exist */
+	public Icon getUserSideShape() {
+		this.makeUserSideShape(); // maybe move this to the constructor
 		return this.shape;
 	}
 
@@ -128,11 +141,12 @@ public class Room
 	}
 
 
-	private void makeShape() {
-		this.makeShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+	private void makeUserSideShape() {
+		this.makeUserSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 	}
 
-	private void makeShape(Color stroke, Color fill) {
+
+	private void makeUserSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
 			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 //			this.shape = shape;
@@ -142,7 +156,8 @@ public class Room
 
 			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
 			text.setFont(new Font(FONT_SIZE));
-
+			text.setX(shape.getX() + labelOffsetX);
+			text.setY(shape.getY() + labelOffsetY);
 			// A pane with the text on top of the shape; this is what actually represents the room
 			Icon icon = new Icon(shape, text);
 			this.shape = icon;
@@ -150,6 +165,54 @@ public class Room
 //			icon.setLayoutY(this.location.getY());
 			//icon.setAlignment(Pos.TOP_LEFT);
 		//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
+		}
+	}
+
+	public Icon getAdminSideShape() {
+		this.makeAdminSideShape(); // maybe move this to the constructor
+		return this.shape;
+	}
+
+	private void makeAdminSideShape() {
+		this.makeAdminSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+	}
+
+	private void makeAdminSideShape(Color stroke, Color fill) {
+		if (this.location != null) {
+			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
+//			this.shape = shape;
+			shape.setStroke(stroke);
+			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+			shape.setFill(fill);
+
+			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
+			text.setFont(new Font(FONT_SIZE));
+			text.setX(shape.getX() + labelOffsetX);
+			text.setY(shape.getY() + labelOffsetY);
+			/**
+			 * This is so you can move the labels, changing the labelOffsetX and Y
+			 */
+			text.setOnMousePressed(e->{
+				System.out.println("pressed a label");
+			});
+
+			text.setOnMouseDragged(e->{
+				this.labelOffsetX = e.getX() - shape.getX();
+				this.labelOffsetY = e.getY() - shape.getY();
+				this.shape = null;
+				this.makeAdminSideShape();
+			});
+
+			text.setOnMouseReleased(e->{
+				System.out.println("released a label");
+			});
+			// A pane with the text on top of the shape; this is what actually represents the room
+			Icon icon = new Icon(shape, text);
+			this.shape = icon;
+//			icon.setLayoutX(this.location.getX());
+//			icon.setLayoutY(this.location.getY());
+			//icon.setAlignment(Pos.TOP_LEFT);
+			//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
 }
