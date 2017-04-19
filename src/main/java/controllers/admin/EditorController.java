@@ -368,7 +368,7 @@ public class EditorController extends MapDisplayController
 	public void confirmBtnPressed() {
 //		this.directory.getRooms().forEach(room ->
 //				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-		DatabaseWrapper.saveDirectory(this.directory);
+		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
 	@FXML

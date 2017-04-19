@@ -38,7 +38,7 @@ public class DatabaseTester
 		Node nodeA = dir.addNewNode(1,2, 4);
 		Node nodeB = dir.addNewNode(2,3, 4);
 
-		DatabaseWrapper controller = new DatabaseWrapper();
+		DatabaseWrapper controller = DatabaseWrapper.getInstance();
 		Directory oldDirectory = new Directory();
 
 		oldDirectory.addRoom(roomA);
