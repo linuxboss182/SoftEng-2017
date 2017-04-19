@@ -81,11 +81,11 @@ public class UserPathController
 			// TODO: Handle impossible paths
 		}
 
-		startRoom.getShape().setScaleX(1.5);
-		startRoom.getShape().setScaleY(1.5);
+		startRoom.getUserSideShape().setScaleX(1.5);
+		startRoom.getUserSideShape().setScaleY(1.5);
 
-		endRoom.getShape().setScaleX(1.5);
-		endRoom.getShape().setScaleY(1.5);
+		endRoom.getUserSideShape().setScaleX(1.5);
+		endRoom.getUserSideShape().setScaleY(1.5);
 
 		// change displayed floor to match the floor that the start node is on
 		int startFloor = startRoom.getLocation().getFloor();
@@ -133,11 +133,11 @@ public class UserPathController
 	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
 
-		int buttonWidth = 80;
-		int buttonHeight = 50;
-		int buttonSpread = 100;
-		int buttonY = 95;
-		int centerX = 250;
+		int buttonWidth = 110;
+		int buttonHeight = 70;
+		int buttonSpread = 140;
+		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
+		int centerX = 0;
 
 
 		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
@@ -183,10 +183,10 @@ public class UserPathController
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
-		startRoom.getShape().setScaleX(1);
-		startRoom.getShape().setScaleY(1);
-		endRoom.getShape().setScaleX(1);
-		endRoom.getShape().setScaleY(1);
+		startRoom.getUserSideShape().setScaleX(1);
+		startRoom.getUserSideShape().setScaleY(1);
+		endRoom.getUserSideShape().setScaleX(1);
+		endRoom.getUserSideShape().setScaleY(1);
 
 		iconController.resetAllRooms();
 		choosingStart = false;
