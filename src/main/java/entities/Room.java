@@ -1,5 +1,6 @@
 package entities;
 
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -37,7 +38,7 @@ public class Room
 	private String image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
-	private Icon adminShape;
+	private Group adminShape;
 	private double labelOffsetX;
 
 	public double getLabelOffsetX() {
@@ -175,7 +176,7 @@ public class Room
 		}
 	}
 
-	public Icon getAdminSideShape() {
+	public Group getAdminSideShape() {
 		this.makeAdminSideShape(); // maybe move this to the constructor
 		return this.adminShape;
 	}
@@ -184,38 +185,38 @@ public class Room
 		this.makeAdminSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 	}
 
+
 	private void makeAdminSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
-			Circle shape = new Circle(this.location.getX(), this.location.getY(), CIRCLE_RADIUS);//			this.shape = shape;
+			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
+//			this.shape = shape;
 			shape.setStroke(stroke);
 			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
 			shape.setFill(fill);
 
-			Label label = new Label(this.name);
-			label.setLayoutX(shape.getCenterX() + this.labelOffsetX);
-			label.setLayoutY(shape.getCenterY() + this.labelOffsetY);
-			label.setFont(new Font(FONT_SIZE));
-			label.setFont(new Font(FONT_SIZE));
-
+			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
+			text.setFont(new Font(FONT_SIZE));
+			text.setX(shape.getX() + labelOffsetX);
+			text.setY(shape.getY() + labelOffsetY);
 			/**
 			 * This is so you can move the labels, changing the labelOffsetX and Y
 			 */
-			label.setOnMousePressed(e->{
+			text.setOnMousePressed(e->{
 				System.out.println("pressed a label");
 			});
 
-			label.setOnMouseDragged(e->{
-				this.labelOffsetX = e.getX() - shape.getCenterX();
-				this.labelOffsetY = e.getY() - shape.getCenterY();
+			text.setOnMouseDragged(e->{
+				this.labelOffsetX = e.getX() - shape.getX();
+				this.labelOffsetY = e.getY() - shape.getY();
 				this.shape = null;
 				this.makeAdminSideShape();
 			});
 
-			label.setOnMouseReleased(e->{
+			text.setOnMouseReleased(e->{
 				System.out.println("released a label");
 			});
 			// A pane with the text on top of the shape; this is what actually represents the room
-			Icon icon = new Icon(shape, label);
+			Group icon = new Group(shape, text);
 			this.adminShape = icon;
 //			icon.setLayoutX(this.location.getX());
 //			icon.setLayoutY(this.location.getY());
