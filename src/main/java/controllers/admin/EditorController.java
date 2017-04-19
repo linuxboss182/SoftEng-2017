@@ -108,6 +108,8 @@ public class EditorController extends MapDisplayController
 	private BorderPane parentBorderPane;
 	@FXML
 	private ScrollPane mapScroll = new ScrollPane();
+	@FXML
+	private Button helpBtn;
 
 
 //	protected Node selectedNode; // you select a node by double clicking
@@ -1055,5 +1057,16 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public void selectKioskClicked() {
 		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+	}
+	@FXML
+	private void helpBtnClicked() throws IOException {
+		AdminHelpController helpController = new AdminHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AdminHelp.fxml"));
+		Scene helpScene = new Scene(loader.load());
+		Stage helpStage = new Stage();
+		helpStage.initOwner(contentAnchor.getScene().getWindow());
+		helpStage.setScene(helpScene);
+		helpStage.showAndWait();
 	}
 }

@@ -45,13 +45,15 @@
       <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
          <items>
             <ScrollPane fx:id="mapScroll">
-            <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
-               <children>
-                  <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                  <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
-                  <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
-               </children>
-            </AnchorPane>
+               <content>
+               <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
+                  <children>
+                     <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                     <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                     <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
+                  </children>
+               </AnchorPane>
+               </content>
             </ScrollPane>
          </items>
       </SplitPane>
@@ -100,7 +102,7 @@
             <ImageView fx:id="logoImageView" fitHeight="39.0" fitWidth="362.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </left>
          <right>
-            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="22.0" prefWidth="285.0" styleClass="mdl-slider" BorderPane.alignment="CENTER" />
+            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="22.0" prefWidth="260.0" styleClass="mdl-slider" BorderPane.alignment="CENTER" />
          </right>
          <top>
             <JFXToolbar prefHeight="16.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
@@ -119,8 +121,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <JFXComboBox fx:id="buildingComboBox" prefHeight="25.0" prefWidth="243.0" />
-                  <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="239.0" GridPane.columnIndex="1" />
+                  <JFXComboBox fx:id="floorComboBox" prefWidth="260.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>
          </center>

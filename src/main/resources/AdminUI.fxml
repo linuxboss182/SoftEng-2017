@@ -97,7 +97,7 @@
                                        <children>
                                           <JFXButton fx:id="addBtn" buttonType="RAISED" onMouseClicked="#addRoomBtnClicked" prefHeight="25.0" prefWidth="67.0" style="-fx-background-color: #5087b4;" text="Add" textFill="WHITE" />
                                           <JFXButton fx:id="deleteBtn" buttonType="RAISED" onMouseClicked="#deleteRoomBtnClicked" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: #5087b4;" text="Delete" textFill="WHITE" GridPane.columnIndex="1" />
-                                          <JFXButton fx:id="modifyBtn" buttonType="RAISED" onMouseClicked="#modifyRoomBtnClicked" prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #5087b4;" text="Modify" textFill="WHITE" GridPane.columnIndex="2" />
+                                          <JFXButton fx:id="modifyBtn" buttonType="RAISED" onMouseClicked="#modifyRoomBtnClicked" prefHeight="25.0" prefWidth="67.0" style="-fx-background-color: #5087b4;" text="Modify" textFill="WHITE" GridPane.columnIndex="2" />
                                        </children>
                                     </GridPane>
                                     <JFXTextField fx:id="nameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -204,16 +204,16 @@
       </GridPane>
    </left>
    <top>
-      <JFXToolbar prefHeight="52.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+      <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
          <top>
-            <JFXToolbar prefHeight="14.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
+            <JFXToolbar prefHeight="16.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
                <center>
                   <Label text="Admin Panel" textFill="WHITE" BorderPane.alignment="CENTER" />
                </center>
             </JFXToolbar>
          </top>
          <right>
-            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="14.0" prefWidth="256.0" BorderPane.alignment="CENTER" />
+            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefWidth="260.0" BorderPane.alignment="CENTER" />
          </right>
          <center>
             <GridPane prefHeight="35.0" prefWidth="918.0" BorderPane.alignment="CENTER">
@@ -225,7 +225,6 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <JFXComboBox fx:id="buildingComboBox" prefHeight="25.0" prefWidth="254.0" />
                   <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>
