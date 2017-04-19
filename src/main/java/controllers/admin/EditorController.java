@@ -938,6 +938,7 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Upload professonals from a file
 	 */
+	@FXML
 	private void loadProfessionalsFile() {
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains people who are already in the application, they will be duplicated.");

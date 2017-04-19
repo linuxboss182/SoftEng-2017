@@ -1,6 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.admin.AddProfessionalController;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -42,6 +43,7 @@ import java.util.Set;
 
 import entities.Node;
 import entities.Room;
+import javafx.stage.Stage;
 import main.ApplicationController;
 
 import static com.sun.java.accessibility.util.AWTEventMonitor.addComponentListener;
@@ -491,8 +493,15 @@ public abstract class UserMasterController
 	}
 
 	@FXML
-	public void aboutBtnClicked () {
-
+	public void aboutBtnClicked () throws IOException {
+		UserAboutPage aboutPageController = new UserAboutPage();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+		Scene addAboutScene = new Scene(loader.load());
+		Stage addAboutStage = new Stage();
+		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
+		addAboutStage.setScene(addAboutScene);
+		addAboutStage.showAndWait();
 	}
 
 
