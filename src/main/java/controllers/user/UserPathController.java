@@ -33,7 +33,7 @@ public class UserPathController
 		implements Initializable
 {
 
-	private static final double PATH_WIDTH = 2.0;
+	private static final double PATH_WIDTH = 4.0;
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
 	@FXML
@@ -80,6 +80,13 @@ public class UserPathController
 		if (ret.isEmpty()) {
 			// TODO: Handle impossible paths
 		}
+
+		startRoom.getShape().setScaleX(1.5);
+		startRoom.getShape().setScaleY(1.5);
+
+		endRoom.getShape().setScaleX(1.5);
+		endRoom.getShape().setScaleY(1.5);
+
 		// change displayed floor to match the floor that the start node is on
 		int startFloor = startRoom.getLocation().getFloor();
 		changeFloor(startFloor);
@@ -176,6 +183,11 @@ public class UserPathController
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
+		startRoom.getShape().setScaleX(1);
+		startRoom.getShape().setScaleY(1);
+		endRoom.getShape().setScaleX(1);
+		endRoom.getShape().setScaleY(1);
+
 		iconController.resetAllRooms();
 		choosingStart = false;
 		choosingEnd = true;
@@ -231,6 +243,7 @@ public class UserPathController
 			if (here.getFloor() == floor && here.getFloor() == there.getFloor()) {
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
+				line.setStroke(Color.MEDIUMVIOLETRED);
 				path.add(line);
 			}
 		}

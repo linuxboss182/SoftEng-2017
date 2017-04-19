@@ -44,6 +44,7 @@
    <center>
       <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
          <items>
+            <ScrollPane fx:id="mapScroll">
             <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
                <children>
                   <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
@@ -51,6 +52,7 @@
                   <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
                </children>
             </AnchorPane>
+            </ScrollPane>
          </items>
       </SplitPane>
    </center>
