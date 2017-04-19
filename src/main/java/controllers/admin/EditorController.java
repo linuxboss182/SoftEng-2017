@@ -15,7 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -34,7 +33,6 @@ import java.net.URL;
 import java.util.*;
 
 import main.ApplicationController;
-import main.database.DatabaseException;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
@@ -368,10 +366,10 @@ public class EditorController extends MapDisplayController
 	public void displayRoomsOnFloor() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getShape());
-			r.getShape().setOnMouseClicked(event -> {});
-			r.getShape().setOnContextMenuRequested(event -> {});
-			Text label = r.getShape().getLabel();
+			roomShapes.add(r.getUsersideShape());
+			r.getUsersideShape().setOnMouseClicked(event -> {});
+			r.getUsersideShape().setOnContextMenuRequested(event -> {});
+			Text label = r.getUsersideShape().getLabel();
 			label.setOnMouseDragged(event -> {
 				this.beingDragged = true;
 				label.relocate(event.getX(), event.getY());
@@ -390,7 +388,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.getChildren().setAll(nodeShapes);
 
 		// Does the same thing, but is hellish to read.
-//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getShape).collect(Collectors.toSet()));
+//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUsersideShape).collect(Collectors.toSet()));
 	}
 
 	/**
@@ -455,7 +453,7 @@ public class EditorController extends MapDisplayController
 		 * But keep it here because it may be useful in the future
 		 *
 		 */
-//		node.getShape().setOnContextMenuRequested(e->{
+//		node.getUsersideShape().setOnContextMenuRequested(e->{
 //			if(node.equals(this.selectedNode)) {
 //				ContextMenu optionsMenu = new ContextMenu();
 //
@@ -466,7 +464,7 @@ public class EditorController extends MapDisplayController
 //				exItem2.setOnAction(e2 -> {
 //				});
 //				optionsMenu.getItems().addAll(exItem1, exItem2);
-//				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+//				optionsMenu.show(node.getUsersideShape(), e.getScreenX(), e.getScreenY());
 //			}
 //		});
 	}
@@ -551,7 +549,7 @@ public class EditorController extends MapDisplayController
 		this.selectedNodes.get(0).applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
 			// TODO: Don't rely on room shapes being a stacked rectangle and text
-			((Text)room.getShape().getChildren().get(1)).setText(name);
+			((Text)room.getUsersideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines(this.directory.getNodesOnFloor(floor));

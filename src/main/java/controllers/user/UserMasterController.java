@@ -10,8 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,26 +21,17 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import entities.Node;
 import entities.Room;
 import main.ApplicationController;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addComponentListener;
 
 
 public abstract class UserMasterController
@@ -290,15 +279,15 @@ public abstract class UserMasterController
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getShape());
+			roomShapes.add(room.getUsersideShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUsersideShape().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getShape().setOnContextMenuRequested(e -> {
+			room.getUsersideShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
@@ -307,7 +296,7 @@ public abstract class UserMasterController
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getUsersideShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
