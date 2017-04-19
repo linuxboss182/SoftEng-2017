@@ -645,36 +645,6 @@ public class EditorController extends MapDisplayController
 			this.redisplayGraph();
 		});
 
-//		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-//			@Override public void handle(ScrollEvent event) {
-//				event.consume();
-//				if (event.getDeltaY() == 0) {
-//					return;
-//				}
-//				double scaleFactor =
-//						(event.getDeltaY() > 0)
-//								? SCALE_DELTA
-//								: 1/SCALE_DELTA;
-//				double potentialScaleX = contentAnchor.getScaleX() * scaleFactor;
-//				double potentialScaleY = contentAnchor.getScaleY() * scaleFactor;
-//				// Pretty much just limit the scaling minimum to be 1/SCALE_DELTA
-//				potentialScaleX = (potentialScaleX < zoomMin ? zoomMin:potentialScaleX);
-//				potentialScaleY = (potentialScaleY < zoomMin ? zoomMin:potentialScaleY);
-//				potentialScaleX = (potentialScaleX > zoomMax ? zoomMax:potentialScaleX);
-//				potentialScaleY = (potentialScaleY > zoomMax ? zoomMax:potentialScaleY);
-//				contentAnchor.setScaleX(potentialScaleX);
-//				contentAnchor.setScaleY(potentialScaleY);
-//				// Update the slider
-//				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
-//			}
-//		});
-
-
-
-
-
-
-
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
 				event.consume();
@@ -719,73 +689,49 @@ public class EditorController extends MapDisplayController
 
 			}
 		});
-//		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
-//			public void handle(MouseEvent event) {
-//				clickedX = event.getX();
-//				clickedY = event.getY();
-//			}
-//		});
-//		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
-//			public void handle(MouseEvent event) {
-//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-//				event.consume();
-//			}
-//		});
-
-
-
-
-
-
-
-
-
-
-
 
 		contentAnchor.setOnMousePressed(e->{
 			clickedX = e.getX();
 			clickedY = e.getY();
-//			this.shiftPressed = e.isShiftDown();
-//			if(this.shiftPressed) {
-//				this.beingDragged = true;
-//				this.selectionStartX = e.getX();
-//				this.selectionStartY = e.getY();
-//			} else {
-//				this.beingDragged = false;
-//			}
+			this.shiftPressed = e.isShiftDown();
+			if(this.shiftPressed) {
+				this.beingDragged = true;
+				this.selectionStartX = e.getX();
+				this.selectionStartY = e.getY();
+			} else {
+				this.beingDragged = false;
+			}
 		});
 		contentAnchor.setOnMouseDragged(e-> {
 
-//			this.draggedANode = true;
-//			if(this.shiftPressed && !draggingNode) {
-//				Rectangle r = new Rectangle();
-//				if(e.getX() > selectionStartX) {
-//					r.setX(selectionStartX);
-//					r.setWidth(e.getX() - selectionStartX);
-//				} else {
-//					r.setX(e.getX());
-//					r.setWidth(selectionStartX - e.getX());
-//				}
-//				if(e.getY() > selectionStartY) {
-//					r.setY(selectionStartY);
-//					r.setHeight(e.getY() - selectionStartY);
-//				} else {
-//					r.setY(e.getY());
-//					r.setHeight(selectionStartY - e.getY());
-//				}
-//				r.setFill(Color.SKYBLUE);
-//				r.setStroke(Color.BLUE);
-//				r.setOpacity(0.5);
-//				this.redisplayAll();
-//				this.botPane.getChildren().add(r);
-//			}
-//
-//			if(!beingDragged) {
+			this.draggedANode = true;
+			if(this.shiftPressed && !draggingNode) {
+				Rectangle r = new Rectangle();
+				if(e.getX() > selectionStartX) {
+					r.setX(selectionStartX);
+					r.setWidth(e.getX() - selectionStartX);
+				} else {
+					r.setX(e.getX());
+					r.setWidth(selectionStartX - e.getX());
+				}
+				if(e.getY() > selectionStartY) {
+					r.setY(selectionStartY);
+					r.setHeight(e.getY() - selectionStartY);
+				} else {
+					r.setY(e.getY());
+					r.setHeight(selectionStartY - e.getY());
+				}
+				r.setFill(Color.SKYBLUE);
+				r.setStroke(Color.BLUE);
+				r.setOpacity(0.5);
+				this.redisplayAll();
+				this.botPane.getChildren().add(r);
+			}
+
+			if(!beingDragged) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
-//			}
+			}
 			e.consume();
 		});
 
