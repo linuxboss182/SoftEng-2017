@@ -58,11 +58,23 @@ public abstract class MapDisplayController
 	protected Pane botPane;
 	protected Pane topPane;
 
-	// Default floor is the fourth because that's the one we emotionally attached to
-	protected static int floor = 4;
+	// default to floor 1
+	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
 	@FXML
 	protected Slider zoomSlider;
+
+	public static FloorImage getFloor() {
+		return floor;
+	}
+
+	public static int getFloorNum() {
+		return floor.getNumber();
+	}
+
+	public static String getFloorName() {
+		return floor.getName();
+	}
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
@@ -99,13 +111,9 @@ public abstract class MapDisplayController
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public void switchFloors(int floor) {
-		this.floor = floor;
-		this.map = FloorProxy.maps.get(floor - 1).display();
-	}
-
-	public void loadMap() {
-		switchFloors(floor);
+	public Image switchFloors(FloorImage floor) {
+		MapDisplayController.floor = floor;
+		return floor.display();
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);

@@ -1,5 +1,8 @@
 package entities;
 
+import controllers.shared.Floor;
+import controllers.shared.FloorImage;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -138,6 +141,16 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String desc) {
+		Room newRoom = new Room(name, desc);
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		newRoom.setLocation(newNode);
+		newNode.setRoom(newRoom);
+		this.nodes.add(newNode);
+		this.rooms.add(newRoom);
+		return newNode;
+	}
+	@Deprecated
 	public Node addNewRoomNode(double x, double y, int floor, String buildingName, String name, String desc) {
 		Room newRoom = new Room(name, desc);
 		Node newNode = new Node(x, y, floor, buildingName);
@@ -147,6 +160,7 @@ public class Directory
 		this.rooms.add(newRoom);
 		return newNode;
 	}
+	@Deprecated
 	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
 		return this.addNewRoomNode(x, y, floor, "DEFAULT", name, desc);
 	}
@@ -186,13 +200,21 @@ public class Directory
 	/**
 	 * Create a new node in this directory
 	 */
+	public Node addNewNode(double x, double y, FloorImage floor) {
+		if (floor == null) throw new RuntimeException("Tried to create node with null floor");
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		this.nodes.add(newNode);
+		return newNode;
+	}
+	@Deprecated
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
 		Node newNode = new Node(x, y, floor, buildingName);
 		this.nodes.add(newNode);
 		return newNode;
 	}
+	@Deprecated
 	public Node addNewNode(double x, double y, int floor) {
-		return this.addNewNode(x, y, floor, "DEFAULT");
+		return this.addNewNode(x, y, floor, "NO BUILDING");
 	}
 
 		// TODO: Add test cases for new Directory methods
@@ -205,8 +227,13 @@ public class Directory
 	 *
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
-	public Set<Node> getNodesOnFloor(int floor) {
-		return this.filterNodes(node -> node.getFloor() == floor);
+	//TODO: Make this take a Floor instead
+	public Set<Node> getNodesOnFloor(FloorImage floor) {
+		return this.filterNodes(node ->
+				(node.getFloor() == floor.getNumber())
+						&&
+				node.getBuildingName().equalsIgnoreCase(floor.getName())
+		);
 	}
 
 	/**
@@ -217,8 +244,10 @@ public class Directory
 	 * @param floor
 	 * @return
 	 */
-	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.filterRooms(room -> room.getLocation() != null && room.getLocation().getFloor() == floor);
+	public Set<Room> getRoomsOnFloor(FloorImage floor) {
+		return this.filterRooms(room -> room.getLocation() != null
+				&& room.getLocation().getFloor() == floor.getNumber()
+				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName()));
 	}
 
 	/**

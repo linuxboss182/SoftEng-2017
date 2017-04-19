@@ -12,7 +12,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -42,6 +44,8 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
+import controllers.shared.FloorImage;
+import controllers.shared.FloorProxy;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -83,9 +87,9 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ComboBox floorChoiceBox;
+	public ComboBox<FloorProxy> floorComboBox;
 	@FXML
-	public ComboBox buildingChoiceBox;
+	public ComboBox buildingComboBox;
 	@FXML
 	public TableView<Professional> roomProfTable;
 	@FXML
@@ -99,11 +103,13 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private Label xPos;
 	@FXML
-	private ComboBox<Algorithm> algorithmChoiceBox;
+	private ComboBox<Algorithm> algorithmComboBox;
 	@FXML
 	private BorderPane parentBorderPane;
 	@FXML
 	private ScrollPane mapScroll = new ScrollPane();
+	@FXML
+	private Button helpBtn;
 
 
 //	protected Node selectedNode; // you select a node by double clicking
@@ -133,11 +139,12 @@ public class EditorController extends MapDisplayController
 		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
-		this.loadMap();
-		this.imageViewMap.setImage(this.map); //Load background
+
+		this.changeFloor(FloorProxy.getFloor(getFloorName(), getFloorNum()));
+
 		this.imageViewMap.setPickOnBounds(true);
-		if(floorChoiceBox != null) {
-			initFloorChoiceBox();
+		if(floorComboBox != null) {
+			initfloorComboBox();
 		}
 
 		// TODO: Move zoom initialization to separate function
@@ -194,15 +201,44 @@ public class EditorController extends MapDisplayController
 
 
 		/** This is the section for key listeners.
-		 *
-		 *
+		 *  Press Back Space for Deleting selected nodes
+		 *  Press Ctrl + A for selecting all nodes
+		 *  Press Ctrl + Open Bracket for zoom in
+		 *  Press Ctrl + Close Bracket for zoom out
+		 *  Press Ctrl + DIGIT1 to view the map for floor 1
+		 *  Press Ctrl + DIGIT2 to view the map for floor 2
+		 *  Press Ctrl + DIGIT3 to view the map for floor 3
+		 *  Press Ctrl + DIGIT4 to view the map for floor 4
+		 *  Press Ctrl + DIGIT5 to view the map for floor 5
+		 *  Press Ctrl + DIGIT6 to view the map for floor 6
+		 *  Press Ctrl + DIGIT7 to view the map for floor 7
+		 *  Press Shift + Right to move the view to the right
+		 *  Press Shift + Left to move the view to the left
+		 *  Press Shift + Up to move the view to the up
+		 *  Press Shift + down to move the view to the down
 		 */
-		parentBorderPane.setOnKeyPressed(e-> {
+		// TODO: Allow changing of floor without building, then add this back in
+
+		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
-
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
 		});
-
 	}
+
 
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
@@ -262,8 +298,8 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
-	private void changeFloor(int floor) {
-		this.switchFloors(floor);
+	private void changeFloor(FloorImage floor) {
+		Image map = this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayGraph();
 	}
@@ -362,8 +398,8 @@ public class EditorController extends MapDisplayController
 //			this.displayNodes(directory.getNodes());
 //			this.redrawLines(directory.getNodes());
 //		} else {
-		this.displayNodes(directory.getNodesOnFloor(floor));
-		this.redrawLines(directory.getNodesOnFloor(floor));
+		this.displayNodes(directory.getNodesOnFloor(getFloor()));
+		this.redrawLines();
 //		}
 	}
 
@@ -377,7 +413,7 @@ public class EditorController extends MapDisplayController
 			roomShapes.add(r.getUserSideShape());
 			r.getUserSideShape().setOnMouseClicked(event -> {});
 			r.getUserSideShape().setOnContextMenuRequested(event -> {});
-			Text label = r.getUserSideShape().getLabel();
+			Label label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
 				this.beingDragged = true;
 				label.relocate(event.getX(), event.getY());
@@ -402,11 +438,12 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Recreate and redisplay all lines on this floor
 	 */
-	public void redrawLines(Collection<Node> nodes) {
+	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : nodes) {
+		for (Node node : directory.getNodesOnFloor(getFloor())) {
 			for (Node neighbor : node.getNeighbors()) {
-				if (node.getFloor() == neighbor.getFloor()) {
+				if ((node.getFloor() == neighbor.getFloor()) &&
+						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
 //				else if (EditorController.DEBUGGING) {
@@ -423,23 +460,12 @@ public class EditorController extends MapDisplayController
 	 * Adds a listener to the choice box.
 	 * Allows you to change floors
 	 */
-	public void initFloorChoiceBox(){
-		this.populateFloorChoiceBox();
-		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
-				(observable, oldValue, newValue) -> {
-					if(newValue.intValue() >= 0) changeFloor(newValue.intValue()+1);
-				});
-	}
+	public void initfloorComboBox() {
+		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
+		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 
-	/**
-	 * Initialize the floor's choice box with 1-7 (the floors)
-	 * Ideally this shouldn't be hard coded
-	 * TODO: Make this not hard coded into our program
-	 */
-	public void populateFloorChoiceBox() {
-		// We are able to change what this list is of.
-		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
 	}
 
 	/**
@@ -519,7 +545,7 @@ public class EditorController extends MapDisplayController
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
-			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
+			Node newNode = directory.addNewRoomNode(x, y, getFloor(), name, description);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
@@ -534,7 +560,7 @@ public class EditorController extends MapDisplayController
 		if(x < 0 || y < 0) {
 			return;
 		}
-		Node newNode = this.directory.addNewNode(x, y, floor);
+		Node newNode = this.directory.addNewNode(x, y, getFloor());
 		this.addNodeListeners(newNode);
 
 		int size = this.selectedNodes.size();
@@ -560,7 +586,7 @@ public class EditorController extends MapDisplayController
 			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
-		this.redrawLines(this.directory.getNodesOnFloor(floor));
+		this.redrawLines();
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
@@ -765,7 +791,7 @@ public class EditorController extends MapDisplayController
 					botRightY = this.selectionStartY;
 				}
 				// Loop through and select/deselect all nodes in the bounds
-				this.directory.getNodesOnFloor(floor).forEach(n -> {
+				this.directory.getNodesOnFloor(getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
 						// Within the bounds, select or deselect it
 						this.selectOrDeselectNode(n);
@@ -818,7 +844,7 @@ public class EditorController extends MapDisplayController
 			this.selectedNodes.forEach(nodes->{
 				this.directory.connectOrDisconnectNodes(nodes, n);
 			});
-			this.redrawLines(this.directory.getNodesOnFloor(floor));
+			this.redrawLines();
 		}
 	}
 
@@ -830,7 +856,7 @@ public class EditorController extends MapDisplayController
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
-				this.redrawLines(this.directory.getNodesOnFloor(floor));
+				this.redrawLines();
 
 			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
@@ -887,6 +913,15 @@ public class EditorController extends MapDisplayController
 		}
 		this.redisplayGraph();
 		System.out.println(this.selectedNodes.size()); // For debugging
+	}
+
+	private void selectAllNodesOnFloor() {
+		this.directory.getNodesOnFloor(floor).forEach(node -> {
+			if (!this.selectedNodes.contains(node)) {
+				this.selectedNodes.add(node);
+				this.iconController.selectAnotherNode(node);
+			}
+		});
 	}
 
 	private void deselectNodes() {
@@ -971,11 +1006,11 @@ public class EditorController extends MapDisplayController
 	 * Get a choice box that sets the active algorithm
 	 */
 	private void setUpAlgorithmChoiceBox() {
-		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
-		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+		this.algorithmComboBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		this.algorithmComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
-		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
-		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
+		// this.algorithmComboBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		this.algorithmComboBox.getSelectionModel().select(Pathfinder.getStrategy());
 	}
 
 	/*
@@ -1023,5 +1058,16 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public void selectKioskClicked() {
 		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+	}
+	@FXML
+	private void helpBtnClicked() throws IOException {
+		AdminHelpController helpController = new AdminHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AdminHelp.fxml"));
+		Scene helpScene = new Scene(loader.load());
+		Stage helpStage = new Stage();
+		helpStage.initOwner(contentAnchor.getScene().getWindow());
+		helpStage.setScene(helpScene);
+		helpStage.showAndWait();
 	}
 }

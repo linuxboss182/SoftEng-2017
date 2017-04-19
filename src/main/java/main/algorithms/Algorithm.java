@@ -8,13 +8,13 @@ import entities.Node;
 
 /**
  * Interface for algorithms.
- * 
- * Besides the 
+ *
+ * Besides the methods here, Algorithms should implement toString.
  */
 public interface Algorithm
 {
 	double FLOOR_HEIGHT = 240;
-	
+
 	StringConverter<Algorithm> ALGORITHM_STRING_CONVERTER = new StringConverter<Algorithm>()
 	{
 		@Override

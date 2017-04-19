@@ -70,11 +70,25 @@ public class DirectionsGenerator
 			double turnAngle = path[i].angle(path[i+1], path[i-1]);
 
 			// Determine the direction of the turn through a bunch of if statements that check which direction the path is traveling
-			if (isElevator(path[i],path[i+1])){
+			if (isElevator(path[i], path[i+1])){
 				directions += "go straight and take the elevator to the " + path[i+1].getFloor()
 						+ getTurnPostfix(path[i+1].getFloor()) + " floor\nThen ";
-			}
-			else if(isRightTurn(turnAngle)) {
+			} else if (isPortal(path[i], path[i+1])) {
+				switch (path[i+1].getBuildingName().toUpperCase()) {
+					case "FAULKNER":
+						directions += "enter Faulkner Hospital,\nThen ";
+						break;
+					case "BELKIN":
+						directions += "enter Belkin House,\nThen ";
+						break;
+					case "OUTSIDE":
+						directions += "exit the building,\nThen ";
+						break;
+					default:
+						directions += "enter the building,\nThen ";
+						break;
+				}
+			} else if(isRightTurn(turnAngle)) {
 				// Right Turn
 				if(rightTurns == 0) {
 					directions += "take a right turn,\nThen ";
@@ -246,12 +260,11 @@ public class DirectionsGenerator
 	 *         false: if they are on the different floor
 	 */
 	private static boolean isElevator(Node node1, Node node2){
-		if (node1.getFloor() != node2.getFloor()) {
-			return true;
-		}
-		else{
-			return false;
-		}
+		return node1.getFloor() != node2.getFloor();
+	}
+
+	private static boolean isPortal(Node node1, Node node2) {
+		return ! node1.getBuildingName().equalsIgnoreCase(node2.getBuildingName());
 	}
 
 	/** Gives the postfix for a number

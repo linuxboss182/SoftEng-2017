@@ -12,16 +12,16 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -38,6 +38,10 @@ import java.util.Set;
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
+
+import controllers.shared.FloorImage;
+import controllers.shared.FloorProxy;
+import controllers.shared.MapDisplayController;
 
 
 public abstract class UserMasterController
@@ -66,7 +70,7 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ComboBox floorChoiceBox;
+	private ComboBox<FloorProxy> floorComboBox;
 	@FXML
 	private ComboBox buildingChoiceBox;
 	@FXML
@@ -129,8 +133,7 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = FloorProxy.maps.get(floor - 1).display();
-		this.imageViewMap.setImage(this.map);
+		this.changeFloor(getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
 
@@ -164,8 +167,8 @@ public abstract class UserMasterController
 			}
 		});
 
-		if(floorChoiceBox != null) {
-			initFloorChoiceBox();
+		if(floorComboBox != null) {
+			initfloorComboBox();
 		}
 
 		this.displayRooms();
@@ -236,25 +239,44 @@ public abstract class UserMasterController
 		//Call listeners for window resizing
 		windowResized();
 
-
-
-	}
-
-	/**
-	 * Adds a listener to the choice box.
-	 * Allows you to change floors
-	 */
-	public void initFloorChoiceBox(){
-		this.populateFloorChoiceBox();
-		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(newValue.intValue() >= 0) {
-					changeFloor(newValue.intValue()+1);
-				}
-
+		/** This is the section for key listeners.
+		 *  Press Ctrl + Open Bracket for zoom in
+		 *  Press Ctrl + Close Bracket for zoom out
+		 *  Press Ctrl + DIGIT1 to view the map for floor 1
+		 *  Press Ctrl + DIGIT2 to view the map for floor 2
+		 *  Press Ctrl + DIGIT3 to view the map for floor 3
+		 *  Press Ctrl + DIGIT4 to view the map for floor 4
+		 *  Press Ctrl + DIGIT5 to view the map for floor 5
+		 *  Press Ctrl + DIGIT6 to view the map for floor 6
+		 *  Press Ctrl + DIGIT7 to view the map for floor 7
+		 *  Press Shift + Right to move the view to the right
+		 *  Press Shift + Left to move the view to the left
+		 *  Press Shift + Up to move the view to the up
+		 *  Press Shift + down to move the view to the down
+		 *
+		 */
+		// TODO: Allow changing of floor without building, then add this back in
+		parentBorderPane.setOnKeyPressed(e -> {
+//			System.out.println(e); // Prints out key statements
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
 			}
+			e.consume();
 		});
+
+
+
 	}
 
 	/**
@@ -290,10 +312,17 @@ public abstract class UserMasterController
 	 * Ideally this shouldn't be hard coded
 	 * TODO: Make this not hard coded into our program
 	 */
-	public void populateFloorChoiceBox() {
-		// We are able to change what this list is of.
-		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+	public void initfloorComboBox() {
+//		// We are able to change what this list is of.
+//		this.floorComboBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
+//		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
+		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
+		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+
 	}
 
 	@FXML
@@ -311,16 +340,16 @@ public abstract class UserMasterController
 
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(floor)) {
+		for (Room room : directory.getRoomsOnFloor(getFloor())) {
 			roomShapes.add(room.getUserSideShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getUserSideShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getUserSideShape().setOnContextMenuRequested(e -> {
+			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
@@ -365,9 +394,9 @@ public abstract class UserMasterController
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 * 
+	 *
 	 * If both start and end locations are set, enable the "get directions" button
-	 * 
+	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	protected void enableOrDisableNavigationButtons() {
@@ -393,8 +422,8 @@ public abstract class UserMasterController
 	}
 
 
-	protected void changeFloor(int floor) {
-		this.switchFloors(floor);
+	protected void changeFloor(FloorImage floor) {
+		Image map = this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms();
 	}

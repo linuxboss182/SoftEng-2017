@@ -67,5 +67,33 @@ public class BreadthFirstTester
 		Assert.assertEquals(3, findPathSafely(origin, dest).size());
 	}
 
+	/* Does a dead end test on the Breadth First pathfinder algorithm
+	* Nodes are organized in a square as shown below
+	*          d
+	*        /
+	*      n1
+	*     /
+	*   o------n2------n3
+	*/
+	@Test
+	public void DeadEndBreadthFirstTest() {
+		Directory dir = new Directory();
+		Node origin = dir.addNewNode(0, 0, 0); //Create a dir.addNewNode
+		Node dest = dir.addNewNode(10, 10, 0); //Create a dir.addNewNode
+		//Create the nodes
+		Node n1 = dir.addNewNode(5, 5, 0);
+		Node n2 = dir.addNewNode(10, 0, 0);
+		Node n3 = dir.addNewNode(20, 0, 0);
+
+		//Link Adjacencies
+		dir.connectNodes(origin, n1);
+		dir.connectNodes(origin, n2);
+		dir.connectNodes(dest, n1);
+		dir.connectNodes(n2, n3);
+
+		//System.out.println(dest);
+		//System.out.println(Arrays.asList(findPathSafely(origin, dest)));
+		Assert.assertEquals(3, findPathSafely(origin, dest).size());
+	}
 
 }

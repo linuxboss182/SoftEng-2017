@@ -187,7 +187,11 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		return Math.hypot((n.y - this.y), (n.x - this.x));
+		if (! this.buildingName.equalsIgnoreCase(n.buildingName)) {
+			return 0;
+		} else {
+			return Math.hypot((n.y - this.y), (n.x - this.x));
+		}
 	}
 
 	/**
@@ -199,8 +203,12 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n, double floorHeight) {
-		return Math.hypot((n.y - this.y), (n.x - this.x))
-				+ (Math.abs(this.floor - n.floor) * floorHeight);
+		if (! this.buildingName.equalsIgnoreCase(n.buildingName)) {
+			return 0;
+		} else {
+			return Math.hypot((n.y - this.y), (n.x - this.x))
+					+ (Math.abs(this.floor - n.floor) * floorHeight);
+		}
 	}
 
 	/**
