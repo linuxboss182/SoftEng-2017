@@ -268,7 +268,7 @@
               </rowConstraints>
                <children>
                   <JFXComboBox fx:id="buildingComboBox" prefHeight="25.0" prefWidth="254.0" />
-                  <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
+                  <JFXComboBox fx:id="floorChoiceBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>
          </center>
