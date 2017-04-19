@@ -94,8 +94,8 @@ public abstract class UserMasterController
 	private ScrollPane mapScroll = new ScrollPane();
 
 	final double SCALE_DELTA = 1.1;
-	final protected double zoomMin = 1/SCALE_DELTA;
-	final protected double zoomMax = SCALE_DELTA*5;
+	final protected double zoomMin = 1;
+	final protected double zoomMax = 6;
 
 	private double clickedX, clickedY;
 	protected double SCALE_TOTAL = 1;

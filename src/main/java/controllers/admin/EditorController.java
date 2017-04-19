@@ -121,8 +121,8 @@ public class EditorController extends MapDisplayController
 
 	final double SCALE_DELTA = 1.1;
 	protected static double SCALE_TOTAL = 1;
-	final protected double zoomMin = 1/SCALE_DELTA;
-	final protected double zoomMax = SCALE_DELTA*5;
+	final protected double zoomMin = 1;
+	final protected double zoomMax = 6;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
 
