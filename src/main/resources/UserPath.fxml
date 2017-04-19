@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXToolbar?>
@@ -19,18 +25,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
    <center>
       <SplitPane fx:id="mapSplitPane" dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <items>
-             <ScrollPane fx:id="mapScroll" prefHeight="499.0" prefWidth="792.0">
-             <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="521.0" prefWidth="804.0">
-               <children>
-                  <ImageView fx:id="imageViewMap" fitHeight="517.0" fitWidth="805.0" pickOnBounds="true" preserveRatio="true" />
-                  <Pane fx:id="linePane" prefHeight="517.0" prefWidth="803.0" />
-                  <Pane fx:id="nodePane" prefHeight="517.0" prefWidth="803.0" />
-               </children>
-            </AnchorPane>
+             <ScrollPane fx:id="mapScroll">
+                 <content>
+                     <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
+                         <children>
+                             <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                             <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                             <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
+                         </children>
+                     </AnchorPane>
+                 </content>
              </ScrollPane>
 
              <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
@@ -38,7 +46,7 @@
       </SplitPane>
    </center>
    <left>
-      <GridPane prefHeight="640.0" prefWidth="369.0" BorderPane.alignment="CENTER">
+      <GridPane prefWidth="360.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -87,9 +95,9 @@
       </GridPane>
    </left>
    <top>
-      <JFXToolbar prefHeight="41.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+      <JFXToolbar prefHeight="51.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
          <right>
-            <JFXSlider fx:id="zoomSlider" prefHeight="14.0" prefWidth="285.0" BorderPane.alignment="CENTER" />
+            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="14.0" prefWidth="285.0" BorderPane.alignment="CENTER" />
          </right>
          <left>
             <ImageView fx:id="logoImageView" fitHeight="46.0" fitWidth="277.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
@@ -97,19 +105,19 @@
          <top>
             <JFXToolbar prefHeight="16.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
                <center>
-                  <Label text="Faulkner Hospital" BorderPane.alignment="CENTER" />
+                  <Label text="Faulkner Hospital" textFill="WHITE" BorderPane.alignment="CENTER" />
                </center>
             </JFXToolbar>
          </top>
       </JFXToolbar>
    </top>
    <bottom>
-      <JFXToolbar prefHeight="44.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
+      <JFXToolbar prefHeight="44.0" BorderPane.alignment="CENTER">
          <center>
-            <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="180.0" style="-fx-background-color: #5087b4;" text="Done" textFill="WHITE" BorderPane.alignment="CENTER" />
+            <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" style="-fx-background-color: #5087b4;" text="Done" textFill="WHITE" BorderPane.alignment="CENTER" />
          </center>
          <left>
-            <JFXButton fx:id="logAsAdmin" buttonType="RAISED" onMouseClicked="#logAsAdminClicked" prefHeight="25.0" prefWidth="138.0" style="-fx-background-color: #5087b4;" text="Login As Admin" textFill="WHITE" BorderPane.alignment="CENTER" />
+            <JFXButton fx:id="logAsAdmin" buttonType="RAISED" onMouseClicked="#logAsAdminClicked" prefHeight="25.0" prefWidth="137.0" style="-fx-background-color: #5087b4;" text="Login As Admin" textFill="WHITE" BorderPane.alignment="CENTER" />
          </left>
       </JFXToolbar>
    </bottom>

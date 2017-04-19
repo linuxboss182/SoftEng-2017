@@ -1,11 +1,13 @@
 package controllers.user;
 
+import controllers.SMSController;
 import controllers.shared.FloorProxy;
 import entities.Node;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import entities.Room;
+import javafx.stage.Stage;
 import main.DirectionsGenerator;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
@@ -251,24 +254,24 @@ public class UserPathController
 
 	@FXML
 	public void sendSMSBtnClicked(){
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("Information Dialog");
-		alert.setHeaderText("Feature Unavailable");
-		alert.setContentText("Sorry, SMS is currently unavailable.");
-		alert.showAndWait();
+//		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//		alert.setTitle("Information Dialog");
+//		alert.setHeaderText("Feature Unavailable");
+//		alert.setContentText("Sorry, SMS is currently unavailable.");
+//		alert.showAndWait();
 
-		// FXMLLoader loader = new FXMLLoader();
-		// loader.setLocation(this.getClass().getResource("/sms.fxml"));
-		// try {
-		// 	Scene smsScene = new Scene(loader.load());
-		// 	((SMSController)loader.getController()).setText(textDirections.getText());
-		// 	Stage smsStage = new Stage();
-		// 	smsStage.initOwner(contentAnchor.getScene().getWindow());
-		// 	smsStage.setScene(smsScene);
-		// 	smsStage.showAndWait();
-		// } catch (Exception e){
-		// 	System.out.println("Error making SMS popup");
-		// }
+		 FXMLLoader loader = new FXMLLoader();
+		 loader.setLocation(this.getClass().getResource("/sms.fxml"));
+		 try {
+		 	Scene smsScene = new Scene(loader.load());
+		 	((SMSController)loader.getController()).setText(textDirections.getText());
+		 	Stage smsStage = new Stage();
+		 	smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
+		 	smsStage.setScene(smsScene);
+		 	smsStage.showAndWait();
+		 } catch (Exception e){
+		 	System.out.println("Error making SMS popup");
+		 }
 	}
 
 
