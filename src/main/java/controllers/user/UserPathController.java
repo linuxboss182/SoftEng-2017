@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -149,13 +150,16 @@ public class UserPathController
 		//prints all the floors on the path in order
 // 		System.out.println(ret.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
 
+		System.out.println(ret);
+		System.out.println(ret.stream().map(n -> n.getBuildingName()).collect(Collectors.toList()));
 		for (int i = 1; i < ret.size()-1; ++i) {
+			System.out.println(here.building + " " + here.number);
 			last = here;
-			here = next;
+			here = new MiniFloor(ret.get(i).getFloor(), ret.get(i).getBuildingName());
 			next = new MiniFloor(ret.get(i+1).getFloor(), ret.get(i+1).getBuildingName());
 //			System.out.println(last+" "+here+" "+next);
 			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-			if (last != here && next == here) {
+			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
 				floors.add(here);
 				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
 			}
