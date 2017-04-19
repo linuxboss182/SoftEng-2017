@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import entities.Node;
+import main.algorithms.Pathfinder;
 
 //TODO: Clean up getTextDirections (see notes)
 /*
@@ -59,12 +60,19 @@ public class DirectionsGenerator
 	 */
 	private static String getTextDirections(Node[] path) {
 		String directions = "First, ";
+		boolean lastWasPortal = false;
 
 		int leftTurns = 0, rightTurns = 0;
 		if (path.length > 1 && isElevator(path[0], path[1])) {
 			directions += "Take the elevator to the " + path[1].getFloor() + getTurnPostfix(path[1].getFloor()) + " floor\nThen ";
 		}
 		for(int i = 1; i < path.length - 1; i++) {
+			if (lastWasPortal) {
+				lastWasPortal = false;
+				leftTurns = 0;
+				rightTurns = 0;
+				continue;
+			}
 			// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
 			// During testing, this method worked how we wanted, but when implementing this code, turns were reversed. (right turns were left turns)
 			double turnAngle = path[i].angle(path[i+1], path[i-1]);
@@ -74,6 +82,7 @@ public class DirectionsGenerator
 				directions += "go straight and take the elevator to the " + path[i+1].getFloor()
 						+ getTurnPostfix(path[i+1].getFloor()) + " floor\nThen ";
 			} else if (isPortal(path[i], path[i+1])) {
+				lastWasPortal = true;
 				switch (path[i+1].getBuildingName().toUpperCase()) {
 					case "FAULKNER":
 						directions += "enter Faulkner Hospital,\nThen ";
@@ -100,6 +109,7 @@ public class DirectionsGenerator
 				rightTurns = 0;
 				leftTurns = 0;
 			} else if(isSoftRightTurn(turnAngle)) {
+				if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList()[0]) continue;
 				// Soft Right Turn
 				directions += "take a soft right turn,\nThen ";
 				// if you take a turn, then the count for turns should be reset to 0
@@ -122,6 +132,7 @@ public class DirectionsGenerator
 					}
 				}
 			} else if(isSoftLeftTurn(turnAngle)) {
+				if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList()[0]) continue;
 				// Soft Left Turn
 				directions += "take a soft left turn\nThen ";
 				// if you take a turn, then the count for turns should be reset to 0
