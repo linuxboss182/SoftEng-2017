@@ -161,7 +161,8 @@ public class UserPathController
 			}
 		}
 		// Check that the last node's floor (which will always be 'next') is in the list
-		if (floors.get(floors.size()-1) != next) {
+		last = floors.get(floors.size()-1);
+		if (! last.isSameFloor(next)) {
 			floors.add(next);
 			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
 		}
