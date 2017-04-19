@@ -2,13 +2,8 @@ package controllers.shared;
 
 import javafx.scene.image.Image;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
-/**
- * Created by tbasl_000 on 4/8/2017.
- */
 public class FloorProxy implements FloorImage
 {
 
@@ -39,36 +34,69 @@ public class FloorProxy implements FloorImage
 		}
 		return floor.displayThumb();
 	}
+
+	@Override
+	public String getName() {
+		return this.building;
+	}
+
+	@Override
+	public int getNumber() {
+		return this.floorNum;
+	}
 	// create floorProxies for every floor
-	private static FloorProxy faulknerFloor1 = new FloorProxy("Faulkner",1);
-	private static FloorProxy faulknerFloor2 = new FloorProxy("Faulkner",2);
-	private static FloorProxy faulknerFloor3 = new FloorProxy("Faulkner",3);
-	private static FloorProxy faulknerFloor4 = new FloorProxy("Faulkner",4);
-	private static FloorProxy faulknerFloor5 = new FloorProxy("Faulkner",5);
-	private static FloorProxy faulknerFloor6 = new FloorProxy("Faulkner",6);
-	private static FloorProxy faulknerFloor7 = new FloorProxy("Faulkner",7);
-	private static FloorProxy belkinFloor1 = new FloorProxy("Belkin", 1);
-	private static FloorProxy belkinFloor2 = new FloorProxy("Belkin", 2);
-	private static FloorProxy belkinFloor3 = new FloorProxy("Belkin", 3);
-	private static FloorProxy belkinFloor4 = new FloorProxy("Belkin", 4);
-	private static FloorProxy outsideFloor = new FloorProxy("Outside", 1);
 
-	private static LinkedList<FloorProxy> faulknerMaps = new LinkedList<>(
-			Arrays.asList(faulknerFloor1, faulknerFloor2, faulknerFloor3, faulknerFloor4,
-					faulknerFloor5, faulknerFloor6, faulknerFloor7));
+//	private static HashMap<String, LinkedList<FloorProxy>> EVERYTHING;
+//	static {
+//		LinkedList<FloorProxy> faulkner = new LinkedList<>(Arrays.asList(
+//				new FloorProxy("Faulkner",1),
+//				new FloorProxy("Faulkner",2),
+//				new FloorProxy("Faulkner",3),
+//				new FloorProxy("Faulkner",4),
+//				new FloorProxy("Faulkner",5),
+//				new FloorProxy("Faulkner",6),
+//				new FloorProxy("Faulkner",7)
+//		));
+//		LinkedList<FloorProxy> belkin = new LinkedList<>(Arrays.asList(
+//				new FloorProxy("Belkin", 1),
+//				new FloorProxy("Belkin", 2),
+//				new FloorProxy("Belkin", 3),
+//				new FloorProxy("Belkin", 4)
+//		));
+//		LinkedList<FloorProxy> outside = new LinkedList<>();
+//		outside.add(new FloorProxy("Outside", 1));
+//
+//		EVERYTHING = new HashMap<>();
+//		EVERYTHING.put("FAULKNER", faulkner);
+//		EVERYTHING.put("BELKIN", belkin);
+//		EVERYTHING.put("OUTSIDE", outside);
+//	}
 
-	private static LinkedList<FloorProxy> belkinMaps = new LinkedList<>(
-			Arrays.asList(belkinFloor1, belkinFloor2, belkinFloor3, belkinFloor4));
+	private static LinkedList<FloorProxy> FLOORS = new LinkedList<>(Arrays.asList(
+				new FloorProxy("Faulkner",1),
+				new FloorProxy("Faulkner",2),
+				new FloorProxy("Faulkner",3),
+				new FloorProxy("Faulkner",4),
+				new FloorProxy("Faulkner",5),
+				new FloorProxy("Faulkner",6),
+				new FloorProxy("Faulkner",7),
+				new FloorProxy("Belkin", 1),
+				new FloorProxy("Belkin", 2),
+				new FloorProxy("Belkin", 3),
+				new FloorProxy("Belkin", 4),
+				new FloorProxy("Outside", 1)));
 
-	private static LinkedList<FloorProxy> outsideMaps = new LinkedList<>(
-			Arrays.asList(outsideFloor));
+	/**
+	 * Get a floor by building and number
+	 */
+	public static FloorProxy getFloor(String building, int floorNum) {
+		return FLOORS.stream()
+				.filter(floor -> (floor.getNumber() == floorNum) && (floor.getName().compareToIgnoreCase(building) == 0))
+				.findAny().orElse(null);
+		//return EVERYTHING.get(building).get(floorNum-1);
+	}
 
-	private static HashMap<String, LinkedList<FloorProxy>> floorMaps = new HashMap<>();
-
-	public static HashMap<String, LinkedList<FloorProxy>> getFloorMaps() {
-		floorMaps.put("Faulkner", faulknerMaps);
-		floorMaps.put("Belkin", belkinMaps);
-		floorMaps.put("Outside", outsideMaps);
-		return floorMaps;
+	public static List<FloorProxy> getFloors() {
+		return new ArrayList<>(FloorProxy.FLOORS);
 	}
 }
