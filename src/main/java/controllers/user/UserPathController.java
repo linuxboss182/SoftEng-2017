@@ -60,8 +60,8 @@ public class UserPathController
 			}
 			return;
 		}
-		System.out.println("UserPathController.initialize");
-		System.out.println("startRoom = " + startRoom);
+//		System.out.println("UserPathController.initialize");
+//		System.out.println("startRoom = " + startRoom);
 		try {
 			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
 		} catch (PathNotFoundException e) {
@@ -109,7 +109,7 @@ public class UserPathController
 			last = ret.get(i-1).getFloor();
 			here = ret.get(i  ).getFloor();
 			next = ret.get(i+1).getFloor();
-			System.out.println(last+" "+here+" "+next);
+//			System.out.println(last+" "+here+" "+next);
 			// Check when there is a floor A -> floor B -> floor B transition and save floor B
 			if (last != here && next == here) {
 				floors.add(here);
@@ -137,7 +137,7 @@ public class UserPathController
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
-		FloorProxy map = FloorProxy.maps.get(floor - 1);
+		FloorProxy map = FloorProxy.getFloor("FAULKNER", floor);
 
 		newFloorButton.setImage(map.displayThumb());
 		newFloorButton.setPickOnBounds(true);

@@ -1,5 +1,6 @@
 package controllers.user;
 
+import controllers.shared.FloorImage;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -12,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -64,7 +66,7 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ChoiceBox floorChoiceBox;
+	private ChoiceBox<FloorImage> floorChoiceBox;
 	@FXML
 	private ToolBar bottomToolbar;
 	@FXML
@@ -115,7 +117,7 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = FloorProxy.maps.get(floor - 1).display();
+		this.map = FloorProxy.getFloor("FAULKNER", floor).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
 
@@ -198,23 +200,6 @@ public abstract class UserMasterController
 	}
 
 	/**
-	 * Adds a listener to the choice box.
-	 * Allows you to change floors
-	 */
-	public void initFloorChoiceBox(){
-		this.populateFloorChoiceBox();
-		this.floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(newValue.intValue() >= 0) {
-					changeFloor(newValue.intValue()+1);
-				}
-
-			}
-		});
-	}
-
-	/**
 	 * Filter the room list for the search bar
 	 *
 	 * @param searchString The new string in the search bar
@@ -247,10 +232,17 @@ public abstract class UserMasterController
 	 * Ideally this shouldn't be hard coded
 	 * TODO: Make this not hard coded into our program
 	 */
-	public void populateFloorChoiceBox() {
-		// We are able to change what this list is of.
-		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+	public void initFloorChoiceBox() {
+//		// We are able to change what this list is of.
+//		this.floorChoiceBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
+//		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
+		this.floorChoiceBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
+		this.floorChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
+		this.floorChoiceBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+
+		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(floor - 1)); // default the selection to be whichever floor we start on
+
 	}
 
 	@FXML
@@ -322,9 +314,9 @@ public abstract class UserMasterController
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 * 
+	 *
 	 * If both start and end locations are set, enable the "get directions" button
-	 * 
+	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	protected void enableOrDisableNavigationButtons() {
@@ -352,6 +344,12 @@ public abstract class UserMasterController
 
 	protected void changeFloor(int floor) {
 		this.switchFloors(floor);
+		this.imageViewMap.setImage(map);
+		this.displayRooms();
+	}
+
+	private void changeFloor(FloorImage floor) {
+		Image map = this.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms();
 	}
