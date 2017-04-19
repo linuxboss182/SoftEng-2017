@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
+import main.algorithms.Algorithm;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 import org.junit.Test;
@@ -14,12 +15,18 @@ import entities.Node;
 /**
  * Created by Michael on 4/2/2017.
  * Tests functions in the Pathfinder
+ * Uses A*
  */
 public class PathfinderTester
 {
 	/** use this to find paths without worrying about missing paths */
 	private static List<Node> findPathSafely(Node n1, Node n2) {
 		List<Node> path = null;
+		Algorithm alg = Arrays.stream(Pathfinder.getAlgorithmList())
+				.filter(a -> "A*".compareToIgnoreCase(a.getName())==0)
+				.findAny().orElse(null);
+		if (alg == null) Assert.fail("BFS not found");
+		Pathfinder.setStrategy(alg);
 		try {
 			 path = Pathfinder.findPath(n1, n2);
 		} catch (PathNotFoundException e) {
@@ -199,17 +206,17 @@ public class PathfinderTester
 
 		//Connect elevator nodes to each other
 		dir.connectNodes(elev1, elev2);
-		System.out.println(origin.getNeighbors());
-		System.out.println(n1.getNeighbors());
-		System.out.println(elev1.getNeighbors());
+		//System.out.println(origin.getNeighbors());
+		//System.out.println(n1.getNeighbors());
+		//System.out.println(elev1.getNeighbors());
 
 		//Create the expected node path array
 		Node[] expect = {origin, n1, elev1, elev2, n2, dest};
 		//Find the shortest path
 		List<Node> result = findPathSafely(origin, dest);
 		Node[] resultAsArray = result.toArray(new Node[result.size()]);
-		System.out.println(Arrays.asList(expect));
-		System.out.println(result);
+		//System.out.println(Arrays.asList(expect));
+		//System.out.println(result);
 		Assert.assertArrayEquals(expect, resultAsArray);
 	}
 
