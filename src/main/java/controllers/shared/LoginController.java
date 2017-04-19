@@ -33,9 +33,9 @@ public class LoginController {
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-		boolean success = true;
-//		boolean success = this.usernameField.getText().equals("admin")
-//		               && this.passwordField.getText().equals("password");
+//		boolean success = true;
+		boolean success = this.usernameField.getText().equals("admin")
+		               && this.passwordField.getText().equals("password");
 
 		if(success) {
 			// TODO: Review
