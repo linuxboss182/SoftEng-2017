@@ -117,7 +117,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <JFXComboBox fx:id="floorChoiceBox" prefWidth="260.0" GridPane.columnIndex="1" />
+                  <JFXComboBox fx:id="floorComboBox" prefWidth="260.0" style="-fx-border-color: #4d4d4d;" GridPane.columnIndex="1" />
                </children>
             </GridPane>
          </center>

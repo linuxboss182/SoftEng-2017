@@ -70,7 +70,7 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ComboBox<FloorProxy> floorChoiceBox;
+	private ComboBox<FloorProxy> floorComboBox;
 	@FXML
 	private ComboBox buildingChoiceBox;
 	@FXML
@@ -167,8 +167,8 @@ public abstract class UserMasterController
 			}
 		});
 
-		if(floorChoiceBox != null) {
-			initFloorChoiceBox();
+		if(floorComboBox != null) {
+			initfloorComboBox();
 		}
 
 		this.displayRooms();
@@ -255,7 +255,6 @@ public abstract class UserMasterController
 		 *  Press Shift + down to move the view to the down
 		 *
 		 */
-
 		// TODO: Allow changing of floor without building, then add this back in
 		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
@@ -313,16 +312,16 @@ public abstract class UserMasterController
 	 * Ideally this shouldn't be hard coded
 	 * TODO: Make this not hard coded into our program
 	 */
-	public void initFloorChoiceBox() {
+	public void initfloorComboBox() {
 //		// We are able to change what this list is of.
 //		this.floorComboBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
 //		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
-		this.floorChoiceBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
-		this.floorChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
+		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
-		//this.floorChoiceBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
 
-		this.floorChoiceBox.setValue(this.floorChoiceBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
 
 	}
 
