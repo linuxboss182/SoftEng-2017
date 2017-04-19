@@ -1,6 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.admin.AddProfessionalController;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -25,26 +26,18 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import entities.Node;
 import entities.Room;
+import javafx.stage.Stage;
 import main.ApplicationController;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addComponentListener;
 
 
 public abstract class UserMasterController
@@ -319,15 +312,15 @@ public abstract class UserMasterController
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getShape());
+			roomShapes.add(room.getUserSideShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUserSideShape().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getShape().setOnContextMenuRequested(e -> {
+			room.getUserSideShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
@@ -336,7 +329,7 @@ public abstract class UserMasterController
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);
@@ -491,8 +484,15 @@ public abstract class UserMasterController
 	}
 
 	@FXML
-	public void aboutBtnClicked () {
-
+	public void aboutBtnClicked () throws IOException {
+		UserAboutPage aboutPageController = new UserAboutPage();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+		Scene addAboutScene = new Scene(loader.load());
+		Stage addAboutStage = new Stage();
+		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
+		addAboutStage.setScene(addAboutScene);
+		addAboutStage.showAndWait();
 	}
 
 
