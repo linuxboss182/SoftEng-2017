@@ -21,8 +21,6 @@ import java.util.List;
 
 public abstract class MapDisplayController
 {
-	// TODO: Add click+drag to select a rectangle area of nodes/a node
-
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
 	protected static Directory directory;
@@ -36,7 +34,7 @@ public abstract class MapDisplayController
 	protected double releasedX;
 	protected double releasedY;
 
-	// TODO: Make global and load from config file
+	// TODO: Remove excessive unecessary state from ALL Controllers (not just this one)
 	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
 	protected static final double RECTANGLE_WIDTH = 7;
 	protected static final double RECTANGLE_HEIGHT = 7;

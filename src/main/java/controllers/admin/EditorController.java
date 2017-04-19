@@ -205,20 +205,12 @@ public class EditorController extends MapDisplayController
 		 *  Press Ctrl + A for selecting all nodes
 		 *  Press Ctrl + Open Bracket for zoom in
 		 *  Press Ctrl + Close Bracket for zoom out
-		 *  Press Ctrl + DIGIT1 to view the map for floor 1
-		 *  Press Ctrl + DIGIT2 to view the map for floor 2
-		 *  Press Ctrl + DIGIT3 to view the map for floor 3
-		 *  Press Ctrl + DIGIT4 to view the map for floor 4
-		 *  Press Ctrl + DIGIT5 to view the map for floor 5
-		 *  Press Ctrl + DIGIT6 to view the map for floor 6
-		 *  Press Ctrl + DIGIT7 to view the map for floor 7
 		 *  Press Shift + Right to move the view to the right
 		 *  Press Shift + Left to move the view to the left
 		 *  Press Shift + Up to move the view to the up
 		 *  Press Shift + down to move the view to the down
 		 */
-		// TODO: Allow changing of floor without building, then add this back in
-
+		// TODO: Use control+plus/minus for zooming
 		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
 			System.out.println(e.getCode());// Prints out key statements
@@ -365,7 +357,7 @@ public class EditorController extends MapDisplayController
 	}
 
 	@FXML
-	public void modifyRoomBtnClicked() { //TODO
+	public void modifyRoomBtnClicked() {
 		if(this.selectedNodes.size() != 1) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
@@ -382,7 +374,6 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Redraw all elements of the map and the professionals' elements
 	 */
-	// TODO: Use this more often
 	private void redisplayAll() {
 		this.redisplayGraph(); // nodes on this floor and lines between them
 		this.populateTableView();
@@ -516,10 +507,9 @@ public class EditorController extends MapDisplayController
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
 	 */
-	private void addNodeRoom(double x, double y, String name, String description) { //TODO
+	private void addNodeRoom(double x, double y, String name, String description) {
 		// checking to see if x and y are negative or name field is empty. Changes text
 		// next to each textField to red if it breaks the rules.
-		// TODO: set fill back to black if the field if filled or follows the rules.
 		if(x < 0 || y < 0 || name.isEmpty()) {
 			if(x < 0){
 				xPos.setTextFill(Color.RED);
@@ -540,7 +530,7 @@ public class EditorController extends MapDisplayController
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
-		// This first condition requires that there has only been one node selected\
+		// This first condition requires that there has only been one node selected
 		// TODO: Review this assumption
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
@@ -579,15 +569,16 @@ public class EditorController extends MapDisplayController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
+	private void updateSelectedRoom(double x, double y, String name, String description) {
 		this.selectedNodes.get(0).applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
-			// TODO: Don't rely on room shapes being a stacked rectangle and text
+			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
 			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
 		// TODO: Update the location of the node, whether or not it is a room (or not)
+		// That should just require a Node.moveTo (but make sure that's not being made private first)
 	}
 
 	/**
@@ -626,7 +617,7 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Delete All of the Nodes selected
 	 */
-	private void deleteSelectedNodes() { // TODO: Separate this from a function that deletes both room and node
+	private void deleteSelectedNodes() {
 		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
 		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
 			Node n = this.selectedNodes.get(i);

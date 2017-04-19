@@ -177,21 +177,6 @@ class DatabaseLoader
 			}
 			resultRooms.close();
 
-//			// add rooms to nodes
-//			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
-//			//ResultSet resultEdges = null;
-//			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
-//			while (resultNodes.next()) {
-////				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
-//				int nodeID = resultNodes.getInt("nodeID");
-//				int roomID = resultNodes.getInt("roomID");
-////				PRINTLN("Loading room "+roomID);
-//				if (!resultNodes.wasNull()) {
-//					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
-//				}
-//			}
-//			resultNodes.close();
-
 			// add adjacency lists to nodes
 			Statement queryEdges = this.db_connection.createStatement();
 			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());

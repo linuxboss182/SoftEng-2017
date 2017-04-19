@@ -242,20 +242,13 @@ public abstract class UserMasterController
 		/** This is the section for key listeners.
 		 *  Press Ctrl + Open Bracket for zoom in
 		 *  Press Ctrl + Close Bracket for zoom out
-		 *  Press Ctrl + DIGIT1 to view the map for floor 1
-		 *  Press Ctrl + DIGIT2 to view the map for floor 2
-		 *  Press Ctrl + DIGIT3 to view the map for floor 3
-		 *  Press Ctrl + DIGIT4 to view the map for floor 4
-		 *  Press Ctrl + DIGIT5 to view the map for floor 5
-		 *  Press Ctrl + DIGIT6 to view the map for floor 6
-		 *  Press Ctrl + DIGIT7 to view the map for floor 7
 		 *  Press Shift + Right to move the view to the right
 		 *  Press Shift + Left to move the view to the left
 		 *  Press Shift + Up to move the view to the up
 		 *  Press Shift + down to move the view to the down
 		 *
 		 */
-		// TODO: Allow changing of floor without building, then add this back in
+		// TODO: Use ctrl+plus/minus for zooming
 		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
 			System.out.println(e.getCode());// Prints out key statements
@@ -310,7 +303,6 @@ public abstract class UserMasterController
 	/**
 	 * Initialize the floor's choice box with 1-7 (the floors)
 	 * Ideally this shouldn't be hard coded
-	 * TODO: Make this not hard coded into our program
 	 */
 	public void initfloorComboBox() {
 //		// We are able to change what this list is of.
@@ -328,7 +320,6 @@ public abstract class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		// TODO: Review
 		// Unset navigation targets for after logout
 		startRoom = null;
 		endRoom = null;

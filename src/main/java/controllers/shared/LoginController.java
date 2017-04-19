@@ -38,7 +38,6 @@ public class LoginController {
 		               && this.passwordField.getText().equals("password");
 
 		if(success) {
-			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
 		} else {

@@ -18,9 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * The class for a Directory
- *
  */
-//TODO: I made this based off of the class diagram as best I could but there's still stuff to do
 public class Directory
 {
 
@@ -217,7 +215,7 @@ public class Directory
 		return this.addNewNode(x, y, floor, "NO BUILDING");
 	}
 
-		// TODO: Add test cases for new Directory methods
+	// TODO: Add test cases for new Directory methods, mostly those below this TODO
 
 	/* Filtered getters */
 	/**

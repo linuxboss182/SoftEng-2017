@@ -52,9 +52,8 @@ public class UserPathController
 		initialize();
 		List<Node> ret;
 
-		// Check if either start or destination is null
-		// TODO: create exception class?
-		// TODO: make pop-up for UI when this happens
+		// Check if either start or destination is null (this should be impossible)
+		// TODO: Get path _before_ openng UserPathController
 		if (startRoom == null || endRoom == null) {
 			try {
 				this.doneBtnClicked();
@@ -64,25 +63,21 @@ public class UserPathController
 			}
 			return;
 		}
-//		System.out.println("UserPathController.initialize");
-//		System.out.println("startRoom = " + startRoom);
+
 		try {
 			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
 		} catch (PathNotFoundException e) {
-			// TODO: URGENT Handle PathNotFoundException (with a popup)
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			alert.setTitle("No Path Found");
 			alert.setHeaderText(null);
 			alert.setContentText("There is no existing path to your destination. \n" +
 					"Please check your start and end location and try again");
 			alert.showAndWait();
-			// TODO: Find a way to close the pathfinding screen (ie press the done button)
 			// TODO: Move the pathfinding (and the error handling) to UserMasterController
-			//System.err.println("ERROR, NO PATH FOUND: MUST HANDLE");
 			return;
 		}
 		if (ret.isEmpty()) {
-			// TODO: Handle impossible paths
+			// This is actually an impossible place to get to if the algorithms are correct
 		}
 
 		startRoom.getUserSideShape().setScaleX(1.5);
@@ -94,7 +89,7 @@ public class UserPathController
 		// change displayed floor to match the floor that the start node is on
 		Node startNode = startRoom.getLocation();
 		if (startNode == null) {
-			// TODO: Handle this better
+			// Handle this better (though it should be impossible)
 			throw new RuntimeException("Start room was null; FIXME");
 		}
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
@@ -287,13 +282,6 @@ public class UserPathController
 	 */
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
-
-		//add kiosk to start of list
-		//directionNodes.add(0, this.kiosk);
-		if(directionNodes.size() <= 0) {
-			// TODO: Give an error message when no path is found
-			return;
-		}
 
 		// This can be any collection type;
 		Collection<Line> path = new HashSet<>();
