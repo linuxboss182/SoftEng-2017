@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -194,15 +195,67 @@ public class EditorController extends MapDisplayController
 
 
 		/** This is the section for key listeners.
-		 *
-		 *
+		 *  Press Back Space for Deleting selected nodes
+		 *  Press Ctrl + A for selecting all nodes
+		 *  Press Ctrl + Open Bracket for zoom in
+		 *  Press Ctrl + Close Bracket for zoom out
+		 *  Press Ctrl + DIGIT1 to view the map for floor 1
+		 *  Press Ctrl + DIGIT2 to view the map for floor 2
+		 *  Press Ctrl + DIGIT3 to view the map for floor 3
+		 *  Press Ctrl + DIGIT4 to view the map for floor 4
+		 *  Press Ctrl + DIGIT5 to view the map for floor 5
+		 *  Press Ctrl + DIGIT6 to view the map for floor 6
+		 *  Press Ctrl + DIGIT7 to view the map for floor 7
+		 *  Press Shift + Right to move the view to the right
+		 *  Press Shift + Left to move the view to the left
+		 *  Press Shift + Up to move the view to the up
+		 *  Press Shift + down to move the view to the down
 		 */
-		parentBorderPane.setOnKeyPressed(e-> {
+		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
-
+			System.out.println(e.getCode());// Prints out key statements
+			if (e.getCode() == KeyCode.BACK_SPACE) {
+				this.deleteSelectedNodes();
+			} else if (e.getCode() == KeyCode.A && e.isControlDown()) {
+				this.selectAllNodesOnFloor();
+			} else if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()) {
+				changeFloor(2);
+				this.floorChoiceBox.getSelectionModel().select(1);
+			}else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()) {
+				changeFloor(3);
+				this.floorChoiceBox.getSelectionModel().select(2);
+			}else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()) {
+				changeFloor(4);
+				this.floorChoiceBox.getSelectionModel().select(3);
+			}else if (e.getCode() == KeyCode.DIGIT5 && e.isControlDown()) {
+				changeFloor(5);
+				this.floorChoiceBox.getSelectionModel().select(4);
+			}else if (e.getCode() == KeyCode.DIGIT6 && e.isControlDown()) {
+				changeFloor(6);
+				this.floorChoiceBox.getSelectionModel().select(5);
+			}else if (e.getCode() == KeyCode.DIGIT7 && e.isControlDown()) {
+				changeFloor(7);
+				this.floorChoiceBox.getSelectionModel().select(6);
+			}else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()) {
+				changeFloor(1);
+				this.floorChoiceBox.getSelectionModel().select(0);
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
 		});
-
 	}
+
 
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
@@ -887,6 +940,15 @@ public class EditorController extends MapDisplayController
 		}
 		this.redisplayGraph();
 		System.out.println(this.selectedNodes.size()); // For debugging
+	}
+
+	private void selectAllNodesOnFloor() {
+		this.directory.getNodesOnFloor(floor).forEach(node -> {
+			if (!this.selectedNodes.contains(node)) {
+				this.selectedNodes.add(node);
+				this.iconController.selectAnotherNode(node);
+			}
+		});
 	}
 
 	private void deselectNodes() {
