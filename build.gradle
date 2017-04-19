@@ -46,6 +46,9 @@ dependencies {
     https://mvnrepository.com/artifact/org.apache.derby/derby
     */
     compile group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'
+
+    // theming library for javafx
+    compile 'com.jfoenix:jfoenix:1.2.0'
 }
 
 jfx {
