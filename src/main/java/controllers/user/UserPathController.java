@@ -81,9 +81,16 @@ public class UserPathController
 			// TODO: Handle impossible paths
 		}
 		// change displayed floor to match the floor that the start node is on
-		int startFloor = startRoom.getLocation().getFloor();
-		changeFloor(startFloor);
-		paintPath(getPathOnFloor(startFloor, ret));
+		Node startNode = startRoom.getLocation();
+		if (startNode == null) {
+			// TODO: Handle this better
+			throw new RuntimeException("Start room was null; FIXME");
+		}
+		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
+
+		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
+
+		this.paintPath(this.getPathOnFloor(startFloor, ret));
 		this.directionsTextField.getChildren().clear();
 
 		textDirections.setText(DirectionsGenerator.fromPath(ret));
@@ -93,22 +100,49 @@ public class UserPathController
 
 		/* Draw the buttons for each floor on a multi-floor path. */
 
-		List<Integer> floors = new ArrayList<>();
+		List<MiniFloor> floors = new ArrayList<>();
 
-		// Set initial values (set next to last in case there are only 1 or 2 steps)
-		int last = 0;
-		int here = ret.get(0).getFloor();
-		int next = ret.get(ret.size()-1).getFloor();
+//		// Set initial values (set next to last in case there are only 1 or 2 steps)
+//		int last = 0;
+//		int here = ret.get(0).getFloor();
+//		int next = ret.get(ret.size()-1).getFloor();
+//		// add starting floor
+//		floors.add(here);
+//		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+//		//prints all the floors on the path in order
+//// 		System.out.println(ret.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
+//
+//		for (int i = 1; i < ret.size()-1; ++i) {
+//			last = ret.get(i-1).getFloor();
+//			here = ret.get(i  ).getFloor();
+//			next = ret.get(i+1).getFloor();
+////			System.out.println(last+" "+here+" "+next);
+//			// Check when there is a floor A -> floor B -> floor B transition and save floor B
+//			if (last != here && next == here) {
+//				floors.add(here);
+//				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
+//			}
+//		}
+//		// Check that the last node's floor (which will always be 'next') is in the list
+//		if (floors.get(floors.size()-1) != next) {
+//			floors.add(next);
+//			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
+//		}
+
+
+		MiniFloor last = new MiniFloor(0, "");
+		MiniFloor here = new MiniFloor(ret.get(0).getFloor(), ret.get(0).getBuildingName());
+		MiniFloor next = new MiniFloor(ret.get(ret.size()-1).getFloor(), ret.get(ret.size()-1).getBuildingName());
 		// add starting floor
 		floors.add(here);
 		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
 		//prints all the floors on the path in order
-// 		System.out.println(ret.stream().map(Node::getFloor).collect(Collectors.toList()).toString());
+// 		System.out.println(ret.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
 
 		for (int i = 1; i < ret.size()-1; ++i) {
-			last = ret.get(i-1).getFloor();
-			here = ret.get(i  ).getFloor();
-			next = ret.get(i+1).getFloor();
+			last = here;
+			here = next;
+			next = new MiniFloor(ret.get(i+1).getFloor(), ret.get(i+1).getBuildingName());
 //			System.out.println(last+" "+here+" "+next);
 			// Check when there is a floor A -> floor B -> floor B transition and save floor B
 			if (last != here && next == here) {
@@ -121,9 +155,27 @@ public class UserPathController
 			floors.add(next);
 			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
 		}
+
 	}
 
-	private void createNewFloorButton(int floor, List<Node> path, int buttonCount) {
+	/**
+	 * Inner class for generating and comparing floors quickly
+	 */
+	class MiniFloor
+	{
+		int number;
+		String building;
+		MiniFloor(int number, String building) {
+			this.number = number;
+			this.building = building;
+		}
+		public boolean isSameFloor(MiniFloor other) {
+			return (other != null) && (this.number == other.number) &&
+					this.building.equalsIgnoreCase(other.building);
+		}
+	}
+
+	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
 
 		int buttonWidth = 80;
@@ -137,7 +189,7 @@ public class UserPathController
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
-		FloorProxy map = FloorProxy.getFloor("FAULKNER", floor);
+		FloorProxy map = FloorProxy.getFloor(floor.building, floor.number);
 
 		newFloorButton.setImage(map.displayThumb());
 		newFloorButton.setPickOnBounds(true);
@@ -153,8 +205,8 @@ public class UserPathController
 
 		newFloorButton.setOnMouseClicked(e-> {
 			// change to the new floor, and draw the path for that floor
-			changeFloor(floor);
-			paintPath(path);
+			this.changeFloor(FloorProxy.getFloor(floor.building, floor.number));
+			this.paintPath(path);
 			//Call text directions
 			this.directionsTextField.getChildren().add(textDirections);
 			if(this.bgRectangle != null) this.bgRectangle.setVisible(false);
@@ -166,10 +218,10 @@ public class UserPathController
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
 
-	private ArrayList<Node> getPathOnFloor(int floor, List<Node> allPath) {
+	private ArrayList<Node> getPathOnFloor(MiniFloor floor, List<Node> allPath) {
 		ArrayList<Node> path = new ArrayList<>();
 		for(Node n : allPath) {
-			if (n.getFloor() == floor) path.add(n);
+			if (n.getFloor() == floor.number && n.getBuildingName().equalsIgnoreCase(floor.building)) path.add(n);
 		}
 		return path;
 	}
@@ -228,7 +280,7 @@ public class UserPathController
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i + 1);
-			if (here.getFloor() == floor && here.getFloor() == there.getFloor()) {
+			if (here.getFloor() == getFloorNum() && here.getFloor() == there.getFloor()) {
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				path.add(line);
