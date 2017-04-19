@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXToolbar?>
@@ -25,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
    <center>
       <SplitPane fx:id="mapSplitPane" dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <items>
@@ -87,7 +81,7 @@
                      </font>
                   </Label>
                   <TextFlow fx:id="directionsTextField" prefHeight="408.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
             </GridPane>
             <Separator prefWidth="200.0" GridPane.rowIndex="1" />
