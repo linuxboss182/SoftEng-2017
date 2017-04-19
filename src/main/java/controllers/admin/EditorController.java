@@ -42,6 +42,8 @@ import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 
+import static javafx.scene.input.KeyCode.SHIFT;
+
 public class EditorController extends MapDisplayController
 		implements Initializable
 {
@@ -112,6 +114,9 @@ public class EditorController extends MapDisplayController
 	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
 	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 	protected boolean ctrlClicked = false;
+
+	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
+
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -191,7 +196,7 @@ public class EditorController extends MapDisplayController
 		 */
 		parentBorderPane.setOnKeyPressed(e-> {
 //			System.out.println(e); // Prints out key statements
-
+			
 		});
 
 	}
@@ -366,10 +371,10 @@ public class EditorController extends MapDisplayController
 	public void displayRoomsOnFloor() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getUsersideShape());
-			r.getUsersideShape().setOnMouseClicked(event -> {});
-			r.getUsersideShape().setOnContextMenuRequested(event -> {});
-			Text label = r.getUsersideShape().getLabel();
+			roomShapes.add(r.getUserSideShape());
+			r.getUserSideShape().setOnMouseClicked(event -> {});
+			r.getUserSideShape().setOnContextMenuRequested(event -> {});
+			Text label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
 				this.beingDragged = true;
 				label.relocate(event.getX(), event.getY());
@@ -388,7 +393,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.getChildren().setAll(nodeShapes);
 
 		// Does the same thing, but is hellish to read.
-//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUsersideShape).collect(Collectors.toSet()));
+//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUserSideShape).collect(Collectors.toSet()));
 	}
 
 	/**
@@ -453,7 +458,7 @@ public class EditorController extends MapDisplayController
 		 * But keep it here because it may be useful in the future
 		 *
 		 */
-//		node.getUsersideShape().setOnContextMenuRequested(e->{
+//		node.getUserSideShape().setOnContextMenuRequested(e->{
 //			if(node.equals(this.selectedNode)) {
 //				ContextMenu optionsMenu = new ContextMenu();
 //
@@ -464,7 +469,7 @@ public class EditorController extends MapDisplayController
 //				exItem2.setOnAction(e2 -> {
 //				});
 //				optionsMenu.getItems().addAll(exItem1, exItem2);
-//				optionsMenu.show(node.getUsersideShape(), e.getScreenX(), e.getScreenY());
+//				optionsMenu.show(node.getUserSideShape(), e.getScreenX(), e.getScreenY());
 //			}
 //		});
 	}
@@ -549,7 +554,7 @@ public class EditorController extends MapDisplayController
 		this.selectedNodes.get(0).applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
 			// TODO: Don't rely on room shapes being a stacked rectangle and text
-			((Text)room.getUsersideShape().getChildren().get(1)).setText(name);
+			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines(this.directory.getNodesOnFloor(floor));
@@ -947,4 +952,35 @@ public class EditorController extends MapDisplayController
 	To set the kiosk, bind this line to a "set kiosk" button:
 	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
 	 */
+
+	private void setToggleShowRooms() {
+		this.toggleShowRooms = !toggleShowRooms;
+		if(toggleShowRooms) {
+			// for now, disable dragging
+			this.beingDragged = true;
+			this.botPane.getChildren().clear();
+			this.topPane.getChildren().clear();
+			this.displayAdminSideRooms();
+
+		} else {
+			// re-enable dragging
+			this.beingDragged = false;
+			this.redisplayAll();
+		}
+	}
+
+	/**
+	 * Show the rooms with editable labels to the admin
+	 */
+	public void displayAdminSideRooms() {
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+		for (Room room : directory.getRoomsOnFloor(floor)) {
+			roomShapes.add(room.getAdminSideShape());
+			/* This is code to make a context menu appear when you right click on the shape for a room
+			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+			 * that is reallllllllly helpful for a lot of stuff
+			 */
+		}
+		this.topPane.getChildren().setAll(roomShapes);
+	}
 }

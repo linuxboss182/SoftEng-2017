@@ -279,15 +279,15 @@ public abstract class UserMasterController
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getUsersideShape());
+			roomShapes.add(room.getUserSideShape());
 			/* This is code to make a context menu appear when you right click on the shape for a room
 			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
-			room.getUsersideShape().setOnMouseClicked((MouseEvent e) -> {
+			room.getUserSideShape().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
-			room.getUsersideShape().setOnContextMenuRequested(e -> {
+			room.getUserSideShape().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
 
@@ -296,7 +296,7 @@ public abstract class UserMasterController
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUsersideShape(), e.getScreenX(), e.getScreenY());
+				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
 		this.topPane.getChildren().setAll(roomShapes);

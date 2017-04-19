@@ -44,7 +44,7 @@ public class Room
 		this.description = description;
 		this.professionals = new HashSet<Professional>();
 		this.image = image;
-		this.makeUsersideShape();
+		this.makeUserSideShape();
 	}
 
 	Room(String name, String description) {
@@ -70,10 +70,8 @@ public class Room
 	}
 
 	/** Get this room's shape to be displayed to a non-admin, and create it if it does not exist */
-	public Icon getUsersideShape() {
-		if(this.shape == null) {
-			this.makeUsersideShape(); // maybe move this to the constructor
-		}
+	public Icon getUserSideShape() {
+		this.makeUserSideShape(); // maybe move this to the constructor
 		return this.shape;
 	}
 
@@ -122,13 +120,12 @@ public class Room
 	}
 
 
-	private void makeUsersideShape() {
-//		this.makeUsersideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-		this.makeAdminsideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+	private void makeUserSideShape() {
+		this.makeUserSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 	}
 
 
-	private void makeUsersideShape(Color stroke, Color fill) {
+	private void makeUserSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
 			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 //			this.shape = shape;
@@ -138,8 +135,8 @@ public class Room
 
 			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
 			text.setFont(new Font(FONT_SIZE));
-			text.setX(labelOffsetX);
-			text.setY(labelOffsetY);
+			text.setX(shape.getX() + labelOffsetX);
+			text.setY(shape.getY() + labelOffsetY);
 			// A pane with the text on top of the shape; this is what actually represents the room
 			Icon icon = new Icon(shape, text);
 			this.shape = icon;
@@ -150,18 +147,16 @@ public class Room
 		}
 	}
 
-	public Icon getAdminsideShape() {
-		if(this.shape == null) {
-			this.makeAdminsideShape(); // maybe move this to the constructor
-		}
+	public Icon getAdminSideShape() {
+		this.makeAdminSideShape(); // maybe move this to the constructor
 		return this.shape;
 	}
 
-	private void makeAdminsideShape() {
-		this.makeAdminsideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
+	private void makeAdminSideShape() {
+		this.makeAdminSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
 	}
 
-	private void makeAdminsideShape(Color stroke, Color fill) {
+	private void makeAdminSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
 			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 //			this.shape = shape;
@@ -184,7 +179,7 @@ public class Room
 				this.labelOffsetX = e.getX() - shape.getX();
 				this.labelOffsetY = e.getY() - shape.getY();
 				this.shape = null;
-				this.makeAdminsideShape();
+				this.makeAdminSideShape();
 			});
 
 			text.setOnMouseReleased(e->{
