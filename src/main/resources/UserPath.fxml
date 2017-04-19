@@ -31,7 +31,8 @@
    <center>
       <SplitPane fx:id="mapSplitPane" dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <items>
-            <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
+             <ScrollPane fx:id="mapScroll">
+             <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
                <children>
                   <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
                   <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
@@ -42,6 +43,7 @@
                   </Pane>
                </children>
             </AnchorPane>
+             </ScrollPane>
             <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
          </items>
       </SplitPane>
