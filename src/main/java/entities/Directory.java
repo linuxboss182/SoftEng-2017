@@ -27,7 +27,7 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private Room kiosk;
-	
+
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
 		int compName = r1.getName().compareTo(r2.getName());
@@ -138,14 +138,17 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
+	public Node addNewRoomNode(double x, double y, int floor, String buildingName, String name, String desc) {
 		Room newRoom = new Room(name, desc);
-		Node newNode = new Node(x, y, floor);
+		Node newNode = new Node(x, y, floor, buildingName);
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
 		this.nodes.add(newNode);
 		this.rooms.add(newRoom);
 		return newNode;
+	}
+	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
+		return this.addNewRoomNode(x, y, floor, "DEFAULT", name, desc);
 	}
 
 	/**
@@ -172,13 +175,16 @@ public class Directory
 	/**
 	 * Create a new node in this directory
 	 */
-	public Node addNewNode(double x, double y, int floor) {
-		Node newNode = new Node(x, y, floor);
+	public Node addNewNode(double x, double y, int floor, String buildingName) {
+		Node newNode = new Node(x, y, floor, buildingName);
 		this.nodes.add(newNode);
 		return newNode;
 	}
+	public Node addNewNode(double x, double y, int floor) {
+		return this.addNewNode(x, y, floor, "DEFAULT");
+	}
 
-	// TODO: Add test cases for new Directory methods
+		// TODO: Add test cases for new Directory methods
 
 	/* Filtered getters */
 	/**
@@ -229,6 +235,43 @@ public class Directory
 		n1.connectOrDisconnect(n2);
 	}
 
+	public void connectNodes(Node n1, Node n2) {
+		n1.connect(n2);
+	}
+
+	public void updateRoom(Room room, String name, String description) {
+		room.setName(name);
+		room.setDescription(description);
+	}
+
+	public void setRoomLocation(Room room, Node node) {
+		room.setLocation(node);
+		node.setRoom(room);
+	}
+
+	public void unsetRoomLocation(Room room) {
+		Node n = room.getLocation();
+		if (n != null) {
+			room.unsetLocation();
+			n.unsetRoom();
+		}
+	}
+
+	public void unsetNodeRoom(Node node) {
+		node.applyToRoom(Room::unsetLocation);
+		node.unsetRoom();
+	}
+
+	public void addRoomToProfessional(Room room, Professional professional) {
+		professional.addLocation(room);
+		room.addProfessional(professional);
+	}
+
+	public void removeRoomFromProfessional(Room room, Professional professional) {
+		professional.removeLocation(room);
+		room.removeProfessional(professional);
+	}
+
 	/* Program logic functions */
 
 	/** return whether this directory has a kiosk */
@@ -238,7 +281,7 @@ public class Directory
 
 	/**
 	 * Determine if the rooms accessibly to the user are all connected
-	 * 
+	 *
 	 * This only considers rooms that have locations
 	 *
 	 * @return Whether all rooms are connected

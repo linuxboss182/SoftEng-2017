@@ -5,6 +5,7 @@ package entities;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * A class to represent someone in the hospital's staff
@@ -21,7 +22,9 @@ public class Professional
 
 	/* Constructors */
 
-	public Professional(String givenName, String surname,
+	/** @deprecated Access and modify professionals through the database instead */
+	@Deprecated
+	Professional(String givenName, String surname,
 	                    String title, Collection<Room> locations) {
 		// for anyone who didn't know:
 		// Room... locations allows infinite parameters of type Room
@@ -32,7 +35,7 @@ public class Professional
 		this.locations = new HashSet<>(locations);
 	}
 
-	public Professional(String givenName, String surname, String title) {
+	Professional(String givenName, String surname, String title) {
 		// for anyone who didn't know:
 		// Room... locations allows infinite parameters of type Room
 		// and it condenses them into type Room[]
@@ -40,10 +43,6 @@ public class Professional
 		this.surname = surname;
 		this.title = title;
 		this.locations = new HashSet<>();
-	}
-
-	public Professional() {
-		this("Enter given name", "Enter surname", "Enter title");
 	}
 
 	/* Interface methods */
@@ -89,21 +88,21 @@ public class Professional
 		return new HashSet<>(this.locations);
 	}
 
-	public void addLocation(Room room){
+	void addLocation(Room room){
 		this.locations.add(room);
 	}
 
-	public String toString(Professional p) {
-		return this.getSurname() + ", " + this.getGivenName();
-	}
-
-	public void removeLocation(Room r) {
+	void removeLocation(Room r) {
 		this.locations.remove(r);
 	}
 
 	@Override
 	public String toString() {
-		return this.givenName;
+		StringJoiner sj = new StringJoiner(", ");
+		if (! "".equals(this.surname)) sj.add(this.surname);
+		if (! "".equals(this.givenName)) sj.add(this.givenName);
+		if (! "".equals(this.title)) sj.add(this.title);
+		return sj.toString();
 	}
 
 }

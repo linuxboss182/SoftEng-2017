@@ -1,3 +1,4 @@
+import entities.Directory;
 import entities.Node;
 
 /**
@@ -28,81 +29,82 @@ class SampleGraph
 	 a=26, b=24, c=10, e=30, f=51, g=40
 	 */
 	SampleGraph() {
-		this.a = new Node(0, 0, 0);
-		this.b = new Node(10, 0, 0);
-		this.c = new Node(0, 24, 0);
-		this.d = new Node(10, 24, 0);
-		this.e = new Node(28, 0, 0);
-		this.f = new Node(55, 0, 0);
-		this.g = new Node(-15, 0, 0);
+		Directory dir = new Directory();
+		this.a = dir.addNewNode(0, 0, 0);
+		this.b = dir.addNewNode(10, 0, 0);
+		this.c = dir.addNewNode(0, 24, 0);
+		this.d = dir.addNewNode(10, 24, 0);
+		this.e = dir.addNewNode(28, 0, 0);
+		this.f = dir.addNewNode(55, 0, 0);
+		this.g = dir.addNewNode(-15, 0, 0);
 
-		this.a.connect(this.b);
-		this.a.connect(this.c);
-		this.b.connect(this.a); // no duplicates should occur
-		this.b.connect(this.c);
-		this.a.connect(this.d);
-		this.b.connect(this.d);
-		this.a.connect(this.g);
-		this.f.connect(this.e);
-		this.b.connect(this.e);
+		dir.connectNodes(this.a, this.b);
+		dir.connectNodes(this.a, this.c);
+		dir.connectNodes(this.b, this.a); // no duplicates should occur
+		dir.connectNodes(this.b, this.c);
+		dir.connectNodes(this.a, this.d);
+		dir.connectNodes(this.b, this.d);
+		dir.connectNodes(this.a, this.g);
+		dir.connectNodes(this.f, this.e);
+		dir.connectNodes(this.b, this.e);
 
 
 		this.nodes = new Node[] {
-			new Node(0, 0, 0),
-			new Node(0, 9, 0),
-			new Node(2.5, 4, 0),
-			new Node(3, 17, 0),
-			new Node(4, 19, 0),
-			new Node(5, 8, 0),
-			new Node(5, 13, 0),
-			new Node(5, 23, 0),
-			new Node(6.3, 21, 0),
-			new Node(7, 0, 0),
-			new Node(7, 2, 0),
-			new Node(7, 4, 0),
-			new Node(7, 6, 0),
-			new Node(7, 23, 0),
-			new Node(8, 3, 0),
-			new Node(8, 19, 0),
-			new Node(9, 6, 0),
-			new Node(10, 9, 0),
-			new Node(10, 14.5, 0),
-			new Node(11, 12, 0),
-			new Node(12, 15, 0),
-			new Node(12, 19.5, 0),
-			new Node(13, 18, 0),
-			new Node(14, 12, 0),
-			new Node(14, 18., 0)
+			dir.addNewNode(0, 0, 0),
+			dir.addNewNode(0, 9, 0),
+			dir.addNewNode(2.5, 4, 0),
+			dir.addNewNode(3, 17, 0),
+			dir.addNewNode(4, 19, 0),
+			dir.addNewNode(5, 8, 0),
+			dir.addNewNode(5, 13, 0),
+			dir.addNewNode(5, 23, 0),
+			dir.addNewNode(6.3, 21, 0),
+			dir.addNewNode(7, 0, 0),
+			dir.addNewNode(7, 2, 0),
+			dir.addNewNode(7, 4, 0),
+			dir.addNewNode(7, 6, 0),
+			dir.addNewNode(7, 23, 0),
+			dir.addNewNode(8, 3, 0),
+			dir.addNewNode(8, 19, 0),
+			dir.addNewNode(9, 6, 0),
+			dir.addNewNode(10, 9, 0),
+			dir.addNewNode(10, 14.5, 0),
+			dir.addNewNode(11, 12, 0),
+			dir.addNewNode(12, 15, 0),
+			dir.addNewNode(12, 19.5, 0),
+			dir.addNewNode(13, 18, 0),
+			dir.addNewNode(14, 12, 0),
+			dir.addNewNode(14, 18., 0)
 		};
 
 		Node[] n = this.nodes;
-		n[1].connect(n[3]);
-		n[2].connect(n[5]);
-		n[2].connect(n[9]);
-		n[3].connect(n[4]);
-		n[3].connect(n[6]);
-		n[4].connect(n[8]);
-		n[5].connect(n[6]);
-		n[5].connect(n[12]);
-		n[5].connect(n[18]);
-		n[6].connect(n[15]);
-		n[7].connect(n[9]);
-		n[8].connect(n[13]);
-		n[8].connect(n[15]);
-		n[9].connect(n[10]);
-		n[9].connect(n[14]);
-		n[10].connect(n[11]);
-		n[11].connect(n[12]);
-		n[13].connect(n[15]);
-		n[14].connect(n[16]);
-		n[16].connect(n[17]);
-		n[17].connect(n[19]);
-		n[17].connect(n[23]);
-		n[18].connect(n[21]);
-		n[18].connect(n[23]);
-		n[19].connect(n[20]);
-		n[21].connect(n[24]);
-		n[22].connect(n[24]);
+		dir.connectNodes(n[1], n[3]);
+		dir.connectNodes(n[2], n[5]);
+		dir.connectNodes(n[2], n[9]);
+		dir.connectNodes(n[3], n[4]);
+		dir.connectNodes(n[3], n[6]);
+		dir.connectNodes(n[4], n[8]);
+		dir.connectNodes(n[5], n[6]);
+		dir.connectNodes(n[5], n[12]);
+		dir.connectNodes(n[5], n[18]);
+		dir.connectNodes(n[6], n[15]);
+		dir.connectNodes(n[7], n[9]);
+		dir.connectNodes(n[8], n[13]);
+		dir.connectNodes(n[8], n[15]);
+		dir.connectNodes(n[9], n[10]);
+		dir.connectNodes(n[9], n[14]);
+		dir.connectNodes(n[10], n[11]);
+		dir.connectNodes(n[11], n[12]);
+		dir.connectNodes(n[13], n[15]);
+		dir.connectNodes(n[14], n[16]);
+		dir.connectNodes(n[16], n[17]);
+		dir.connectNodes(n[17], n[19]);
+		dir.connectNodes(n[17], n[23]);
+		dir.connectNodes(n[18], n[21]);
+		dir.connectNodes(n[18], n[23]);
+		dir.connectNodes(n[19], n[20]);
+		dir.connectNodes(n[21], n[24]);
+		dir.connectNodes(n[22], n[24]);
 	}
 
 	/*

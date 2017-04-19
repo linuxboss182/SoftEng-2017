@@ -10,7 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -38,7 +40,9 @@ public class UserPathController
 	private Button doneBtn;
 	@FXML
 	private AnchorPane floorsTraveledAnchorPane;
-	Text textDirections = new Text();
+	private Text textDirections = new Text();
+	private Rectangle bgRectangle = null;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialize();
@@ -133,10 +137,19 @@ public class UserPathController
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
-		FloorProxy map = new FloorProxy(floor);
+		FloorProxy map = FloorProxy.maps.get(floor - 1);
 
 		newFloorButton.setImage(map.displayThumb());
 		newFloorButton.setPickOnBounds(true);
+
+		Rectangle backgroundRectangle = new Rectangle();
+		backgroundRectangle.setWidth(buttonWidth*1.25);
+		backgroundRectangle.setHeight(buttonHeight*1.25);
+		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount-10);
+		backgroundRectangle.setY(buttonY - 10);
+		backgroundRectangle.setFill(Color.WHITE);
+		backgroundRectangle.setStroke(Color.BLACK);
+		backgroundRectangle.setStrokeWidth(5);
 
 		newFloorButton.setOnMouseClicked(e-> {
 			// change to the new floor, and draw the path for that floor
@@ -144,7 +157,12 @@ public class UserPathController
 			paintPath(path);
 			//Call text directions
 			this.directionsTextField.getChildren().add(textDirections);
+			if(this.bgRectangle != null) this.bgRectangle.setVisible(false);
+			backgroundRectangle.setVisible(true);
+			this.bgRectangle = backgroundRectangle;
 		});
+		backgroundRectangle.setVisible(false);
+		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
 

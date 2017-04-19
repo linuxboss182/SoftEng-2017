@@ -1,4 +1,4 @@
-package main;
+package main.database;
 
 import java.sql.*;
 import java.util.Map;
@@ -11,12 +11,22 @@ import entities.Room;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
-public class DatabaseController
+/**
+ * Class for saving to and loading from the database
+ *
+ * Package methods:
+ * - DatabaseLoader(): Constructor
+ * - getDirectory():
+ * - populateDirectory(): builds a directory by loading from the database
+ * - destructiveSaveDirectory(Directory): empties the database, then saves the directory
+ *                                        to the database
+ */
+class DatabaseLoader
 {
 	private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
+	private DatabaseConnector dbConn;
 	private Connection db_connection;
-	private String connection_string;
 
 	// Debugging functions
 //	private static void PRINTLN(Object o) {
@@ -26,162 +36,12 @@ public class DatabaseController
 //		System.out.print(o);
 //	}
 
-	public DatabaseController(String connection_string) {
-		this.connection_string = connection_string;
+	DatabaseLoader(DatabaseConnector dbConn) {
+		this.dbConn = dbConn;
+		this.db_connection = dbConn.getConnection();
 	}
 
-	public DatabaseController(){
-		this("jdbc:derby:DB;create=true");
-	}
-
-	/**
-	 * Attempt to connect to the database
-	 *
-	 * If the database does not exist, it is created and the tables are created.
-	 *
-	 * @throws DatabaseException if the connection fails
-	 */
-	public void init()
-			throws DatabaseException {
-		boolean flag = this.initDB();
-		if (! flag) {
-			throw new DatabaseException("Connection failed");
-		}
-
-		SQLWarning warning;
-		try {
-			// db warning was issued if db existed before this function was called
-			warning = this.db_connection.getWarnings();
-			// if null, no warning = new database
-		} catch (SQLException e) {
-			throw new DatabaseException("Failed to check connecton warnings", e);
-		}
-
-		if (warning == null) { //if null, DB does not exist
-			flag = this.reInitSchema();
-			if (! flag) {
-				throw new DatabaseException("Failed to initialize database schema");
-			}
-		}
-	}
-
-	//initialize the database
-	//returns true if success, false if failure
-	// (do not add db calls after the line indicated below)
-	private boolean initDB() {
-		try {
-			Class.forName(DatabaseController.driver);
-		} catch(ClassNotFoundException e) {
-			System.err.println("Java DB Driver not found. Add the classpath to your module.");
-			return false;
-		}
-		System.out.println("Connected to database");
-
-		try {
-			this.db_connection = DriverManager.getConnection(this.connection_string);
-			// MAKE NO MORE DB CALLS AFTER THIS POINT (they could break this.init())
-		} catch (SQLException e) {
-			System.err.println("Connection failed. Check output console.");
-			e.printStackTrace();
-			return false;
-		}
-		System.out.println("Java DB connection established!");
-		return true;
-	}
-
-	//initializes the database empty with the desired schema
-	//returns true if success, false if error
-
-	/**
-	 * Initialize the database schema
-	 *
-	 * Deletes and recreates all tables in the database
-	 *
-	 * @return true if successful
-	 */
-	// TODO: Refactor so reInitSchema throws SQLException to be handled elsewhere in the class
-	private boolean reInitSchema() {
-		boolean result;
-		Statement initSchema = null;
-		try {
-			initSchema = this.db_connection.createStatement();
-		} catch (SQLException e) {
-			//something's really bad if we get here. like "we don't have a database" bad
-			e.printStackTrace();
-			return false;
-		}
-
-		for (String dropStatement : StoredProcedures.getDrops()) {
-			//drop the table if it exists
-			try {
-				initSchema.executeUpdate(dropStatement);
-			} catch (SQLException e) {
-				System.err.println("Failed statement: " + dropStatement);
-				System.err.println(e.getMessage());
-			}
-		}
-
-		for (String table : StoredProcedures.getSchema()) {
-			try {
-				initSchema.executeUpdate(table);
-			} catch (SQLException e) {
-				System.err.println("Failed statement: " + table);
-				System.err.println(e.getMessage());
-			}
-		}
-
-		/**  Code below wasn't working and was replaced with for loops above. Keeping just
-		 *   in case we want to use it again. */
-		/*
-		String[] schema = StoredProcedures.getSchema();
-		//find our tables in the schema
-		for (int i=0; i < schema.length; i++) {
-			Pattern matchTable = Pattern.compile("\\bCREATE\\b\\s\\bTABLE\\b\\s(\\w*)");
-			Matcher matcher = matchTable.matcher(schema[i]);
-			boolean found = false;
-			while (matcher.find() && found == false) {
-				//we're making a table
-				String table = matcher.group(1); //group zero = entire expression
-
-				//make the table if it doesn't exist
-				try {
-					initSchema.executeUpdate(schema[i]);
-				} catch (SQLException e) {
-					System.err.println("Failed to create table " + table + ". Continuing...");
-					System.err.println(e.getMessage());
-				}
-
-				found = true;
-			}
-		}
-		*/
-		//close connection via statement
-		try {
-			initSchema.close();
-		} catch (SQLException e) {
-			System.err.println("Failed to close connection");
-			e.printStackTrace();
-			return false;
-		}
-
-		//stop once we find the first match(assume one create statement per string)
-		return true;
-	}
-
-	// close the connection to the database
-	// returns true if success, false if failure
-	public boolean close() {
-		try {
-			this.db_connection.close();
-			return true;
-		} catch (SQLException e) {
-			System.err.println("Failed to close connection");
-			e.printStackTrace();
-		 	return false;
-		}
-	}
-
-	public Directory getDirectory() {
+	Directory getDirectory() {
 		Directory dir = new Directory();
 		this.populateDirectory(dir);
 		return dir;
@@ -193,16 +53,15 @@ public class DatabaseController
 	 * @param directory The directory to populate
 	 * @return True if success, false if failure
 	 */
-	public boolean populateDirectory(Directory directory) {
-		Map<Integer, Node> nodes = new HashMap<>();
+	private boolean populateDirectory(Directory directory) {
 		Map<Integer, Room> rooms = new HashMap<>();
 		Map<Integer, Professional> professionals = new HashMap<>();
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
-			this.retrieveNodesAndRooms(nodes, rooms);
+			this.retrieveNodesAndRooms(directory, rooms);
 			//find all them professionals
-			this.retrieveProfessionals(rooms, professionals);
+			this.retrieveProfessionals(directory, rooms);
 			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -210,12 +69,6 @@ public class DatabaseController
 			return false;
 		}
 		//add all to directory
-		for(Node n: nodes.values()){
-			directory.addNode(n);
-		}
-		for(Room r: rooms.values()){
-			directory.addRoom(r);
-		}
 		for(Professional p: professionals.values()){
 			directory.addProfessional(p);
 		}
@@ -243,10 +96,11 @@ public class DatabaseController
 
 	/**Retrieves all employees with their location data populated(among other things)
 	 *
+	 * @param directory The directory to populate
 	 * @param rooms A hash map of all rooms in the database
-	 * @param professionals The hash map of professionals to populate
 	 */
-	private void retrieveProfessionals(Map<Integer, Room> rooms, Map<Integer, Professional> professionals) throws SQLException{
+	private void retrieveProfessionals(Directory directory, Map<Integer, Room> rooms) throws SQLException{
+		HashMap<Integer, Professional> professionals = new HashMap<>();
 		HashMap<Integer, Room> profRooms = new HashMap<>();
 		try {
 			Statement queryProfessionals = this.db_connection.createStatement();
@@ -254,11 +108,12 @@ public class DatabaseController
 
 			//find all professionals
 			while (resultProfessionals.next()) {
-				Professional professional = new Professional(
+				Professional professional = directory.addNewProfessional(
 						resultProfessionals.getString("employeeGivenName"),
 						resultProfessionals.getString("employeeSurname"),
 						resultProfessionals.getString("employeeTitle"));
 				//add to hashmap
+				directory.addProfessional(professional);
 				professionals.put(resultProfessionals.getInt("employeeID"), professional);
 			}
 			resultProfessionals.close();
@@ -272,10 +127,7 @@ public class DatabaseController
 				int employeeID = resultProfRooms.getInt("employeeID");
 				Professional professional = professionals.get(employeeID);
 				Room room = rooms.getOrDefault(resultProfRooms.getInt("roomID"), null);
-
-				if (room != null) {
-					professional.addLocation(room);
-				}
+				directory.addRoomToProfessional(room, professional);
 			}
 			resultProfRooms.close();
 			queryProfRooms.close();
@@ -286,20 +138,23 @@ public class DatabaseController
 
 	/**Retrieves nodes and rooms from the database and populates the given hash maps
 	 *
-	 * @param nodes The map of nodes to populate
+	 * @param directory The directory to populate
 	 * @param rooms The map of rooms to populate
 	 */
-	private void retrieveNodesAndRooms(Map<Integer, Node> nodes, Map<Integer, Room> rooms) throws SQLException {
+	private void retrieveNodesAndRooms(Directory directory, Map<Integer, Room> rooms) throws SQLException {
+		Map<Integer, Node> nodes = new HashMap<>();
 		try {
 			//populate Nodes
 			Statement queryNodes = this.db_connection.createStatement();
 			ResultSet resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
 			while (resultNodes.next()) {
 //				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
-				Node node = new Node(resultNodes.getDouble("nodeX"),
-				                     resultNodes.getDouble("nodeY"),
-				                     resultNodes.getInt("floor"));
+				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
+				                                 resultNodes.getDouble("nodeY"),
+				                                 resultNodes.getInt("floor"),
+												 resultNodes.getString("buildingName"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
+				directory.addNode(node);
 			}
 			resultNodes.close();
 
@@ -308,40 +163,41 @@ public class DatabaseController
 			ResultSet resultRooms = queryRooms.executeQuery(StoredProcedures.procRetrieveRooms());
 			while (resultRooms.next()) {
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
-				Room room = new Room(resultRooms.getString("roomName"),
-				                     resultRooms.getString("roomDescription"));
+				Room room = directory.addNewRoom(resultRooms.getString("roomName"),
+				                                 resultRooms.getString("roomDescription"));
+				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
 					//we have a location in the room
-					room.setLocation(nodes.get(resultRooms.getInt("nodeID")));
+					directory.setRoomLocation(room, nodes.get(nodeID));
 				}
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
 			}
 			resultRooms.close();
 
-			// add rooms to nodes
-			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
-			Statement queryEdges = this.db_connection.createStatement();
-			//ResultSet resultEdges = null;
-			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
-			while (resultNodes.next()) {
-//				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
-				int nodeID = resultNodes.getInt("nodeID");
-				int roomID = resultNodes.getInt("roomID");
-//				PRINTLN("Loading room "+roomID);
-				if (!resultNodes.wasNull()) {
-					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
-				}
-			}
-			resultNodes.close();
+//			// add rooms to nodes
+//			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
+//			//ResultSet resultEdges = null;
+//			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
+//			while (resultNodes.next()) {
+////				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
+//				int nodeID = resultNodes.getInt("nodeID");
+//				int roomID = resultNodes.getInt("roomID");
+////				PRINTLN("Loading room "+roomID);
+//				if (!resultNodes.wasNull()) {
+//					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
+//				}
+//			}
+//			resultNodes.close();
 
 			// add adjacency lists to nodes
+			Statement queryEdges = this.db_connection.createStatement();
 			ResultSet resultEdges = queryEdges.executeQuery(StoredProcedures.procRetrieveEdges());
 			while (resultEdges.next()) {
 				int node1 = resultEdges.getInt("node1");
 				int node2 = resultEdges.getInt("node2");
 //				PRINTLN("Loading edge "+node1+" "+node2);
-				nodes.get(node1).connect(nodes.get(node2));
+				directory.connectNodes(nodes.get(node1), nodes.get(node2));
 			}
 			resultEdges.close();
 
@@ -367,9 +223,9 @@ public class DatabaseController
 	 */
 	// TODO: manually create a backup of the database before destroying it
 	// (i.e. copy the db directory, then operate, and remove it if successful)
-	public void destructiveSaveDirectory(Directory dir)
+	void destructiveSaveDirectory(Directory dir)
 			throws DatabaseException {
-		this.reInitSchema(); // drop tables, then recreate tables
+		this.dbConn.reInitSchema(); // drop tables, then recreate tables
 		System.out.println("START SAVING");
 		try {
 			this.saveDirectory(dir); // insert directory info into tables
@@ -391,7 +247,8 @@ public class DatabaseController
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
-			                                        n.getFloor(), n.mapToRoom(Object::hashCode));
+			                                        n.getFloor(), n.mapToRoom(Object::hashCode),
+													n.getBuildingName());
 			db.executeUpdate(query);
 		}
 
@@ -447,7 +304,8 @@ public class DatabaseController
 	}
 
 	//A test call to the database
-	public void exampleQueries() {
+	@Deprecated
+	private void exampleQueries() {
 		try {
 			Statement statement = this.db_connection.createStatement();
 			ResultSet results = statement.executeQuery("SELECT employeeSurname FROM Employees WHERE employeeTitle='Dr.'");

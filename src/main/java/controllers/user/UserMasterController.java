@@ -1,5 +1,6 @@
 package controllers.user;
 
+import com.jfoenix.controls.JFXButton;
 import controllers.shared.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -9,20 +10,25 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
@@ -36,12 +42,14 @@ import entities.Node;
 import entities.Room;
 import main.ApplicationController;
 
+import static com.sun.java.accessibility.util.AWTEventMonitor.addComponentListener;
+
 
 public abstract class UserMasterController
 		extends MapDisplayController
 {
 	@FXML
-	private Button logAsAdmin;
+	private JFXButton logAsAdmin;
 	@FXML
 	private ImageView imageViewMap;
 	@FXML
@@ -63,7 +71,23 @@ public abstract class UserMasterController
 	@FXML
 	private GridPane sideGridPane;
 	@FXML
-	private ChoiceBox floorChoiceBox;
+	private ComboBox floorChoiceBox;
+	@FXML
+	private ComboBox buildingChoiceBox;
+	@FXML
+	private ToolBar bottomToolbar;
+	@FXML
+	private BorderPane parentBorderPane;
+	@FXML
+	private SplitPane mapSplitPane;
+	@FXML
+	private GridPane destGridPane;
+	@FXML
+	private GridPane bottomGridPane;
+	@FXML
+	private Button aboutBtn;
+	@FXML
+	private ImageView logoImageView;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -91,7 +115,7 @@ public abstract class UserMasterController
 	 */
 	protected Scene getScene() {
 		// The contentAnchor should alays exist, so use it to get the scene
-		return this.contentAnchor.getScene();
+		return this.parentBorderPane.getScene();
 	}
 
 	public void initialize() {
@@ -104,9 +128,16 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.map = new FloorProxy(floor).display();
+		this.map = FloorProxy.maps.get(floor - 1).display();
 		this.imageViewMap.setImage(this.map);
 		this.imageViewMap.setPickOnBounds(true);
+
+
+		//Load logo
+//		Image logo;
+//		logo = new Image("/bwhLogo.png");
+//		logoImageView.setImage(logo);
+
 
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
@@ -180,6 +211,11 @@ public abstract class UserMasterController
 			}
 		});
 
+		//Call listeners for window resizing
+		windowResized();
+
+
+
 	}
 
 	/**
@@ -245,7 +281,7 @@ public abstract class UserMasterController
 		// Unset navigation targets for after logout
 		startRoom = null;
 		endRoom = null;
-		Parent loginPrompt = (AnchorPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
 
 
@@ -386,5 +422,49 @@ public abstract class UserMasterController
 		contentAnchor.setScaleX(zoomCoefficient);
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
+
+	public void scaleElements() {
+//		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
+//		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
+//		if(this.getDirectionsBtn != null) {
+//			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
+//		}
+//
+//		double windowWidth = parentBorderPane.getWidth();
+//		//destGridPane.setPrefWidth(windowWidth / 4);
+//
+//		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
+//		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
+//		if(this.bottomGridPane != null) {
+//			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
+//			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
+//				c.setPrefWidth(bottomToolbar.getWidth() / 3);
+//			}
+//		}
+
+		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
+	}
+
+	public void windowResized() {
+
+		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+				System.out.println("Width: " + newSceneWidth);
+				scaleElements();
+			}
+		});
+		this.parentBorderPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				System.out.println("Height: " + newSceneHeight);
+				scaleElements();
+			}
+		});
+	}
+
+	@FXML
+	public void aboutBtnClicked () {
+
+	}
+
 
 }

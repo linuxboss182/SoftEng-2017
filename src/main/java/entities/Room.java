@@ -15,6 +15,10 @@ import javax.swing.text.DefaultTextUI;
 
 import controllers.icons.Icon;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * A class for Room(s).
@@ -34,20 +38,22 @@ public class Room
 	private Node location;
 	private String name;
 	private String description;
+	private Set<Professional> professionals;
 	private String image; // The String path of the image for this room
 	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
 
 	/* Constructors */
-	public Room(String name, String description, String image) {
+	Room(String name, String description, String image) {
 		this.location = null;
 		this.name = name;
 		this.description = description;
+		this.professionals = new HashSet<Professional>();
 		this.image = image;
 		this.makeShape();
 	}
 
-	public Room(String name, String description) {
+	Room(String name, String description) {
 		this(name, description, Room.DEFAULT_IMAGE_PATH);
 	}
 
@@ -77,11 +83,11 @@ public class Room
 		return this.shape;
 	}
 
-	public void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 
-	public void setDescription(String description) {
+	void setDescription(String description) {
 		this.description = description;
 	}
 
@@ -93,13 +99,27 @@ public class Room
 //		this.shape = shape;
 //	}
 
-	public void setLocation(Node location) {
+	void setLocation(Node location) {
 		this.location = location;
 	}
 
-	public void unsetLocation() {
+	void unsetLocation() {
 		this.location = null;
 	}
+
+	void addProfessional(Professional professional) {
+		this.professionals.add(professional);
+	}
+
+	void removeProfessional(Professional professional) {
+		this.professionals.remove(professional);
+	}
+
+	// TODO: Add "getProfessionalsForRoom" to Directory, returning a sorted TreeSet
+	Collection<Professional> getProfessionals() {
+		return new HashSet<>(this.professionals);
+	}
+
 
 	// TODO: Remove Room::toString; replace with custom method
 	@Override

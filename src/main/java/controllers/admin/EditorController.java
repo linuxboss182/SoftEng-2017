@@ -15,11 +15,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,14 +31,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 import main.ApplicationController;
-import main.DatabaseException;
+import main.database.DatabaseException;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
@@ -44,6 +42,7 @@ import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
+import main.database.DatabaseWrapper;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -85,7 +84,9 @@ public class EditorController extends MapDisplayController
 	@FXML
 	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
-	public ChoiceBox floorChoiceBox;
+	public ComboBox floorChoiceBox;
+	@FXML
+	public ComboBox buildingChoiceBox;
 	@FXML
 	public TableView<Professional> roomProfTable;
 	@FXML
@@ -98,9 +99,21 @@ public class EditorController extends MapDisplayController
 	private Text yPos;
 	@FXML
 	private Label xPos;
+	@FXML
+	private ComboBox<Algorithm> algorithmChoiceBox;
+	@FXML
+	private BorderPane parentBorderPane;
 
-
-	protected Node selectedNode; // you select a node by double clicking
+//	protected Node selectedNode; // you select a node by double clicking
+	protected ArrayList<Node> selectedNodes = new ArrayList<>();
+	protected boolean shiftPressed = false;
+	protected double selectionStartX;
+	protected double selectionStartY;
+	protected double selectionEndX;
+	protected double selectionEndY;
+	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
+	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
+	protected boolean ctrlClicked = false;
 
 	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1/SCALE_DELTA;
@@ -152,6 +165,7 @@ public class EditorController extends MapDisplayController
 		this.topPane.setPickOnBounds(false);
 
 		this.installPaneListeners();
+		this.setUpAlgorithmChoiceBox();
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
@@ -171,6 +185,17 @@ public class EditorController extends MapDisplayController
 				//selectedLocation = newValue;
 			}
 		});
+
+
+		/** This is the section for key listeners.
+		 *
+		 *
+		 */
+		parentBorderPane.setOnKeyPressed(e-> {
+//			System.out.println(e); // Prints out key statements
+
+		});
+
 	}
 
 	public void populateTableView() {
@@ -209,6 +234,8 @@ public class EditorController extends MapDisplayController
 				selectedProf = newValue;
 			}
 		});
+
+
 	}
 
 	@FXML
@@ -237,18 +264,18 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedProf == null || this.selectedNode == null) return;
+		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
 
-		this.selectedNode.applyToRoom(room -> this.selectedProf.addLocation(room));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.addRoomToProfessional(room, this.selectedProf)));
 
 		this.populateTableView();
 	}
 
 	@FXML
 	public void delProfFromRoom() {
-		if (this.selectedNode == null || this.selectedProf == null) return;
+		if (this.selectedNodes.size() == 0 || this.selectedProf == null) return;
 
-		this.selectedNode.applyToRoom(room -> this.selectedProf.removeLocation(room));
+		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.removeRoomFromProfessional(room, this.selectedProf)));
 
 		this.populateTableView();
 	}
@@ -277,13 +304,7 @@ public class EditorController extends MapDisplayController
 	public void confirmBtnPressed() {
 //		this.directory.getRooms().forEach(room ->
 //				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-		try {
-			ApplicationController.dbc.destructiveSaveDirectory(this.directory);
-		} catch (DatabaseException e) {
-			System.err.println("\n\nDATABASE DAMAGED\n\n");
-			e.printStackTrace();
-			System.err.println("\n\nDATABASE DAMAGED\n\n");
-		}
+		DatabaseWrapper.saveDirectory(this.directory);
 	}
 
 	@FXML
@@ -303,14 +324,14 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	public void modifyRoomBtnClicked() { //TODO
-		if(this.selectedNode == null) return;
+		if(this.selectedNodes.size() != 1) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
 	public void deleteRoomBtnClicked() {
-		this.deleteSelectedNode();
+		this.deleteSelectedNodes();
 	}
 
 
@@ -390,7 +411,7 @@ public class EditorController extends MapDisplayController
 			}
 		}
 		this.botPane.getChildren().setAll(lines);
-	}	
+	}
 
 	/**
 	 * Adds a listener to the choice box.
@@ -421,27 +442,33 @@ public class EditorController extends MapDisplayController
 	 * @note No other function should add the base listeners to nodes.
 	 */
 	private void addNodeListeners(Node node) {
-		node.getShape().setOnMouseClicked(event -> this.selectOrConnectNodeListener(event, node));
+		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
-		node.getShape().setOnMouseReleased(event -> this.deleteNodeIfOffMapListener(event, node));
+		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
+			this.draggingNode = true;
 		});
-		node.getShape().setOnContextMenuRequested(e->{
-			if(node.equals(this.selectedNode)) {
-				ContextMenu optionsMenu = new ContextMenu();
 
-				MenuItem exItem1 = new MenuItem("Connect to Node...");
-				exItem1.setOnAction(e1 -> {
-				});
-				MenuItem exItem2 = new MenuItem("");
-				exItem2.setOnAction(e2 -> {
-				});
-				optionsMenu.getItems().addAll(exItem1, exItem2);
-				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
-			}
-		});
+		/** I commented this out for now because it does not have functionality in our program
+		 * But keep it here because it may be useful in the future
+		 *
+		 */
+//		node.getShape().setOnContextMenuRequested(e->{
+//			if(node.equals(this.selectedNode)) {
+//				ContextMenu optionsMenu = new ContextMenu();
+//
+//				MenuItem exItem1 = new MenuItem("Connect to Node...");
+//				exItem1.setOnAction(e1 -> {
+//				});
+//				MenuItem exItem2 = new MenuItem("");
+//				exItem2.setOnAction(e2 -> {
+//				});
+//				optionsMenu.getItems().addAll(exItem1, exItem2);
+//				optionsMenu.show(node.getShape(), e.getScreenX(), e.getScreenY());
+//			}
+//		});
 	}
 
 	private double readX() {
@@ -481,12 +508,18 @@ public class EditorController extends MapDisplayController
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
-		if (this.selectedNode != null && this.selectedNode.getRoom() == null) {
-			directory.addNewRoomToNode(this.selectedNode, name, description);
+		// This first condition requires that there has only been one node selected\
+		// TODO: Review this assumption
+		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
+			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
 			Node newNode = directory.addNewRoomNode(x, y, floor, name, description);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
+			this.selectedNodes.forEach(n -> {
+				this.directory.connectOrDisconnectNodes(n, newNode);
+			});
+			this.redisplayAll();
 		}
 	}
 
@@ -497,13 +530,26 @@ public class EditorController extends MapDisplayController
 		}
 		Node newNode = this.directory.addNewNode(x, y, floor);
 		this.addNodeListeners(newNode);
+
+		int size = this.selectedNodes.size();
+		if(size > 0) {
+			this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
+		}
+		if(this.shiftPressed) {
+			this.selectOrDeselectNode(newNode);
+		}
 	}
 
-	private void  updateSelectedRoom(double x, double y, String name, String description) { //TODO
-		this.selectedNode.applyToRoom(room -> {
-			room.setName(name);
-			room.setDescription(description);
-			// Reset name
+	/**
+	 * This should only be called by the modify room button
+	 *
+	 * it runs with the assumption that it has been guaranteed a room is in the selected Nodes list at index 0
+	 *
+	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
+	 */
+	private void updateSelectedRoom(double x, double y, String name, String description) { //TODO
+		this.selectedNodes.get(0).applyToRoom(room -> {
+			directory.updateRoom(room, name, description);
 			// TODO: Don't rely on room shapes being a stacked rectangle and text
 			((Text)room.getShape().getChildren().get(1)).setText(name);
 		});
@@ -512,18 +558,65 @@ public class EditorController extends MapDisplayController
 		// TODO: Update the location of the node, whether or not it is a room (or not)
 	}
 
-	private void updateSelectedNode(double x, double y) { //TODO
-		this.selectedNode.moveTo(x, y);
-		this.selectedNode.getShape().setCenterX(this.selectedNode.getX());
-		this.selectedNode.getShape().setCenterY(this.selectedNode.getY());
+	/**
+	 * This should only be called in theory by the method called by the modify room button.
+	 *
+	 * It runs with the assumption that it has been guaranteed that a node is in the selectedNodes list at index 0
+	 *
+	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
+	 */
+	private void updateSelectedNode(double x, double y) {
+		this.selectedNodes.get(0).moveTo(x, y);
+		this.selectedNodes.get(0).getShape().setCenterX(this.selectedNodes.get(0).getX());
+		this.selectedNodes.get(0).getShape().setCenterY(this.selectedNodes.get(0).getY());
 	}
 
-	private void deleteSelectedNode() { // TODO: Separate this from a function that deletes both room and node
-		if(this.selectedNode == null) return;
+	private void updateSelectedNodes(double x, double y) {
+		this.selectedNodes.forEach(n -> {
+			double newX = n.getX() - this.clickedX + x;
+			double newY = n.getY() - this.clickedY + y;
+			n.moveTo(newX, newY);
+			n.getShape().setCenterX(newX);
+			n.getShape().setCenterY(newY);
+		});
+		this.clickedX = x;
+		this.clickedY = y;
+	}
 
-		this.directory.removeNodeAndRoom(this.selectedNode);
-		this.selectedNode = null;
+	/**
+	 * Deletes the node from EVERYTHING
+	 * @param n
+	 */
+	private void deleteNode(Node n) {
+		this.directory.removeNodeAndRoom(n);
+	}
 
+	/**
+	 * Delete All of the Nodes selected
+	 */
+	private void deleteSelectedNodes() { // TODO: Separate this from a function that deletes both room and node
+		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
+		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
+			Node n = this.selectedNodes.get(i);
+			deleteNode(n);
+			this.selectedNodes.remove(n);
+		}
+		this.selectedNodes.clear();
+		this.redisplayAll();
+	}
+
+	/** Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
+	 */
+	private void deleteOutOfBoundNodes() {
+
+		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
+		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
+			Node n = this.selectedNodes.get(i);
+			if(n.getX() < 0 || n.getY() < 0) {
+				deleteNode(n);
+				this.selectedNodes.remove(n);
+			}
+		}
 		this.redisplayAll();
 	}
 
@@ -539,8 +632,10 @@ public class EditorController extends MapDisplayController
 			if(e.getClickCount() == 2) {
 				this.addNode(e.getX(), e.getY());
 			}
+			if(!this.shiftPressed) {
+				this.deselectNodes();
 
-			this.deselectNode();
+			}
 
 			this.redisplayGraph();
 		});
@@ -568,43 +663,129 @@ public class EditorController extends MapDisplayController
 				zoomSlider.setValue(((potentialScaleX - zoomMin) / (zoomMax - zoomMin))*100);
 			}
 		});
-		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				clickedX = event.getX();
-				clickedY = event.getY();
+		contentAnchor.setOnMousePressed(e->{
+			clickedX = e.getX();
+			clickedY = e.getY();
+			this.shiftPressed = e.isShiftDown();
+			if(this.shiftPressed) {
+				this.beingDragged = true;
+				this.selectionStartX = e.getX();
+				this.selectionStartY = e.getY();
+			} else {
+				this.beingDragged = false;
 			}
 		});
-		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				if(!beingDragged) {
-					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+		contentAnchor.setOnMouseDragged(e-> {
+//			this.shiftPressed = e.isShiftDown();
+//			if(this.shiftPressed) {
+//				this.beingDragged = true;
+//			}
+			this.draggedANode = true;
+			if(this.shiftPressed && !draggingNode) {
+				Rectangle r = new Rectangle();
+				if(e.getX() > selectionStartX) {
+					r.setX(selectionStartX);
+					r.setWidth(e.getX() - selectionStartX);
+				} else {
+					r.setX(e.getX());
+					r.setWidth(selectionStartX - e.getX());
 				}
-				event.consume();
+				if(e.getY() > selectionStartY) {
+					r.setY(selectionStartY);
+					r.setHeight(e.getY() - selectionStartY);
+				} else {
+					r.setY(e.getY());
+					r.setHeight(selectionStartY - e.getY());
+				}
+				r.setFill(Color.SKYBLUE);
+				r.setStroke(Color.BLUE);
+				r.setOpacity(0.5);
+				this.redisplayAll();
+				this.botPane.getChildren().add(r);
 			}
+
+			if(!beingDragged) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+			}
+			e.consume();
+		});
+		contentAnchor.setOnMouseReleased(e->{
+			if(this.shiftPressed && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+				this.selectionEndX = e.getX();
+				this.selectionEndY = e.getY();
+				this.redisplayAll(); // this is to clear the rectangle off of the pane
+
+				// These are the bounds of the selection
+				double topLeftX;
+				double topLeftY;
+				double botRightX;
+				double botRightY;
+				if(this.selectionStartX < this.selectionEndX) {
+					topLeftX = this.selectionStartX;
+					botRightX = this.selectionEndX;
+				} else {
+					topLeftX = this.selectionEndX;
+					botRightX = this.selectionStartX;
+				}
+				if(this.selectionStartY < this.selectionEndY) {
+					topLeftY = this.selectionStartY;
+					botRightY = this.selectionEndY;
+				} else {
+					topLeftY = this.selectionEndY;
+					botRightY = this.selectionStartY;
+				}
+				// Loop through and select/deselect all nodes in the bounds
+				this.directory.getNodesOnFloor(floor).forEach(n -> {
+					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
+						// Within the bounds, select or deselect it
+						this.selectOrDeselectNode(n);
+					}
+				});
+			}
+			this.shiftPressed = e.isShiftDown();
+			this.beingDragged = this.shiftPressed;
+			this.draggingNode = false;
 		});
 	}
 
-	public void selectOrConnectNodeListener(MouseEvent e, Node n) {
+	public void clickNodeListener(MouseEvent e, Node n) {
 		// update text fields
 		this.setFields(n.getX(), n.getY());
-
+		if(this.draggedANode) {
+			this.draggedANode = false;
+			return;
+		}
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-
-			this.selectNode(n);
+			if(!this.shiftPressed) {
+				if(this.selectedNodes.size() > 1) {
+					this.deselectNodes();
+				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
+					this.deselectNodes();
+				}
+			}
+			// This ctrls stuff for pressing ctrl when you clicked
+			// SELECTS ALL OF THE NODE's NEIGHBORS
+			if(e.isControlDown()) {
+				n.getNeighbors().forEach(neighbor-> {
+					this.selectOrDeselectNode(neighbor);
+				});
+			}
+			this.selectOrDeselectNode(n);
 			this.updateFields();
 
-		} else if(this.selectedNode != null && !this.selectedNode.equals(n) && this.secondaryPressed) {
-			// ^ checks if there has been a node selected,
-			// checks if the node selected is not the node we are clicking on
-			// and checks if the button pressed is the right mouse button (secondary)
+		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
+			/**
+			 * Connect all of the nodes selected to the one that you have clicked on
+			 */
 
-			// finally check if they are connected or not
-			// if they are connected, remove the connection
-			// if they are not connected, add a connection
-			directory.connectOrDisconnectNodes(selectedNode, n);
+
+
+			this.selectedNodes.forEach(nodes->{
+				this.directory.connectOrDisconnectNodes(nodes, n);
+			});
 			this.redrawLines(this.directory.getNodesOnFloor(floor));
 		}
 	}
@@ -612,11 +793,13 @@ public class EditorController extends MapDisplayController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
-		if(this.selectedNode != null && this.selectedNode.equals(n)) {
+		this.draggingNode = true;
+		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
 			if(e.isPrimaryButtonDown()) {
-				this.updateSelectedNode(e.getX(), e.getY());
-				this.setFields(this.selectedNode.getX(), this.selectedNode.getY());
+				this.updateSelectedNodes(e.getX(), e.getY());
+				this.setFields(n.getX(), n.getY());
 				this.redrawLines(this.directory.getNodesOnFloor(floor));
+
 			} else if (this.secondaryPressed) {
 				// right click drag on the selected node
 				// do nothing for now
@@ -624,15 +807,14 @@ public class EditorController extends MapDisplayController
 		}
 	}
 
-	public void deleteNodeIfOffMapListener(MouseEvent e, Node n) {
+	public void releaseNodeListener(MouseEvent e, Node n) {
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
 		// if the releasedX or Y is negative we want to remove the node
 
-		if(this.releasedX < 0 || this.releasedY < 0) {
-			this.deleteSelectedNode();
-		}
+		// Delete any nodes that were dragged out of bounds
+		this.deleteOutOfBoundNodes();
 
 		this.beingDragged = false;
 	}
@@ -659,18 +841,35 @@ public class EditorController extends MapDisplayController
 		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
-	private void selectNode (Node n){
-		this.selectedNode = n;
-
-		this.iconController.selectSingleNode(n);
+	/**
+	 * Adds or removes the node from the selection pool
+	 * @param n - The Node being selected or deselected
+	 */
+	private void selectOrDeselectNode(Node n) {
+		if(this.selectedNodes.contains(n)) {
+			this.selectedNodes.remove(n);
+			this.iconController.resetSingleNode(n);
+		} else {
+			this.selectedNodes.add(n);
+			this.iconController.selectAnotherNode(n);
+		}
 		this.redisplayGraph();
+		System.out.println(this.selectedNodes.size()); // For debugging
 	}
 
-	private void deselectNode(){
-		this.selectedNode = null;
+	private void deselectNodes() {
 		this.iconController.deselectAllNodes();
-		this.redisplayGraph();
+		this.selectedNodes.clear();
+		System.out.println(this.selectedNodes.size());
 	}
+
+	// This method is commented out because it is outdated and was only used when there was singular node selection
+	// In the current implementation it is not needed
+//	private void deselectNode(){
+//		this.selectedNode = null;
+//		this.iconController.deselectAllNodes();
+//		this.redisplayGraph();
+//	}
 
 	private void setXCoordField(double x) {
 		this.xCoordField.setText(x+"");
@@ -698,17 +897,17 @@ public class EditorController extends MapDisplayController
 		this.setDescriptField(desc);
 	}
 
-	/** Updates the node/room fields based off of the selected node (or room)
+	/** Updates the node/room fields based off of the most recently selected node (or room)
 	 *
 	 */
 	private void updateFields() {
-		if(selectedNode == null) {
+		if(selectedNodes.size() == 0) {
 			return;
 		}
-		this.setFields(selectedNode.getX(), selectedNode.getY());
+		this.setFields(selectedNodes.get(this.selectedNodes.size() - 1).getX(), selectedNodes.get(this.selectedNodes.size() - 1).getY());
 
-		//TODO: Use applyToRoom instead of checking containsRoom
-		selectedNode.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
+		selectedNodes.get(this.selectedNodes.size() - 1).applyToRoom(room ->
+				this.setRoomFields(room.getName(), room.getDescription()));
 	}
 
 	/**
@@ -738,15 +937,14 @@ public class EditorController extends MapDisplayController
 	/**
 	 * Get a choice box that sets the active algorithm
 	 */
-	private ChoiceBox<Algorithm> makeAlgorithmChoiceBox() {
-		ChoiceBox<Algorithm> algorithmChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
-		algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+	private void setUpAlgorithmChoiceBox() {
+		this.algorithmChoiceBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
+		this.algorithmChoiceBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
-		algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
-		algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
-		return algorithmChoiceBox;
+		this.algorithmChoiceBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
+		this.algorithmChoiceBox.getSelectionModel().select(Pathfinder.getStrategy());
 	}
-	
+
 	/*
 	To set the kiosk, bind this line to a "set kiosk" button:
 	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));

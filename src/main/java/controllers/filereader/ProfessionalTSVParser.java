@@ -131,10 +131,9 @@ public class ProfessionalTSVParser
 			if (match.matches()) {
 				// make a professionalfg
 				String titles = match.group("titles");
-				prof = new Professional(match.group("givenName"),
-						match.group("surname"),
-						(titles==null) ? "" : titles);
-				this.dir.addProfessional(prof);
+				prof = dir.addNewProfessional(match.group("givenName"),
+				                              match.group("surname"),
+				                              (titles==null) ? "" : titles);
 
 				this.addLocationsToProfessional(line, prof);
 			}
@@ -161,6 +160,8 @@ public class ProfessionalTSVParser
 			roomNames.add(room);
 		}
 
-		this.dir.getRooms().stream().filter(r -> roomNames.contains(r.getName())).forEach(prof::addLocation);
+		this.dir.getRooms().stream()
+				.filter(r -> roomNames.contains(r.getName()))
+				.forEach(room -> this.dir.addRoomToProfessional(room, prof));
 	}
 }

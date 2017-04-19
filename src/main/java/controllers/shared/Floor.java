@@ -5,9 +5,6 @@ import javafx.scene.image.Image;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-/**
- * Created by tbasl_000 on 4/8/2017.
- */
 public class Floor implements FloorImage
 {
 	// Attributes of the floor class

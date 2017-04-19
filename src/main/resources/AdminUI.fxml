@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -23,22 +29,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
-	<bottom>
-		<ToolBar prefHeight="62.0" prefWidth="1289.0" BorderPane.alignment="CENTER">
-			<items>
-				<Button fx:id="logoutBtn" mnemonicParsing="false" onMouseClicked="#logoutBtnClicked" text="Logout" />
-				<Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="527.0" HBox.hgrow="ALWAYS" />
-				<Button fx:id="confirmBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="150.0" mnemonicParsing="false" onMouseClicked="#confirmBtnPressed" prefHeight="43.0" prefWidth="199.0" text="Save &amp; Apply" textAlignment="CENTER" />
-				<Pane prefHeight="30.0" prefWidth="354.0" />
-			</items>
-		</ToolBar>
-	</bottom>
-	<top>
-		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-	</top>
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
    <center>
-      <SplitPane dividerPositions="0.746875" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+      <SplitPane orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
@@ -95,24 +88,6 @@
                      </children></Pane>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="304.0" prefWidth="1172.0">
-               <children>
-                  <Button layoutX="227.0" layoutY="44.0" mnemonicParsing="false" onMouseClicked="#decreaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="-" />
-                  <Slider fx:id="zoomSlider" layoutX="272.0" layoutY="53.0" prefHeight="14.0" prefWidth="264.0" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="3.0" prefHeight="17.0" prefWidth="393.0" text="ZOOM" textAlignment="CENTER">
-                     <font>
-                        <Font size="19.0" />
-                     </font>
-                  </Label>
-                  <Button layoutX="544.0" layoutY="44.0" mnemonicParsing="false" onMouseClicked="#increaseZoomButtonPressed" prefHeight="32.0" prefWidth="35.0" text="+" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="83.0" prefHeight="17.0" prefWidth="393.0" text="FLOORS" textAlignment="CENTER">
-                     <font>
-                        <Font size="19.0" />
-                     </font>
-                  </Label>
-                  <ChoiceBox fx:id="floorChoiceBox" layoutX="291.0" layoutY="111.0" prefHeight="25.0" prefWidth="227.0" />
-               </children>
-            </AnchorPane>
         </items>
       </SplitPane>
    </center>
@@ -141,6 +116,7 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.43408203125" minWidth="10.0" prefWidth="18.906646728515625" />
                                 </columnConstraints>
                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -148,15 +124,11 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Text fx:id="roomName" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" />
-                                    <TextField fx:id="nameField" GridPane.columnIndex="2" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <TextArea fx:id="descriptField" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="xPos" />
-                                    <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" fx:id="xCoordField" />
-                                    <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <TextField fx:id="yCoordField" prefHeight="25.0" prefWidth="284.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                    <Text fx:id="roomName" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="xPos" />
+                                    <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="5">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -166,11 +138,20 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button fx:id="addRoomBtn" mnemonicParsing="false" onMouseClicked="#addRoomBtnClicked" prefHeight="25.0" prefWidth="66.0" text="Add" />
-                                          <Button fx:id="deleteRoomBtn" mnemonicParsing="false" onMouseClicked="#deleteRoomBtnClicked" prefHeight="25.0" prefWidth="70.0" text="Delete" GridPane.columnIndex="1" />
-                                          <Button fx:id="modifyRoomBtn" mnemonicParsing="false" onMouseClicked="#modifyRoomBtnClicked" prefHeight="25.0" prefWidth="72.0" text="Modify " GridPane.columnIndex="2" />
+                                          <JFXButton fx:id="addBtn" buttonType="RAISED" onMouseClicked="#addRoomBtnClicked" prefHeight="25.0" prefWidth="67.0" style="-fx-background-color: #5087b4;" text="Add" textFill="WHITE" />
+                                          <JFXButton fx:id="deleteBtn" buttonType="RAISED" onMouseClicked="#deleteRoomBtnClicked" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: #5087b4;" text="Delete" textFill="WHITE" GridPane.columnIndex="1" />
+                                          <JFXButton fx:id="modifyBtn" buttonType="RAISED" onMouseClicked="#modifyRoomBtnClicked" prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #5087b4;" text="Modify" textFill="WHITE" GridPane.columnIndex="2" />
                                        </children>
                                     </GridPane>
+                                    <JFXTextField fx:id="nameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <JFXTextArea fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <JFXTextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xCoordField" />
+                                    <JFXTextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                    <Label text="Selected Room" GridPane.columnIndex="1" GridPane.columnSpan="2">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
                                  </children>
                               </GridPane>
                            </children>
@@ -181,30 +162,62 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <GridPane layoutX="9.0" layoutY="1.0" prefHeight="324.0" prefWidth="378.0">
+                              <GridPane layoutX="20.0" prefHeight="324.0" prefWidth="378.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="181.5755615234375" minWidth="10.0" prefWidth="42.47257995605469" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="215.51779174804688" minWidth="10.0" prefWidth="115.17997741699219" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.17372131347656" minWidth="10.0" prefWidth="232.8200225830078" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="197.70741271972656" minWidth="10.0" prefWidth="39.623687744140625" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="181.5755615234375" minWidth="2.0" prefWidth="4.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="215.51779174804688" minWidth="10.0" prefWidth="171.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.17372131347656" minWidth="10.0" prefWidth="184.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="197.70741271972656" minWidth="10.0" prefWidth="22.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Button fx:id="deleteProfBtn" mnemonicParsing="false" onMouseClicked="#deleteProfBtnClicked" prefHeight="25.0" prefWidth="126.0" text="Delete Professional" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                    <Button fx:id="addProBtn" mnemonicParsing="false" onMouseClicked="#addProfToRoom" text="Add Professional to Room" GridPane.columnIndex="2" />
-                                    <Button fx:id="delProBtn" mnemonicParsing="false" onMouseClicked="#delProfFromRoom" text="Delete Professional from Room" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Button fx:id="addCustomProBtn" mnemonicParsing="false" onMouseClicked="#addCustomProBtnPressed" text="Add Custom Professional" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                    <JFXButton fx:id="addProBtn" buttonType="RAISED" onMouseClicked="#addProfToRoom" style="-fx-background-color: #5087b4;" text="Add Professional to Room" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <JFXButton fx:id="deleteProBtn" buttonType="RAISED" onMouseClicked="#delProfFromRoom" style="-fx-background-color: #5087b4;" text="Delete Professional from Room" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <JFXButton fx:id="deleteProfBtn" buttonType="RAISED" onMouseClicked="#deleteProfBtnClicked" style="-fx-background-color: #5087b4;" text="Delete Professional" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                                    <JFXButton fx:id="addCustomProBtn" buttonType="RAISED" onMouseClicked="#addCustomProBtnPressed" style="-fx-background-color: #5087b4;" text="Add Professional" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                                    <JFXButton fx:id="importBtn" buttonType="RAISED" style="-fx-background-color: #5087b4;" text="Add from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                                    <Label text="Add/Delete Professionals From Rooms" GridPane.columnIndex="1" GridPane.columnSpan="2">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Add/Delete Professionals From Directory" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
                                  </children>
                               </GridPane>
                            </children>
                         </AnchorPane>
                   </content>
                 </Tab>
+                  <Tab text="Pathfinding">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="147.0" layoutY="37.0" text="Algorithms:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="170.0" layoutY="149.0" text="Kiosk:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXComboBox fx:id="algorithmChoiceBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
+                              <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
               </tabs>
             </TabPane>
             <GridPane>
@@ -232,4 +245,46 @@
          </children>
       </GridPane>
    </left>
+   <top>
+      <JFXToolbar prefHeight="52.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+         <top>
+            <JFXToolbar prefHeight="14.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
+               <center>
+                  <Label text="Admin Panel" textFill="WHITE" BorderPane.alignment="CENTER" />
+               </center>
+            </JFXToolbar>
+         </top>
+         <right>
+            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="14.0" prefWidth="256.0" BorderPane.alignment="CENTER" />
+         </right>
+         <center>
+            <GridPane prefHeight="35.0" prefWidth="918.0" BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <JFXComboBox fx:id="buildingComboBox" prefHeight="25.0" prefWidth="254.0" />
+                  <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="258.0" GridPane.columnIndex="1" />
+               </children>
+            </GridPane>
+         </center>
+         <left>
+            <ImageView fitHeight="35.0" fitWidth="384.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+         </left>
+      </JFXToolbar>
+   </top>
+   <bottom>
+      <JFXToolbar prefHeight="50.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
+         <center>
+            <JFXButton fx:id="confirmBtn" buttonType="RAISED" onMouseClicked="#confirmBtnPressed" prefHeight="37.0" prefWidth="165.0" style="-fx-background-color: #5087b4;" text="Save &amp; Apply" textFill="WHITE" BorderPane.alignment="CENTER" />
+         </center>
+         <left>
+            <JFXButton fx:id="logoutBtn" buttonType="RAISED" onMouseClicked="#logoutBtnClicked" prefHeight="25.0" prefWidth="76.0" style="-fx-background-color: #5087b4;" text="Logout" textFill="WHITE" BorderPane.alignment="CENTER" />
+         </left>
+      </JFXToolbar>
+   </bottom>
 </BorderPane>
