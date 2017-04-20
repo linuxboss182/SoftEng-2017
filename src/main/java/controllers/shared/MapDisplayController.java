@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+// TODO: Use this class more effectively
+// Move stuff here when possible, remove unneeded stuff later
 
 public abstract class MapDisplayController
 {
@@ -35,23 +37,10 @@ public abstract class MapDisplayController
 	protected double releasedY;
 
 	// TODO: Remove excessive unecessary state from ALL Controllers (not just this one)
-	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
-	protected static final double RECTANGLE_WIDTH = 7;
-	protected static final double RECTANGLE_HEIGHT = 7;
-	protected static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
-	protected static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
-	protected static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	protected static final Color KIOSK_COLOR = Color.YELLOW;
-	protected static final String KIOSK_NAME = "You Are Here";
-	protected static final double CIRCLE_RADIUS = 5;
 
 	protected Professional selectedProf;
-	protected String roomList;
-	protected List<Professional> proList;
-	protected List<Node> directionNodes = new ArrayList<>();
 	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
-	protected Node destNode;
 
 	protected Pane botPane;
 	protected Pane topPane;

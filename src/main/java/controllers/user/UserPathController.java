@@ -32,6 +32,16 @@ import main.DirectionsGenerator;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 
+// TODO: Put directions in a scroll box
+// TODO: Generally improve text directions (see below)
+/*
+Remove recurring directions
+
+If possible, use things like "follow the sidewalk" (probably not possible)
+
+If possible, get turn direction upon exiting a building (requires changes elsewhere)
+ */
+
 public class UserPathController
 		extends UserMasterController
 		implements Initializable
@@ -108,34 +118,6 @@ public class UserPathController
 
 		List<MiniFloor> floors = new ArrayList<>();
 
-//		// Set initial values (set next to last in case there are only 1 or 2 steps)
-//		int last = 0;
-//		int here = ret.get(0).getFloor();
-//		int next = ret.get(ret.size()-1).getFloor();
-//		// add starting floor
-//		floors.add(here);
-//		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
-//		//prints all the floors on the path in order
-//// 		System.out.println(ret.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
-//
-//		for (int i = 1; i < ret.size()-1; ++i) {
-//			last = ret.get(i-1).getFloor();
-//			here = ret.get(i  ).getFloor();
-//			next = ret.get(i+1).getFloor();
-////			System.out.println(last+" "+here+" "+next);
-//			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-//			if (last != here && next == here) {
-//				floors.add(here);
-//				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
-//			}
-//		}
-//		// Check that the last node's floor (which will always be 'next') is in the list
-//		if (floors.get(floors.size()-1) != next) {
-//			floors.add(next);
-//			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
-//		}
-
-
 		MiniFloor last = new MiniFloor(0, "");
 		MiniFloor here = new MiniFloor(ret.get(0).getFloor(), ret.get(0).getBuildingName());
 		MiniFloor next = new MiniFloor(ret.get(ret.size()-1).getFloor(), ret.get(ret.size()-1).getBuildingName());
@@ -171,6 +153,7 @@ public class UserPathController
 	/**
 	 * Inner class for generating and comparing floors quickly
 	 */
+	// TODO: Refactor out in favor of real Floors
 	class MiniFloor
 	{
 		int number;
@@ -280,6 +263,7 @@ public class UserPathController
 	 *
 	 * @param directionNodes A list of the nodes in the path, in order
 	 */
+	// TODO: Fix bug where separate paths on one floor are connected
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 

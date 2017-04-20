@@ -7,6 +7,8 @@ import entities.Node;
 import entities.Room;
 
 // TODO: Move to entities; complete integration with Room
+// How much of IconController should be exposed?
+
 /**
  * This is the only class that should ever change entities' colors
  *
@@ -54,7 +56,9 @@ public class IconController
 		NODE.DEFAULT.applyTo(node.getShape());
 
 		// Set elevator colors
-		if (node.getNeighbors().stream().anyMatch(n -> (node.getFloor() != n.getFloor())
+		// TODO: Use a different color for portals
+		if (node.getNeighbors().stream()
+				.anyMatch(n -> (node.getFloor() != n.getFloor())
 				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
 			NODE.ELEVATOR.applyTo(node.getShape());
 		} else if (node.getRoom() != null) {

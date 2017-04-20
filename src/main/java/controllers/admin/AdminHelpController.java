@@ -12,9 +12,6 @@ import java.util.ResourceBundle;
 
 import static main.ApplicationController.getDirectory;
 
-/**
- * Created by s7sal on 4/19/2017.
- */
 public class AdminHelpController  implements Initializable
 {
 	@FXML

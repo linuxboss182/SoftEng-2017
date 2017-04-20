@@ -98,6 +98,7 @@ public abstract class UserMasterController
 	protected double SCALE_TOTAL = 1;
 	protected static Room startRoom;
 	protected static Room endRoom;
+	// TODO: Are these still needed? They shouldn't be, because of UserStartController being a separate class.
 	protected static boolean choosingStart = false;
 	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
 
@@ -116,7 +117,7 @@ public abstract class UserMasterController
 	 * Get the scene this is working on
 	 */
 	protected Scene getScene() {
-		// The contentAnchor should alays exist, so use it to get the scene
+		// The parentBorderPane should always exist, so use it to get the scene
 		return this.parentBorderPane.getScene();
 	}
 
@@ -147,6 +148,7 @@ public abstract class UserMasterController
 		this.enableOrDisableNavigationButtons();
 
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
+		// TODO: Move zoom stuff to MapDisplayController
 		zoomSlider.setValue(0);
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -178,6 +180,7 @@ public abstract class UserMasterController
 		}
 
 
+		// TODO: Move to MapDisplayController
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
 				event.consume();
@@ -222,18 +225,17 @@ public abstract class UserMasterController
 
 			}
 		});
-		contentAnchor.setOnMousePressed(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				clickedX = event.getX();
-				clickedY = event.getY();
-			}
+
+		// TODO: See if there's a way to include this in the OnMouseDragged listener
+		contentAnchor.setOnMousePressed(event -> {
+			clickedX = event.getX();
+			clickedY = event.getY();
 		});
-		contentAnchor.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-				event.consume();
-			}
+
+		contentAnchor.setOnMouseDragged(event -> {
+			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			event.consume();
 		});
 
 		//Call listeners for window resizing
@@ -250,8 +252,6 @@ public abstract class UserMasterController
 		 */
 		// TODO: Use ctrl+plus/minus for zooming
 		parentBorderPane.setOnKeyPressed(e -> {
-//			System.out.println(e); // Prints out key statements
-			System.out.println(e.getCode());// Prints out key statements
 			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
 				increaseZoomButtonPressed();
 			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
@@ -329,17 +329,20 @@ public abstract class UserMasterController
 
 	}
 
+	/**
+	 * Display all rooms on the current floor of the current building
+	 */
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(getFloor())) {
 			roomShapes.add(room.getUserSideShape());
-			/* This is code to make a context menu appear when you right click on the shape for a room
-			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-			 * that is reallllllllly helpful for a lot of stuff
-			 */
+
+			// Add listener to select rooms on click
 			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
 				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
 			});
+
+			// Add listener for context menus (right click)
 			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
 
 				ContextMenu optionsMenu = new ContextMenu();
@@ -355,6 +358,9 @@ public abstract class UserMasterController
 		this.topPane.getChildren().setAll(roomShapes);
 	}
 
+	/**
+	 * Populates the list of rooms
+	 */
 	public void populateListView() {
 		this.directoryView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
@@ -362,20 +368,10 @@ public abstract class UserMasterController
 		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
 			@Override
 			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
-				// Commented this out because we are not going to want to get directions as soon as they click on the list view
-//				List<Node> ret;
-//				if(kiosk != null) {
-//					ret = Pathfinder.findPath(kiosk.getLocation(), newValue.getLocation());
-//					paintPath(new ArrayList<>(ret));
-//				} else {
-//
-//				}
 				// These variables are set in the controllers when the scene is switched...
 				if(choosingEnd) {
-
 					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
 				} else if(choosingStart) {
-
 					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
 
 				}
@@ -514,6 +510,4 @@ public abstract class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
-
-
 }

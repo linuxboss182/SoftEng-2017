@@ -140,14 +140,14 @@ public class EditorController extends MapDisplayController
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
 
-		this.changeFloor(FloorProxy.getFloor(getFloorName(), getFloorNum()));
+		this.changeFloor(getFloor());
 
 		this.imageViewMap.setPickOnBounds(true);
 		if(floorComboBox != null) {
 			initfloorComboBox();
 		}
 
-		// TODO: Move zoom initialization to separate function
+		// TODO: Move zoom initialization to separate function and call in installPaneListeners
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		zoomSlider.setValue(0);
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -232,6 +232,7 @@ public class EditorController extends MapDisplayController
 	}
 
 
+	// TODO: rename descriptively
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
 
@@ -415,6 +416,7 @@ public class EditorController extends MapDisplayController
 	}
 
 	//Editor
+	// TODO: Automatically use the one floor instead of passing in a collection
 	public void displayNodes(Collection<Node> nodes) {
 		Set<Circle> nodeShapes = new HashSet<>();
 		for (Node n : nodes) {
@@ -473,25 +475,6 @@ public class EditorController extends MapDisplayController
 			this.secondaryPressed = event.isSecondaryButtonDown();
 			this.draggingNode = true;
 		});
-
-		/** I commented this out for now because it does not have functionality in our program
-		 * But keep it here because it may be useful in the future
-		 *
-		 */
-//		node.getUserSideShape().setOnContextMenuRequested(e->{
-//			if(node.equals(this.selectedNode)) {
-//				ContextMenu optionsMenu = new ContextMenu();
-//
-//				MenuItem exItem1 = new MenuItem("Connect to Node...");
-//				exItem1.setOnAction(e1 -> {
-//				});
-//				MenuItem exItem2 = new MenuItem("");
-//				exItem2.setOnAction(e2 -> {
-//				});
-//				optionsMenu.getItems().addAll(exItem1, exItem2);
-//				optionsMenu.show(node.getUserSideShape(), e.getScreenX(), e.getScreenY());
-//			}
-//		});
 	}
 
 	private double readX() {
@@ -663,6 +646,7 @@ public class EditorController extends MapDisplayController
 			this.redisplayGraph();
 		});
 
+		// TODO: Move to MapDisplayController
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
 				event.consume();
@@ -720,6 +704,7 @@ public class EditorController extends MapDisplayController
 				this.beingDragged = false;
 			}
 		});
+
 		contentAnchor.setOnMouseDragged(e-> {
 
 			this.draggedANode = true;
