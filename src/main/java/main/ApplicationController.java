@@ -17,6 +17,7 @@ public class ApplicationController extends Application
 
 	private static Directory directory;
 	private static IconController iconController;
+	private static DatabaseWrapper databaseWrapper; // only referenced in this class
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
@@ -28,20 +29,20 @@ public class ApplicationController extends Application
 
 
 	public static void main(String[] args) {
-
+		databaseWrapper = DatabaseWrapper.getInstance();
 		try {
-			DatabaseWrapper.init();
+			databaseWrapper.init();
 		} catch (DatabaseException e) {
 			System.out.println("ERROR IN DATABASE INITIALIZATION:\n" + e.getMessage());
 			return;
 		}
 
-		ApplicationController.directory = DatabaseWrapper.getDirectory();
+		ApplicationController.directory = databaseWrapper.getDirectory();
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
 
-		DatabaseWrapper.close();
+		databaseWrapper.close();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
