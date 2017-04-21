@@ -149,25 +149,9 @@ public class EditorController extends MapDisplayController
 
 		// TODO: Move zoom initialization to separate function and call in installPaneListeners
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
+		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
-		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-			                    Number oldValue, Number newValue) {
-				/**
-				 * This one was a fun one.
-				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-				 * and when it's at the far right, it will be zoomed in all the way
-				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-				 * the equation is just that
-				 */
-				double zoomPercent = (zoomSlider.getValue()/100);
-				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-				mapScroll.setScaleX(zoomCoefficient);
-				mapScroll.setScaleY(zoomCoefficient);
-			}
-		});
+		setZoomSliding();
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
@@ -183,34 +167,24 @@ public class EditorController extends MapDisplayController
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
 
-		//Populate the tableview
-		HashSet<Room> locations = new HashSet<>();
-		for (Professional p: directory.getProfessionals()) {
-			locations.addAll(p.getLocations());
-
-		}
 		this.populateTableView();
 
-		//Listener for the tableview
-		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			if (roomProfTable.getSelectionModel().getSelectedItem() != null) {
-				// TODO: Allow professional selection from the TableView
-				//selectedLocation = newValue;
-			}
-		});
-
-
-		/** This is the section for key listeners.
-		 *  Press Back Space for Deleting selected nodes
-		 *  Press Ctrl + A for selecting all nodes
-		 *  Press Ctrl + Open Bracket for zoom in
-		 *  Press Ctrl + Close Bracket for zoom out
-		 *  Press Shift + Right to move the view to the right
-		 *  Press Shift + Left to move the view to the left
-		 *  Press Shift + Up to move the view to the up
-		 *  Press Shift + down to move the view to the down
-		 */
 		// TODO: Use control+plus/minus for zooming
+		setHotkeys();
+	}
+
+
+	/** This is the section for key listeners.
+	 *  Press Back Space for Deleting selected nodes
+	 *  Press Ctrl + A for selecting all nodes
+	 *  Press Ctrl + Open Bracket for zoom in
+	 *  Press Ctrl + Close Bracket for zoom out
+	 *  Press Shift + Right to move the view to the right
+	 *  Press Shift + Left to move the view to the left
+	 *  Press Shift + Up to move the view to the up
+	 *  Press Shift + down to move the view to the down
+	 */
+	private void setHotkeys() {
 		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
 			System.out.println(e.getCode());// Prints out key statements
@@ -228,6 +202,23 @@ public class EditorController extends MapDisplayController
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
 			}
 			e.consume();
+		});
+	}
+
+	private void setZoomSliding() {
+		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/**
+			 * This one was a fun one.
+			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+			 * and when it's at the far right, it will be zoomed in all the way
+			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+			 * the equation is just that
+			 */
+			double zoomPercent = (zoomSlider.getValue()/100);
+			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+			mapScroll.setScaleX(zoomCoefficient);
+			mapScroll.setScaleY(zoomCoefficient);
 		});
 	}
 
