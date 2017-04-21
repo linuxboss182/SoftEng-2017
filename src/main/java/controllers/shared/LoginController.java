@@ -15,8 +15,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 public class LoginController {
+
+	private LoginHandler logins;
+
 	@FXML
 	private Label errorLbl;
 	@FXML
@@ -29,14 +33,14 @@ public class LoginController {
 	private Button loginBtn;
 
 
-
+	public void attachHandler(LoginHandler logins){
+		this.logins = logins;
+	}
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-//		boolean success = true;
-		boolean success = this.usernameField.getText().equals("admin")
-		               && this.passwordField.getText().equals("password");
-
+		boolean success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
+//		boolean success = adminLogins.get(this.passwordField.getText()).equals(this.usernameField.getText());
 		if(success) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
@@ -44,7 +48,6 @@ public class LoginController {
 			this.errorLbl.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
 		}
-
 	}
 
 	@FXML
@@ -52,6 +55,7 @@ public class LoginController {
 		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		errorLbl.getScene().setRoot(destUI);
 	}
+
 
 
 }

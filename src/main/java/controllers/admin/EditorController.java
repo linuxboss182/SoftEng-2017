@@ -54,6 +54,8 @@ public class EditorController extends MapDisplayController
 
 	@FXML
 	private Button addRoomBtn;
+	//@FXML
+	//private Button addUserButton;
 	@FXML
 	private Button logoutBtn;
 	@FXML

@@ -1,6 +1,6 @@
 package main.database;
 
-import main.StoredProcedures;
+import main.database.StoredProcedures;
 
 import java.sql.*;
 
