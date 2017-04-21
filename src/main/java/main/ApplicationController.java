@@ -30,18 +30,18 @@ public class ApplicationController extends Application
 	public static void main(String[] args) {
 
 		try {
-			DatabaseWrapper.init();
+			DatabaseWrapper.getInstance().init();
 		} catch (DatabaseException e) {
 			System.out.println("ERROR IN DATABASE INITIALIZATION:\n" + e.getMessage());
 			return;
 		}
 
-		ApplicationController.directory = DatabaseWrapper.getDirectory();
+		ApplicationController.directory = DatabaseWrapper.getInstance().getDirectory();
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
 
-		DatabaseWrapper.close();
+		DatabaseWrapper.getInstance().close();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
