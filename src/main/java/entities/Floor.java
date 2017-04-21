@@ -1,4 +1,4 @@
-package controllers.shared;
+package entities;
 
 import javafx.scene.image.Image;
 

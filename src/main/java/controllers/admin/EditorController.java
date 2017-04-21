@@ -44,8 +44,8 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import controllers.shared.FloorImage;
-import controllers.shared.FloorProxy;
+import entities.FloorImage;
+import entities.FloorProxy;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -339,7 +339,7 @@ public class EditorController extends MapDisplayController
 	public void confirmBtnPressed() {
 //		this.directory.getRooms().forEach(room ->
 //				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-		DatabaseWrapper.saveDirectory(this.directory);
+		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
 	@FXML
