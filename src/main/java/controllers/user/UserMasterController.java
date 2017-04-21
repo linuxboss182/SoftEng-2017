@@ -131,7 +131,7 @@ public abstract class UserMasterController
 		//Add map
 		//this.map = new Image("/4_thefourthfloor.png");
 		// use floor proxy class to load in map
-		this.changeFloor(getFloor());
+		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
 
@@ -310,7 +310,7 @@ public abstract class UserMasterController
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
 
-		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 
 	}
 
@@ -331,7 +331,7 @@ public abstract class UserMasterController
 	 */
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(getFloor())) {
+		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
 			roomShapes.add(room.getUserSideShape());
 
 			// Add listener to select rooms on click
@@ -407,7 +407,7 @@ public abstract class UserMasterController
 
 
 	protected void changeFloor(FloorImage floor) {
-		Image map = this.switchFloors(floor);
+		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms();
 	}

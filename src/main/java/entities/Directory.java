@@ -1,5 +1,8 @@
 package entities;
 
+import controllers.shared.MapDisplayController;
+import javafx.scene.image.Image;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,6 +28,9 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 
+	// default to floor 1
+	private FloorImage floor;
+
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
 		int compName = r1.getName().compareTo(r2.getName());
@@ -41,6 +47,7 @@ public class Directory
 		this.rooms = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
+		this.floor = FloorProxy.getFloor("FAULKNER", 1);
 	}
 
 
@@ -281,6 +288,28 @@ public class Directory
 	public void setRoomLocation(Room room, Node node) {
 		room.setLocation(node);
 		node.setRoom(room);
+	}
+
+	/**
+	 * Switches the map to the given floor
+	 *
+	 * @param floor the floor we want to switch to
+	 */
+	public Image switchFloors(FloorImage floor) {
+		this.floor = floor;
+		return this.floor.display();
+	}
+
+	public FloorImage getFloor() {
+		return this.floor;
+	}
+
+	public int getFloorNum() {
+		return this.floor.getNumber();
+	}
+
+	public String getFloorName() {
+		return this.floor.getName();
 	}
 
 	public void unsetRoomLocation(Room room) {
