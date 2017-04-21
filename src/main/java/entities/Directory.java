@@ -29,7 +29,7 @@ public class Directory
 	private Room kiosk;
 
 	// default to floor 1
-	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
+	private FloorImage floor;
 
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
@@ -47,6 +47,7 @@ public class Directory
 		this.rooms = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
+		this.floor = FloorProxy.getFloor("FAULKNER", 1);
 	}
 
 
