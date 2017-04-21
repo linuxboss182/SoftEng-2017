@@ -18,29 +18,30 @@ import java.lang.reflect.InvocationTargetException;
 
 public class LoginController {
 	@FXML
-	private Label errorLabel;
+	private Label errorLbl;
 	@FXML
 	private Button cancelBtn;
 	@FXML
 	private TextField usernameField;
 	@FXML
 	private PasswordField passwordField;
+	@FXML
+	private Button loginBtn;
 
 
 
 
 	@FXML
-	public void loginClicked() throws IOException, InvocationTargetException {
-		boolean success = true;
-//		boolean success = this.usernameField.getText().equals("admin")
-//		               && this.passwordField.getText().equals("password");
+	public void loginBtnClicked() throws IOException, InvocationTargetException {
+//		boolean success = true;
+		boolean success = this.usernameField.getText().equals("admin")
+		               && this.passwordField.getText().equals("password");
 
 		if(success) {
-			// TODO: Review
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
-			errorLabel.getScene().setRoot(adminUI);
+			errorLbl.getScene().setRoot(adminUI);
 		} else {
-			this.errorLabel.setText("Incorrect Username or Password");
+			this.errorLbl.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
 		}
 
@@ -49,7 +50,7 @@ public class LoginController {
 	@FXML
 	public void cancelBtnClicked() throws IOException, InvocationTargetException {
 		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		errorLabel.getScene().setRoot(destUI);
+		errorLbl.getScene().setRoot(destUI);
 	}
 
 

@@ -8,16 +8,15 @@ import entities.Directory;
 import entities.Node;
 import entities.Professional;
 import entities.Room;
-import main.StoredProcedures;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
 /**
  * Class for saving to and loading from the database
- * 
+ *
  * Package methods:
  * - DatabaseLoader(): Constructor
- * - getDirectory(): 
+ * - getDirectory():
  * - populateDirectory(): builds a directory by loading from the database
  * - destructiveSaveDirectory(Directory): empties the database, then saves the directory
  *                                        to the database
@@ -165,7 +164,9 @@ class DatabaseLoader
 			while (resultRooms.next()) {
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = directory.addNewRoom(resultRooms.getString("roomName"),
-				                                 resultRooms.getString("roomDescription"));
+				                                 resultRooms.getString("roomDescription"),
+												 resultRooms.getDouble("labelX"),
+												 resultRooms.getDouble("labelY"));
 				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
@@ -175,21 +176,6 @@ class DatabaseLoader
 				rooms.put(resultRooms.getInt("roomID"),room); //image where?
 			}
 			resultRooms.close();
-
-//			// add rooms to nodes
-//			// TODO: save roomIDs in a map when nodes are originally loaded, then associate rooms with nodes without a new query
-//			//ResultSet resultEdges = null;
-//			resultNodes = queryNodes.executeQuery(StoredProcedures.procRetrieveNodes());
-//			while (resultNodes.next()) {
-////				PRINTLN("Loading edges and room for node " + resultNodes.getInt("nodeID"));
-//				int nodeID = resultNodes.getInt("nodeID");
-//				int roomID = resultNodes.getInt("roomID");
-////				PRINTLN("Loading room "+roomID);
-//				if (!resultNodes.wasNull()) {
-//					nodes.get(nodeID).setRoom(rooms.getOrDefault(roomID, null));
-//				}
-//			}
-//			resultNodes.close();
 
 			// add adjacency lists to nodes
 			Statement queryEdges = this.db_connection.createStatement();
@@ -259,11 +245,15 @@ class DatabaseLoader
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	r.getName(),
-																	r.getDescription());
+																	r.getDescription(),
+																	r.getLabelOffsetX(),
+																	r.getLabelOffsetY());
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
-														r.getDescription());
+														r.getDescription(),
+														r.getLabelOffsetX(),
+														r.getLabelOffsetY());
 			}
 			db.executeUpdate(query);
 		}

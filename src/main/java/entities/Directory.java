@@ -1,5 +1,8 @@
 package entities;
 
+import controllers.shared.Floor;
+import controllers.shared.FloorImage;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,9 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * The class for a Directory
- *
  */
-//TODO: I made this based off of the class diagram as best I could but there's still stuff to do
 public class Directory
 {
 
@@ -27,7 +28,7 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private Room kiosk;
-	
+
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
 		int compName = r1.getName().compareTo(r2.getName());
@@ -138,7 +139,17 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, int floor, String name, String desc, String buildingName) {
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String desc) {
+		Room newRoom = new Room(name, desc);
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		newRoom.setLocation(newNode);
+		newNode.setRoom(newRoom);
+		this.nodes.add(newNode);
+		this.rooms.add(newRoom);
+		return newNode;
+	}
+	@Deprecated
+	public Node addNewRoomNode(double x, double y, int floor, String buildingName, String name, String desc) {
 		Room newRoom = new Room(name, desc);
 		Node newNode = new Node(x, y, floor, buildingName);
 		newRoom.setLocation(newNode);
@@ -146,6 +157,10 @@ public class Directory
 		this.nodes.add(newNode);
 		this.rooms.add(newRoom);
 		return newNode;
+	}
+	@Deprecated
+	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
+		return this.addNewRoomNode(x, y, floor, "DEFAULT", name, desc);
 	}
 
 	/**
@@ -170,15 +185,37 @@ public class Directory
 	}
 
 	/**
+	 * Create a new room in this directory
+	 *
+	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 */
+	public Room addNewRoom(String name, String desc, double labelX, double labelY) {
+		Room newRoom = new Room(name, desc, labelX, labelY);
+		this.rooms.add(newRoom);
+		return newRoom;
+	}
+
+	/**
 	 * Create a new node in this directory
 	 */
+	public Node addNewNode(double x, double y, FloorImage floor) {
+		if (floor == null) throw new RuntimeException("Tried to create node with null floor");
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		this.nodes.add(newNode);
+		return newNode;
+	}
+	@Deprecated
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
 		Node newNode = new Node(x, y, floor, buildingName);
 		this.nodes.add(newNode);
 		return newNode;
 	}
+	@Deprecated
+	public Node addNewNode(double x, double y, int floor) {
+		return this.addNewNode(x, y, floor, "NO BUILDING");
+	}
 
-	// TODO: Add test cases for new Directory methods
+	// TODO: Add test cases for new Directory methods, mostly those below this TODO
 
 	/* Filtered getters */
 	/**
@@ -188,8 +225,13 @@ public class Directory
 	 *
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
-	public Set<Node> getNodesOnFloor(int floor) {
-		return this.filterNodes(node -> node.getFloor() == floor);
+	//TODO: Make this take a Floor instead
+	public Set<Node> getNodesOnFloor(FloorImage floor) {
+		return this.filterNodes(node ->
+				(node.getFloor() == floor.getNumber())
+						&&
+				node.getBuildingName().equalsIgnoreCase(floor.getName())
+		);
 	}
 
 	/**
@@ -200,8 +242,10 @@ public class Directory
 	 * @param floor
 	 * @return
 	 */
-	public Set<Room> getRoomsOnFloor(int floor) {
-		return this.filterRooms(room -> room.getLocation() != null && room.getLocation().getFloor() == floor);
+	public Set<Room> getRoomsOnFloor(FloorImage floor) {
+		return this.filterRooms(room -> room.getLocation() != null
+				&& room.getLocation().getFloor() == floor.getNumber()
+				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName()));
 	}
 
 	/**
@@ -232,7 +276,12 @@ public class Directory
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
 	}
-	
+
+	public void updateRoom(Room room, String name, String description) {
+		room.setName(name);
+		room.setDescription(description);
+	}
+
 	public void setRoomLocation(Room room, Node node) {
 		room.setLocation(node);
 		node.setRoom(room);
@@ -246,7 +295,7 @@ public class Directory
 		}
 	}
 
-	public void unsertNodeRoom(Node node) {
+	public void unsetNodeRoom(Node node) {
 		node.applyToRoom(Room::unsetLocation);
 		node.unsetRoom();
 	}
@@ -255,7 +304,7 @@ public class Directory
 		professional.addLocation(room);
 		room.addProfessional(professional);
 	}
-	
+
 	public void removeRoomFromProfessional(Room room, Professional professional) {
 		professional.removeLocation(room);
 		room.removeProfessional(professional);
@@ -270,7 +319,7 @@ public class Directory
 
 	/**
 	 * Determine if the rooms accessibly to the user are all connected
-	 * 
+	 *
 	 * This only considers rooms that have locations
 	 *
 	 * @return Whether all rooms are connected

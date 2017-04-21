@@ -26,8 +26,14 @@ enum DepthFirst
 			throws PathNotFoundException {
 		Set<Node> visited = new HashSet<>();
 		LinkedList<Node> path = this.recurse(start, dest, visited);
-		path.addFirst(start);
-		return path;
+		if (path.isEmpty()){
+			throw new PathNotFoundException("No path found between the two connections");
+		}
+		else{
+			return path;
+		}
+		//path.addFirst(start);
+		//return path;
 		//throw new PathNotFoundException("No path found between the two given nodes.");
 	}
 
@@ -46,11 +52,18 @@ enum DepthFirst
 					list = this.recurse(n, dest, visited);
 				}
 				if (!list.isEmpty()) {
-					list.push(n);
+					list.push(current);
 					return list;
 				}
 			}
 		}
+
 		return new LinkedList<>();
 	}
+
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 }

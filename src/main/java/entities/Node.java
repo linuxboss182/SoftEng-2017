@@ -88,7 +88,6 @@ public class Node
 		}
 	}
 
-	// TODO: Encapsulate to Directory
 	void setRoom(Room room) {
 		this.room = room;
 	}
@@ -103,7 +102,7 @@ public class Node
 	}
 
 	/** Set node coordinates */
-	// TODO: Encapsulate to Directory
+	// TODO: Encapsulate to Directory, or decide more clearly that single-entity changes may be exposed
 	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -187,7 +186,11 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n) {
-		return Math.hypot((n.y - this.y), (n.x - this.x));
+		if (! this.buildingName.equalsIgnoreCase(n.buildingName)) {
+			return 0;
+		} else {
+			return Math.hypot((n.y - this.y), (n.x - this.x));
+		}
 	}
 
 	/**
@@ -199,8 +202,12 @@ public class Node
 	 * @return The distance between this and the given node
 	 */
 	public double distance(Node n, double floorHeight) {
-		return Math.hypot((n.y - this.y), (n.x - this.x))
-				+ (Math.abs(this.floor - n.floor) * floorHeight);
+		if (! this.buildingName.equalsIgnoreCase(n.buildingName)) {
+			return 0;
+		} else {
+			return Math.hypot((n.y - this.y), (n.x - this.x))
+					+ (Math.abs(this.floor - n.floor) * floorHeight);
+		}
 	}
 
 	/**
@@ -265,7 +272,7 @@ public class Node
 	 *
 	 * @return This node's shape, a Circle
 	 */
-	//TODO: Maybe make a Node's shape be a Shape rather than a Circle
+	//TODO: Maybe make a Node's shape be an Icon of some sort rather than a Circle
 	public Circle getShape() {
 		if(this.circ == null) {
 			this.makeShape(); // maybe move this to the constructor

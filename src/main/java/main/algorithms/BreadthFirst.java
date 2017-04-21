@@ -53,4 +53,9 @@ enum BreadthFirst
 		}
 		return finalPath;
 	}
+
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 }

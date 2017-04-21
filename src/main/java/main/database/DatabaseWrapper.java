@@ -2,6 +2,8 @@ package main.database;
 
 import entities.Directory;
 
+// TODO: Make DBWrapper a singleton
+
 /**
  * Class for interacting with the database
  *

@@ -38,27 +38,27 @@ INSERT INTO Edges VALUES(13, 21);
 INSERT INTO Edges VALUES(21, 13);
 
 /* Inserting data of rooms into Table Rooms */
-INSERT INTO Rooms VALUES('4A', 1, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4B', 2, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4C', 3, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4D', 4, 'Storage of Patients');
-INSERT INTO Rooms VALUES('Atrium Ele', 5, 'Elevators Room');
-INSERT INTO Rooms VALUES('4RestroomAUnisex', 6, 'A bathroom');
-INSERT INTO Rooms VALUES('4RestroomBUnisex', 7, 'A bathroom');
-INSERT INTO Rooms VALUES('4E', 8, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4L', 9, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4K', 10, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4G', 11, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4H', 12, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4I', 13, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4J', 14, 'Storage of Patients');
-INSERT INTO Rooms VALUES('Hillside Ele', 15, 'Elevators Room');
-INSERT INTO Rooms VALUES('TymanConfCent', 16, 'Tyman Conference Center');
-INSERT INTO Rooms VALUES('4N', 17, 'Maintenance Closet');
-INSERT INTO Rooms VALUES('4RestroomMale', 18, 'Male Bathroom');
-INSERT INTO Rooms VALUES('4RestroomFemale', 19, 'Female Bathroom');
-INSERT INTO Rooms VALUES('4F', 20, 'Storage of Patients');
-INSERT INTO Rooms VALUES('4S', 21, 'Storage of Patients');
+INSERT INTO label VALUES('4A', 1, 'Storage of Patients');
+INSERT INTO label VALUES('4B', 2, 'Storage of Patients');
+INSERT INTO label VALUES('4C', 3, 'Storage of Patients');
+INSERT INTO label VALUES('4D', 4, 'Storage of Patients');
+INSERT INTO label VALUES('Atrium Ele', 5, 'Elevators Room');
+INSERT INTO label VALUES('4RestroomAUnisex', 6, 'A bathroom');
+INSERT INTO label VALUES('4RestroomBUnisex', 7, 'A bathroom');
+INSERT INTO label VALUES('4E', 8, 'Storage of Patients');
+INSERT INTO label VALUES('4L', 9, 'Storage of Patients');
+INSERT INTO label VALUES('4K', 10, 'Storage of Patients');
+INSERT INTO label VALUES('4G', 11, 'Storage of Patients');
+INSERT INTO label VALUES('4H', 12, 'Storage of Patients');
+INSERT INTO label VALUES('4I', 13, 'Storage of Patients');
+INSERT INTO label VALUES('4J', 14, 'Storage of Patients');
+INSERT INTO label VALUES('Hillside Ele', 15, 'Elevators Room');
+INSERT INTO label VALUES('TymanConfCent', 16, 'Tyman Conference Center');
+INSERT INTO label VALUES('4N', 17, 'Maintenance Closet');
+INSERT INTO label VALUES('4RestroomMale', 18, 'Male Bathroom');
+INSERT INTO label VALUES('4RestroomFemale', 19, 'Female Bathroom');
+INSERT INTO label VALUES('4F', 20, 'Storage of Patients');
+INSERT INTO label VALUES('4S', 21, 'Storage of Patients');
 
 /* Inserting data of employee into Table Employee */
 INSERT INTO Employees VALUES('Carla', 'Green', 1, 'Dr.');

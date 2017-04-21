@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+// TODO: Use this class more effectively
+// Move stuff here when possible, remove unneeded stuff later
 
 public abstract class MapDisplayController
 {
-	// TODO: Add click+drag to select a rectangle area of nodes/a node
-
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
 	protected static Directory directory;
@@ -36,34 +36,32 @@ public abstract class MapDisplayController
 	protected double releasedX;
 	protected double releasedY;
 
-	// TODO: Make global and load from config file
-	protected static final double DEFAULT_STROKE_WIDTH = 1.5;
-	protected static final double RECTANGLE_WIDTH = 7;
-	protected static final double RECTANGLE_HEIGHT = 7;
-	protected static final Color DEFAULT_SHAPE_COLOR = Color.web("0x0000FF");
-	protected static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
-	protected static final Color SELECTED_SHAPE_COLOR = Color.BLACK;
+	// TODO: Remove excessive unecessary state from ALL Controllers (not just this one)
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
-	protected static final Color KIOSK_COLOR = Color.YELLOW;
-	protected static final String KIOSK_NAME = "You Are Here";
-	protected static final double CIRCLE_RADIUS = 5;
 
 	protected Professional selectedProf;
-	protected String roomList;
-	protected List<Professional> proList;
-	protected List<Node> directionNodes = new ArrayList<>();
 	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
-	protected Node destNode;
 
 	protected Pane botPane;
 	protected Pane topPane;
 
-	// Default floor is the fourth because that's the one we emotionally attached to
-	protected static String building = "Faulkner";
-	protected static int floor = 1;
+	// default to floor 1
+	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
 	@FXML
 	protected Slider zoomSlider;
+
+	public static FloorImage getFloor() {
+		return floor;
+	}
+
+	public static int getFloorNum() {
+		return floor.getNumber();
+	}
+
+	public static String getFloorName() {
+		return floor.getName();
+	}
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
@@ -100,13 +98,9 @@ public abstract class MapDisplayController
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public void switchFloors(String building, int floor) {
-		this.floor = floor;
-		this.map = FloorProxy.getFloorMaps().get(building).get(floor-1).display();
-	}
-
-	public void loadMap() {
-		switchFloors(building, floor);
+	public Image switchFloors(FloorImage floor) {
+		MapDisplayController.floor = floor;
+		return floor.display();
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);

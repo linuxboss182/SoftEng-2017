@@ -1,74 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXToolbar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
-   <bottom>
-      <ToolBar fx:id="bottomToolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <Button fx:id="logAsAdmin" mnemonicParsing="false" onMouseClicked="#logAsAdminClicked" text="Login As Admin" />
-            <Pane maxWidth="-Infinity" prefHeight="30.0" prefWidth="392.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button layoutX="14.0" layoutY="3.0" mnemonicParsing="false" onMouseClicked="#sendSMSBtnClicked" text="Send Directions to Phone " />
-               </children></Pane>
-            <Pane prefHeight="30.0" prefWidth="557.0">
-               <children>
-                  <Button fx:id="doneBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="-25.0" layoutY="3.0" mnemonicParsing="false" onMouseClicked="#doneBtnClicked" prefWidth="210.0" text="Done" textAlignment="CENTER" />
-               </children></Pane>
-         </items>
-      </ToolBar>
-   </bottom>
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
    <center>
       <SplitPane fx:id="mapSplitPane" dividerPositions="0.85" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <items>
-            <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="785.0">
-               <children>
-                  <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                  <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
-                  <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0">
-                     <children>
-                        <Accordion layoutX="14.0" layoutY="26.0" />
-                     </children>
-                  </Pane>
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" />
+             <ScrollPane fx:id="mapScroll">
+                 <content>
+                     <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
+                         <children>
+                             <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                             <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                             <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
+                         </children>
+                     </AnchorPane>
+                 </content>
+             </ScrollPane>
+
+             <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
          </items>
       </SplitPane>
    </center>
-   <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <Pane prefHeight="30.0" prefWidth="556.0" />
-            <Slider fx:id="zoomSlider" prefHeight="14.0" prefWidth="264.0" />
-         </items></ToolBar>
-   </top>
    <left>
-      <GridPane prefHeight="640.0" prefWidth="369.0" BorderPane.alignment="CENTER">
+      <GridPane prefWidth="360.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -99,7 +71,8 @@
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="220.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="426.0" minHeight="10.0" prefHeight="418.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="426.0" minHeight="10.0" prefHeight="374.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="426.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label prefHeight="17.0" prefWidth="161.0" text="Directions:" GridPane.columnIndex="1">
@@ -108,10 +81,38 @@
                      </font>
                   </Label>
                   <TextFlow fx:id="directionsTextField" prefHeight="408.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
             </GridPane>
             <Separator prefWidth="200.0" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </left>
+   <top>
+      <JFXToolbar prefHeight="51.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+         <right>
+            <JFXSlider fx:id="zoomSlider" indicatorPosition="RIGHT" prefHeight="14.0" prefWidth="285.0" BorderPane.alignment="CENTER" />
+         </right>
+         <left>
+            <ImageView fx:id="logoImageView" fitHeight="46.0" fitWidth="277.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+         </left>
+         <top>
+            <JFXToolbar prefHeight="16.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
+               <center>
+                  <Label text="Faulkner Hospital" textFill="WHITE" BorderPane.alignment="CENTER" />
+               </center>
+            </JFXToolbar>
+         </top>
+      </JFXToolbar>
+   </top>
+   <bottom>
+      <JFXToolbar prefHeight="44.0" BorderPane.alignment="CENTER">
+         <center>
+            <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" style="-fx-background-color: #5087b4;" text="Done" textFill="WHITE" BorderPane.alignment="CENTER" />
+         </center>
+         <left>
+            <JFXButton fx:id="logAsAdmin" buttonType="RAISED" onMouseClicked="#logAsAdminClicked" prefHeight="25.0" prefWidth="137.0" style="-fx-background-color: #5087b4;" text="Login As Admin" textFill="WHITE" BorderPane.alignment="CENTER" />
+         </left>
+      </JFXToolbar>
+   </bottom>
 </BorderPane>

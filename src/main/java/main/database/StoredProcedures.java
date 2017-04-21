@@ -1,4 +1,4 @@
-package main;
+package main.database;
 
 import java.util.List;
 import java.util.Arrays;
@@ -24,6 +24,8 @@ public class StoredProcedures
 					+" roomID             integer PRIMARY KEY"
 					+" , roomName           varchar(200) NOT NULL"
 					+" , roomDescription varchar(1000)"
+					+" , labelX double precision NOT NULL"
+					+" , labelY double precision NOT NULL"
 					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL)",
 			"CREATE TABLE Employees ("
 					+" employeeID        integer PRIMARY KEY"
@@ -155,21 +157,22 @@ public class StoredProcedures
 
 	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName){
 		//query needs work
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", "+buildingName+")";
+		buildingName = sanitize(buildingName);
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", '"+buildingName+"')";
 	}
 
-	public static String procInsertRoom(int roomID, String roomName, String roomDescription){
+	public static String procInsertRoom(int roomID, String roomName, String roomDescription, double labelX, double labelY){
 		roomName = sanitize(roomName);
 		roomDescription = sanitize(roomDescription);
-		return "INSERT INTO Rooms (roomName, roomDescription, roomID) VALUES('"+roomName
-				+"', '"+roomDescription+"', "+roomID+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, roomID, labelX, labelY) VALUES('"+roomName
+				+"', '"+roomDescription+"', "+roomID+","+ labelX +","+labelY+ ")";
 	}
 
-	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription){
+	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription, double labelX, double labelY){
 		roomName = sanitize(roomName);
 		roomDescription = sanitize(roomDescription);
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID) VALUES('"+roomName
-				+"', '"+roomDescription+"', "+nodeID+", "+roomID+")";
+		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID, labelX, labelY) VALUES('"+roomName
+				+"', '"+roomDescription+"', "+nodeID+", "+roomID+","+ labelX +","+labelY+ ")";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
