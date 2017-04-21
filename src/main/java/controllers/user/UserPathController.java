@@ -272,7 +272,7 @@ public class UserPathController
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i + 1);
-			if (here.getFloor() == getFloorNum() && here.getFloor() == there.getFloor()) {
+			if (here.getFloor() == this.directory.getFloorNum() && here.getFloor() == there.getFloor()) {
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);

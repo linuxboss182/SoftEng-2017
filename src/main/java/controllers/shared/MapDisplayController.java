@@ -48,18 +48,6 @@ public abstract class MapDisplayController
 	@FXML
 	protected Slider zoomSlider;
 
-	public static FloorImage getFloor() {
-		return floor;
-	}
-
-	public static int getFloorNum() {
-		return floor.getNumber();
-	}
-
-	public static String getFloorName() {
-		return floor.getName();
-	}
-
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
 		this.topPane = topPane;
@@ -88,16 +76,6 @@ public abstract class MapDisplayController
 	 * @param nodes A collection of nodes to draw edges between
 	 */
 	public void redrawEdges(Collection<Node> nodes) {
-	}
-
-	/**
-	 * Switches the map to the given floor
-	 *
-	 * @param floor the floor we want to switch to
-	 */
-	public Image switchFloors(FloorImage floor) {
-		MapDisplayController.floor = floor;
-		return floor.display();
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);

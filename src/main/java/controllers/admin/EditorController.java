@@ -140,7 +140,7 @@ public class EditorController extends MapDisplayController
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
 
-		this.changeFloor(getFloor());
+		this.changeFloor(this.directory.getFloor());
 
 		this.imageViewMap.setPickOnBounds(true);
 		if(floorComboBox != null) {
@@ -292,7 +292,7 @@ public class EditorController extends MapDisplayController
 	}
 
 	private void changeFloor(FloorImage floor) {
-		Image map = this.switchFloors(floor);
+		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayGraph();
 	}
@@ -390,7 +390,7 @@ public class EditorController extends MapDisplayController
 //			this.displayNodes(directory.getNodes());
 //			this.redrawLines(directory.getNodes());
 //		} else {
-		this.displayNodes(directory.getNodesOnFloor(getFloor()));
+		this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
 		this.redrawLines();
 //		}
 	}
@@ -433,7 +433,7 @@ public class EditorController extends MapDisplayController
 	 */
 	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : directory.getNodesOnFloor(getFloor())) {
+		for (Node node : directory.getNodesOnFloor(directory.getFloor())) {
 			for (Node neighbor : node.getNeighbors()) {
 				if ((node.getFloor() == neighbor.getFloor()) &&
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
@@ -458,7 +458,7 @@ public class EditorController extends MapDisplayController
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 
-		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 	}
 
 	/**
@@ -518,7 +518,7 @@ public class EditorController extends MapDisplayController
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
-			Node newNode = directory.addNewRoomNode(x, y, getFloor(), name, description);
+			Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
@@ -533,7 +533,7 @@ public class EditorController extends MapDisplayController
 		if(x < 0 || y < 0) {
 			return;
 		}
-		Node newNode = this.directory.addNewNode(x, y, getFloor());
+		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
 
 		int size = this.selectedNodes.size();
@@ -767,7 +767,7 @@ public class EditorController extends MapDisplayController
 					botRightY = this.selectionStartY;
 				}
 				// Loop through and select/deselect all nodes in the bounds
-				this.directory.getNodesOnFloor(getFloor()).forEach(n -> {
+				this.directory.getNodesOnFloor(this.directory.getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
 						// Within the bounds, select or deselect it
 						this.selectOrDeselectNode(n);
