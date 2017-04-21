@@ -1,10 +1,7 @@
 package controllers.shared;
 
 import controllers.icons.IconController;
-import entities.Directory;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
+import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;

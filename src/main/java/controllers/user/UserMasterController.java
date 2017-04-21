@@ -1,8 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
-import controllers.admin.AddProfessionalController;
-import controllers.shared.FloorProxy;
+import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.beans.value.ChangeListener;
@@ -39,9 +38,7 @@ import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import controllers.shared.FloorImage;
-import controllers.shared.FloorProxy;
-import controllers.shared.MapDisplayController;
+import entities.FloorImage;
 
 
 public abstract class UserMasterController

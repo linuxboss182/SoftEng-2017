@@ -1,7 +1,7 @@
 package controllers.user;
 
 import controllers.SMSController;
-import controllers.shared.FloorProxy;
+import entities.FloorProxy;
 import entities.Node;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
