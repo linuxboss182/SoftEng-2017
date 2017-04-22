@@ -26,9 +26,11 @@ import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import entities.Room;
@@ -38,7 +40,7 @@ import main.ApplicationController;
 import entities.FloorImage;
 
 
-public abstract class UserMasterController
+public class UserMasterController
 		extends MapDisplayController
 		implements Initializable
 {
@@ -47,7 +49,7 @@ public abstract class UserMasterController
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
-	@FXML protected Pane nodePane;
+	@FXML private Pane nodePane;
 	@FXML protected TextField searchBar;
 	@FXML protected TextFlow directionsTextField;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
@@ -65,15 +67,6 @@ public abstract class UserMasterController
 	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
 
 
-	/* ABSTRACT METHODS */
-	/**
-	 * Function called when a room is left clicked on the map
-	 * @param room
-	 */
-	protected abstract void clickRoomAction(Room room);
-
-
-	/* NON-ABSTRACT METHODS */
 
 	/**
 	 * Get the scene this is working on
@@ -83,6 +76,10 @@ public abstract class UserMasterController
 		return this.parentBorderPane.getScene();
 	}
 
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		this.initialize();
+	}
 
 	/**
 	 * Method used to initialize superclasses
@@ -90,12 +87,12 @@ public abstract class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
+		if (startRoom == null) startRoom = directory.getKiosk();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -274,7 +271,17 @@ public abstract class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		/* Alternate load method that allows interaction with the UPC before switching scene.
+		FXMLLoader userPath = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+		BorderPane pane = userPath.load();
+		UserPathController cont = userPath.getController();
+
+		ApplicationController.getStage().setScene(new Scene(pane));
+		ApplicationController.getStage().show();
+		 */
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
+
 		this.getScene().setRoot(userPath);
 	}
 
@@ -286,9 +293,27 @@ public abstract class UserMasterController
 	}
 
 
-	/**
+	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
+
+	/**
+	 * Function called when a room is left clicked on the map
+	 * @param room
+	 */
+	protected void clickRoomAction(Room room) {
+		if (! this.changeStartBtn.isDisabled()) {
+			this.selectStartRoom(room);
+			this.changeStartBtn.setDisable(false);
+		} else {
+			this.selectEndRoom(room);
+		}
+	}
+
+	@FXML
+	public void changeStartClicked() throws IOException, InvocationTargetException {
+		this.changeStartBtn.setDisable(true);
+	}
 
 	protected void selectStartRoom(Room r) {
 		if(r == null) return;

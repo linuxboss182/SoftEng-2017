@@ -42,6 +42,8 @@ If possible, use things like "follow the sidewalk" (probably not possible)
 If possible, get turn direction upon exiting a building (requires changes elsewhere)
  */
 
+// TODO: UserPathController should not inherit from UserMasterController
+
 public class UserPathController
 		extends UserMasterController
 		implements Initializable

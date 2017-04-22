@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import entities.Room;
 
+// TODO: REMOVE THIS CLASS ENTIRELY
 
 public class UserDestinationController
 		extends UserMasterController
@@ -20,34 +21,24 @@ public class UserDestinationController
 {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//Call initialize from super class
-		this.initialize();
+		this.initialize(); // THIS IS THE ONLY LINE OF CODE THAT THIS CLASS SHOULD HAVE
 
-		if (startRoom == null) startRoom = directory.getKiosk();
+//
+//		// This has to be done after setting the kiosk
+//		this.enableOrDisableNavigationButtons();
+////		this.disableDirectionsBtn();
+////		this.disableChangeStartBtn();
+//
+//		//Listener for search bar
+//		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
-		// This has to be done after setting the kiosk
-		this.enableOrDisableNavigationButtons();
-//		this.disableDirectionsBtn();
-//		this.disableChangeStartBtn();
-
-		//Listener for search bar
-		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
-
-	}
-
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-		Parent userStart = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserStart.fxml"));
-		this.getScene().setRoot(userStart);
-		choosingEnd = false;
-		choosingStart = true;
 	}
 
 	/**
 	 * When selecting a destination, left clicking a room should select it
 	 */
-	@Override
-	protected void clickRoomAction(Room room) {
-		this.selectEndRoom(room);
-	}
+//	@Override
+//	protected void clickRoomAction(Room room) {
+//		this.selectEndRoom(room);
+//	}
 }
