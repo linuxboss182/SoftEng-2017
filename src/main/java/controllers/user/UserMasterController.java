@@ -46,10 +46,8 @@ public abstract class UserMasterController
 {
 	@FXML
 	private JFXButton logAsAdmin;
-	@FXML
-	private ImageView imageViewMap;
-	@FXML
-	private AnchorPane contentAnchor = new AnchorPane();
+//	@FXML
+//	private ImageView imageViewMap;
 	@FXML
 	private ListView<Room> directoryView;
 	@FXML
@@ -84,15 +82,11 @@ public abstract class UserMasterController
 	private Button aboutBtn;
 	@FXML
 	private ImageView logoImageView;
-	@FXML
-	private ScrollPane mapScroll = new ScrollPane();
 
-	final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1;
 	final protected double zoomMax = 6;
 
 	private double clickedX, clickedY;
-	protected double SCALE_TOTAL = 1;
 	protected static Room startRoom;
 	protected static Room endRoom;
 	// TODO: Are these still needed? They shouldn't be, because of UserStartController being a separate class.
@@ -119,6 +113,10 @@ public abstract class UserMasterController
 	}
 
 	public void initialize() {
+		this.contentAnchor = new AnchorPane();
+		this.mapScroll = new ScrollPane();
+		this.SCALE_TOTAL = 1;
+
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -179,53 +177,6 @@ public abstract class UserMasterController
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			event.consume();
-		});
-	}
-
-	private void setScrollZoom() {
-		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor =
-						(event.getDeltaY() > 0)
-								? SCALE_DELTA
-								: 1/SCALE_DELTA;
-
-				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
-					Bounds viewPort = mapScroll.getViewportBounds();
-					Bounds contentSize = contentAnchor.getBoundsInParent();
-
-					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
-					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
-
-					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
-					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					SCALE_TOTAL *= scaleFactor;
-
-					double newCenterX = centerPosX * scaleFactor;
-					double newCenterY = centerPosY * scaleFactor;
-
-					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
-					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
-				}
-
-				if (scaleFactor * SCALE_TOTAL <= 1) {
-//					SCALE_TOTAL = 1/scaleFactor;
-					zoomSlider.setValue(0);
-
-				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-//					SCALE_TOTAL = 6 / scaleFactor;
-					zoomSlider.setValue(100);
-
-				}else {
-					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
-				}
-
-			}
 		});
 	}
 

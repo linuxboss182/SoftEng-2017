@@ -64,8 +64,8 @@ public class EditorController extends MapDisplayController
 	private TextField xCoordField;
 	@FXML
 	private TextField yCoordField;
-	@FXML
-	private ImageView imageViewMap;
+//	@FXML
+//	private ImageView imageViewMap;
 	@FXML
 	private Button modifyRoomBtn;
 	@FXML
@@ -84,8 +84,6 @@ public class EditorController extends MapDisplayController
 	protected Pane linePane;
 	@FXML
 	protected Pane nodePane;
-	@FXML
-	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
 	public ComboBox<FloorProxy> floorComboBox;
 	@FXML
@@ -107,8 +105,6 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private BorderPane parentBorderPane;
 	@FXML
-	private ScrollPane mapScroll = new ScrollPane();
-	@FXML
 	private Button helpBtn;
 
 
@@ -126,8 +122,6 @@ public class EditorController extends MapDisplayController
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
 
-	final double SCALE_DELTA = 1.1;
-	protected static double SCALE_TOTAL = 1;
 	final protected double zoomMin = 1;
 	final protected double zoomMax = 6;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
@@ -135,6 +129,9 @@ public class EditorController extends MapDisplayController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.contentAnchor = new AnchorPane();
+		this.mapScroll = new ScrollPane();
+		this.SCALE_TOTAL = 1;
 		//Load
 		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
@@ -638,50 +635,7 @@ public class EditorController extends MapDisplayController
 		});
 
 		// TODO: Move to MapDisplayController
-		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor =
-						(event.getDeltaY() > 0)
-								? SCALE_DELTA
-								: 1/SCALE_DELTA;
-
-				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
-					Bounds viewPort = mapScroll.getViewportBounds();
-					Bounds contentSize = contentAnchor.getBoundsInParent();
-
-					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
-					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
-
-					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
-					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					SCALE_TOTAL *= scaleFactor;
-
-					double newCenterX = centerPosX * scaleFactor;
-					double newCenterY = centerPosY * scaleFactor;
-
-					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
-					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
-				}
-
-				if (scaleFactor * SCALE_TOTAL <= 1) {
-//					SCALE_TOTAL = 1/scaleFactor;
-					zoomSlider.setValue(0);
-
-				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-//					SCALE_TOTAL = 6 / scaleFactor;
-					zoomSlider.setValue(100);
-
-				}else {
-					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
-				}
-
-			}
-		});
+		setScrollZoom();
 
 		contentAnchor.setOnMousePressed(e->{
 			clickedX = e.getX();

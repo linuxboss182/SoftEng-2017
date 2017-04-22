@@ -4,9 +4,15 @@ import controllers.icons.IconController;
 import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -20,6 +26,16 @@ import java.util.List;
 
 public abstract class MapDisplayController
 {
+	protected final double SCALE_DELTA = 1.1;
+	protected double SCALE_TOTAL;
+
+	@FXML
+	public AnchorPane contentAnchor;
+	@FXML
+	protected ImageView imageViewMap;
+	@FXML
+	protected ScrollPane mapScroll;
+
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
 	protected static Directory directory;
@@ -76,6 +92,55 @@ public abstract class MapDisplayController
 	 * @param nodes A collection of nodes to draw edges between
 	 */
 	public void redrawEdges(Collection<Node> nodes) {
+	}
+
+	protected void setScrollZoom() {
+		this.contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
+			@Override
+			public void handle(ScrollEvent event) {
+				event.consume();
+				System.out.println("HERE");
+				if (event.getDeltaY() == 0) {
+					return;
+				}
+				double scaleFactor =
+						(event.getDeltaY() > 0)
+								? SCALE_DELTA
+								: 1/SCALE_DELTA;
+
+				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
+					Bounds viewPort = mapScroll.getViewportBounds();
+					Bounds contentSize = contentAnchor.getBoundsInParent();
+
+					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+
+					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+
+					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+					SCALE_TOTAL *= scaleFactor;
+
+					double newCenterX = centerPosX * scaleFactor;
+					double newCenterY = centerPosY * scaleFactor;
+
+					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+				}
+
+				if (scaleFactor * SCALE_TOTAL <= 1) {
+//					SCALE_TOTAL = 1/scaleFactor;
+					zoomSlider.setValue(0);
+
+				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
+//					SCALE_TOTAL = 6 / scaleFactor;
+					zoomSlider.setValue(100);
+
+				}else {
+					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
+				}
+
+			}
+		});
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
