@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,45 +44,22 @@ import entities.FloorImage;
 
 public abstract class UserMasterController
 		extends MapDisplayController
+		implements Initializable
 {
-	@FXML
-	private JFXButton logAsAdmin;
-//	@FXML
-//	private ImageView imageViewMap;
-	@FXML
-	private ListView<Room> directoryView;
-	@FXML
-	private Button getDirectionsBtn;
-	@FXML
-	private Button changeStartBtn;
-	@FXML
-	private Pane linePane;
-	@FXML
-	protected TextField searchBar;
-	@FXML
-	private Pane nodePane;
-	@FXML
-	protected TextFlow directionsTextField;
-	@FXML
-	private GridPane sideGridPane;
-	@FXML
-	private ComboBox<FloorProxy> floorComboBox;
-	@FXML
-	private ComboBox buildingChoiceBox;
-	@FXML
-	private ToolBar bottomToolbar;
-	@FXML
-	private BorderPane parentBorderPane;
-	@FXML
-	private SplitPane mapSplitPane;
-	@FXML
-	private GridPane destGridPane;
-	@FXML
-	private GridPane bottomGridPane;
-	@FXML
-	private Button aboutBtn;
-	@FXML
-	private ImageView logoImageView;
+	@FXML private JFXButton logAsAdmin;
+	@FXML private ListView<Room> directoryView;
+	@FXML private Button getDirectionsBtn;
+	@FXML private Button changeStartBtn;
+	@FXML protected Pane linePane;
+	@FXML protected Pane nodePane;
+	@FXML protected TextField searchBar;
+	@FXML protected TextFlow directionsTextField;
+	@FXML private ComboBox<FloorProxy> floorComboBox;
+	@FXML private BorderPane parentBorderPane;
+	@FXML private SplitPane mapSplitPane;
+	@FXML private GridPane destGridPane;
+	@FXML private Button aboutBtn;
+	@FXML private ImageView logoImageView;
 
 	private double clickedX, clickedY;
 	protected static Room startRoom;

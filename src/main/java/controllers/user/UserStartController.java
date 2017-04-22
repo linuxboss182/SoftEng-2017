@@ -21,8 +21,7 @@ public class UserStartController
 {
 
 
-	@FXML
-	private Button backBtn;
+	@FXML private Button backBtn;
 
 
 	final double SCALE_DELTA = 1.1;

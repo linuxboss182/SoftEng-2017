@@ -1,5 +1,6 @@
 package controllers.admin;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,63 +48,30 @@ import main.database.DatabaseWrapper;
 import entities.FloorImage;
 import entities.FloorProxy;
 
-public class EditorController extends MapDisplayController
+public class EditorController
+		extends MapDisplayController
 		implements Initializable
 {
-	private static final boolean DEBUGGING = false;
-
-	@FXML
-	private Button addRoomBtn;
-	@FXML
-	private Button logoutBtn;
-	@FXML
-	private TextField nameField;
-	@FXML
-	private TextArea descriptField;
-	@FXML
-	private TextField xCoordField;
-	@FXML
-	private TextField yCoordField;
-//	@FXML
-//	private ImageView imageViewMap;
-	@FXML
-	private Button modifyRoomBtn;
-	@FXML
-	private Button cancelBtn;
-	@FXML
-	private Button deleteRoomBtn;
-	@FXML
-	private Button confirmBtn;
-//	@FXML
-//	private ChoiceBox<Professional> proChoiceBox;
-	@FXML
-	private Button addCustomProBtn;
-	@FXML
-	private Button deleteProfBtn;
-	@FXML
-	protected Pane linePane;
-	@FXML
-	protected Pane nodePane;
-	@FXML
-	public ComboBox<FloorProxy> floorComboBox;
-	@FXML
-	public ComboBox buildingComboBox;
-	@FXML
-	public TableView<Professional> roomProfTable;
-	@FXML
-	private TableColumn<Professional, String> roomCol;
-	@FXML
-	private TableColumn<Professional, String> profCol;
-	@FXML
-	private Text roomName;
-	@FXML
-	private Text yPos;
-	@FXML
-	private Label xPos;
-	@FXML
-	private ComboBox<Algorithm> algorithmComboBox;
-	@FXML
-	private Button helpBtn;
+	@FXML private JFXButton addBtn;
+	@FXML private Button logoutBtn;
+	@FXML private TextField nameField;
+	@FXML private TextArea descriptField;
+	@FXML private TextField xCoordField;
+	@FXML private TextField yCoordField;
+	@FXML private Button confirmBtn;
+	@FXML private Button addCustomProBtn;
+	@FXML private Button deleteProfBtn;
+	@FXML protected Pane linePane;
+	@FXML protected Pane nodePane;
+	@FXML public ComboBox<FloorProxy> floorComboBox;
+	@FXML public TableView<Professional> roomProfTable;
+	@FXML private TableColumn<Professional, String> roomCol;
+	@FXML private TableColumn<Professional, String> profCol;
+	@FXML private Text roomName;
+	@FXML private Text yPos;
+	@FXML private Label xPos;
+	@FXML private ComboBox<Algorithm> algorithmComboBox;
+	@FXML private Button helpBtn;
 
 
 //	protected Node selectedNode; // you select a node by double clicking

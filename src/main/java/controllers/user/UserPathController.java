@@ -50,10 +50,8 @@ public class UserPathController
 	private static final double PATH_WIDTH = 4.0;
 	final double SCALE_DELTA = 1.1;
 	private double clickedX, clickedY;
-	@FXML
-	private Button doneBtn;
-	@FXML
-	private AnchorPane floorsTraveledAnchorPane;
+	@FXML private Button doneBtn;
+	@FXML private AnchorPane floorsTraveledAnchorPane;
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 

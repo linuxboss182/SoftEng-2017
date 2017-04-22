@@ -33,17 +33,12 @@ public abstract class MapDisplayController
 	final protected double zoomMax = 6;
 	protected double SCALE_TOTAL = 1;
 
-	@FXML
-	public AnchorPane contentAnchor = new AnchorPane();
-	@FXML
-	protected ImageView imageViewMap;
-	@FXML
-	protected ScrollPane mapScroll= new ScrollPane();
+	@FXML public AnchorPane contentAnchor = new AnchorPane();
+	@FXML protected ImageView imageViewMap;
+	@FXML protected ScrollPane mapScroll= new ScrollPane();
 
-	protected Image map;
-	protected List<Line> lines = new ArrayList<Line>();
-	protected static Directory directory;
-	protected static IconController iconController;
+	protected Directory directory;
+	protected IconController iconController;
 
 	// Primary is left click and secondary is right click
 	// these keep track of which button was pressed last on the mouse
