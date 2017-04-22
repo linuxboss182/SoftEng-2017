@@ -1,6 +1,8 @@
 package controllers.user;
 
+import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
+import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.fxml.FXML;
@@ -12,22 +14,27 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import entities.Room;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import main.ApplicationController;
 import main.DirectionsGenerator;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
@@ -45,110 +52,26 @@ If possible, get turn direction upon exiting a building (requires changes elsewh
 // TODO: UserPathController should not inherit from UserMasterController
 
 public class UserPathController
-		extends UserMasterController
+		extends MapDisplayController
 		implements Initializable
 {
+	@FXML private JFXButton logAsAdmin;
+	@FXML protected Pane linePane;
+	@FXML private Pane nodePane;
+	@FXML protected TextFlow directionsTextField;
+	@FXML private BorderPane parentBorderPane;
+	@FXML private SplitPane mapSplitPane;
+	@FXML private ImageView logoImageView;
+
+	@FXML private Button doneBtn;
+	@FXML private AnchorPane floorsTraveledAnchorPane;
 
 	private static final double PATH_WIDTH = 4.0;
 	final double SCALE_DELTA = 1.1;
-	private double clickedX, clickedY;
-	@FXML private Button doneBtn;
-	@FXML private AnchorPane floorsTraveledAnchorPane;
+	private double clickedX;
+	private double clickedY;
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		this.initialize();
-		List<Node> ret;
-
-		// Check if either start or destination is null (this should be impossible)
-		// TODO: Get path _before_ openng UserPathController
-		if (startRoom == null || endRoom == null) {
-			try {
-				this.doneBtnClicked();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.err.println("Error loading user UserDestination.fxml");
-			}
-			return;
-		}
-
-		try {
-			ret = Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
-		} catch (PathNotFoundException e) {
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setTitle("No Path Found");
-			alert.setHeaderText(null);
-			alert.setContentText("There is no existing path to your destination. \n" +
-					"Please check your start and end location and try again");
-			alert.showAndWait();
-			// TODO: Move the pathfinding (and the error handling) to UserMasterController
-			return;
-		}
-		if (ret.isEmpty()) {
-			// This is actually an impossible place to get to if the algorithms are correct
-		}
-
-		startRoom.getUserSideShape().setScaleX(1.5);
-		startRoom.getUserSideShape().setScaleY(1.5);
-
-		endRoom.getUserSideShape().setScaleX(1.5);
-		endRoom.getUserSideShape().setScaleY(1.5);
-
-		// change displayed floor to match the floor that the start node is on
-		Node startNode = startRoom.getLocation();
-		if (startNode == null) {
-			// Handle this better (though it should be impossible)
-			throw new RuntimeException("Start room was null; FIXME");
-		}
-		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
-
-		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
-
-		this.paintPath(this.getPathOnFloor(startFloor, ret));
-		this.directionsTextField.getChildren().clear();
-
-		textDirections.setText(DirectionsGenerator.fromPath(ret));
-		//Call text directions
-		this.directionsTextField.getChildren().add(textDirections);
-
-
-		/* Draw the buttons for each floor on a multi-floor path. */
-
-		List<MiniFloor> floors = new ArrayList<>();
-
-		MiniFloor last = new MiniFloor(0, "");
-		MiniFloor here = new MiniFloor(ret.get(0).getFloor(), ret.get(0).getBuildingName());
-		MiniFloor next = new MiniFloor(ret.get(ret.size()-1).getFloor(), ret.get(ret.size()-1).getBuildingName());
-		// add starting floor
-		floors.add(here);
-		this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
-		//prints all the floors on the path in order
-// 		System.out.println(ret.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
-
-		System.out.println(ret);
-		System.out.println(ret.stream().map(n -> n.getBuildingName()).collect(Collectors.toList()));
-		for (int i = 1; i < ret.size()-1; ++i) {
-			System.out.println(here.building + " " + here.number);
-			last = here;
-			here = new MiniFloor(ret.get(i).getFloor(), ret.get(i).getBuildingName());
-			next = new MiniFloor(ret.get(i+1).getFloor(), ret.get(i+1).getBuildingName());
-//			System.out.println(last+" "+here+" "+next);
-			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
-				floors.add(here);
-				this.createNewFloorButton(here, this.getPathOnFloor(here, ret), floors.size());
-			}
-		}
-		// Check that the last node's floor (which will always be 'next') is in the list
-		last = floors.get(floors.size()-1);
-		if (! last.isSameFloor(next)) {
-			floors.add(next);
-			this.createNewFloorButton(next, this.getPathOnFloor(next, ret), floors.size());
-		}
-
-	}
 
 	/**
 	 * Inner class for generating and comparing floors quickly
@@ -165,6 +88,125 @@ public class UserPathController
 		public boolean isSameFloor(MiniFloor other) {
 			return (other != null) && (this.number == other.number) &&
 					this.building.equalsIgnoreCase(other.building);
+		}
+	}
+
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+
+		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+		this.directory = ApplicationController.getDirectory();
+		iconController = ApplicationController.getIconController();
+
+		this.changeFloor(this.directory.getFloor());
+		this.imageViewMap.setPickOnBounds(true);
+
+		// TODO: Move zoom stuff to MapDisplayController
+		// TODO: Set zoom based on window size
+		zoomSlider.setValue(0);
+		setZoomSliding();
+
+		this.displayRooms();
+		iconController.resetAllRooms();
+
+		setScrollZoom();
+
+		contentAnchor.setOnMousePressed(event -> {
+			clickedX = event.getX();
+			clickedY = event.getY();
+		});
+
+		contentAnchor.setOnMouseDragged(event -> {
+			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			event.consume();
+		});
+
+		setHotkeys();
+	}
+
+	/**
+	 * Attempt to set up this scene in preparation to display a path between the given rooms
+	 *
+	 * If either room is null or the path does not exist, an empty Optional is returned.
+	 *
+	 * If the path does not exist, an alert is displayed.
+	 *
+	 * @param startRoom The room to start from
+	 * @param endRoom The room to end from
+	 * @return this if successful, or an empty Optional if an error occurs
+	 */
+	boolean preparePathSceneSuccess(Room startRoom, Room endRoom) {
+		if ((startRoom == null) || (endRoom == null)) {
+			return false;
+		}
+
+		Node startNode = startRoom.getLocation();
+		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
+		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
+
+		List<Node> ret = this.getPathOrAlert(startRoom, endRoom);
+		if (ret == null) {
+			return false;
+		}
+
+		this.paintPath(this.getPathOnFloor(startFloor, ret));
+		this.directionsTextField.getChildren().clear();
+
+		textDirections.setText(DirectionsGenerator.fromPath(ret));
+		//Call text directions
+		this.directionsTextField.getChildren().add(textDirections);
+
+		/* Draw the buttons for each floor on a multi-floor path. */
+		drawMiniMaps(ret);
+
+//		startRoom.getUserSideShape().setScaleX(1.5);
+//		startRoom.getUserSideShape().setScaleY(1.5);
+//		endRoom.getUserSideShape().setScaleX(1.5);
+//		endRoom.getUserSideShape().setScaleY(1.5);
+
+		return true;
+	}
+
+	/**
+	 * Draw the minimaps for floor-switching
+	 *
+	 * @param path The path to draw floors for
+	 */
+	private void drawMiniMaps(List<Node> path) {
+		List<MiniFloor> floors = new ArrayList<>();
+
+		MiniFloor last = new MiniFloor(0, "");
+		MiniFloor here = new MiniFloor(path.get(0).getFloor(), path.get(0).getBuildingName());
+		MiniFloor next = new MiniFloor(path.get(path.size()-1).getFloor(), path.get(path.size()-1).getBuildingName());
+		// add starting floor
+		floors.add(here);
+		this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
+		//prints all the floors on the path in order
+// 		System.out.println(path.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
+
+		System.out.println(path);
+		System.out.println(path.stream().map(n -> n.getBuildingName()).collect(Collectors.toList()));
+		for (int i = 1; i < path.size()-1; ++i) {
+			System.out.println(here.building + " " + here.number);
+			last = here;
+			here = new MiniFloor(path.get(i).getFloor(), path.get(i).getBuildingName());
+			next = new MiniFloor(path.get(i+1).getFloor(), path.get(i+1).getBuildingName());
+//			System.out.println(last+" "+here+" "+next);
+			// Check when there is a floor A -> floor B -> floor B transition and save floor B
+			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
+				floors.add(here);
+				this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
+			}
+		}
+		// Check that the last node's floor (which will always be 'next') is in the list
+		last = floors.get(floors.size()-1);
+		if (! last.isSameFloor(next)) {
+			floors.add(next);
+			this.createNewFloorButton(next, this.getPathOnFloor(next, path), floors.size());
 		}
 	}
 
@@ -211,6 +253,7 @@ public class UserPathController
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
 
+	// TODO: Draw by segments, not by floors
 	private ArrayList<Node> getPathOnFloor(MiniFloor floor, List<Node> allPath) {
 		ArrayList<Node> path = new ArrayList<>();
 		for(Node n : allPath) {
@@ -221,16 +264,14 @@ public class UserPathController
 
 	@FXML
 	public void doneBtnClicked() throws IOException {
-		startRoom.getUserSideShape().setScaleX(1);
-		startRoom.getUserSideShape().setScaleY(1);
-		endRoom.getUserSideShape().setScaleX(1);
-		endRoom.getUserSideShape().setScaleY(1);
+//		startRoom.getUserSideShape().setScaleX(1);
+//		startRoom.getUserSideShape().setScaleY(1);
+//		endRoom.getUserSideShape().setScaleX(1);
+//		endRoom.getUserSideShape().setScaleY(1);
 
 		iconController.resetAllRooms();
-		startRoom = null;
-		endRoom = null;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.getScene().setRoot(userPath);
+		this.floorsTraveledAnchorPane.getScene().setRoot(userPath);
 	}
 
 	@FXML
@@ -280,4 +321,57 @@ public class UserPathController
 		this.linePane.getChildren().setAll(path);
 	}
 
+
+	/**
+	 * Get a path between the given rooms, showing an alert if there is no path
+	 *
+	 * @return A list of nodes representing the path, or null if no path is found
+	 */
+	private List<Node> getPathOrAlert(Room startRoom, Room endRoom) {
+		try {
+			return Pathfinder.findPath(startRoom.getLocation(), endRoom.getLocation());
+		} catch (PathNotFoundException e) {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("No Path Found");
+			alert.setHeaderText(null);
+			alert.setContentText("There is no existing path to your destination. \n" +
+					"Please check your start and end location and try again");
+			alert.showAndWait();
+
+			return null;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	@Override
+	protected void redisplayMapItems() {
+		this.displayRooms();
+	}
+
+	private void displayRooms() {
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
+			roomShapes.add(room.getUserSideShape());
+		}
+		this.nodePane.getChildren().setAll(roomShapes);
+	}
+
+	@FXML
+	public void logAsAdminClicked()
+			throws IOException, InvocationTargetException {
+		// Unset navigation targets for after logout
+		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+		floorsTraveledAnchorPane.getScene().setRoot(loginPrompt);
+	}
 }
