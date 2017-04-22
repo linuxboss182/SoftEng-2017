@@ -4,8 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -22,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -37,8 +33,6 @@ import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import entities.FloorImage;
-
 
 public class UserMasterController
 		extends MapDisplayController
@@ -51,7 +45,6 @@ public class UserMasterController
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
 	@FXML protected TextField searchBar;
-	@FXML protected TextFlow directionsTextField;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
@@ -59,9 +52,10 @@ public class UserMasterController
 	@FXML private Button aboutBtn;
 	@FXML private ImageView logoImageView;
 
-	private double clickedX, clickedY;
-	protected static Room startRoom;
-	protected static Room endRoom;
+	private double clickedX;
+	private double clickedY;
+	protected Room startRoom;
+	protected Room endRoom;
 
 
 	/**
@@ -96,41 +90,33 @@ public class UserMasterController
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
-		// TODO: Move zoom stuff to MapDisplayController
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
 		setZoomSliding();
 
-		if(floorComboBox != null) {
-			initfloorComboBox();
-		}
+		initfloorComboBox();
 
 		this.displayRooms();
 		iconController.resetAllRooms();
-		if(this.directoryView != null) {
-			this.populateListView();
-		}
 
-		// TODO: Move to MapDisplayController
+		this.populateListView();
+
 		setScrollZoom();
 
 		// TODO: See if there's a way to include this in the OnMouseDragged listener
-		getCoordsFromMouseClick();
 
-		setMouseDragPanning();
+		setMouseMapListeners();
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 	}
 
-	private void getCoordsFromMouseClick() {
+	private void setMouseMapListeners() {
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();
 		});
-	}
 
-	private void setMouseDragPanning() {
 		contentAnchor.setOnMouseDragged(event -> {
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
@@ -184,8 +170,6 @@ public class UserMasterController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		// Unset navigation targets for after logout
-		startRoom = null;
-		endRoom = null;
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
 	}
@@ -264,19 +248,20 @@ public class UserMasterController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
-		/* Alternate load method that allows interaction with the UPC before switching scene.
-		FXMLLoader userPath = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
-		BorderPane pane = userPath.load();
-		UserPathController cont = userPath.getController();
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+		BorderPane pane = loader.load();
+		UserPathController controller = loader.getController();
 
-		ApplicationController.getStage().setScene(new Scene(pane));
-		ApplicationController.getStage().show();
-		 */
-		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-
-		this.getScene().setRoot(userPath);
+		/* change to a scene with the path */
+		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+			ApplicationController.getStage().setScene(new Scene(pane));
+			ApplicationController.getStage().show();
+		} else {
+			this.redisplayMapItems();
+		}
+//		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
+//		this.getScene().setRoot(userPath);
 	}
-
 
 	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
