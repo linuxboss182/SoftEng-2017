@@ -4,14 +4,13 @@ import controllers.icons.IconController;
 import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -52,10 +51,8 @@ public abstract class MapDisplayController
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
-	@FXML
-	protected Slider zoomSlider;
-	@FXML
-	protected BorderPane parentBorderPane;
+	@FXML protected Slider zoomSlider;
+	@FXML protected BorderPane parentBorderPane;
 
 	// TODO: move shared initializaton to MDC
 //	@Override
@@ -99,51 +96,49 @@ public abstract class MapDisplayController
 		this.redisplayMapItems();
 	}
 
+
 	protected void setScrollZoom() {
 
-		this.contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override
-			public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor = (event.getDeltaY() > 0)
-									 ? SCALE_DELTA
-									 : 1/SCALE_DELTA;
-
-				if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
-					Bounds viewPort = mapScroll.getViewportBounds();
-					Bounds contentSize = contentAnchor.getBoundsInParent();
-
-					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
-					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
-
-					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
-					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					currentScale *= scaleFactor;
-
-					double newCenterX = centerPosX * scaleFactor;
-					double newCenterY = centerPosY * scaleFactor;
-
-					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
-					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
-				}
-
-				if (scaleFactor * currentScale <= 1) {
-					currentScale = 1/scaleFactor;
-					zoomSlider.setValue(0);
-
-				}else if(scaleFactor * currentScale >= 5.5599173134922495) {
-					currentScale = 6 / scaleFactor;
-					zoomSlider.setValue(100);
-
-				}else {
-					zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
-				}
-
+		this.contentAnchor.setOnScroll(event -> {
+			event.consume();
+			if (event.getDeltaY() == 0) {
+				return;
 			}
+			double scaleFactor = (event.getDeltaY() > 0)
+								 ? SCALE_DELTA
+								 : 1/SCALE_DELTA;
+
+			if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
+				Bounds viewPort = mapScroll.getViewportBounds();
+				Bounds contentSize = contentAnchor.getBoundsInParent();
+
+				double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+
+				double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+
+				mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+				mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+				currentScale *= scaleFactor;
+
+				double newCenterX = centerPosX * scaleFactor;
+				double newCenterY = centerPosY * scaleFactor;
+
+				mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+				mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+			}
+
+			if (scaleFactor * currentScale <= 1) {
+				currentScale = 1/scaleFactor;
+				zoomSlider.setValue(0);
+
+			}else if(scaleFactor * currentScale >= 5.5599173134922495) {
+				currentScale = 6 / scaleFactor;
+				zoomSlider.setValue(100);
+
+			}else {
+				zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
+			}
+
 		});
 
 	}
