@@ -183,12 +183,6 @@ public class EditorController
 		}
 	}
 
-	private void changeFloor(FloorImage floor) {
-		Image map = this.directory.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.redisplayGraph();
-	}
-
 	@FXML
 	public void addProfToRoom() {
 		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
@@ -263,6 +257,11 @@ public class EditorController
 
 
 	/* **** Non-FXML functions **** */
+
+	@Override
+	protected void redisplayMapItems() {
+		this.redisplayGraph();
+	}
 
 	/**
 	 * Redraw all elements of the map and the professionals' elements

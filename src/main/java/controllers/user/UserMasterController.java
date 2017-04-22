@@ -188,8 +188,14 @@ public class UserMasterController
 		endRoom = null;
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
+	}
 
-
+	/**
+	 * Called by MapDisplayController when changing floor
+	 */
+	@Override
+	protected void redisplayMapItems() {
+		this.displayRooms();
 	}
 
 	/**
@@ -269,13 +275,6 @@ public class UserMasterController
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
 
 		this.getScene().setRoot(userPath);
-	}
-
-
-	protected void changeFloor(FloorImage floor) {
-		Image map = this.directory.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.displayRooms();
 	}
 
 

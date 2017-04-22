@@ -86,7 +86,17 @@ public abstract class MapDisplayController
 	 *
 	 * @param nodes A collection of nodes to draw edges between
 	 */
-	public void redrawEdges(Collection<Node> nodes) {
+	public void redrawEdges(Collection<Node> nodes) {}
+
+	/**
+	 * Method to redisplay anything that should be drawn on the map
+	 */
+	protected abstract void redisplayMapItems();
+
+	protected void changeFloor(FloorImage floor) {
+		Image map = this.directory.switchFloors(floor);
+		this.imageViewMap.setImage(map);
+		this.redisplayMapItems();
 	}
 
 	protected void setScrollZoom() {
