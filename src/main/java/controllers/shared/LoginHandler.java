@@ -17,10 +17,10 @@ public class LoginHandler
 
 	public void addAccount(String username, String password, Boolean isAdmin){
 		String uppercasedUsername = username.toUpperCase();
-		if (isAdmin){
+		if (isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)){
 			this.adminLogins.put(uppercasedUsername, password);
 		}
-		else {
+		else if (!isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)) {
 			this.professionalLogins.put(uppercasedUsername, password);
 		}
 	}
@@ -32,6 +32,19 @@ public class LoginHandler
 		}
 		else if (professionalLogins.containsKey(uppercasedUsername)) {
 			professionalLogins.remove(uppercasedUsername);
+		}
+	}
+
+	public void changePassword(String username, String oldPassword, String newPassword){
+		String uppercasedUsername = username.toUpperCase();
+		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(oldPassword))){
+			adminLogins.put(uppercasedUsername, newPassword);
+		}
+		else if (professionalLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(professionalLogins.get(uppercasedUsername).equals(oldPassword))){
+			professionalLogins.put(uppercasedUsername, newPassword);
+		}
+		else{
+			//throw an error or something idk
 		}
 	}
 
