@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -39,7 +38,6 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import entities.FloorImage;
 import entities.FloorProxy;
 
 public class EditorController
@@ -447,7 +445,7 @@ public class EditorController
 		this.selectedNodes.get(0).applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
 			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
-			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
+			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
