@@ -8,6 +8,7 @@ public enum Type
 	ELEVATOR,
 	STAIRS,
 	PORTAL,
-	BATHROOM,
+	OUTSIDE,
+	HALLWAY,
 	;
 }

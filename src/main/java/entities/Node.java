@@ -24,8 +24,10 @@ public class Node
 					return Type.STAIRS;
 				case "portal":
 					return Type.PORTAL;
-				case "bathroom":
-					return Type.BATHROOM;
+				case "hallway":
+					return Type.HALLWAY;
+				case "outside":
+					return Type.OUTSIDE;
 				default:
 					return null;
 			}
