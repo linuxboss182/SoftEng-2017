@@ -92,8 +92,6 @@ public abstract class UserMasterController
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-		this.setPanes(linePane, nodePane);
-
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 
@@ -235,7 +233,7 @@ public abstract class UserMasterController
 				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
 			});
 		}
-		this.topPane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**

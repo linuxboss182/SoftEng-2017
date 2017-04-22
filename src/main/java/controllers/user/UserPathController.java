@@ -277,7 +277,7 @@ public class UserPathController
 				path.add(line);
 			}
 		}
-		this.botPane.getChildren().setAll(path);
+		this.linePane.getChildren().setAll(path);
 	}
 
 	/**

@@ -54,9 +54,6 @@ public abstract class MapDisplayController
 	protected Professional selectedProf;
 	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 
-	protected Pane botPane;
-	protected Pane topPane;
-
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
@@ -65,27 +62,29 @@ public abstract class MapDisplayController
 	@FXML
 	protected BorderPane parentBorderPane;
 
-	public void setPanes(Pane botPane, Pane topPane) {
-		this.botPane = botPane;
-		this.topPane = topPane;
-	}
+	// TODO: move shared initializaton to MDC
+//	@Override
+//	public void initialize(URL location, ResourceBundle resources) {
+//		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
+//		iconController = ApplicationController.getIconController();
+//	}
 
 
-	//This function takes in two nodes, displays a
-	@Deprecated
-	public void paintLine(Node start, Node finish) {
-		if (start.getFloor() == finish.getFloor()) {
-			Line line = new Line();
-			line.setStartX(start.getX());
-			line.setStartY(start.getY());
-			line.setFill(this.CONNECTION_LINE_COLOR);
-			line.setEndX(finish.getX());
-			line.setEndY(finish.getY());
-			this.lines.add(line);
-			this.botPane.getChildren().add(line);
-			line.setVisible(true);
-		}
-	}
+//	//This function takes in two nodes, displays a
+//	@Deprecated
+//	public void paintLine(Node start, Node finish) {
+//		if (start.getFloor() == finish.getFloor()) {
+//			Line line = new Line();
+//			line.setStartX(start.getX());
+//			line.setStartY(start.getY());
+//			line.setFill(this.CONNECTION_LINE_COLOR);
+//			line.setEndX(finish.getX());
+//			line.setEndY(finish.getY());
+//			this.lines.add(line);
+//			this.botPane.getChildren().add(line);
+//			line.setVisible(true);
+//		}
+//	}
 
 	/**
 	 * Display any edges between any of the given nodes

@@ -97,7 +97,6 @@ public class EditorController
 		this.mapScroll = new ScrollPane();
 		this.SCALE_TOTAL = 1;
 		//Load
-		this.setPanes(linePane, nodePane); //Set the panes
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
 
@@ -120,7 +119,7 @@ public class EditorController
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
 		this.contentAnchor.setPickOnBounds(false);
-		this.topPane.setPickOnBounds(false);
+		this.nodePane.setPickOnBounds(false);
 
 		this.installPaneListeners();
 		this.setUpAlgorithmChoiceBox();
@@ -188,7 +187,7 @@ public class EditorController
 
 		try {
 			Parent userUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-			this.botPane.getScene().setRoot(userUI);
+			this.linePane.getScene().setRoot(userUI);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -315,7 +314,7 @@ public class EditorController
 			});
 			label.setOnMouseReleased(event -> this.beingDragged = false);
 		}
-		this.topPane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	//Editor
@@ -325,10 +324,10 @@ public class EditorController
 		for (Node n : nodes) {
 			nodeShapes.add(n.getShape());
 		}
-		this.topPane.getChildren().setAll(nodeShapes);
+		this.nodePane.getChildren().setAll(nodeShapes);
 
 		// Does the same thing, but is hellish to read.
-//		this.topPane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUserSideShape).collect(Collectors.toSet()));
+//		this.nodePane.getChildren().setAll(this.directory.getNodes().stream().map(Node::getUserSideShape).collect(Collectors.toSet()));
 	}
 
 	/**
@@ -349,7 +348,7 @@ public class EditorController
 //				}
 			}
 		}
-		this.botPane.getChildren().setAll(lines);
+		this.linePane.getChildren().setAll(lines);
 	}
 
 	/**
@@ -535,7 +534,7 @@ public class EditorController
 	///////////////////////
 
 	public void installPaneListeners(){
-		botPane.setOnMouseClicked(e -> {
+		linePane.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
 			if(e.getClickCount() == 2) {
@@ -588,7 +587,7 @@ public class EditorController
 				r.setStroke(Color.BLUE);
 				r.setOpacity(0.5);
 				this.redisplayAll();
-				this.botPane.getChildren().add(r);
+				this.linePane.getChildren().add(r);
 			}
 
 			if(!beingDragged && !this.toggleShowRooms) {
@@ -838,15 +837,15 @@ public class EditorController
 		if(toggleShowRooms) {
 			// for now, disable dragging
 			this.imageViewMap.setDisable(true);
-			this.botPane.setDisable(true);
-			this.botPane.getChildren().clear();
-			this.topPane.getChildren().clear();
+			this.linePane.setDisable(true);
+			this.linePane.getChildren().clear();
+			this.nodePane.getChildren().clear();
 			this.displayAdminSideRooms();
 
 		} else {
 			// re-enable dragging
 			this.imageViewMap.setDisable(false);
-			this.botPane.setDisable(false);
+			this.linePane.setDisable(false);
 			this.redisplayAll();
 		}
 	}
@@ -863,7 +862,7 @@ public class EditorController
 			 * that is reallllllllly helpful for a lot of stuff
 			 */
 		}
-		this.topPane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/*
