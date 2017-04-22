@@ -6,26 +6,17 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import main.ApplicationController;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.ResourceBundle;
 
 // TODO: Use this class more effectively
 // Move stuff here when possible, remove unneeded stuff later
@@ -35,7 +26,7 @@ public abstract class MapDisplayController
 	protected final double SCALE_DELTA = 1.1;
 	final protected double zoomMin = 1;
 	final protected double zoomMax = 6;
-	protected double SCALE_TOTAL = 1;
+	protected double currentScale = 1;
 
 	@FXML public AnchorPane contentAnchor = new AnchorPane();
 	@FXML protected ImageView imageViewMap;
@@ -111,7 +102,7 @@ public abstract class MapDisplayController
 									 ? SCALE_DELTA
 									 : 1/SCALE_DELTA;
 
-				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
+				if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
 					Bounds viewPort = mapScroll.getViewportBounds();
 					Bounds contentSize = contentAnchor.getBoundsInParent();
 
@@ -121,7 +112,7 @@ public abstract class MapDisplayController
 
 					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
 					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					SCALE_TOTAL *= scaleFactor;
+					currentScale *= scaleFactor;
 
 					double newCenterX = centerPosX * scaleFactor;
 					double newCenterY = centerPosY * scaleFactor;
@@ -130,16 +121,16 @@ public abstract class MapDisplayController
 					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
 				}
 
-				if (scaleFactor * SCALE_TOTAL <= 1) {
-					SCALE_TOTAL = 1/scaleFactor;
+				if (scaleFactor * currentScale <= 1) {
+					currentScale = 1/scaleFactor;
 					zoomSlider.setValue(0);
 
-				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-					SCALE_TOTAL = 6 / scaleFactor;
+				}else if(scaleFactor * currentScale >= 5.5599173134922495) {
+					currentScale = 6 / scaleFactor;
 					zoomSlider.setValue(100);
 
 				}else {
-					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
+					zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
 				}
 
 			}

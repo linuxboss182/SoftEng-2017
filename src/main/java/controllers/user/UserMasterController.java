@@ -7,11 +7,9 @@ import controllers.shared.MapDisplayController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,10 +19,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextFlow;
 
@@ -107,17 +103,10 @@ public abstract class UserMasterController
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
-		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		// TODO: Move zoom stuff to MapDisplayController
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
 		setZoomSliding();
-		/*
-		(x, y) -> {
-			x += 1;
-			return x+y;
-		}
-		 */
 
 		if(floorComboBox != null) {
 			initfloorComboBox();
@@ -189,13 +178,10 @@ public abstract class UserMasterController
 	 * Ideally this shouldn't be hard coded
 	 */
 	public void initfloorComboBox() {
-//		// We are able to change what this list is of.
-//		this.floorComboBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
-//		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
-		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER); // <- for choiceBox, not comboBox
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 

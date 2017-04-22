@@ -5,20 +5,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -52,6 +46,7 @@ public class EditorController
 		extends MapDisplayController
 		implements Initializable
 {
+	// TODO: Add the other buttons, and pull listeners out of the FXMLs
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
 	@FXML private TextField nameField;
@@ -104,8 +99,6 @@ public class EditorController
 			initfloorComboBox();
 		}
 
-		// TODO: Move zoom initialization to separate function and call in installPaneListeners
-		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
 		setZoomSliding();
