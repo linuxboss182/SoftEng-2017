@@ -39,18 +39,9 @@ public class UserStartController
 
 	@FXML
 	public void backBtnClicked() throws IOException, InvocationTargetException {
-		choosingStart = false;
-		choosingEnd = true;
 		Parent userDest = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.getScene().setRoot(userDest);
 
 	}
 
-	/**
-	 * When selecting a starting point, left clicking a room should select it
-	 */
-	@Override
-	protected void clickRoomAction(Room room) {
-		this.selectStartRoom(room);
-	}
 }

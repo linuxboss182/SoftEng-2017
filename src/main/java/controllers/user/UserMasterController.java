@@ -62,10 +62,6 @@ public class UserMasterController
 	private double clickedX, clickedY;
 	protected static Room startRoom;
 	protected static Room endRoom;
-	// TODO: Are these still needed? They shouldn't be, because of UserStartController being a separate class.
-	protected static boolean choosingStart = false;
-	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
-
 
 
 	/**
@@ -206,7 +202,7 @@ public class UserMasterController
 
 			// Add listener to select rooms on click
 			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
+				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			});
 
 			// Add listener for context menus (right click)
@@ -232,18 +228,8 @@ public class UserMasterController
 		this.directoryView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
-			@Override
-			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
-				// These variables are set in the controllers when the scene is switched...
-				if(choosingEnd) {
-					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
-				} else if(choosingStart) {
-					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
-
-				}
-			}
-		});
+		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
 	}
 
 	/**
@@ -261,9 +247,9 @@ public class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-		if (this.changeStartBtn != null) {
-			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-		}
+//		if (this.changeStartBtn != null) {
+//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
+//		}
 	}
 
 
@@ -298,11 +284,10 @@ public class UserMasterController
 	 */
 
 	/**
-	 * Function called when a room is left clicked on the map
-	 * @param room
+	 * Function called to select a room
 	 */
-	protected void clickRoomAction(Room room) {
-		if (! this.changeStartBtn.isDisabled()) {
+	protected void selectRoomAction(Room room) {
+		if (this.changeStartBtn.isDisabled()) {
 			this.selectStartRoom(room);
 			this.changeStartBtn.setDisable(false);
 		} else {
@@ -312,7 +297,9 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
+		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 		this.changeStartBtn.setDisable(true);
+		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 	}
 
 	protected void selectStartRoom(Room r) {

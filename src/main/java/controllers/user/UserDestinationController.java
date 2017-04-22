@@ -15,6 +15,7 @@ import entities.Room;
 
 // TODO: REMOVE THIS CLASS ENTIRELY
 
+@Deprecated
 public class UserDestinationController
 		extends UserMasterController
 		implements Initializable
@@ -34,9 +35,9 @@ public class UserDestinationController
 
 	}
 
-	/**
-	 * When selecting a destination, left clicking a room should select it
-	 */
+//	/**
+//	 * When selecting a destination, left clicking a room should select it
+//	 */
 //	@Override
 //	protected void clickRoomAction(Room room) {
 //		this.selectEndRoom(room);

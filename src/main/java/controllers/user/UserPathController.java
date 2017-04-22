@@ -227,8 +227,6 @@ public class UserPathController
 		endRoom.getUserSideShape().setScaleY(1);
 
 		iconController.resetAllRooms();
-		choosingStart = false;
-		choosingEnd = true;
 		startRoom = null;
 		endRoom = null;
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
@@ -282,12 +280,4 @@ public class UserPathController
 		this.linePane.getChildren().setAll(path);
 	}
 
-	/**
-	 * When a path has been drawn, clicking a room doesn't do anythng
-	 */
-	// TODO: Make clicking a room after getting directions highlight the room in the directions, maybe?
-	@Override
-	protected void clickRoomAction(Room room) {
-		return;
-	}
 }
