@@ -6,6 +6,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -18,10 +19,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import main.ApplicationController;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ResourceBundle;
 
 // TODO: Use this class more effectively
 // Move stuff here when possible, remove unneeded stuff later
@@ -95,13 +99,12 @@ public abstract class MapDisplayController
 	}
 
 	protected void setScrollZoom() {
+
 		this.contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
 				event.consume();
-				System.out.println("HERE");
 				if (event.getDeltaY() == 0) {
-					System.out.println("NOP");
 					return;
 				}
 				double scaleFactor = (event.getDeltaY() > 0)
@@ -109,7 +112,6 @@ public abstract class MapDisplayController
 									 : 1/SCALE_DELTA;
 
 				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
-					System.out.println("1-6");
 					Bounds viewPort = mapScroll.getViewportBounds();
 					Bounds contentSize = contentAnchor.getBoundsInParent();
 
@@ -129,22 +131,20 @@ public abstract class MapDisplayController
 				}
 
 				if (scaleFactor * SCALE_TOTAL <= 1) {
-					System.out.println("<1");
 					SCALE_TOTAL = 1/scaleFactor;
 					zoomSlider.setValue(0);
 
 				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-					System.out.println(">5.55");
 					SCALE_TOTAL = 6 / scaleFactor;
 					zoomSlider.setValue(100);
 
 				}else {
-					System.out.println("else");
 					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
 				}
 
 			}
 		});
+
 	}
 
 	@FXML

@@ -87,6 +87,12 @@ public abstract class UserMasterController
 		return this.parentBorderPane.getScene();
 	}
 
+
+	/**
+	 * Method used to initialize superclasses
+	 *
+	 * Not technically related to Initializable::initialize, but used for the same purpose
+	 */
 	public void initialize() {
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

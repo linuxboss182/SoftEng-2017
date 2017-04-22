@@ -83,7 +83,6 @@ public class EditorController
 	protected double selectionEndY;
 	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
 	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
-	protected boolean ctrlClicked = false;
 
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
@@ -93,9 +92,7 @@ public class EditorController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.contentAnchor = new AnchorPane();
-		this.mapScroll = new ScrollPane();
-		this.SCALE_TOTAL = 1;
+
 		//Load
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();

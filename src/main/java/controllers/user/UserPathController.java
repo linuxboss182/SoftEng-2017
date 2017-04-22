@@ -57,7 +57,7 @@ public class UserPathController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		initialize();
+		this.initialize();
 		List<Node> ret;
 
 		// Check if either start or destination is null (this should be impossible)
