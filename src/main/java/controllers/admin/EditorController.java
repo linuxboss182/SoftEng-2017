@@ -103,8 +103,6 @@ public class EditorController extends MapDisplayController
 	@FXML
 	private ComboBox<Algorithm> algorithmComboBox;
 	@FXML
-	private BorderPane parentBorderPane;
-	@FXML
 	private Button helpBtn;
 
 
@@ -122,8 +120,6 @@ public class EditorController extends MapDisplayController
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
 
-	final protected double zoomMin = 1;
-	final protected double zoomMax = 6;
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
 
@@ -168,55 +164,6 @@ public class EditorController extends MapDisplayController
 
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
-	}
-
-
-	/** This is the section for key listeners.
-	 *  Press Back Space for Deleting selected nodes
-	 *  Press Ctrl + A for selecting all nodes
-	 *  Press Ctrl + Open Bracket for zoom in
-	 *  Press Ctrl + Close Bracket for zoom out
-	 *  Press Shift + Right to move the view to the right
-	 *  Press Shift + Left to move the view to the left
-	 *  Press Shift + Up to move the view to the up
-	 *  Press Shift + down to move the view to the down
-	 */
-	private void setHotkeys() {
-		parentBorderPane.setOnKeyPressed(e -> {
-//			System.out.println(e); // Prints out key statements
-			System.out.println(e.getCode());// Prints out key statements
-			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-				increaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-				decreaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
-			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
-			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
-			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
-			}
-			e.consume();
-		});
-	}
-
-	private void setZoomSliding() {
-		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			/**
-			 * This one was a fun one.
-			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-			 * and when it's at the far right, it will be zoomed in all the way
-			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-			 * the equation is just that
-			 */
-			double zoomPercent = (zoomSlider.getValue()/100);
-			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-			mapScroll.setScaleX(zoomCoefficient);
-			mapScroll.setScaleY(zoomCoefficient);
-		});
 	}
 
 
@@ -796,28 +743,6 @@ public class EditorController extends MapDisplayController
 		this.deleteOutOfBoundNodes();
 
 		this.beingDragged = false;
-	}
-
-	@FXML
-	protected void increaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent+=.2;
-		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
-	protected void decreaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent-=.2;
-		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
 	/**

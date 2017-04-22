@@ -83,9 +83,6 @@ public abstract class UserMasterController
 	@FXML
 	private ImageView logoImageView;
 
-	final protected double zoomMin = 1;
-	final protected double zoomMax = 6;
-
 	private double clickedX, clickedY;
 	protected static Room startRoom;
 	protected static Room endRoom;
@@ -113,9 +110,6 @@ public abstract class UserMasterController
 	}
 
 	public void initialize() {
-		this.contentAnchor = new AnchorPane();
-		this.mapScroll = new ScrollPane();
-		this.SCALE_TOTAL = 1;
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -135,7 +129,7 @@ public abstract class UserMasterController
 		// TODO: Move zoom stuff to MapDisplayController
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
-		addZoomSliderListener();
+		setZoomSliding();
 		/*
 		(x, y) -> {
 			x += 1;
@@ -177,51 +171,6 @@ public abstract class UserMasterController
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			event.consume();
-		});
-	}
-
-	/** This is the section for key listeners.
-	 *  Press Ctrl + Open Bracket for zoom in
-	 *  Press Ctrl + Close Bracket for zoom out
-	 *  Press Shift + Right to move the view to the right
-	 *  Press Shift + Left to move the view to the left
-	 *  Press Shift + Up to move the view to the up
-	 *  Press Shift + down to move the view to the down
-	 *
-	 */
-	private void setHotkeys() {
-		parentBorderPane.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-				increaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-				decreaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
-			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
-			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
-			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
-			}
-			e.consume();
-		});
-	}
-
-	private void addZoomSliderListener() {
-		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			/**
-			 * This one was a fun one.
-			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-			 * and when it's at the far right, it will be zoomed in all the way
-			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-			 * the equation is just that
-			 */
-			double zoomPercent = (zoomSlider.getValue()/100);
-			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-			mapScroll.setScaleX(zoomCoefficient);
-			mapScroll.setScaleY(zoomCoefficient);
 		});
 	}
 
@@ -390,28 +339,6 @@ public abstract class UserMasterController
 //		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
 		this.displayRooms();
-	}
-
-	@FXML
-	protected void increaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent+=.2;
-		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
-	protected void decreaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent-=.2;
-		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
 	}
 
 	@FXML

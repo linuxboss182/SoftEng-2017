@@ -11,8 +11,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -27,14 +29,16 @@ import java.util.List;
 public abstract class MapDisplayController
 {
 	protected final double SCALE_DELTA = 1.1;
-	protected double SCALE_TOTAL;
+	final protected double zoomMin = 1;
+	final protected double zoomMax = 6;
+	protected double SCALE_TOTAL = 1;
 
 	@FXML
-	public AnchorPane contentAnchor;
+	public AnchorPane contentAnchor = new AnchorPane();
 	@FXML
 	protected ImageView imageViewMap;
 	@FXML
-	protected ScrollPane mapScroll;
+	protected ScrollPane mapScroll= new ScrollPane();
 
 	protected Image map;
 	protected List<Line> lines = new ArrayList<Line>();
@@ -63,6 +67,8 @@ public abstract class MapDisplayController
 
 	@FXML
 	protected Slider zoomSlider;
+	@FXML
+	protected BorderPane parentBorderPane;
 
 	public void setPanes(Pane botPane, Pane topPane) {
 		this.botPane = botPane;
@@ -101,14 +107,15 @@ public abstract class MapDisplayController
 				event.consume();
 				System.out.println("HERE");
 				if (event.getDeltaY() == 0) {
+					System.out.println("NOP");
 					return;
 				}
-				double scaleFactor =
-						(event.getDeltaY() > 0)
-								? SCALE_DELTA
-								: 1/SCALE_DELTA;
+				double scaleFactor = (event.getDeltaY() > 0)
+									 ? SCALE_DELTA
+									 : 1/SCALE_DELTA;
 
 				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
+					System.out.println("1-6");
 					Bounds viewPort = mapScroll.getViewportBounds();
 					Bounds contentSize = contentAnchor.getBoundsInParent();
 
@@ -128,18 +135,89 @@ public abstract class MapDisplayController
 				}
 
 				if (scaleFactor * SCALE_TOTAL <= 1) {
-//					SCALE_TOTAL = 1/scaleFactor;
+					System.out.println("<1");
+					SCALE_TOTAL = 1/scaleFactor;
 					zoomSlider.setValue(0);
 
 				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-//					SCALE_TOTAL = 6 / scaleFactor;
+					System.out.println(">5.55");
+					SCALE_TOTAL = 6 / scaleFactor;
 					zoomSlider.setValue(100);
 
 				}else {
+					System.out.println("else");
 					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
 				}
 
 			}
+		});
+	}
+
+	@FXML
+	protected void increaseZoomButtonPressed() {
+		double zoomPercent = (zoomSlider.getValue()/100);
+		zoomPercent+=.2;
+		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
+		zoomSlider.setValue(zoomPercent*100);
+		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+		contentAnchor.setScaleX(zoomCoefficient);
+		contentAnchor.setScaleY(zoomCoefficient);
+	}
+
+	@FXML
+	protected void decreaseZoomButtonPressed() {
+		double zoomPercent = (zoomSlider.getValue()/100);
+		zoomPercent-=.2;
+		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
+		zoomSlider.setValue(zoomPercent*100);
+		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+		contentAnchor.setScaleX(zoomCoefficient);
+		contentAnchor.setScaleY(zoomCoefficient);
+	}
+
+	/** This is the section for key listeners.
+	 *  Press Back Space for Deleting selected nodes
+	 *  Press Ctrl + A for selecting all nodes
+	 *  Press Ctrl + Open Bracket for zoom in
+	 *  Press Ctrl + Close Bracket for zoom out
+	 *  Press Shift + Right to move the view to the right
+	 *  Press Shift + Left to move the view to the left
+	 *  Press Shift + Up to move the view to the up
+	 *  Press Shift + down to move the view to the down
+	 */
+	protected void setHotkeys() {
+		parentBorderPane.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+				increaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+				decreaseZoomButtonPressed();
+			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			}
+			e.consume();
+		});
+	}
+
+	protected void setZoomSliding() {
+		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/**
+			 * This one was a fun one.
+			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+			 * and when it's at the far right, it will be zoomed in all the way
+			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+			 * the equation is just that
+			 */
+			double zoomPercent = (zoomSlider.getValue()/100);
+			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+			mapScroll.setScaleX(zoomCoefficient);
+			mapScroll.setScaleY(zoomCoefficient);
 		});
 	}
 
