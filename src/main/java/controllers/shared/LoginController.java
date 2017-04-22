@@ -3,6 +3,7 @@ package controllers.shared;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,11 +16,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
-public class LoginController {
+public class LoginController implements Initializable
+{
 
-	private LoginHandler logins;
+	private LoginHandler logins = new LoginHandler();
 
 	@FXML
 	private Label errorLbl;
@@ -33,18 +37,24 @@ public class LoginController {
 	private Button loginBtn;
 
 
-	public void attachHandler(LoginHandler logins){
-		this.logins = logins;
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		logins.addAccount("Frank", "12345", true);
 	}
+
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-		boolean success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
+		byte success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
 //		boolean success = adminLogins.get(this.passwordField.getText()).equals(this.usernameField.getText());
-		if(success) {
+		if(success == 2) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
-		} else {
+		}
+		else if (success == 1){
+			//TODO: Figure out what to do with logged-in professionals
+		}
+		else {
 			this.errorLbl.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
 		}

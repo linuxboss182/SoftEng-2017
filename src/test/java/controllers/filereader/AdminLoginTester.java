@@ -21,21 +21,35 @@ public class AdminLoginTester
 	@Test
 	public void basicLogin(){
 		LoginHandler login = new LoginHandler();
-		login.addAdmin("Frank", "12345");
-		Assert.assertTrue(login.checkLogin("Frank", "12345"));
+		login.addAccount("Frank", "12345", true);
+		Assert.assertEquals(2, login.checkLogin("Frank", "12345"));
 	}
 
 	@Test
 	public void basicFailedLogin(){
 		LoginHandler login = new LoginHandler();
-		login.addAdmin("Frank", "12345");
-		Assert.assertFalse(login.checkLogin("Fronk", "12345"));
+		login.addAccount("Frank", "12345", true);
+		Assert.assertEquals(0, login.checkLogin("Fronk", "12345"));
 	}
 
 	@Test
 	public void testCaseSensitive(){
 		LoginHandler login = new LoginHandler();
-		login.addAdmin("Frank", "12345");
-		Assert.assertTrue(login.checkLogin("frank", "12345"));
+		login.addAccount("Frank", "12345", true);
+		Assert.assertEquals(2, login.checkLogin("frank", "12345"));
+	}
+
+	@Test
+	public void professionalLogin(){
+		LoginHandler login = new LoginHandler();
+		login.addAccount("Frank", "12345", false);
+		Assert.assertEquals(1, login.checkLogin("Frank", "12345"));
+	}
+
+	@Test
+	public void basicFailedProLogin(){
+		LoginHandler login = new LoginHandler();
+		login.addAccount("Frank", "12345", false);
+		Assert.assertEquals(0, login.checkLogin("Fronk", "12345"));
 	}
 }
