@@ -1,8 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
-import controllers.admin.AddProfessionalController;
-import controllers.shared.FloorProxy;
+import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.beans.value.ChangeListener;
@@ -39,9 +38,7 @@ import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import controllers.shared.FloorImage;
-import controllers.shared.FloorProxy;
-import controllers.shared.MapDisplayController;
+import entities.FloorImage;
 
 
 public abstract class UserMasterController
@@ -125,49 +122,28 @@ public abstract class UserMasterController
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-		//Set the panes
 		this.setPanes(linePane, nodePane);
-		//Grab the database controller from main and use it to populate our directory
+
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 
-		//Add map
-		//this.map = new Image("/4_thefourthfloor.png");
-		// use floor proxy class to load in map
-		this.changeFloor(getFloor());
+		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
-
-
-		//Load logo
-//		Image logo;
-//		logo = new Image("/bwhLogo.png");
-//		logoImageView.setImage(logo);
-
 
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
 		// TODO: Move zoom stuff to MapDisplayController
+		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
-		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-			                    Number oldValue, Number newValue) {
-				/**
-				 * This one was a fun one.
-				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-				 * and when it's at the far right, it will be zoomed in all the way
-				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-				 * the equation is just that
-				 */
-				double zoomPercent = (zoomSlider.getValue()/100);
-				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-				mapScroll.setScaleX(zoomCoefficient);
-				mapScroll.setScaleY(zoomCoefficient);
-			}
-		});
+		addZoomSliderListener();
+		/*
+		(x, y) -> {
+			x += 1;
+			return x+y;
+		}
+		 */
 
 		if(floorComboBox != null) {
 			initfloorComboBox();
@@ -179,8 +155,34 @@ public abstract class UserMasterController
 			this.populateListView();
 		}
 
-
 		// TODO: Move to MapDisplayController
+		setScrollZoom();
+
+		// TODO: See if there's a way to include this in the OnMouseDragged listener
+		getCoordsFromMouseClick();
+
+		setMouseDragPanning();
+
+		// TODO: Use ctrl+plus/minus for zooming
+		setHotkeys();
+	}
+
+	private void getCoordsFromMouseClick() {
+		contentAnchor.setOnMousePressed(event -> {
+			clickedX = event.getX();
+			clickedY = event.getY();
+		});
+	}
+
+	private void setMouseDragPanning() {
+		contentAnchor.setOnMouseDragged(event -> {
+			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			event.consume();
+		});
+	}
+
+	private void setScrollZoom() {
 		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override public void handle(ScrollEvent event) {
 				event.consume();
@@ -225,32 +227,18 @@ public abstract class UserMasterController
 
 			}
 		});
+	}
 
-		// TODO: See if there's a way to include this in the OnMouseDragged listener
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
-
-		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			event.consume();
-		});
-
-		//Call listeners for window resizing
-		windowResized();
-
-		/** This is the section for key listeners.
-		 *  Press Ctrl + Open Bracket for zoom in
-		 *  Press Ctrl + Close Bracket for zoom out
-		 *  Press Shift + Right to move the view to the right
-		 *  Press Shift + Left to move the view to the left
-		 *  Press Shift + Up to move the view to the up
-		 *  Press Shift + down to move the view to the down
-		 *
-		 */
-		// TODO: Use ctrl+plus/minus for zooming
+	/** This is the section for key listeners.
+	 *  Press Ctrl + Open Bracket for zoom in
+	 *  Press Ctrl + Close Bracket for zoom out
+	 *  Press Shift + Right to move the view to the right
+	 *  Press Shift + Left to move the view to the left
+	 *  Press Shift + Up to move the view to the up
+	 *  Press Shift + down to move the view to the down
+	 *
+	 */
+	private void setHotkeys() {
 		parentBorderPane.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
 				increaseZoomButtonPressed();
@@ -267,9 +255,23 @@ public abstract class UserMasterController
 			}
 			e.consume();
 		});
+	}
 
-
-
+	private void addZoomSliderListener() {
+		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/**
+			 * This one was a fun one.
+			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+			 * and when it's at the far right, it will be zoomed in all the way
+			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+			 * the equation is just that
+			 */
+			double zoomPercent = (zoomSlider.getValue()/100);
+			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+			mapScroll.setScaleX(zoomCoefficient);
+			mapScroll.setScaleY(zoomCoefficient);
+		});
 	}
 
 	/**
@@ -313,7 +315,7 @@ public abstract class UserMasterController
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
 
-		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 
 	}
 
@@ -334,7 +336,7 @@ public abstract class UserMasterController
 	 */
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(getFloor())) {
+		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
 			roomShapes.add(room.getUserSideShape());
 
 			// Add listener to select rooms on click
@@ -410,7 +412,7 @@ public abstract class UserMasterController
 
 
 	protected void changeFloor(FloorImage floor) {
-		Image map = this.switchFloors(floor);
+		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.displayRooms();
 	}
@@ -459,44 +461,6 @@ public abstract class UserMasterController
 		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
 		contentAnchor.setScaleX(zoomCoefficient);
 		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	public void scaleElements() {
-//		this.bottomToolbar.prefWidthProperty().bind(this.parentBorderPane.widthProperty());
-//		//this.contentAnchor.prefWidthProperty().bind(this.mapSplitPane.widthProperty());
-//		if(this.getDirectionsBtn != null) {
-//			this.getDirectionsBtn.relocate((parentBorderPane.getWidth()/ 2), 0);
-//		}
-//
-//		double windowWidth = parentBorderPane.getWidth();
-//		//destGridPane.setPrefWidth(windowWidth / 4);
-//
-//		//directoryView.setPrefWidth(destGridPane.getWidth() - 30.0);
-//		//destGridPane.minWidthProperty().set(directoryView.getWidth() + 30);
-//		if(this.bottomGridPane != null) {
-//			bottomGridPane.setPrefWidth(bottomToolbar.getPrefWidth() - 100);
-//			for (ColumnConstraints c : bottomGridPane.getColumnConstraints()) {
-//				c.setPrefWidth(bottomToolbar.getWidth() / 3);
-//			}
-//		}
-
-		//this.getDirectionsBtn.relocate((500.0), (bottomToolbar.getHeight()/2));
-	}
-
-	public void windowResized() {
-
-		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-				System.out.println("Width: " + newSceneWidth);
-				scaleElements();
-			}
-		});
-		this.parentBorderPane.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				System.out.println("Height: " + newSceneHeight);
-				scaleElements();
-			}
-		});
 	}
 
 	@FXML

@@ -44,8 +44,8 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import controllers.shared.FloorImage;
-import controllers.shared.FloorProxy;
+import entities.FloorImage;
+import entities.FloorProxy;
 
 public class EditorController extends MapDisplayController
 		implements Initializable
@@ -140,7 +140,7 @@ public class EditorController extends MapDisplayController
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
 
-		this.changeFloor(getFloor());
+		this.changeFloor(this.directory.getFloor());
 
 		this.imageViewMap.setPickOnBounds(true);
 		if(floorComboBox != null) {
@@ -149,25 +149,9 @@ public class EditorController extends MapDisplayController
 
 		// TODO: Move zoom initialization to separate function and call in installPaneListeners
 		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
+		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
-		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-			                    Number oldValue, Number newValue) {
-				/**
-				 * This one was a fun one.
-				 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-				 * and when it's at the far right, it will be zoomed in all the way
-				 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-				 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-				 * the equation is just that
-				 */
-				double zoomPercent = (zoomSlider.getValue()/100);
-				double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-				mapScroll.setScaleX(zoomCoefficient);
-				mapScroll.setScaleY(zoomCoefficient);
-			}
-		});
+		setZoomSliding();
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
@@ -183,34 +167,24 @@ public class EditorController extends MapDisplayController
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
 
-		//Populate the tableview
-		HashSet<Room> locations = new HashSet<>();
-		for (Professional p: directory.getProfessionals()) {
-			locations.addAll(p.getLocations());
-
-		}
 		this.populateTableView();
 
-		//Listener for the tableview
-		roomProfTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			if (roomProfTable.getSelectionModel().getSelectedItem() != null) {
-				// TODO: Allow professional selection from the TableView
-				//selectedLocation = newValue;
-			}
-		});
-
-
-		/** This is the section for key listeners.
-		 *  Press Back Space for Deleting selected nodes
-		 *  Press Ctrl + A for selecting all nodes
-		 *  Press Ctrl + Open Bracket for zoom in
-		 *  Press Ctrl + Close Bracket for zoom out
-		 *  Press Shift + Right to move the view to the right
-		 *  Press Shift + Left to move the view to the left
-		 *  Press Shift + Up to move the view to the up
-		 *  Press Shift + down to move the view to the down
-		 */
 		// TODO: Use control+plus/minus for zooming
+		setHotkeys();
+	}
+
+
+	/** This is the section for key listeners.
+	 *  Press Back Space for Deleting selected nodes
+	 *  Press Ctrl + A for selecting all nodes
+	 *  Press Ctrl + Open Bracket for zoom in
+	 *  Press Ctrl + Close Bracket for zoom out
+	 *  Press Shift + Right to move the view to the right
+	 *  Press Shift + Left to move the view to the left
+	 *  Press Shift + Up to move the view to the up
+	 *  Press Shift + down to move the view to the down
+	 */
+	private void setHotkeys() {
 		parentBorderPane.setOnKeyPressed(e -> {
 //			System.out.println(e); // Prints out key statements
 			System.out.println(e.getCode());// Prints out key statements
@@ -228,6 +202,23 @@ public class EditorController extends MapDisplayController
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
 			}
 			e.consume();
+		});
+	}
+
+	private void setZoomSliding() {
+		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/**
+			 * This one was a fun one.
+			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
+			 * and when it's at the far right, it will be zoomed in all the way
+			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
+			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
+			 * the equation is just that
+			 */
+			double zoomPercent = (zoomSlider.getValue()/100);
+			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+			mapScroll.setScaleX(zoomCoefficient);
+			mapScroll.setScaleY(zoomCoefficient);
 		});
 	}
 
@@ -292,7 +283,7 @@ public class EditorController extends MapDisplayController
 	}
 
 	private void changeFloor(FloorImage floor) {
-		Image map = this.switchFloors(floor);
+		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayGraph();
 	}
@@ -339,7 +330,7 @@ public class EditorController extends MapDisplayController
 	public void confirmBtnPressed() {
 //		this.directory.getRooms().forEach(room ->
 //				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
-		DatabaseWrapper.saveDirectory(this.directory);
+		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
 	@FXML
@@ -390,7 +381,7 @@ public class EditorController extends MapDisplayController
 //			this.displayNodes(directory.getNodes());
 //			this.redrawLines(directory.getNodes());
 //		} else {
-		this.displayNodes(directory.getNodesOnFloor(getFloor()));
+		this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
 		this.redrawLines();
 //		}
 	}
@@ -433,7 +424,7 @@ public class EditorController extends MapDisplayController
 	 */
 	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
-		for (Node node : directory.getNodesOnFloor(getFloor())) {
+		for (Node node : directory.getNodesOnFloor(directory.getFloor())) {
 			for (Node neighbor : node.getNeighbors()) {
 				if ((node.getFloor() == neighbor.getFloor()) &&
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
@@ -458,7 +449,7 @@ public class EditorController extends MapDisplayController
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 
-		this.floorComboBox.setValue(this.floorComboBox.getItems().get(getFloorNum() - 1)); // default the selection to be whichever floor we start on
+		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 	}
 
 	/**
@@ -518,7 +509,7 @@ public class EditorController extends MapDisplayController
 		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
 			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
 		} else {
-			Node newNode = directory.addNewRoomNode(x, y, getFloor(), name, description);
+			Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
 			this.addNodeListeners(newNode);
 			this.redisplayGraph();
 			this.selectedNodes.forEach(n -> {
@@ -533,7 +524,7 @@ public class EditorController extends MapDisplayController
 		if(x < 0 || y < 0) {
 			return;
 		}
-		Node newNode = this.directory.addNewNode(x, y, getFloor());
+		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
 
 		int size = this.selectedNodes.size();
@@ -767,7 +758,7 @@ public class EditorController extends MapDisplayController
 					botRightY = this.selectionStartY;
 				}
 				// Loop through and select/deselect all nodes in the bounds
-				this.directory.getNodesOnFloor(getFloor()).forEach(n -> {
+				this.directory.getNodesOnFloor(this.directory.getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
 						// Within the bounds, select or deselect it
 						this.selectOrDeselectNode(n);
