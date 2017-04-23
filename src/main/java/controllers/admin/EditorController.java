@@ -15,9 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -40,9 +38,10 @@ import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 import entities.FloorProxy;
 
+import static javafx.scene.paint.Color.GRAY;
+
 public class EditorController
 		extends MapDisplayController
-		implements Initializable
 {
 	// TODO: Add the other buttons, and pull listeners out of the FXMLs
 	@FXML private JFXButton addBtn;
@@ -120,6 +119,23 @@ public class EditorController
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
 	}
+
+	public void populateRoundPane(MouseEvent e){
+		Arc RoundPane = new Arc();
+		RoundPane.setCenterX(e.getX());
+		RoundPane.setCenterY(e.getY());
+		RoundPane.setRadiusX(120.0f);
+		RoundPane.setRadiusY(120.0f);
+		RoundPane.setStartAngle(0);
+		RoundPane.setLength(360);
+		RoundPane.setType(ArcType.OPEN);
+		RoundPane.setStroke(GRAY);
+		RoundPane.setStrokeType(StrokeType.INSIDE);
+		RoundPane.setFill(null);
+		RoundPane.setStrokeWidth(60);
+		RoundPane.setOpacity(90);
+	}
+
 
 
 	// TODO: rename descriptively
