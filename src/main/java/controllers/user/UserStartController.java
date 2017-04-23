@@ -14,13 +14,14 @@ import java.util.ResourceBundle;
 
 import entities.Room;
 
+// TODO: REMOVE THIS CLASS ENTIRELY
 
+/** @deprecated This class is no longer used. */
+@Deprecated
 public class UserStartController
 		extends UserMasterController
 		implements Initializable
 {
-
-
 	@FXML private Button backBtn;
 
 
