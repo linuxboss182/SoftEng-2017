@@ -2,6 +2,7 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
+import controllers.icons.IconController;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
@@ -127,7 +128,10 @@ public class UserPathController
 
 		// Redraw rooms when the background is released
 		// TODO: Fix bug where clicking rooms un-draws them
-		contentAnchor.setOnMouseReleased(event -> this.displayRooms());
+		contentAnchor.setOnMouseReleased(event -> {
+			iconController.resetAllRooms();
+			this.displayRooms();
+		});
 
 		setHotkeys();
 	}
