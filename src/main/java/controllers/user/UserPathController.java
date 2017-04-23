@@ -193,17 +193,12 @@ public class UserPathController
 		// add starting floor
 		floors.add(here);
 		this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-		//prints all the floors on the path in order
-// 		System.out.println(path.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
 
-		System.out.println(path);
-		System.out.println(path.stream().map(n -> n.getBuildingName()).collect(Collectors.toList()));
 		for (int i = 1; i < path.size()-1; ++i) {
-			System.out.println(here.building + " " + here.number);
 			last = here;
 			here = new MiniFloor(path.get(i).getFloor(), path.get(i).getBuildingName());
 			next = new MiniFloor(path.get(i+1).getFloor(), path.get(i+1).getBuildingName());
-//			System.out.println(last+" "+here+" "+next);
+
 			// Check when there is a floor A -> floor B -> floor B transition and save floor B
 			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
 				floors.add(here);
