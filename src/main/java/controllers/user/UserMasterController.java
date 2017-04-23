@@ -254,8 +254,8 @@ public class UserMasterController
 
 		/* change to a scene with the path */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-			ApplicationController.getStage().setScene(new Scene(pane));
-			ApplicationController.getStage().show();
+//			ApplicationController.getStage().setScene(new Scene(pane));
+//			ApplicationController.getStage().show();
 		} else {
 			this.redisplayMapItems();
 		}

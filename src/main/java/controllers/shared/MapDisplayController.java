@@ -128,13 +128,10 @@ public abstract class MapDisplayController
 			}
 
 			if (scaleFactor * currentScale <= 1) {
-				currentScale = 1/scaleFactor;
 				zoomSlider.setValue(0);
 
 			}else if(scaleFactor * currentScale >= 5.5599173134922495) {
-				currentScale = 6 / scaleFactor;
 				zoomSlider.setValue(100);
-
 			}else {
 				zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
 			}
@@ -143,27 +140,27 @@ public abstract class MapDisplayController
 
 	}
 
-	@FXML
-	protected void increaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent+=.2;
-		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
-	protected void decreaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent-=.2;
-		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
+//	@FXML
+//	protected void increaseZoomButtonPressed() {
+//		double zoomPercent = (zoomSlider.getValue()/100);
+//		zoomPercent+=.2;
+//		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
+//		zoomSlider.setValue(zoomPercent*100);
+//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+//		contentAnchor.setScaleX(zoomCoefficient);
+//		contentAnchor.setScaleY(zoomCoefficient);
+//	}
+//
+//	@FXML
+//	protected void decreaseZoomButtonPressed() {
+//		double zoomPercent = (zoomSlider.getValue()/100);
+//		zoomPercent-=.2;
+//		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
+//		zoomSlider.setValue(zoomPercent*100);
+//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+//		contentAnchor.setScaleX(zoomCoefficient);
+//		contentAnchor.setScaleY(zoomCoefficient);
+//	}
 
 	/** This is the section for key listeners.
 	 *  Press Back Space for Deleting selected nodes
@@ -177,11 +174,13 @@ public abstract class MapDisplayController
 	 */
 	protected void setHotkeys() {
 		parentBorderPane.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-				increaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-				decreaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+			//TODO add functionality for zooming with hotkeys
+//			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+//				increaseZoomButtonPressed();
+//			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+//				decreaseZoomButtonPressed();
+//			}
+			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
 			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
