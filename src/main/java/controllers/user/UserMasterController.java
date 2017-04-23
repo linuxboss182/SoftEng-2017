@@ -252,10 +252,10 @@ public class UserMasterController
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
 
-		/* change to a scene with the path */
+		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-//			ApplicationController.getStage().setScene(new Scene(pane));
-//			ApplicationController.getStage().show();
+			ApplicationController.getStage().setScene(new Scene(pane));
+			ApplicationController.getStage().show();
 		} else {
 			this.redisplayMapItems();
 		}
