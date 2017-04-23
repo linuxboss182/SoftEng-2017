@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -42,6 +43,7 @@ import static javafx.scene.paint.Color.GRAY;
 
 public class EditorController
 		extends MapDisplayController
+		implements Initializable
 {
 	// TODO: Add the other buttons, and pull listeners out of the FXMLs
 	@FXML private JFXButton addBtn;
@@ -120,20 +122,24 @@ public class EditorController
 		setHotkeys();
 	}
 
-	public void populateRoundPane(MouseEvent e){
-		Arc RoundPane = new Arc();
-		RoundPane.setCenterX(e.getX());
-		RoundPane.setCenterY(e.getY());
-		RoundPane.setRadiusX(120.0f);
-		RoundPane.setRadiusY(120.0f);
-		RoundPane.setStartAngle(0);
-		RoundPane.setLength(360);
-		RoundPane.setType(ArcType.OPEN);
-		RoundPane.setStroke(GRAY);
-		RoundPane.setStrokeType(StrokeType.INSIDE);
-		RoundPane.setFill(null);
-		RoundPane.setStrokeWidth(60);
-		RoundPane.setOpacity(90);
+	/**
+	 * Setup a radial context menu
+	 */
+	public void populateRoundPane(ContextMenuEvent e){
+		Arc roundPane = new Arc();
+		roundPane.setCenterX(e.getX());
+		roundPane.setCenterY(e.getY());
+		roundPane.setRadiusX(120.0f);
+		roundPane.setRadiusY(120.0f);
+		roundPane.setStartAngle(0);
+		roundPane.setLength(360);
+		roundPane.setType(ArcType.OPEN);
+		roundPane.setStroke(GRAY);
+		roundPane.setStrokeType(StrokeType.INSIDE);
+		roundPane.setFill(null);
+		roundPane.setStrokeWidth(60);
+		roundPane.setOpacity(90);
+		this.nodePane.getChildren().add(roundPane);
 	}
 
 
@@ -373,6 +379,7 @@ public class EditorController
 	 */
 	private void addNodeListeners(Node node) {
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
+		node.getShape().setOnContextMenuRequested((e -> populateRoundPane(e)));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
