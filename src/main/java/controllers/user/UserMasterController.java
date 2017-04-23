@@ -259,8 +259,6 @@ public class UserMasterController
 		} else {
 			this.redisplayMapItems();
 		}
-//		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-//		this.getScene().setRoot(userPath);
 	}
 
 	/*

@@ -67,7 +67,6 @@ public class UserPathController
 	@FXML private AnchorPane floorsTraveledAnchorPane;
 
 	private static final double PATH_WIDTH = 4.0;
-	final double SCALE_DELTA = 1.1;
 	private double clickedX;
 	private double clickedY;
 	private Text textDirections = new Text();
@@ -124,6 +123,11 @@ public class UserPathController
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			event.consume();
 		});
+
+
+		// Redraw rooms when the background is released
+		// TODO: Fix bug where clicking rooms un-draws them
+		contentAnchor.setOnMouseReleased(event -> this.displayRooms());
 
 		setHotkeys();
 	}
@@ -341,18 +345,6 @@ public class UserPathController
 			return null;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	@Override
 	protected void redisplayMapItems() {
