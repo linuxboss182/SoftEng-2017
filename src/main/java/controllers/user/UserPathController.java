@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -65,7 +66,7 @@ public class UserPathController
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
 
-	private static final double PATH_WIDTH = 4.0;
+	public static final double PATH_WIDTH = 4.0;
 	private double clickedX;
 	private double clickedY;
 	private Text textDirections = new Text();
@@ -118,8 +119,12 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 
@@ -308,7 +313,7 @@ public class UserPathController
 		this.directionsTextField.getChildren().clear();
 
 		// This can be any collection type;
-		Collection<Line> path = new HashSet<>();
+		Collection<Arrow> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i + 1);
@@ -316,7 +321,7 @@ public class UserPathController
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(line);
+				path.add(new Arrow(line));
 			}
 		}
 		this.linePane.getChildren().setAll(path);
