@@ -67,8 +67,32 @@ public class EditorController
 	@FXML private Button helpBtn;
 
 
-//	protected Node selectedNode; // you select a node by double clicking
-	protected ArrayList<Node> selectedNodes = new ArrayList<>();
+	/**
+	 * Class implemented for use in multiple selection
+	 *
+	 * In addition to standard operatons, can test if only one element is present, and
+	 * get the element if there is only one.
+	 */
+	private class SingularHashSet<E> extends HashSet<E>
+	{
+		public boolean isSingular() {
+			return this.size() == 1;
+		}
+		public E getSoleElement() {
+			Iterator<E> iterator = this.iterator();
+			if (! iterator.hasNext()) {
+				throw new NoSuchElementException("too few elements for SingularHashSet::getSoleElement");
+			}
+			E element = iterator.next();
+			if (iterator.hasNext()) {
+				throw new NoSuchElementException("too many elements for SingularHashSet::getSoleElement");
+			} else {
+				return element;
+			}
+		}
+	}
+
+	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
 	protected double selectionStartX;
 	protected double selectionStartY;
 	protected double selectionEndX;
@@ -264,8 +288,8 @@ public class EditorController
 		yPos.setFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
-		if (this.selectedNodes.size() == 1 && (this.selectedNodes.get(0).getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
+		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
+			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, description);
 		} else {
 			this.addNodeRoom(x, y, name, description);
 		}
@@ -274,7 +298,7 @@ public class EditorController
 
 	@FXML
 	public void modifyRoomBtnClicked() {
-		if(this.selectedNodes.size() != 1) return;
+		if(! this.selectedNodes.isSingular()) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
 	}
@@ -438,7 +462,7 @@ public class EditorController
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
 	private void updateSelectedRoom(double x, double y, String name, String description) {
-		this.selectedNodes.get(0).applyToRoom(room -> {
+		this.selectedNodes.getSoleElement().applyToRoom(room -> {
 			directory.updateRoom(room, name, description);
 			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
 			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
@@ -457,9 +481,9 @@ public class EditorController
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
 	private void updateSelectedNode(double x, double y) {
-		this.selectedNodes.get(0).moveTo(x, y);
-		this.selectedNodes.get(0).getShape().setCenterX(this.selectedNodes.get(0).getX());
-		this.selectedNodes.get(0).getShape().setCenterY(this.selectedNodes.get(0).getY());
+		this.selectedNodes.getSoleElement().moveTo(x, y);
+		this.selectedNodes.getSoleElement().getShape().setCenterX(x);
+		this.selectedNodes.getSoleElement().getShape().setCenterY(y);
 	}
 
 	private void updateSelectedNodes(double x, double y) {
@@ -483,31 +507,26 @@ public class EditorController
 	}
 
 	/**
-	 * Delete All of the Nodes selected
+	 * Delete all of the selected Nodes
 	 */
 	private void deleteSelectedNodes() {
-		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
-		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
-			Node n = this.selectedNodes.get(i);
-			deleteNode(n);
-			this.selectedNodes.remove(n);
-		}
+		this.selectedNodes.forEach(this::deleteNode);
 		this.selectedNodes.clear();
 		this.redisplayAll();
 	}
 
-	/** Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
+	/**
+	 * Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
 	 */
 	private void deleteOutOfBoundNodes() {
-
-		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
-		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
-			Node n = this.selectedNodes.get(i);
-			if(n.getX() < 0 || n.getY() < 0) {
-				deleteNode(n);
-				this.selectedNodes.remove(n);
+		Set<Node> deleted = new HashSet<>();
+		this.selectedNodes.forEach(node -> {
+			if ((node.getX() < 0) || (node.getY() < 0)) {
+				this.deleteNode(node);
+				deleted.add(node);
 			}
-		}
+		});
+		this.selectedNodes.removeAll(deleted);
 		this.redisplayAll();
 	}
 
@@ -519,21 +538,26 @@ public class EditorController
 	public void installPaneListeners(){
 		linePane.setOnMouseClicked(e -> {
 			this.setFields(e.getX(), e.getY());
+
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				Node newNode = this.addNode(e.getX(), e.getY());
-				int size = this.selectedNodes.size();
-				if(size > 0) {
-					this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
+				// adding nodes:
+				if (e.isShiftDown()) {
+					// shift double click:
+					// if one node is selected, connect to new, then select only new
+					// if multiple are selected, connect to all and add new to selection
+					if (this.selectedNodes.isSingular()) {
+						this.directory.connectNodes(newNode, this.selectedNodes.getSoleElement());
+						this.selectSingleNode(newNode); // chain add if one is selected
+					} else {
+						this.selectedNodes.forEach(n -> this.directory.connectNodes(n, newNode));
+						this.selectNode(newNode);
+					}
 				}
-				if(e.isShiftDown()) {
-					this.selectOrDeselectNode(newNode);
-				}
-			}
-			if(! e.isShiftDown()) {
+			} else if (! e.isShiftDown()) {
 				this.deselectNodes();
 			}
-
 			this.redisplayGraph();
 		});
 
@@ -626,37 +650,39 @@ public class EditorController
 			}
 			this.beingDragged = e.isShiftDown();
 			this.draggingNode = false;
+			this.redisplayGraph();
 		});
 	}
 
-	public void clickNodeListener(MouseEvent e, Node n) {
+	public void clickNodeListener(MouseEvent e, Node node) {
 		// update text fields
-		this.setFields(n.getX(), n.getY());
+		this.setFields(node.getX(), node.getY());
 		if(this.draggedANode) {
 			this.draggedANode = false;
 			return;
 		}
-		// check if you single click
-		// so, then you are selecting a node
+		// single left click to select a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-			if(! e.isShiftDown()) {
-				if(this.selectedNodes.size() > 1) {
-					this.deselectNodes();
-				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
-					this.deselectNodes();
-				}
-			}
-			// This ctrls stuff for pressing ctrl when you clicked
-			// SELECTS ALL OF THE NODE's NEIGHBORS
-			if(e.isControlDown()) {
-				n.getNeighbors().forEach(this::selectOrDeselectNode);
-			}
-			this.selectOrDeselectNode(n);
-			this.updateFields();
+			System.out.println("Node clicked: " + node + "\t\tselected: " + this.selectedNodes + ", size = " + this.selectedNodes.size());
 
-		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
+			this.setFields(node.getX(), node.getY());
+			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
+			if (! e.isShiftDown()) {
+				System.out.println("Deselected");
+				this.deselectNodes(); // no-shift click will deselect all others
+			}
+			// control click to select neighbors instead of target node
+			if (e.isControlDown()) {
+				System.out.println("Neighbors selected");
+				node.getNeighbors().forEach(this::selectNode);
+			}
+
+			this.selectNode(node);
+			this.redisplayGraph();
+
+		} else if (! this.selectedNodes.isEmpty() && this.secondaryPressed) {
 			// Connect all of the nodes selected to the one that you have clicked on
-			this.selectedNodes.forEach(node -> this.directory.connectOrDisconnectNodes(node, n));
+			this.selectedNodes.forEach(n -> this.directory.connectOrDisconnectNodes(node, n));
 			this.redrawLines();
 		}
 	}
@@ -665,8 +691,8 @@ public class EditorController
 	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
 		this.draggingNode = true;
-		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
-			if(e.isPrimaryButtonDown()) {
+		if (this.selectedNodes.contains(n)) {
+			if (e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
@@ -675,6 +701,7 @@ public class EditorController
 				// right click drag on the selected node
 				// do nothing for now
 			}
+			this.redisplayGraph();
 		}
 	}
 
@@ -696,14 +723,10 @@ public class EditorController
 	 */
 	private void selectOrDeselectNode(Node n) {
 		if(this.selectedNodes.contains(n)) {
-			this.selectedNodes.remove(n);
-			this.iconController.resetSingleNode(n);
+			this.deselectNode(n);
 		} else {
-			this.selectedNodes.add(n);
-			this.iconController.selectAnotherNode(n);
+			this.selectNode(n);
 		}
-		this.redisplayGraph();
-		System.out.println(this.selectedNodes.size()); // For debugging
 	}
 
 	private void selectAllNodesOnFloor() {
@@ -715,10 +738,25 @@ public class EditorController
 		});
 	}
 
+	private void selectSingleNode(Node n) {
+		this.selectedNodes.clear();
+		this.selectedNodes.add(n);
+		this.iconController.selectSingleNode(n);
+	}
+
+	private void selectNode(Node n) {
+		this.selectedNodes.add(n);
+		this.iconController.selectAnotherNode(n);
+	}
+
+	private void deselectNode(Node n) {
+		this.selectedNodes.remove(n);
+		this.iconController.resetSingleNode(n);
+	}
+
 	private void deselectNodes() {
 		this.iconController.deselectAllNodes();
 		this.selectedNodes.clear();
-		System.out.println(this.selectedNodes.size());
 	}
 
 	// This method is commented out because it is outdated and was only used when there was singular node selection
@@ -753,19 +791,6 @@ public class EditorController
 	private void setRoomFields(String name, String desc) {
 		this.setNameField(name);
 		this.setDescriptField(desc);
-	}
-
-	/** Updates the node/room fields based off of the most recently selected node (or room)
-	 *
-	 */
-	private void updateFields() {
-		if(selectedNodes.size() == 0) {
-			return;
-		}
-		this.setFields(selectedNodes.get(this.selectedNodes.size() - 1).getX(), selectedNodes.get(this.selectedNodes.size() - 1).getY());
-
-		selectedNodes.get(this.selectedNodes.size() - 1).applyToRoom(room ->
-				this.setRoomFields(room.getName(), room.getDescription()));
 	}
 
 	/**
@@ -843,12 +868,12 @@ public class EditorController
 		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
-	/*
-	To set the kiosk, bind this line to a "set kiosk" button
-	*/
+	/**
+	 * Make the room of the currently-selected node into the kiosk
+	 */
 	@FXML
 	public void selectKioskClicked() {
-		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+		if (selectedNodes.isSingular()) selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
 	}
 	@FXML
 	private void helpBtnClicked() throws IOException {
