@@ -105,7 +105,6 @@ public class EditorController
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
-	private boolean beingDragged; //Protects the imageView for being dragged
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -245,8 +244,6 @@ public class EditorController
 
 	@FXML
 	public void confirmBtnPressed() {
-//		this.directory.getRooms().forEach(room ->
-//				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
 		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
@@ -352,10 +349,9 @@ public class EditorController
 			r.getUserSideShape().setOnContextMenuRequested(event -> {});
 			Label label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
-				this.beingDragged = true;
+				event.consume();
 				label.relocate(event.getX(), event.getY());
 			});
-			label.setOnMouseReleased(event -> this.beingDragged = false);
 		}
 		this.nodePane.getChildren().setAll(roomShapes);
 	}
@@ -534,8 +530,9 @@ public class EditorController
 	/////EVENT HANDLERS////
 	///////////////////////
 
-	public void installPaneListeners(){
+	public void installPaneListeners() {
 		linePane.setOnMouseClicked(e -> {
+			e.consume();
 			this.setFields(e.getX(), e.getY());
 
 			//Create node on double click
@@ -563,20 +560,17 @@ public class EditorController
 		// TODO: Move to MapDisplayController
 		setScrollZoom();
 
-		contentAnchor.setOnMousePressed(e->{
+		contentAnchor.setOnMousePressed(e -> {
 			clickedX = e.getX();
 			clickedY = e.getY();
 			if(e.isShiftDown()) {
-				this.beingDragged = true;
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
-			} else {
-				this.beingDragged = false;
 			}
 		});
 
 		contentAnchor.setOnMouseDragged(e-> {
-
+			e.consume();
 			this.draggedANode = true;
 			if(e.isShiftDown() && !draggingNode) {
 				Rectangle r = new Rectangle();
@@ -601,17 +595,14 @@ public class EditorController
 				this.linePane.getChildren().add(r);
 			}
 
-			if(!beingDragged && !this.toggleShowRooms) {
+			if(! this.toggleShowRooms) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
-			} else if(this.toggleShowRooms) {
-
-
 			}
-			e.consume();
 		});
 
 		contentAnchor.setOnMouseReleased(e->{
+			e.consume();
 			if(e.isShiftDown() && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
@@ -647,13 +638,13 @@ public class EditorController
 			if(this.toggleShowRooms) {
 				this.displayAdminSideRooms();
 			}
-			this.beingDragged = e.isShiftDown();
 			this.draggingNode = false;
 			this.redisplayGraph();
 		});
 	}
 
 	public void clickNodeListener(MouseEvent e, Node node) {
+		e.consume();
 		// update text fields
 		this.setFields(node.getX(), node.getY());
 		if(this.draggedANode) {
@@ -662,17 +653,13 @@ public class EditorController
 		}
 		// single left click to select a node
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY)) {
-			System.out.println("Node clicked: " + node + "\t\tselected: " + this.selectedNodes + ", size = " + this.selectedNodes.size());
-
 			this.setFields(node.getX(), node.getY());
 			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
 			if (! e.isShiftDown()) {
-				System.out.println("Deselected");
 				this.deselectNodes(); // no-shift click will deselect all others
 			}
 			// control click to select neighbors instead of target node
 			if (e.isControlDown()) {
-				System.out.println("Neighbors selected");
 				node.getNeighbors().forEach(this::selectNode);
 			}
 
@@ -688,7 +675,7 @@ public class EditorController
 
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
-		this.beingDragged = true;
+		e.consume();
 		this.draggingNode = true;
 		if (this.selectedNodes.contains(n)) {
 			if (e.isPrimaryButtonDown()) {
@@ -705,6 +692,7 @@ public class EditorController
 	}
 
 	public void releaseNodeListener(MouseEvent e, Node n) {
+		e.consume();
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
@@ -713,7 +701,6 @@ public class EditorController
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
 
-		this.beingDragged = false;
 	}
 
 	/**
