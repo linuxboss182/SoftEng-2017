@@ -1,6 +1,6 @@
 package controllers.shared;
 
-import controllers.icons.IconController;
+import entities.icons.IconController;
 import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;

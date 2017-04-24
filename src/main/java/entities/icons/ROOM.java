@@ -1,4 +1,4 @@
-package controllers.icons;
+package entities.icons;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
