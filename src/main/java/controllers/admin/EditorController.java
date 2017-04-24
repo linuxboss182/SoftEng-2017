@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -83,6 +84,9 @@ public class EditorController
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private boolean beingDragged; //Protects the imageView for being dragged
+	double contextRad = 120;
+	double contextWidth = 60;
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -126,21 +130,52 @@ public class EditorController
 	 * Setup a radial context menu
 	 */
 	public void populateRoundPane(ContextMenuEvent e){
-		Arc roundPane = new Arc();
-		roundPane.setCenterX(e.getX());
-		roundPane.setCenterY(e.getY());
-		roundPane.setRadiusX(120.0f);
-		roundPane.setRadiusY(120.0f);
-		roundPane.setStartAngle(0);
-		roundPane.setLength(360);
-		roundPane.setType(ArcType.OPEN);
-		roundPane.setStroke(GRAY);
-		roundPane.setStrokeType(StrokeType.INSIDE);
-		roundPane.setFill(null);
-		roundPane.setStrokeWidth(60);
-		roundPane.setOpacity(90);
-		this.nodePane.getChildren().add(roundPane);
+
+		Group contextMenu = new Group();
+
+		Arc roundPanel = new Arc(e.getX(), e.getY(), contextRad, contextRad, 0, 360);
+		roundPanel.setType(ArcType.OPEN);
+		roundPanel.setStrokeWidth(contextWidth);
+		roundPanel.setStroke(Color.GRAY);
+		roundPanel.setStrokeType(StrokeType.INSIDE);
+		roundPanel.setFill(null);
+		roundPanel.setOpacity(0.9);
+
+		Line split1 = new Line();
+		split1.setStartX(e.getX());
+		split1.setStartY(e.getY());
+		split1.setEndX(e.getX() - contextRad / Math.sqrt(2));
+		split1.setEndY(e.getY() - contextRad / Math.sqrt(2));
+
+		Line split2 = new Line();
+		split2.setStartX(e.getX());
+		split2.setStartY(e.getY());
+		split2.setEndX(e.getX() + contextRad / Math.sqrt(2));
+		split2.setEndY(e.getY() - contextRad / Math.sqrt(2));
+
+		Line split3 = new Line();
+		split3.setStartX(e.getX());
+		split3.setStartY(e.getY());
+		split3.setEndX(e.getX() - contextRad / Math.sqrt(2));
+		split3.setEndY(e.getY() + contextRad / Math.sqrt(2));
+
+		Line split4 = new Line();
+		split4.setStartX(e.getX());
+		split4.setStartY(e.getY());
+		split4.setEndX(e.getX() + contextRad / Math.sqrt(2));
+		split4.setEndY(e.getY() + contextRad / Math.sqrt(2));
+
+
+		contextMenu.getChildren().add(roundPanel);
+		contextMenu.getChildren().add(split1);
+		contextMenu.getChildren().add(split2);
+		contextMenu.getChildren().add(split3);
+		contextMenu.getChildren().add(split4);
+		this.nodePane.getChildren().add(contextMenu);
+
 	}
+
+
 
 
 
