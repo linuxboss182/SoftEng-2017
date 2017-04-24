@@ -31,7 +31,7 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
     <center>
-        <SplitPane orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
             <items>
                 <ScrollPane fx:id="mapScroll">
                     <content>

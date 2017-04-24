@@ -119,8 +119,12 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 
