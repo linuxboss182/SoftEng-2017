@@ -36,7 +36,11 @@ public class StoredProcedures
 					+"roomID   integer references Rooms(roomID) ON DELETE CASCADE"
 					+" , employeeID integer references Employees(employeeID) ON DELETE CASCADE"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))",
-			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)"
+			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)",
+			"CREATE TABLE Users ("
+					+"userID    varchar(100) PRIMARY KEY"
+					+"passHash  varchar(100))"
+					+"permission    varchar(100)"
 	);
 
 	private static final List<String> drops = Arrays.asList(
@@ -45,7 +49,8 @@ public class StoredProcedures
 			"DROP TABLE Employees",
 			"DROP TABLE Rooms",
 			"DROP TABLE Edges",
-			"DROP TABLE Nodes"
+			"DROP TABLE Nodes",
+			"DROP TABLE Users"
 	);
 
 	//initial data that will be in the database upon construction
@@ -260,5 +265,16 @@ public class StoredProcedures
 
 	public static String procRetrieveKiosk() {
 		return "SELECT roomID FROM Kiosk";
+	}
+
+	public static String procRetrieveUsers(){
+		return "SELECT * FROM Users";
+	}
+
+	public static String procInsertUser(String userID, String passHash, String permission){
+		userID = sanitize(userID);
+		passHash = sanitize(passHash);
+		permission = sanitize(permission);
+		return "INSERT INTO Users(userID, passHash, permission) VALUES('"+userID+"', '"+passHash+"', '"+permission+"')";
 	}
 }

@@ -55,24 +55,21 @@ class DatabaseLoader
 	 */
 	private boolean populateDirectory(Directory directory) {
 		Map<Integer, Room> rooms = new HashMap<>();
-		Map<Integer, Professional> professionals = new HashMap<>();
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
 			this.retrieveNodesAndRooms(directory, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(directory, rooms);
+			//retrieve all user data
+			this.retrieveUserData(directory);
 			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.err.println("A SQL Exception occured");
 			return false;
 		}
-		//add all to directory
-		for(Professional p: professionals.values()){
-			directory.addProfessional(p);
-		}
-		// commented out because we don't have a defined kiosk location at the moment
+
 		System.out.println("Kiosk is " + kioskID);
 		if (kioskID != null) {
 			directory.setKiosk(rooms.get(kioskID));
@@ -197,6 +194,28 @@ class DatabaseLoader
 		}
 	}
 
+	/**Retrieves users and password hashes from the database and populates the given hash maps
+	 *
+	 * @param directory The directory to populate
+	 */
+
+	private void retrieveUserData(Directory directory) throws SQLException{
+		try {
+			//populate Users
+			Statement queryUsers = this.db_connection.createStatement();
+			ResultSet resultUsers = queryUsers.executeQuery(StoredProcedures.procRetrieveUsers());
+			while (resultUsers.next()) {
+				directory.addUser(resultUsers.getString("userID"),
+								  resultUsers.getString("passHash"),
+								  resultUsers.getString("permission"));
+			}
+			resultUsers.close();
+			queryUsers.close();
+		} catch (SQLException e){
+			throw e;
+		}
+	}
+
 	/**
 	 * Replace the database with the contents of the given directory
 	 *
@@ -272,15 +291,8 @@ class DatabaseLoader
 				db.executeUpdate(query);
 			}
 		}
-//
-//		for (Room n : dir.getRooms()) {
-//			for (Node m : n.getLocation().getNeighbors()) {
-//				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
-//				db.executeUpdate(query);
-//			}
-//		}
-//		System.out.println("room edges saved");
 
+		//save professionals
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
 					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
@@ -291,6 +303,15 @@ class DatabaseLoader
 				db.executeUpdate(query);
 			}
 		}
+
+		//save user data
+		for (int i=0;i<dir.getUsers().toArray().length;i++){
+			query = StoredProcedures.procInsertUser(dir.getUsers().toArray()[i].toString(),
+													dir.getPassHashes().toArray()[i].toString(),
+													dir.getPermissions().toArray()[i].toString());
+			db.executeQuery(query);
+		}
+
 		db.close();
 	}
 
