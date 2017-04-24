@@ -1,6 +1,8 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -51,6 +53,8 @@ public class UserMasterController
 	@FXML private GridPane destGridPane;
 	@FXML private Button aboutBtn;
 	@FXML private ImageView logoImageView;
+	@FXML private JFXDrawer navDrawer;
+	@FXML private JFXHamburger navHamburgerBtn;
 
 	private double clickedX;
 	private double clickedY;
@@ -88,7 +92,7 @@ public class UserMasterController
 		this.imageViewMap.setPickOnBounds(true);
 
 		// Set buttons to default
-		this.enableOrDisableNavigationButtons();
+		//this.enableOrDisableNavigationButtons();
 
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
@@ -96,10 +100,10 @@ public class UserMasterController
 
 		initfloorComboBox();
 
-		this.displayRooms();
+		//this.displayRooms();
 		iconController.resetAllRooms();
 
-		this.populateListView();
+		//this.populateListView();
 
 		setScrollZoom();
 
@@ -109,7 +113,34 @@ public class UserMasterController
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+
+		//Set the content for the slide out drawer
+		setDrawerContents();
+
 	}
+
+	private void setDrawerContents() {
+		try {
+			VBox box = FXMLLoader.load(getClass().getClassLoader().getResource("NavDrawer.fxml"));
+
+			navDrawer.setSidePane(box);
+			navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
+			navDrawer.prefWidthProperty().bind(parentBorderPane.widthProperty());
+		} catch (IOException ex) {
+			//Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	@FXML
+	public void onNavHamburgerBtnClicked() throws IOException {
+		if(navDrawer.isShown())
+			navDrawer.close();
+		else
+			navDrawer.open();
+
+
+
+	}
+
 
 	private void setMouseMapListeners() {
 		contentAnchor.setOnMousePressed(event -> {
@@ -124,32 +155,7 @@ public class UserMasterController
 		});
 	}
 
-	/**
-	 * Filter the room list for the search bar
-	 *
-	 * @param searchString The new string in the search bar
-	 */
-	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
-			this.populateListView();
-		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
 
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
-
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
-
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
-		}
-	}
 
 
 	/**
@@ -166,61 +172,52 @@ public class UserMasterController
 
 	}
 
-	@FXML
-	public void logAsAdminClicked()
-			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.getScene().setRoot(loginPrompt);
-	}
+//	@FXML
+//	public void logAsAdminClicked()
+//			throws IOException, InvocationTargetException {
+//		// Unset navigation targets for after logout
+//		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+//		this.getScene().setRoot(loginPrompt);
+//	}
 
 	/**
 	 * Called by MapDisplayController when changing floor
 	 */
 	@Override
 	protected void redisplayMapItems() {
-		this.displayRooms();
+		//this.displayRooms();
 	}
 
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
+//	public void displayRooms() {
+//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+//		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
+//			roomShapes.add(room.getUserSideShape());
+//
+//			// Add listener to select rooms on click
+//			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
+//				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+//			});
+//
+//			// Add listener for context menus (right click)
+//			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
+//
+//				ContextMenu optionsMenu = new ContextMenu();
+//
+//				MenuItem startRoomItem = new MenuItem("Set as starting location");
+//				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
+//				MenuItem endRoomItem = new MenuItem("Set as destination");
+//				endRoomItem.setOnAction(e2-> selectEndRoom(room));
+//				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+//				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
+//			});
+//		}
+//		this.nodePane.getChildren().setAll(roomShapes);
+//	}
 
-			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-			});
 
-			// Add listener for context menus (right click)
-			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-
-				ContextMenu optionsMenu = new ContextMenu();
-
-				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-			});
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
-	}
-
-	/**
-	 * Populates the list of rooms
-	 */
-	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
-	}
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
@@ -229,37 +226,37 @@ public class UserMasterController
 	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
-	protected void enableOrDisableNavigationButtons() {
-		if (this.getDirectionsBtn != null) {
-			if (endRoom == null || startRoom == null) {
-				this.getDirectionsBtn.setDisable(true);
-			} else {
-				this.getDirectionsBtn.setDisable(false);
-			}
-		}
+//	protected void enableOrDisableNavigationButtons() {
+//		if (this.getDirectionsBtn != null) {
+//			if (endRoom == null || startRoom == null) {
+//				this.getDirectionsBtn.setDisable(true);
+//			} else {
+//				this.getDirectionsBtn.setDisable(false);
+//			}
+//		}
 //		if (this.changeStartBtn != null) {
 //			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
 //		}
-	}
+	//}
 
 
 
 
-	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
-		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
-		BorderPane pane = loader.load();
-		UserPathController controller = loader.getController();
-
-		/* change to a scene with the path if possible */
-		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-			ApplicationController.getStage().setScene(new Scene(pane));
-			ApplicationController.getStage().show();
-		} else {
-			this.redisplayMapItems();
-		}
-	}
+//	@FXML
+//	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+//		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+//		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+//		BorderPane pane = loader.load();
+//		UserPathController controller = loader.getController();
+//
+//		/* change to a scene with the path if possible */
+//		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+//			ApplicationController.getStage().setScene(new Scene(pane));
+//			ApplicationController.getStage().show();
+//		} else {
+//			this.redisplayMapItems();
+//		}
+//	}
 
 	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
@@ -268,50 +265,50 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
-			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
-		} else {
-			this.selectEndRoom(room);
-		}
-	}
+//	protected void selectRoomAction(Room room) {
+//		if (this.changeStartBtn.isDisabled()) {
+//			this.selectStartRoom(room);
+//			this.changeStartBtn.setDisable(false);
+//		} else {
+//			this.selectEndRoom(room);
+//		}
+//	}
 
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
-		this.changeStartBtn.setDisable(true);
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
-	}
+//	@FXML
+//	public void changeStartClicked() throws IOException, InvocationTargetException {
+//		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
+//		this.changeStartBtn.setDisable(true);
+//		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
+//	}
 
-	protected void selectStartRoom(Room r) {
-		if(r == null) return;
-		startRoom = r;
-		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-		iconController.selectStartRoom(r);
-		this.displayRooms();
-	}
+//	protected void selectStartRoom(Room r) {
+//		if(r == null) return;
+//		startRoom = r;
+//		this.enableOrDisableNavigationButtons();
+////		this.enableDirectionsBtn();
+//		iconController.selectStartRoom(r);
+//		this.displayRooms();
+//	}
+//
+//	protected void selectEndRoom(Room r) {
+//		if(r == null) return;
+//		endRoom = r;
+//		this.enableOrDisableNavigationButtons();
+////		this.enableDirectionsBtn();
+////		this.enableChangeStartBtn();
+//		iconController.selectEndRoom(r);
+//		this.displayRooms();
+//	}
 
-	protected void selectEndRoom(Room r) {
-		if(r == null) return;
-		endRoom = r;
-		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-//		this.enableChangeStartBtn();
-		iconController.selectEndRoom(r);
-		this.displayRooms();
-	}
-
-	@FXML
-	public void aboutBtnClicked () throws IOException {
-		UserAboutPage aboutPageController = new UserAboutPage();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
-		Scene addAboutScene = new Scene(loader.load());
-		Stage addAboutStage = new Stage();
-		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
-		addAboutStage.setScene(addAboutScene);
-		addAboutStage.showAndWait();
-	}
+//	@FXML
+//	public void aboutBtnClicked () throws IOException {
+//		UserAboutPage aboutPageController = new UserAboutPage();
+//		FXMLLoader loader = new FXMLLoader();
+//		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+//		Scene addAboutScene = new Scene(loader.load());
+//		Stage addAboutStage = new Stage();
+//		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
+//		addAboutStage.setScene(addAboutScene);
+//		addAboutStage.showAndWait();
+//	}
 }
