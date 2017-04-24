@@ -98,8 +98,6 @@ public class EditorController
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
-	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
-	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
@@ -411,9 +409,6 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
-		node.getShape().setOnMousePressed((MouseEvent event) -> {
-			this.draggingNode = true;
-		});
 	}
 
 	private double readX() {
@@ -565,6 +560,7 @@ public class EditorController
 		setScrollZoom();
 
 		contentAnchor.setOnMousePressed(e -> {
+			e.consume();
 			clickedX = e.getX();
 			clickedY = e.getY();
 			if(e.isShiftDown()) {
@@ -575,8 +571,7 @@ public class EditorController
 
 		contentAnchor.setOnMouseDragged(e-> {
 			e.consume();
-			this.draggedANode = true;
-			if(e.isShiftDown() && !draggingNode) {
+			if(e.isShiftDown()) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -597,9 +592,7 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
-			}
-
-			if(! this.toggleShowRooms) {
+			} else if(! this.toggleShowRooms) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
 			}
@@ -607,7 +600,7 @@ public class EditorController
 
 		contentAnchor.setOnMouseReleased(e->{
 			e.consume();
-			if(e.isShiftDown() && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+			if (e.isShiftDown()) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
 				this.redisplayAll(); // this is to clear the rectangle off of the pane
@@ -634,29 +627,25 @@ public class EditorController
 				// Loop through and select/deselect all nodes in the bounds
 				this.directory.getNodesOnFloor(this.directory.getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
-						// Within the bounds, select or deselect it
-						this.selectOrDeselectNode(n);
+						this.selectNode(n);
 					}
 				});
 			}
 			if(this.toggleShowRooms) {
 				this.displayAdminSideRooms();
 			}
-			this.draggingNode = false;
 			this.redisplayGraph();
 		});
 	}
 
 	public void clickNodeListener(MouseEvent e, Node node) {
 		e.consume();
+
 		// update text fields
 		this.setFields(node.getX(), node.getY());
-		if(this.draggedANode) {
-			this.draggedANode = false;
-			return;
-		}
-		// single left click to select a node
-		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY)) {
+
+		// single left click without drag to select nodes
+		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
 			this.setFields(node.getX(), node.getY());
 			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
 			if (! e.isShiftDown()) {
@@ -667,7 +656,7 @@ public class EditorController
 				node.getNeighbors().forEach(this::selectNode);
 			}
 
-			this.selectNode(node);
+			this.selectOrDeselectNode(node);
 			this.redisplayGraph();
 
 		} else if (!this.selectedNodes.isEmpty() && (e.getButton() == MouseButton.SECONDARY)) {
@@ -680,7 +669,6 @@ public class EditorController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
-		this.draggingNode = true;
 		if (this.selectedNodes.contains(n)) {
 			if (e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
@@ -700,11 +688,8 @@ public class EditorController
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
-		// if the releasedX or Y is negative we want to remove the node
-
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
-
 	}
 
 	/**
