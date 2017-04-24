@@ -237,8 +237,40 @@ public class EditorController
 			}
 			return;
 		}
+		double x = this.readX();
+		double y = this.readY();
+		String name = this.nameField.getText();
+		String description = this.descriptField.getText();
 
-		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		// check to see if x and y are negative or name field is empty. Changes text
+		// next to each textField to red if it breaks the rules.
+		// This first condition requires that there has only been one node selected
+		if(x < 0 || y < 0 || name.isEmpty()) {
+			if(x < 0){
+				xPos.setTextFill(Color.RED);
+			} else {
+				xPos.setTextFill(Color.BLACK);
+			} if(y < 0){
+				yPos.setFill(Color.RED);
+			} else {
+				yPos.setFill(Color.BLACK);
+			} if(name.isEmpty()) {
+				roomName.setFill(Color.RED);
+			} else {
+				roomName.setFill(Color.BLACK);
+			}
+			return;
+		}
+		xPos.setTextFill(Color.BLACK);
+		yPos.setFill(Color.BLACK);
+		roomName.setFill(Color.BLACK);
+
+		if (this.selectedNodes.size() == 1 && (this.selectedNodes.get(0).getRoom() == null)) {
+			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
+		} else {
+			this.addNodeRoom(x, y, name, description);
+		}
+		this.redisplayAll();
 	}
 
 	@FXML
@@ -380,41 +412,13 @@ public class EditorController
 	 * Also add a new node associated with the room.
 	 */
 	private void addNodeRoom(double x, double y, String name, String description) {
-		// checking to see if x and y are negative or name field is empty. Changes text
-		// next to each textField to red if it breaks the rules.
-		if(x < 0 || y < 0 || name.isEmpty()) {
-			if(x < 0){
-				xPos.setTextFill(Color.RED);
-			} else {
-				xPos.setTextFill(Color.BLACK);
-			} if(y < 0){
-				yPos.setFill(Color.RED);
-			} else {
-				yPos.setFill(Color.BLACK);
-			} if(name.isEmpty()){
-				roomName.setFill(Color.RED);
-			} else {
-				roomName.setFill(Color.BLACK);
-			}
-			return;
-		}
-		xPos.setTextFill(Color.BLACK);
-		yPos.setFill(Color.BLACK);
-		roomName.setFill(Color.BLACK);
-
-		// This first condition requires that there has only been one node selected
 		// TODO: Review this assumption
-		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
-			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
-		} else {
-			Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
-			this.addNodeListeners(newNode);
-			this.redisplayGraph();
-			this.selectedNodes.forEach(n -> {
-				this.directory.connectOrDisconnectNodes(n, newNode);
-			});
-			this.redisplayAll();
-		}
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
+		this.addNodeListeners(newNode);
+		this.redisplayGraph();
+		this.selectedNodes.forEach(n -> {
+			this.directory.connectOrDisconnectNodes(n, newNode);
+		});
 	}
 
 	/** Add a new node to the directory at the given coordinates */
