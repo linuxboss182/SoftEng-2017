@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class Room
 {
-	// TODO: Fix room icon operations
+	// TODO: Clean up room icon operations
 	private static final double DEFAULT_STROKE_WIDTH = 1.5;
 	private static final double RECTANGLE_WIDTH = 7;
 	private static final double RECTANGLE_HEIGHT = 7;
@@ -47,7 +47,6 @@ public class Room
 	private String description;
 	private Set<Professional> professionals;
 	private String image; // The String path of the image for this room
-	//TODO: This should be a Node and a Label, not a StackPane
 	private Icon shape;
 	private Group adminShape;
 	private double labelOffsetX;
@@ -147,6 +146,7 @@ public class Room
 	}
 
 	// TODO: Add "getProfessionalsForRoom" to Directory, returning a sorted TreeSet
+	// Do we actually need rooms to have professionals? It's cheap, but we never use them.
 	Collection<Professional> getProfessionals() {
 		return new HashSet<>(this.professionals);
 	}

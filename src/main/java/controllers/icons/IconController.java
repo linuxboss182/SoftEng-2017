@@ -6,6 +6,9 @@ import entities.Directory;
 import entities.Node;
 import entities.Room;
 
+// TODO: Move to entities; complete integration with Room
+// How much of IconController should be exposed?
+
 /**
  * This is the only class that should ever change entities' colors
  *
@@ -53,7 +56,9 @@ public class IconController
 		NODE.DEFAULT.applyTo(node.getShape());
 
 		// Set elevator colors
-		if (node.getNeighbors().stream().anyMatch(n -> (node.getFloor() != n.getFloor())
+		// TODO: Use a different color for portals
+		if (node.getNeighbors().stream()
+				.anyMatch(n -> (node.getFloor() != n.getFloor())
 				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
 			NODE.ELEVATOR.applyTo(node.getShape());
 		} else if (node.getRoom() != null) {
@@ -155,10 +160,7 @@ public class IconController
 //	 * @note This creates a new shape whenever this is called; this is the intended
 //	 *       behavior, but is likely to change in future iterations.
 //	 */
-//	// TODO: Pop some of this out into an IconBuilder class
-//	// TODO: Replace StackPane use with ImageView and a Label
-//	// TODO: Don't create a new javafx Node every time
-//	// TODO: Actually use IconController for Rooms
+//	// TODO: Actually use IconController for user-side Rooms
 //	private void resetRoom(Room room) {
 //		if (room == null || room.getLocation() == null) return;
 //
@@ -198,10 +200,10 @@ public class IconController
 //	}
 
 	public void setElevatorIcon(Room room) {
-		//TODO: Implement in iteration 3
+		//TODO: Implement
 	}
 
 	public void setBathroomIcon(Room room) {
-		//TODO: Implement in iteration 3
+		//TODO: Implement
 	}
 }

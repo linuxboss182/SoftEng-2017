@@ -89,7 +89,6 @@ enum AStar
 			}
 		}
 		throw new PathNotFoundException("No path exists between the given locations.");
-		// return Collections.emptyList(); // TODO: replace this with some sort of "no path" indicator
 	}
 
 	private static double heuristic(Node current, Node other) {

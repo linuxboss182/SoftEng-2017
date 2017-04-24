@@ -88,7 +88,6 @@ public class Node
 		}
 	}
 
-	// TODO: Encapsulate to Directory
 	void setRoom(Room room) {
 		this.room = room;
 	}
@@ -103,7 +102,7 @@ public class Node
 	}
 
 	/** Set node coordinates */
-	// TODO: Encapsulate to Directory
+	// TODO: Encapsulate to Directory, or decide more clearly that single-entity changes may be exposed
 	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -273,7 +272,7 @@ public class Node
 	 *
 	 * @return This node's shape, a Circle
 	 */
-	//TODO: Maybe make a Node's shape be a Shape rather than a Circle
+	//TODO: Maybe make a Node's shape be an Icon of some sort rather than a Circle
 	public Circle getShape() {
 		if(this.circ == null) {
 			this.makeShape(); // maybe move this to the constructor
