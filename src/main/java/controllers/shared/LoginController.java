@@ -1,7 +1,6 @@
 package controllers.shared;
 
 
-import com.sun.jdi.InvocationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
