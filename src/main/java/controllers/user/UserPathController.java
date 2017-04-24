@@ -64,6 +64,7 @@ public class UserPathController
 	@FXML private ImageView logoImageView;
 
 	@FXML private Button doneBtn;
+	@FXML private JFXButton reverseBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
 
 	public static final double PATH_WIDTH = 4.0;
@@ -71,6 +72,8 @@ public class UserPathController
 	private double clickedY;
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
+	private Room roomStart;
+	private Room roomEnd;
 
 	/**
 	 * Inner class for generating and comparing floors quickly
@@ -179,9 +182,11 @@ public class UserPathController
 //		endRoom.getUserSideShape().setScaleX(1.5);
 //		endRoom.getUserSideShape().setScaleY(1.5);
 
+		roomStart = startRoom;
+		roomEnd = endRoom;
+
 		return true;
 	}
-
 	/**
 	 * Draw the minimaps for floor-switching
 	 *
@@ -280,6 +285,8 @@ public class UserPathController
 		this.floorsTraveledAnchorPane.getScene().setRoot(userPath);
 	}
 
+
+
 	@FXML
 	public void sendSMSBtnClicked(){
 //		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -367,5 +374,10 @@ public class UserPathController
 		// Unset navigation targets for after logout
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		floorsTraveledAnchorPane.getScene().setRoot(loginPrompt);
+	}
+	@FXML
+	public void reverseBtnClicked(){
+		floorsTraveledAnchorPane.getChildren().clear();
+		preparePathSceneSuccess(roomEnd,roomStart);
 	}
 }

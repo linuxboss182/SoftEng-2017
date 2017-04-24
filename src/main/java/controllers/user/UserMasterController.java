@@ -39,6 +39,7 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private JFXButton logAsAdmin;
+	@FXML private JFXButton reverseBtn;
 	@FXML private ListView<Room> directoryView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
