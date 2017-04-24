@@ -538,7 +538,9 @@ public class EditorController
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				Node newNode = this.addNode(e.getX(), e.getY());
-				// adding nodes:
+				if (newNode == null) {
+					return;
+				}
 				if (e.isShiftDown()) {
 					// shift double click:
 					// if one node is selected, connect to new, then select only new
@@ -550,6 +552,8 @@ public class EditorController
 						this.selectedNodes.forEach(n -> this.directory.connectNodes(n, newNode));
 						this.selectNode(newNode);
 					}
+				} else {
+					this.selectSingleNode(newNode);
 				}
 			} else if (! e.isShiftDown()) {
 				this.deselectNodes();
