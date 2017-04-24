@@ -50,6 +50,7 @@ public class Directory
 		this.rooms = new HashSet<>();
 		this.users = new HashSet<>();
 		this.passHashes = new HashSet<>();
+		this.permissions = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
