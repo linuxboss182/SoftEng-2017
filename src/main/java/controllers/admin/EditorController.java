@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -415,8 +416,6 @@ public class EditorController
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
-			this.primaryPressed = event.isPrimaryButtonDown();
-			this.secondaryPressed = event.isSecondaryButtonDown();
 			this.draggingNode = true;
 		});
 	}
@@ -662,7 +661,7 @@ public class EditorController
 			return;
 		}
 		// single left click to select a node
-		if(e.getClickCount() == 1 && this.primaryPressed) {
+		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY)) {
 			System.out.println("Node clicked: " + node + "\t\tselected: " + this.selectedNodes + ", size = " + this.selectedNodes.size());
 
 			this.setFields(node.getX(), node.getY());
@@ -680,7 +679,7 @@ public class EditorController
 			this.selectNode(node);
 			this.redisplayGraph();
 
-		} else if (! this.selectedNodes.isEmpty() && this.secondaryPressed) {
+		} else if (!this.selectedNodes.isEmpty() && (e.getButton() == MouseButton.SECONDARY)) {
 			// Connect all of the nodes selected to the one that you have clicked on
 			this.selectedNodes.forEach(n -> this.directory.connectOrDisconnectNodes(node, n));
 			this.redrawLines();
@@ -697,7 +696,7 @@ public class EditorController
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
 
-			} else if (this.secondaryPressed) {
+			} else if (e.getButton() == MouseButton.SECONDARY) {
 				// right click drag on the selected node
 				// do nothing for now
 			}
