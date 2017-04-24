@@ -2,7 +2,6 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
-import controllers.icons.IconController;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
@@ -30,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import entities.Room;
 import javafx.scene.text.TextFlow;
