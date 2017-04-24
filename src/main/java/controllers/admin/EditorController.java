@@ -69,7 +69,6 @@ public class EditorController
 
 //	protected Node selectedNode; // you select a node by double clicking
 	protected ArrayList<Node> selectedNodes = new ArrayList<>();
-	protected boolean shiftPressed = false;
 	protected double selectionStartX;
 	protected double selectionStartY;
 	protected double selectionEndX;
@@ -183,7 +182,7 @@ public class EditorController
 
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
+		if (this.selectedProf == null || this.selectedNodes.isEmpty()) return;
 
 		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.addRoomToProfessional(room, this.selectedProf)));
 
@@ -192,7 +191,7 @@ public class EditorController
 
 	@FXML
 	public void delProfFromRoom() {
-		if (this.selectedNodes.size() == 0 || this.selectedProf == null) return;
+		if (this.selectedNodes.isEmpty() || this.selectedProf == null) return;
 
 		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.removeRoomFromProfessional(room, this.selectedProf)));
 
@@ -422,20 +421,13 @@ public class EditorController
 	}
 
 	/** Add a new node to the directory at the given coordinates */
-	private void addNode(double x, double y) {
+	private Node addNode(double x, double y) {
 		if(x < 0 || y < 0) {
-			return;
+			return null;
 		}
 		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
-
-		int size = this.selectedNodes.size();
-		if(size > 0) {
-			this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
-		}
-		if(this.shiftPressed) {
-			this.selectOrDeselectNode(newNode);
-		}
+		return newNode;
 	}
 
 	/**
@@ -529,11 +521,17 @@ public class EditorController
 			this.setFields(e.getX(), e.getY());
 			//Create node on double click
 			if(e.getClickCount() == 2) {
-				this.addNode(e.getX(), e.getY());
+				Node newNode = this.addNode(e.getX(), e.getY());
+				int size = this.selectedNodes.size();
+				if(size > 0) {
+					this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
+				}
+				if(e.isShiftDown()) {
+					this.selectOrDeselectNode(newNode);
+				}
 			}
-			if(!this.shiftPressed) {
+			if(! e.isShiftDown()) {
 				this.deselectNodes();
-
 			}
 
 			this.redisplayGraph();
@@ -545,8 +543,7 @@ public class EditorController
 		contentAnchor.setOnMousePressed(e->{
 			clickedX = e.getX();
 			clickedY = e.getY();
-			this.shiftPressed = e.isShiftDown();
-			if(this.shiftPressed) {
+			if(e.isShiftDown()) {
 				this.beingDragged = true;
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
@@ -558,7 +555,7 @@ public class EditorController
 		contentAnchor.setOnMouseDragged(e-> {
 
 			this.draggedANode = true;
-			if(this.shiftPressed && !draggingNode) {
+			if(e.isShiftDown() && !draggingNode) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -592,7 +589,7 @@ public class EditorController
 		});
 
 		contentAnchor.setOnMouseReleased(e->{
-			if(this.shiftPressed && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+			if(e.isShiftDown() && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
 				this.redisplayAll(); // this is to clear the rectangle off of the pane
@@ -627,8 +624,7 @@ public class EditorController
 			if(this.toggleShowRooms) {
 				this.displayAdminSideRooms();
 			}
-			this.shiftPressed = e.isShiftDown();
-			this.beingDragged = this.shiftPressed;
+			this.beingDragged = e.isShiftDown();
 			this.draggingNode = false;
 		});
 	}
@@ -643,7 +639,7 @@ public class EditorController
 		// check if you single click
 		// so, then you are selecting a node
 		if(e.getClickCount() == 1 && this.primaryPressed) {
-			if(!this.shiftPressed) {
+			if(! e.isShiftDown()) {
 				if(this.selectedNodes.size() > 1) {
 					this.deselectNodes();
 				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
@@ -653,23 +649,14 @@ public class EditorController
 			// This ctrls stuff for pressing ctrl when you clicked
 			// SELECTS ALL OF THE NODE's NEIGHBORS
 			if(e.isControlDown()) {
-				n.getNeighbors().forEach(neighbor-> {
-					this.selectOrDeselectNode(neighbor);
-				});
+				n.getNeighbors().forEach(this::selectOrDeselectNode);
 			}
 			this.selectOrDeselectNode(n);
 			this.updateFields();
 
 		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
-			/**
-			 * Connect all of the nodes selected to the one that you have clicked on
-			 */
-
-
-
-			this.selectedNodes.forEach(nodes->{
-				this.directory.connectOrDisconnectNodes(nodes, n);
-			});
+			// Connect all of the nodes selected to the one that you have clicked on
+			this.selectedNodes.forEach(node -> this.directory.connectOrDisconnectNodes(node, n));
 			this.redrawLines();
 		}
 	}
