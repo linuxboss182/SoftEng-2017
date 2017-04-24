@@ -285,18 +285,18 @@ public class UserPathController
 //		alert.setContentText("Sorry, SMS is currently unavailable.");
 //		alert.showAndWait();
 
-		 FXMLLoader loader = new FXMLLoader();
-		 loader.setLocation(this.getClass().getResource("/sms.fxml"));
-		 try {
-		 	Scene smsScene = new Scene(loader.load());
-		 	((SMSController)loader.getController()).setText(textDirections.getText());
-		 	Stage smsStage = new Stage();
-		 	smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
-		 	smsStage.setScene(smsScene);
-		 	smsStage.showAndWait();
-		 } catch (Exception e){
-		 	System.out.println("Error making SMS popup");
-		 }
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/sms.fxml"));
+		try {
+			Scene smsScene = new Scene(loader.load());
+			((SMSController)loader.getController()).setText(textDirections.getText());
+			Stage smsStage = new Stage();
+			smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
+			smsStage.setScene(smsScene);
+			smsStage.showAndWait();
+		} catch (IOException e) {
+			System.out.println("Error making SMS popup");
+			throw new RuntimeException(e);
+		}
 	}
 
 
