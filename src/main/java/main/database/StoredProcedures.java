@@ -39,8 +39,8 @@ public class StoredProcedures
 			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)",
 			"CREATE TABLE Users ("
 					+"userID    varchar(100) PRIMARY KEY"
-					+"passHash  varchar(100))"
-					+"permission    varchar(100)"
+					+" , passHash  varchar(100)"
+					+" , permission    varchar(100))"
 	);
 
 	private static final List<String> drops = Arrays.asList(
