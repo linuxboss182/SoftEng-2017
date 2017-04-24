@@ -49,6 +49,7 @@ public class EditorController
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
 	@FXML private TextField nameField;
+	@FXML private TextField displayNameField;
 	@FXML private TextArea descriptField;
 	@FXML private TextField xCoordField;
 	@FXML private TextField yCoordField;
@@ -285,9 +286,9 @@ public class EditorController
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, description);
+			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
 		} else {
-			this.addNodeRoom(x, y, name, description);
+			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
 		}
 		this.redisplayAll();
 	}
@@ -296,7 +297,8 @@ public class EditorController
 	public void modifyRoomBtnClicked() {
 		if(! this.selectedNodes.isSingular()) return;
 
-		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
+				this.displayNameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -424,9 +426,9 @@ public class EditorController
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
 	 */
-	private void addNodeRoom(double x, double y, String name, String description) {
+	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
 		// TODO: Review this assumption
-		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
@@ -451,9 +453,9 @@ public class EditorController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String description) {
+	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
-			directory.updateRoom(room, name, description);
+			directory.updateRoom(room, name, displayName, description);
 			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
 			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
@@ -647,7 +649,7 @@ public class EditorController
 		// single left click without drag to select nodes
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
 			this.setFields(node.getX(), node.getY());
-			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
+			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
 			if (! e.isShiftDown()) {
 				this.deselectNodes(); // no-shift click will deselect all others
 			}
@@ -759,12 +761,17 @@ public class EditorController
 		this.nameField.setText(name);
 	}
 
+	private void setDisplayNameField(String displayName) {
+		this.displayNameField.setText(displayName);
+	}
+
 	private void setDescriptField(String desc) {
 		this.descriptField.setText(desc);
 	}
 
-	private void setRoomFields(String name, String desc) {
+	private void setRoomFields(String name, String displayName, String desc) {
 		this.setNameField(name);
+		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
 	}
 
