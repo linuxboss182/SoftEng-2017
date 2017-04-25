@@ -32,11 +32,7 @@ public class NavDrawerController
 
 	@FXML private ImageView destImageView;
 
-	@FXML private JFXTextField startField;
 
-	@FXML private VBox drawerVBox;
-
-	@FXML private JFXTextField destinationField;
 
 
 
@@ -54,12 +50,14 @@ public class NavDrawerController
 		destFieldListener();
 	}
 
-//	protected void clickRoomAction(Room room) {
-//
-//	}
+	protected void clickRoomAction(Room room) {
+
+	}
+
 	public void startFieldListener() {
 		// Enable search; if this becomes more than one line, make it a function
 		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> {
+			isStart = true;
 			this.filterRoomsByName(contents);
 			resultsListView.setVisible(true);
 		});
@@ -68,6 +66,7 @@ public class NavDrawerController
 	public void destFieldListener() {
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> {
+			isDest = false;
 			this.filterRoomsByName(contents);
 			resultsListView.setVisible(true);
 		});
@@ -83,10 +82,18 @@ public class NavDrawerController
 		this.resultsListView.setItems(this.listProperty);
 
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-		System.out.println("begin");
 
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
+
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
+			if (isStart == true) {
+				this.selectStartRoom(resultsListView.getSelectionModel().getSelectedItem());
+			}
+
+			if (isDest == true) {
+				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
+			}
+
+		});
 	}
 
 	/**

@@ -3,6 +3,7 @@ package controllers.user;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
@@ -57,10 +58,18 @@ public class UserMasterController
 	@FXML private JFXDrawer navDrawer;
 	@FXML private JFXHamburger navHamburgerBtn;
 
+	////NavDrawer Elements
+	@FXML protected JFXTextField startField;
+	@FXML protected VBox drawerVBox;
+	@FXML protected JFXTextField destinationField;
+
 	private double clickedX;
 	private double clickedY;
 	protected Room startRoom;
 	protected Room endRoom;
+
+	protected boolean isStart;
+	protected boolean isDest;
 
 	HamburgerBackArrowBasicTransition back;
 
@@ -204,11 +213,8 @@ public class UserMasterController
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
 			roomShapes.add(room.getUserSideShape());
-
 			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-			});
+
 
 			// Add listener for context menus (right click)
 			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
@@ -216,7 +222,10 @@ public class UserMasterController
 				ContextMenu optionsMenu = new ContextMenu();
 
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
+				startRoomItem.setOnAction(e1 -> {
+					selectStartRoom(room);
+					startField.setText(room.getName());
+				});
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
@@ -224,6 +233,22 @@ public class UserMasterController
 			});
 		}
 		this.nodePane.getChildren().setAll(roomShapes);
+	}
+
+	public void roomClickListener(Room room) {
+		room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
+			if (e.getButton() == MouseButton.PRIMARY) {
+				if (isStart) {
+					this.selectStartRoom(room);
+					startField.setText(room.getName());
+				}
+				if (isDest) {
+					this.selectEndRoom(room);
+					destinationField.setText(room.getName());
+				}
+
+			}
+		});
 	}
 
 
@@ -274,14 +299,14 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
-			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
-		} else {
-			this.selectEndRoom(room);
-		}
-	}
+//	protected void selectRoomAction(Room room) {
+//		if (this.changeStartBtn.isDisabled()) {
+//
+//			this.changeStartBtn.setDisable(false);
+//		} else {
+//			this.selectEndRoom(room);
+//		}
+//	}
 
 //	@FXML
 //	public void changeStartClicked() throws IOException, InvocationTargetException {
@@ -295,6 +320,7 @@ public class UserMasterController
 		startRoom = r;
 		//this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
+		System.out.println("Start: " + r.getName());
 		iconController.selectStartRoom(r);
 		this.displayRooms();
 	}
@@ -305,6 +331,7 @@ public class UserMasterController
 		//this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
 //		this.enableChangeStartBtn();
+		System.out.println("End: " + r.getName());
 		iconController.selectEndRoom(r);
 		this.displayRooms();
 	}
