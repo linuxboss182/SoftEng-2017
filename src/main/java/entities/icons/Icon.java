@@ -1,11 +1,14 @@
 package entities.icons;
 
-import java.util.function.Consumer;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
+
+/**
+ * Class for room Icons displayed to users
+ */
 public class Icon
 		extends Group
 {
@@ -50,6 +53,21 @@ public class Icon
 		return this.label;
 	}
 
+	/**
+	 * Set the label text for this icon, or hide the label if given an empty string
+	 *
+	 * null will also hide the text
+	 *
+	 * @param text The text to display, or the empty string
+	 */
+	void setLabelText(String text) {
+		if ("".equals(text)) {
+			this.label.setVisible(false);
+		} else {
+			this.label.setVisible(true);
+			this.label.setText(text);
+		}
+	}
 
 	@Deprecated
 	void setSymbol(Node symbol) {
@@ -73,29 +91,10 @@ public class Icon
 	public void setLabelOffset(double x, double y) {
 		this.labelOffsetX = x;
 		this.labelOffsetY = y;
-		this.label.setLayoutX(this.label.getLayoutX() + this.labelOffsetX);
-		this.label.setLayoutY(this.label.getLayoutY() + this.labelOffsetY);
-	}
-
-	/**
-	 * Apply the given consumer function to this icon's symbol, if present
-	 *
-	 * @param consumer A function that may take a single javafx Node as its only argument
-	 */
-	public void applyToSymbol(Consumer<? super Node> consumer) {
-		if (this.symbol != null) {
-			consumer.accept(this.symbol);
-		}
-	}
-
-	/**
-	 * Apply the given consumer function to this icon's label, if present
-	 *
-	 * @param consumer A function that may take a single javafx Node as its only argument
-	 */
-	public void applyToLabel(Consumer<? super Node> consumer) {
-		if (this.symbol != null) {
-			consumer.accept(this.symbol);
-		}
+		this.label.setTranslateX(x);
+		this.label.setTranslateY(y);
+		// TODO: if the above lines work, remove the lines below, and the labelOffset fields
+//		this.label.setLayoutX(this.label.getLayoutX() + this.labelOffsetX);
+//		this.label.setLayoutY(this.label.getLayoutY() + this.labelOffsetY);
 	}
 }
