@@ -2,6 +2,7 @@ package controllers.shared;
 
 import entities.icons.IconController;
 import entities.*;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,9 +31,9 @@ public abstract class MapDisplayController
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
 
-	@FXML public AnchorPane contentAnchor = new AnchorPane();
+	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
-	@FXML protected ScrollPane mapScroll= new ScrollPane();
+	@FXML protected ScrollPane mapScroll;
 
 	protected Directory directory;
 	protected IconController iconController;
@@ -221,7 +222,7 @@ public abstract class MapDisplayController
 	 */
 	protected void initWindowResizeListener() {
 
-		fitMapSize();
+//		fitMapSize();
 		this.parentBorderPane.boundsInLocalProperty().addListener(new ChangeListener<Bounds>()
 
 
@@ -235,6 +236,11 @@ public abstract class MapDisplayController
 	}
 
 	private void fitMapSize() {
+		System.out.println("MapDisplayController.fitMapSize");
+		System.out.println("mapScroll = " + mapScroll);
+		System.out.println("contentAnchor = " + contentAnchor);
+		System.out.println("contentAnchor = " + contentAnchor.getTranslateX());
+		
 		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 
@@ -245,12 +251,16 @@ public abstract class MapDisplayController
 			contentAnchor.setScaleX(potentialScaleY);
 			contentAnchor.setScaleY(potentialScaleY);
 		}
+		System.out.println("potentialScaleX = " + potentialScaleX);
+		System.out.println("potentialScaleY = " + potentialScaleY);
 
 		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
 		contentAnchor.setTranslateX(potentialX);
 
 		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
 		contentAnchor.setTranslateY(potentialY);
+		System.out.println("potentialX = " + potentialX);
+		System.out.println("potentialY = " + potentialY);
 
 	}
 }

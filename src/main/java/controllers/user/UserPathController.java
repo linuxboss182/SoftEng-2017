@@ -5,6 +5,7 @@ import controllers.extras.SMSController;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -136,6 +137,7 @@ public class UserPathController
 		});
 
 		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
 	}
 
 	/**
