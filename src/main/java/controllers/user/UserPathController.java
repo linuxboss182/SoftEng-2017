@@ -2,7 +2,6 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
-import controllers.icons.IconController;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
@@ -25,12 +24,7 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import entities.Room;
@@ -167,9 +161,7 @@ public class UserPathController
 		if (path == null) {
 			return false;
 		}
-//		this.paintPath(this.getPathOnFloor(startFloor, path));
 		this.directionsTextField.getChildren().clear();
-
 		textDirections.setText(DirectionsGenerator.fromPath(path));
 		//Call text directions
 		this.directionsTextField.getChildren().add(textDirections);
@@ -179,7 +171,8 @@ public class UserPathController
 		LinkedList<Node> seg = new LinkedList<>();
 		for(int i = 0; i < path.size()-1; i++){
 			seg.add(path.get(i));
-			if((path.get(i).getFloor() != path.get(i+1).getFloor())){
+			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
+					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
 				pathSegments.add(seg);
 				// TODO: Look over this
 				seg = new LinkedList<>();
@@ -330,15 +323,12 @@ public class UserPathController
 	// TODO: Fix bug where separate paths on one floor are connected
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
-		Collection<Node> visited = new HashSet<>();
-
 		// This can be any collection type;
 		Collection<Arrow> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i+1);
 			if (here.getFloor() == this.directory.getFloorNum() && here.getFloor() == there.getFloor()) {
-				visited.add(here);
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
