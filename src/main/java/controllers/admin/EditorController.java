@@ -530,6 +530,7 @@ public class EditorController
 	public void installPaneListeners() {
 		linePane.setOnMouseClicked(e -> {
 			e.consume();
+			this.clearFields();
 			this.setFields(e.getX(), e.getY());
 
 			//Create node on double click
@@ -653,6 +654,7 @@ public class EditorController
 
 		// single left click without drag to select nodes
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
+			this.clearFields();
 			this.setFields(node.getX(), node.getY());
 			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
 			if (! e.isShiftDown()) {
@@ -778,6 +780,14 @@ public class EditorController
 		this.setNameField(name);
 		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
+	}
+
+	private void clearFields() {
+		this.xCoordField.setText("");
+		this.yCoordField.setText("");
+		this.displayNameField.setText("");
+		this.nameField.setText("");
+		this.descriptField.setText("");
 	}
 
 	/**
