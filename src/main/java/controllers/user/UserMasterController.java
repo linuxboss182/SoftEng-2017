@@ -109,6 +109,9 @@ public class UserMasterController
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+
+		// Enable search; if this becomes more than one line, make it a function
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 	}
 
 	private void setMouseMapListeners() {
