@@ -56,8 +56,6 @@ public class Icon
 	/**
 	 * Set the label text for this icon, or hide the label if given an empty string
 	 *
-	 * null will also hide the text
-	 *
 	 * @param text The text to display, or the empty string
 	 */
 	void setLabelText(String text) {

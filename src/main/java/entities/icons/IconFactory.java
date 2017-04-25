@@ -11,9 +11,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-/**
- *
- */
+// TODO: Replace this with a static "constructor" method in Icon
+
 public class IconFactory
 {
 	private static final double DEFAULT_LABEL_X_OFFSET = 0;
@@ -35,7 +34,7 @@ public class IconFactory
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
 		ImageView image = new ImageView(type.getImage());
-		Label label = new Label(name);
+		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
 		image.setLayoutX(x);
 		image.setLayoutY(y);
