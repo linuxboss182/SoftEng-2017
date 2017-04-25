@@ -36,6 +36,8 @@ public class AdminHelpController  implements Initializable
 				"Press Shift + down to move the view to the down");
 
 		commandTextFlow.getChildren().add(commands);
+		commandTextFlow.setStyle("-fx-border-color: black;");
+		
 
 	}
 
