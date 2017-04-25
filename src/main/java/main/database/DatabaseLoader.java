@@ -4,10 +4,7 @@ import java.sql.*;
 import java.util.Map;
 import java.util.HashMap;
 
-import entities.Directory;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
+import entities.*;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
@@ -165,6 +162,7 @@ class DatabaseLoader
 				                                 resultRooms.getString("roomDescription"),
 												 resultRooms.getDouble("labelX"),
 												 resultRooms.getDouble("labelY"));
+				room.setType(RoomType.valueOf(resultRooms.getString("roomType")));
 				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
@@ -260,7 +258,7 @@ class DatabaseLoader
 		}
 
 		for (Room r : dir.getRooms()) {
-//			PRINTLN("Saving node "+r.hashCode());
+//			PRINTLN("Saving node "+r.hashCode())
 			if(r.getLocation() != null) {
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
@@ -268,14 +266,16 @@ class DatabaseLoader
 																	r.getDisplayName(),
 																	r.getDescription(),
 																	r.getLabelOffsetX(),
-																	r.getLabelOffsetY());
+																	r.getLabelOffsetY(),
+																	r.getType().getName());
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
 														r.getDisplayName(),
 														r.getDescription(),
 														r.getLabelOffsetX(),
-														r.getLabelOffsetY());
+														r.getLabelOffsetY(),
+														r.getType().getName());
 			}
 			db.executeUpdate(query);
 		}
