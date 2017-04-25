@@ -14,7 +14,7 @@
          </font>
       </Label>
       <JFXButton fx:id="closeBtn" buttonType="RAISED" onMouseClicked="#closeBtnClicked" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #5087b4;" text="Close" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-      <TextFlow fx:id="commandTextFlow" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextFlow fx:id="commandTextFlow" lineSpacing="5.0" prefHeight="230.0" prefWidth="230.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
    </children>
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="235.0" minWidth="10.0" prefWidth="135.0" />

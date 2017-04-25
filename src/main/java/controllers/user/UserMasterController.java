@@ -384,6 +384,7 @@ public class UserMasterController
 		startRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
+
 		iconController.selectStartRoom(r);
 		this.displayRooms();
 	}
