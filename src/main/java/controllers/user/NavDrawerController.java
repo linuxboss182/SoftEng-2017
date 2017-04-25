@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import entities.Room;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -49,13 +51,47 @@ public class NavDrawerController
 		startFieldListener();
 		destFieldListener();
 		listViewListener();
+		startFieldFocusedListener();
+		destinationFieldFocusedListener();
+
 	}
 
 	protected void clickRoomAction(Room room) {
 
 	}
 
+	public void startFieldFocusedListener() {
+		startField.focusedProperty().addListener(new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					isStart = true;
+				}
+				else {
+					isStart = false;
+				}
+			}
+		});
+	}
+
+	public void destinationFieldFocusedListener() {
+		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					isDest = true;
+				}
+				else {
+					isDest = false;
+				}
+			}
+		});
+	}
+
 	public void startFieldListener() {
+
 		// Enable search; if this becomes more than one line, make it a function
 		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> {
 			isStart = true;
@@ -89,18 +125,18 @@ public class NavDrawerController
 
 	protected void listViewListener() {
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			if (isStart == true) {
+			if (isStart) {
 				this.selectStartRoom(resultsListView.getSelectionModel().getSelectedItem());
 				System.out.println("start clicked");
 
-				isDest = false;
+				//isDest = false;
 			}
 
-			if (isDest == true) {
+			if (isDest) {
 				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
 				System.out.println("end clicked");
 
-				isStart = false;
+				//isStart = false;
 			}
 
 		});
