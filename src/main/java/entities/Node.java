@@ -14,7 +14,6 @@ import java.util.function.Function;
  */
 public class Node
 {
-	@Deprecated
 	public RoomType getType() {
 		RoomType t = this.mapToRoom(room -> {
 			switch (room.getDescription()) {

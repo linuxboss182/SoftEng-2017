@@ -71,12 +71,12 @@ public class DirectionsGenerator
 //		}
 		// redo text directions with switch cases based on types of nodes
 		for(int i = 1; i < path.size() - 1; i++) {
-			if(path.get(i).getType().getName() == null){
-				System.out.println("");
+			if(path.get(i).getType() == null){
+				System.out.println("Howdy");
 			} else {
-				switch (path.get(i).getType().getName()) {
+				switch (path.get(i).getType()) {
 					// if PORTAL is read, check to see what type of next node is
-					case "Portal":
+					case PORTAL:
 						if (path.get(i+1).getBuildingName().equals("outside")) {
 							directions.append("Go outside,\nThen ");
 							while ((path.get(i + 1).getBuildingName().equals("outside")) || (path.get(i + 1) == null)) {
@@ -91,14 +91,14 @@ public class DirectionsGenerator
 							directions.append("\nThen ");
 						}
 						break;
-					case "Stairs":
+					case STAIRS:
 						while (path.get(i + 1).getType() == RoomType.STAIRS) {
 							i++;
 						}
 						directions.append("Take the stairs to the ").append(path.get(i).getFloor());
 						directions.append("\nThen");
 						break;
-					case "Elevator":
+					case ELEVATOR:
 						while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
 							i++;
 						}
