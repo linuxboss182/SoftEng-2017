@@ -69,6 +69,6 @@
       <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER" />
    </right>
    <left>
-      <JFXDrawer fx:id="navDrawer" defaultDrawerSize="380.0" BorderPane.alignment="CENTER" />
+      <JFXDrawer fx:id="navDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>

@@ -141,10 +141,15 @@ public class UserMasterController
 
 	private void setDrawerContents() {
 		try {
-			VBox box = FXMLLoader.load(getClass().getClassLoader().getResource("NavDrawer.fxml"));
+			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/NavDrawer.fxml"));
+			VBox box = loader.load();
+			NavDrawerController controller = loader.getController();
+			this.destinationField = controller.destinationField;
+			this.startField = controller.startField;
 
 			navDrawer.setSidePane(box);
 			navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
+
 			//navDrawer.prefWidthProperty().bind(parentBorderPane.widthProperty());
 		} catch (IOException ex) {
 			//Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -214,7 +219,7 @@ public class UserMasterController
 		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
 			roomShapes.add(room.getUserSideShape());
 			// Add listener to select rooms on click
-
+			roomClickListener(room);
 
 			// Add listener for context menus (right click)
 			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
@@ -224,7 +229,7 @@ public class UserMasterController
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
 				startRoomItem.setOnAction(e1 -> {
 					selectStartRoom(room);
-					startField.setText(room.getName());
+					//startField.setText(room.getName());
 				});
 				MenuItem endRoomItem = new MenuItem("Set as destination");
 				endRoomItem.setOnAction(e2-> selectEndRoom(room));
@@ -240,10 +245,12 @@ public class UserMasterController
 			if (e.getButton() == MouseButton.PRIMARY) {
 				if (isStart) {
 					this.selectStartRoom(room);
+					System.out.println("startroom = " + room.getName());
 					startField.setText(room.getName());
 				}
 				if (isDest) {
 					this.selectEndRoom(room);
+					System.out.println("endroom = " + room.getName());
 					destinationField.setText(room.getName());
 				}
 
@@ -321,19 +328,21 @@ public class UserMasterController
 		//this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
 		System.out.println("Start: " + r.getName());
-		iconController.selectStartRoom(r);
-		this.displayRooms();
+
+		//iconController.selectStartRoom(r);
+		//this.displayRooms();
 	}
 
 	protected void selectEndRoom(Room r) {
 		if(r == null) return;
 		endRoom = r;
+
 		//this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
 //		this.enableChangeStartBtn();
 		System.out.println("End: " + r.getName());
-		iconController.selectEndRoom(r);
-		this.displayRooms();
+		//iconController.selectEndRoom(r);
+		//this.displayRooms();
 	}
 
 //	@FXML

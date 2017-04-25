@@ -42,12 +42,13 @@ public class NavDrawerController
 //		startIcon = new javafx.scene.image.Image("/startIcon.png", true);
 //		startImageView.setImage(startIcon);
 		this.directory = ApplicationController.getDirectory();
-		startField.setText("Your Location");
+		//startField.setText("Your Location");
 		populateListView();
 		resultsListView.setVisible(false);
 
 		startFieldListener();
 		destFieldListener();
+		listViewListener();
 	}
 
 	protected void clickRoomAction(Room room) {
@@ -66,7 +67,7 @@ public class NavDrawerController
 	public void destFieldListener() {
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> {
-			isDest = false;
+			isDest = true;
 			this.filterRoomsByName(contents);
 			resultsListView.setVisible(true);
 		});
@@ -84,13 +85,22 @@ public class NavDrawerController
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 
+	}
+
+	protected void listViewListener() {
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
 			if (isStart == true) {
 				this.selectStartRoom(resultsListView.getSelectionModel().getSelectedItem());
+				System.out.println("start clicked");
+
+				isDest = false;
 			}
 
 			if (isDest == true) {
 				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
+				System.out.println("end clicked");
+
+				isStart = false;
 			}
 
 		});
