@@ -48,11 +48,32 @@ public class NavDrawerController
 		this.directory = ApplicationController.getDirectory();
 		startField.setText("Your Location");
 		populateListView();
+		resultsListView.setVisible(false);
+
+		startFieldListener();
+		destFieldListener();
 	}
 
 //	protected void clickRoomAction(Room room) {
 //
 //	}
+	public void startFieldListener() {
+		// Enable search; if this becomes more than one line, make it a function
+		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> {
+			this.filterRoomsByName(contents);
+			resultsListView.setVisible(true);
+		});
+	}
+
+	public void destFieldListener() {
+		// Enable search; if this becomes more than one line, make it a function
+		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> {
+			this.filterRoomsByName(contents);
+			resultsListView.setVisible(true);
+		});
+	}
+
+
 
 	/**
 	 * Populates the list of rooms
@@ -71,13 +92,13 @@ public class NavDrawerController
 	/**
 	 * Filter the room list for the search bar
 	 *
-	 * @param startString The new string in the start bar
-	 * @param destString The new string in the dest bar
+	 * @param contentString The new string in the search bar
 	 */
-	public void filterRoomsByName(String startString, String destString) {
-		if((this.startField == null) || (startString == null) || (startString.length() == 0) ||
-				(this.destinationField == null) || (destString == null) || (destString.length() == 0)) {
+	public void filterRoomsByName(String contentString) {
+		if((this.startField == null) || (contentString == null) || (contentString.length() == 0) ||
+				(this.destinationField == null)) {
 			this.populateListView();
+			resultsListView.setVisible(false);
 		} else {
 			// The Collator allows case-insensitie comparison
 			Collator coll = Collator.getInstance();
@@ -85,19 +106,14 @@ public class NavDrawerController
 			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
 
 			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normeStart = Normalizer.normalize(startString, Normalizer.Form.NFD).toLowerCase()
+			String normeStart = Normalizer.normalize(contentString, Normalizer.Form.NFD).toLowerCase()
 					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
 
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normeDest = Normalizer.normalize(destString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
 
 			Set<Room> roomSet = directory.filterRooms(room ->
 					(room.getLocation() != null) && // false if room has no location
 							(Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-									.contains(normeStart)) &&
-							(Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-									.contains(normeDest))); // check with unicode normalization
+									.contains(normeStart))); // check with unicode normalization
 
 			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}

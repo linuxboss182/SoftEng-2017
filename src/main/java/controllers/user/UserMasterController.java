@@ -3,6 +3,7 @@ package controllers.user;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -61,6 +62,11 @@ public class UserMasterController
 	protected Room startRoom;
 	protected Room endRoom;
 
+	HamburgerBackArrowBasicTransition back;
+
+
+
+
 
 	/**
 	 * Get the scene this is working on
@@ -114,8 +120,13 @@ public class UserMasterController
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 
+
+
 		//Set the content for the slide out drawer
 		setDrawerContents();
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
 
 	}
 
@@ -132,10 +143,14 @@ public class UserMasterController
 	}
 	@FXML
 	public void onNavHamburgerBtnClicked() throws IOException {
-		if(navDrawer.isShown())
+		back.setRate(back.getRate() * -1);
+		back.play();
+		if(navDrawer.isShown()) {
+
 			navDrawer.close();
-		else
+		} else {
 			navDrawer.open();
+		}
 	}
 
 

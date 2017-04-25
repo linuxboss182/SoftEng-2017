@@ -30,5 +30,6 @@
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />
+      <HBox prefHeight="100.0" prefWidth="200.0" />
    </children>
 </VBox>
