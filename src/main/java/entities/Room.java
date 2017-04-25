@@ -1,6 +1,5 @@
 package entities;
 
-import entities.icons.RoomType;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;

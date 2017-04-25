@@ -1,4 +1,4 @@
-package entities.icons;
+package entities;
 
 import javafx.scene.image.Image;
 
