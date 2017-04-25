@@ -1,5 +1,7 @@
 package controllers.shared;
 
+import main.database.DatabaseWrapper;
+
 import java.util.HashMap;
 
 /**
@@ -10,8 +12,8 @@ public class LoginHandler
 	private HashMap<String, String> adminLogins;
 	private HashMap <String, String> professionalLogins;
 
-	public LoginHandler(){
-		this.adminLogins = new HashMap<>();
+	public LoginHandler(HashMap<String, String> adminMap){
+		this.adminLogins = adminMap;
 		this.professionalLogins = new HashMap();
 	}
 
@@ -19,9 +21,12 @@ public class LoginHandler
 		String uppercasedUsername = username.toUpperCase();
 		if (isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)){
 			this.adminLogins.put(uppercasedUsername, password);
+			DatabaseWrapper.getInstance().getDirectory().addUser(uppercasedUsername, password, "admin");
+			System.out.println("I... did it?");
 		}
 		else if (!isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)) {
 			this.professionalLogins.put(uppercasedUsername, password);
+			DatabaseWrapper.getInstance().getDirectory().addUser(uppercasedUsername, password, "professional");
 		}
 	}
 
@@ -50,6 +55,11 @@ public class LoginHandler
 
 	public byte checkLogin(String username, String password){
 		String uppercasedUsername = username.toUpperCase();
+		System.out.println(adminLogins.keySet());
+		System.out.println(adminLogins.values());
+		System.out.println(adminLogins.get(uppercasedUsername));
+		System.out.println(adminLogins.isEmpty());
+		System.out.println(adminLogins.containsKey("admin"));
 		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(password))){
 			return 2;
 		}
@@ -59,5 +69,9 @@ public class LoginHandler
 		else{
 			return 0;
 		}
+	}
+
+	private enum LoginStatus {
+		ADMIN, USER, FAILURE;
 	}
 }

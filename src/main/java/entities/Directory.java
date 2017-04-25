@@ -2,13 +2,7 @@ package entities;
 
 import javafx.scene.image.Image;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,9 +19,9 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
-	private Set<String> users;
-	private Set<String> passHashes;
-	private Set<String> permissions;
+	private HashMap<String, String> users;
+//	private Set<String> passHashes;
+//	private Set<String> permissions;
 	private Room kiosk;
 
 	// default to floor 1
@@ -47,9 +41,9 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
-		this.users = new HashSet<>();
-		this.passHashes = new HashSet<>();
-		this.permissions = new HashSet<>();
+		this.users = new HashMap<>();
+//		this.passHashes = new HashSet<>();
+//		this.permissions = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -103,22 +97,22 @@ public class Directory
 	public void addUser(String user, String password, String permission){
 		//some password criteria here
 		//hashing
-		this.users.add(user);
-		this.passHashes.add(password);
-		this.permissions.add(permission);
+		this.users.put(user, password);
+//		this.passHashes.add(password);
+//		this.permissions.add(permission);
 	}
 
-	public Set<String> getUsers(){
+	public HashMap<String, String> getUsers(){
 		return this.users;
 	}
-
-	public Set<String> getPassHashes(){
-		return this.passHashes;
-	}
-
-	public Set<String> getPermissions(){
-		return this.permissions;
-	}
+//
+//	public Set<String> getPassHashes(){
+//		return this.passHashes;
+//	}
+//
+//	public Set<String> getPermissions(){
+//		return this.permissions;
+//	}
 	/* Element removal methods */
 
 	/** @deprecated May be restored once nodeless rooms are possible */

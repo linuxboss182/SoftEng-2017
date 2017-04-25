@@ -1,6 +1,7 @@
 package controllers.shared;
 
 
+import entities.Directory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,11 +18,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
+import main.database.DatabaseWrapper;
+
+import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
+import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class LoginController implements Initializable{
 
@@ -40,9 +47,31 @@ public class LoginController implements Initializable{
 	@FXML
 	private BorderPane parentBorderPane;
 
-	/*
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		Directory directory = DatabaseWrapper.getInstance().getDirectory();
+		directory.addUser("admin", "password", "admin");
+		logins = new LoginHandler(directory.getUsers());
+//		Set<String> passwordSet = directory.getPassHashes();
+//		Set<String> permissionSet = directory.getPermissions();
+
+//		String[] users = userSet.toArray(new String[userSet.size()]);
+//		String[] passwords = userSet.toArray(new String[passwordSet.size()]);
+//		String[] permissions = userSet.toArray(new String[permissionSet.size()]);
+
+//		for (int n = 0; n < users.length; n++){
+//			System.out.println("YOOOOOO");
+//			logins.addAccount(users[n], passwords[n], permissions[n].equals("admin"));
+//		}
+
+
+
+//		logins.addAccount("admin", "password", true);
+//		logins.addAccount("admin2", "admin, too?", true);
+
+
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
 				try{
@@ -57,15 +86,6 @@ public class LoginController implements Initializable{
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
-	}
-	*/
-
-
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		logins = new LoginHandler();
-		logins.addAccount("admin", "password", true);
 	}
 
 
