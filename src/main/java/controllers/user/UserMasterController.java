@@ -4,8 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -22,23 +19,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import entities.FloorImage;
 
-
-public abstract class UserMasterController
+public class UserMasterController
 		extends MapDisplayController
 		implements Initializable
 {
@@ -47,9 +43,8 @@ public abstract class UserMasterController
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
-	@FXML protected Pane nodePane;
+	@FXML private Pane nodePane;
 	@FXML protected TextField searchBar;
-	@FXML protected TextFlow directionsTextField;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
@@ -57,23 +52,11 @@ public abstract class UserMasterController
 	@FXML private Button aboutBtn;
 	@FXML private ImageView logoImageView;
 
-	private double clickedX, clickedY;
-	protected static Room startRoom;
-	protected static Room endRoom;
-	// TODO: Are these still needed? They shouldn't be, because of UserStartController being a separate class.
-	protected static boolean choosingStart = false;
-	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
+	private double clickedX;
+	private double clickedY;
+	protected Room startRoom;
+	protected Room endRoom;
 
-
-	/* ABSTRACT METHODS */
-	/**
-	 * Function called when a room is left clicked on the map
-	 * @param room
-	 */
-	protected abstract void clickRoomAction(Room room);
-
-
-	/* NON-ABSTRACT METHODS */
 
 	/**
 	 * Get the scene this is working on
@@ -83,6 +66,10 @@ public abstract class UserMasterController
 		return this.parentBorderPane.getScene();
 	}
 
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		this.initialize();
+	}
 
 	/**
 	 * Method used to initialize superclasses
@@ -90,12 +77,12 @@ public abstract class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
+		if (startRoom == null) startRoom = directory.getKiosk();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -103,44 +90,44 @@ public abstract class UserMasterController
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
-		// TODO: Move zoom stuff to MapDisplayController
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
 		setZoomSliding();
 
-		if(floorComboBox != null) {
-			initfloorComboBox();
-		}
+		initfloorComboBox();
 
 		this.displayRooms();
 		iconController.resetAllRooms();
-		if(this.directoryView != null) {
-			this.populateListView();
-		}
 
-		// TODO: Move to MapDisplayController
+		this.populateListView();
+
 		setScrollZoom();
 
 		// TODO: See if there's a way to include this in the OnMouseDragged listener
-		getCoordsFromMouseClick();
 
-		setMouseDragPanning();
+		setMouseMapListeners();
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+
+		// Enable search; if this becomes more than one line, make it a function
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 	}
 
-	private void getCoordsFromMouseClick() {
+	private void setMouseMapListeners() {
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();
 		});
-	}
 
-	private void setMouseDragPanning() {
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 	}
@@ -191,12 +178,16 @@ public abstract class UserMasterController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		// Unset navigation targets for after logout
-		startRoom = null;
-		endRoom = null;
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
+	}
 
-
+	/**
+	 * Called by MapDisplayController when changing floor
+	 */
+	@Override
+	protected void redisplayMapItems() {
+		this.displayRooms();
 	}
 
 	/**
@@ -209,7 +200,7 @@ public abstract class UserMasterController
 
 			// Add listener to select rooms on click
 			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
+				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			});
 
 			// Add listener for context menus (right click)
@@ -235,18 +226,8 @@ public abstract class UserMasterController
 		this.directoryView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
-			@Override
-			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
-				// These variables are set in the controllers when the scene is switched...
-				if(choosingEnd) {
-					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
-				} else if(choosingStart) {
-					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
-
-				}
-			}
-		});
+		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
 	}
 
 	/**
@@ -264,9 +245,9 @@ public abstract class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-		if (this.changeStartBtn != null) {
-			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-		}
+//		if (this.changeStartBtn != null) {
+//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
+//		}
 	}
 
 
@@ -274,21 +255,42 @@ public abstract class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.getScene().setRoot(userPath);
+		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+		BorderPane pane = loader.load();
+		UserPathController controller = loader.getController();
+
+		/* change to a scene with the path if possible */
+		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+			ApplicationController.getStage().setScene(new Scene(pane));
+			ApplicationController.getStage().show();
+		} else {
+			this.redisplayMapItems();
+		}
 	}
 
-
-	protected void changeFloor(FloorImage floor) {
-		Image map = this.directory.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.displayRooms();
-	}
-
-
-	/**
+	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
+
+	/**
+	 * Function called to select a room
+	 */
+	protected void selectRoomAction(Room room) {
+		if (this.changeStartBtn.isDisabled()) {
+			this.selectStartRoom(room);
+			this.changeStartBtn.setDisable(false);
+		} else {
+			this.selectEndRoom(room);
+		}
+	}
+
+	@FXML
+	public void changeStartClicked() throws IOException, InvocationTargetException {
+		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
+		this.changeStartBtn.setDisable(true);
+		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
+	}
 
 	protected void selectStartRoom(Room r) {
 		if(r == null) return;

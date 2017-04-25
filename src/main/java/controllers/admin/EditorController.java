@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -39,7 +39,6 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import entities.FloorImage;
 import entities.FloorProxy;
 
 public class EditorController
@@ -50,6 +49,7 @@ public class EditorController
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
 	@FXML private TextField nameField;
+	@FXML private TextField displayNameField;
 	@FXML private TextArea descriptField;
 	@FXML private TextField xCoordField;
 	@FXML private TextField yCoordField;
@@ -67,23 +67,43 @@ public class EditorController
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
+	@FXML private SplitPane mapSplitPane;
 
+	/**
+	 * Class implemented for use in multiple selection
+	 *
+	 * In addition to standard operatons, can test if only one element is present, and
+	 * get the element if there is only one.
+	 */
+	private class SingularHashSet<E> extends HashSet<E>
+	{
+		public boolean isSingular() {
+			return this.size() == 1;
+		}
+		public E getSoleElement() {
+			Iterator<E> iterator = this.iterator();
+			if (! iterator.hasNext()) {
+				throw new NoSuchElementException("too few elements for SingularHashSet::getSoleElement");
+			}
+			E element = iterator.next();
+			if (iterator.hasNext()) {
+				throw new NoSuchElementException("too many elements for SingularHashSet::getSoleElement");
+			} else {
+				return element;
+			}
+		}
+	}
 
-//	protected Node selectedNode; // you select a node by double clicking
-	protected ArrayList<Node> selectedNodes = new ArrayList<>();
-	protected boolean shiftPressed = false;
+	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
 	protected double selectionStartX;
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
-	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
-	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
-	private boolean beingDragged; //Protects the imageView for being dragged
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -183,15 +203,9 @@ public class EditorController
 		}
 	}
 
-	private void changeFloor(FloorImage floor) {
-		Image map = this.directory.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.redisplayGraph();
-	}
-
 	@FXML
 	public void addProfToRoom() {
-		if (this.selectedProf == null || this.selectedNodes.size() == 0) return;
+		if (this.selectedProf == null || this.selectedNodes.isEmpty()) return;
 
 		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.addRoomToProfessional(room, this.selectedProf)));
 
@@ -200,7 +214,7 @@ public class EditorController
 
 	@FXML
 	public void delProfFromRoom() {
-		if (this.selectedNodes.size() == 0 || this.selectedProf == null) return;
+		if (this.selectedNodes.isEmpty() || this.selectedProf == null) return;
 
 		this.selectedNodes.forEach(n-> n.applyToRoom(room -> directory.removeRoomFromProfessional(room, this.selectedProf)));
 
@@ -229,8 +243,6 @@ public class EditorController
 
 	@FXML
 	public void confirmBtnPressed() {
-//		this.directory.getRooms().forEach(room ->
-//				System.out.println("Attempting to save room: "+room.getName()+" to database..."));
 		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
@@ -245,15 +257,48 @@ public class EditorController
 			}
 			return;
 		}
+		double x = this.readX();
+		double y = this.readY();
+		String name = this.nameField.getText();
+		String description = this.descriptField.getText();
 
-		this.addNodeRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		// check to see if x and y are negative or name field is empty. Changes text
+		// next to each textField to red if it breaks the rules.
+		// This first condition requires that there has only been one node selected
+		if(x < 0 || y < 0 || name.isEmpty()) {
+			if(x < 0){
+				xPos.setTextFill(Color.RED);
+			} else {
+				xPos.setTextFill(Color.BLACK);
+			} if(y < 0){
+				yPos.setFill(Color.RED);
+			} else {
+				yPos.setFill(Color.BLACK);
+			} if(name.isEmpty()) {
+				roomName.setFill(Color.RED);
+			} else {
+				roomName.setFill(Color.BLACK);
+			}
+			return;
+		}
+		xPos.setTextFill(Color.BLACK);
+		yPos.setFill(Color.BLACK);
+		roomName.setFill(Color.BLACK);
+
+		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
+			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
+		} else {
+			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+		}
+		this.redisplayAll();
 	}
 
 	@FXML
 	public void modifyRoomBtnClicked() {
-		if(this.selectedNodes.size() != 1) return;
+		if(! this.selectedNodes.isSingular()) return;
 
-		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
+				this.displayNameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -263,6 +308,11 @@ public class EditorController
 
 
 	/* **** Non-FXML functions **** */
+
+	@Override
+	protected void redisplayMapItems() {
+		this.redisplayGraph();
+	}
 
 	/**
 	 * Redraw all elements of the map and the professionals' elements
@@ -299,10 +349,9 @@ public class EditorController
 			r.getUserSideShape().setOnContextMenuRequested(event -> {});
 			Label label = r.getUserSideShape().getLabel();
 			label.setOnMouseDragged(event -> {
-				this.beingDragged = true;
+				event.consume();
 				label.relocate(event.getX(), event.getY());
 			});
-			label.setOnMouseReleased(event -> this.beingDragged = false);
 		}
 		this.nodePane.getChildren().setAll(roomShapes);
 	}
@@ -362,11 +411,6 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
-		node.getShape().setOnMousePressed((MouseEvent event) -> {
-			this.primaryPressed = event.isPrimaryButtonDown();
-			this.secondaryPressed = event.isSecondaryButtonDown();
-			this.draggingNode = true;
-		});
 	}
 
 	private double readX() {
@@ -382,59 +426,24 @@ public class EditorController
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
 	 */
-	private void addNodeRoom(double x, double y, String name, String description) {
-		// checking to see if x and y are negative or name field is empty. Changes text
-		// next to each textField to red if it breaks the rules.
-		if(x < 0 || y < 0 || name.isEmpty()) {
-			if(x < 0){
-				xPos.setTextFill(Color.RED);
-			} else {
-				xPos.setTextFill(Color.BLACK);
-			} if(y < 0){
-				yPos.setFill(Color.RED);
-			} else {
-				yPos.setFill(Color.BLACK);
-			} if(name.isEmpty()){
-				roomName.setFill(Color.RED);
-			} else {
-				roomName.setFill(Color.BLACK);
-			}
-			return;
-		}
-		xPos.setTextFill(Color.BLACK);
-		yPos.setFill(Color.BLACK);
-		roomName.setFill(Color.BLACK);
-
-		// This first condition requires that there has only been one node selected
+	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
 		// TODO: Review this assumption
-		if (this.selectedNodes.size() == 1 && this.selectedNodes.get(0).getRoom() == null) {
-			directory.addNewRoomToNode(this.selectedNodes.get(0), name, description);
-		} else {
-			Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
-			this.addNodeListeners(newNode);
-			this.redisplayGraph();
-			this.selectedNodes.forEach(n -> {
-				this.directory.connectOrDisconnectNodes(n, newNode);
-			});
-			this.redisplayAll();
-		}
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
+		this.addNodeListeners(newNode);
+		this.redisplayGraph();
+		this.selectedNodes.forEach(n -> {
+			this.directory.connectOrDisconnectNodes(n, newNode);
+		});
 	}
 
 	/** Add a new node to the directory at the given coordinates */
-	private void addNode(double x, double y) {
+	private Node addNode(double x, double y) {
 		if(x < 0 || y < 0) {
-			return;
+			return null;
 		}
 		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
-
-		int size = this.selectedNodes.size();
-		if(size > 0) {
-			this.directory.connectOrDisconnectNodes(this.selectedNodes.get(size - 1), newNode);
-		}
-		if(this.shiftPressed) {
-			this.selectOrDeselectNode(newNode);
-		}
+		return newNode;
 	}
 
 	/**
@@ -444,11 +453,11 @@ public class EditorController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String description) {
-		this.selectedNodes.get(0).applyToRoom(room -> {
-			directory.updateRoom(room, name, description);
+	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
+		this.selectedNodes.getSoleElement().applyToRoom(room -> {
+			directory.updateRoom(room, name, displayName, description);
 			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
-			((Text)room.getUserSideShape().getChildren().get(1)).setText(name);
+			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -464,9 +473,9 @@ public class EditorController
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
 	private void updateSelectedNode(double x, double y) {
-		this.selectedNodes.get(0).moveTo(x, y);
-		this.selectedNodes.get(0).getShape().setCenterX(this.selectedNodes.get(0).getX());
-		this.selectedNodes.get(0).getShape().setCenterY(this.selectedNodes.get(0).getY());
+		this.selectedNodes.getSoleElement().moveTo(x, y);
+		this.selectedNodes.getSoleElement().getShape().setCenterX(x);
+		this.selectedNodes.getSoleElement().getShape().setCenterY(y);
 	}
 
 	private void updateSelectedNodes(double x, double y) {
@@ -490,31 +499,26 @@ public class EditorController
 	}
 
 	/**
-	 * Delete All of the Nodes selected
+	 * Delete all of the selected Nodes
 	 */
 	private void deleteSelectedNodes() {
-		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
-		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
-			Node n = this.selectedNodes.get(i);
-			deleteNode(n);
-			this.selectedNodes.remove(n);
-		}
+		this.selectedNodes.forEach(this::deleteNode);
 		this.selectedNodes.clear();
 		this.redisplayAll();
 	}
 
-	/** Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
+	/**
+	 * Deletes the nodes in the selection pool that are out of bounds (less than 0 x and y)
 	 */
 	private void deleteOutOfBoundNodes() {
-
-		// I use this instead of a normal forEach because that does not allow for me to remove the nodes easily
-		for(int i = this.selectedNodes.size() - 1; i >= 0; i--) {
-			Node n = this.selectedNodes.get(i);
-			if(n.getX() < 0 || n.getY() < 0) {
-				deleteNode(n);
-				this.selectedNodes.remove(n);
+		Set<Node> deleted = new HashSet<>();
+		this.selectedNodes.forEach(node -> {
+			if ((node.getX() < 0) || (node.getY() < 0)) {
+				this.deleteNode(node);
+				deleted.add(node);
 			}
-		}
+		});
+		this.selectedNodes.removeAll(deleted);
 		this.redisplayAll();
 	}
 
@@ -523,41 +527,53 @@ public class EditorController
 	/////EVENT HANDLERS////
 	///////////////////////
 
-	public void installPaneListeners(){
+	public void installPaneListeners() {
 		linePane.setOnMouseClicked(e -> {
+			e.consume();
 			this.setFields(e.getX(), e.getY());
+
 			//Create node on double click
 			if(e.getClickCount() == 2) {
-				this.addNode(e.getX(), e.getY());
-			}
-			if(!this.shiftPressed) {
+				Node newNode = this.addNode(e.getX(), e.getY());
+				if (newNode == null) {
+					return;
+				}
+				if (e.isShiftDown()) {
+					// shift double click:
+					// if one node is selected, connect to new, then select only new
+					// if multiple are selected, connect to all and add new to selection
+					if (this.selectedNodes.isSingular()) {
+						this.directory.connectNodes(newNode, this.selectedNodes.getSoleElement());
+						this.selectSingleNode(newNode); // chain add if one is selected
+					} else {
+						this.selectedNodes.forEach(n -> this.directory.connectNodes(n, newNode));
+						this.selectNode(newNode);
+					}
+				} else {
+					this.selectSingleNode(newNode);
+				}
+			} else if (! e.isShiftDown()) {
 				this.deselectNodes();
-
 			}
-
 			this.redisplayGraph();
 		});
 
 		// TODO: Move to MapDisplayController
 		setScrollZoom();
 
-		contentAnchor.setOnMousePressed(e->{
+		contentAnchor.setOnMousePressed(e -> {
+			e.consume();
 			clickedX = e.getX();
 			clickedY = e.getY();
-			this.shiftPressed = e.isShiftDown();
-			if(this.shiftPressed) {
-				this.beingDragged = true;
+			if(e.isShiftDown()) {
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
-			} else {
-				this.beingDragged = false;
 			}
 		});
 
 		contentAnchor.setOnMouseDragged(e-> {
-
-			this.draggedANode = true;
-			if(this.shiftPressed && !draggingNode) {
+			e.consume();
+			if(e.isShiftDown()) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -578,20 +594,20 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
+			} else if(! this.toggleShowRooms) {
+				// Limits the dragging for x and y coordinates. (panning I mean)
+				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				}
+				if(e.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && e.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				}
 			}
-
-			if(!beingDragged && !this.toggleShowRooms) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
-			} else if(this.toggleShowRooms) {
-
-
-			}
-			e.consume();
 		});
 
 		contentAnchor.setOnMouseReleased(e->{
-			if(this.shiftPressed && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+			e.consume();
+			if (e.isShiftDown()) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
 				this.redisplayAll(); // this is to clear the rectangle off of the pane
@@ -618,88 +634,69 @@ public class EditorController
 				// Loop through and select/deselect all nodes in the bounds
 				this.directory.getNodesOnFloor(this.directory.getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
-						// Within the bounds, select or deselect it
-						this.selectOrDeselectNode(n);
+						this.selectNode(n);
 					}
 				});
 			}
 			if(this.toggleShowRooms) {
 				this.displayAdminSideRooms();
 			}
-			this.shiftPressed = e.isShiftDown();
-			this.beingDragged = this.shiftPressed;
-			this.draggingNode = false;
+			this.redisplayGraph();
 		});
 	}
 
-	public void clickNodeListener(MouseEvent e, Node n) {
+	public void clickNodeListener(MouseEvent e, Node node) {
+		e.consume();
+
 		// update text fields
-		this.setFields(n.getX(), n.getY());
-		if(this.draggedANode) {
-			this.draggedANode = false;
-			return;
-		}
-		// check if you single click
-		// so, then you are selecting a node
-		if(e.getClickCount() == 1 && this.primaryPressed) {
-			if(!this.shiftPressed) {
-				if(this.selectedNodes.size() > 1) {
-					this.deselectNodes();
-				} else if(this.selectedNodes.size() == 1 && !this.selectedNodes.get(0).equals(n)) {
-					this.deselectNodes();
-				}
+		this.setFields(node.getX(), node.getY());
+
+		// single left click without drag to select nodes
+		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
+			this.setFields(node.getX(), node.getY());
+			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
+			if (! e.isShiftDown()) {
+				this.deselectNodes(); // no-shift click will deselect all others
 			}
-			// This ctrls stuff for pressing ctrl when you clicked
-			// SELECTS ALL OF THE NODE's NEIGHBORS
-			if(e.isControlDown()) {
-				n.getNeighbors().forEach(neighbor-> {
-					this.selectOrDeselectNode(neighbor);
-				});
+			// control click to select neighbors instead of target node
+			if (e.isControlDown()) {
+				node.getNeighbors().forEach(this::selectNode);
 			}
-			this.selectOrDeselectNode(n);
-			this.updateFields();
 
-		} else if(this.selectedNodes.size() != 0 && this.secondaryPressed) {
-			/**
-			 * Connect all of the nodes selected to the one that you have clicked on
-			 */
+			this.selectOrDeselectNode(node);
+			this.redisplayGraph();
 
-
-
-			this.selectedNodes.forEach(nodes->{
-				this.directory.connectOrDisconnectNodes(nodes, n);
-			});
+		} else if (!this.selectedNodes.isEmpty() && (e.getButton() == MouseButton.SECONDARY)) {
+			// Connect all of the nodes selected to the one that you have clicked on
+			this.selectedNodes.forEach(n -> this.directory.connectOrDisconnectNodes(node, n));
 			this.redrawLines();
 		}
 	}
 
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
-		this.beingDragged = true;
-		this.draggingNode = true;
-		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
-			if(e.isPrimaryButtonDown()) {
+		e.consume();
+		if (this.selectedNodes.contains(n)) {
+			if (e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
 
-			} else if (this.secondaryPressed) {
+			} else if (e.getButton() == MouseButton.SECONDARY) {
 				// right click drag on the selected node
 				// do nothing for now
 			}
+			this.redisplayGraph();
 		}
 	}
 
 	public void releaseNodeListener(MouseEvent e, Node n) {
+		e.consume();
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
-		// if the releasedX or Y is negative we want to remove the node
-
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
-
-		this.beingDragged = false;
 	}
 
 	/**
@@ -708,14 +705,10 @@ public class EditorController
 	 */
 	private void selectOrDeselectNode(Node n) {
 		if(this.selectedNodes.contains(n)) {
-			this.selectedNodes.remove(n);
-			this.iconController.resetSingleNode(n);
+			this.deselectNode(n);
 		} else {
-			this.selectedNodes.add(n);
-			this.iconController.selectAnotherNode(n);
+			this.selectNode(n);
 		}
-		this.redisplayGraph();
-		System.out.println(this.selectedNodes.size()); // For debugging
 	}
 
 	private void selectAllNodesOnFloor() {
@@ -727,10 +720,25 @@ public class EditorController
 		});
 	}
 
+	private void selectSingleNode(Node n) {
+		this.selectedNodes.clear();
+		this.selectedNodes.add(n);
+		this.iconController.selectSingleNode(n);
+	}
+
+	private void selectNode(Node n) {
+		this.selectedNodes.add(n);
+		this.iconController.selectAnotherNode(n);
+	}
+
+	private void deselectNode(Node n) {
+		this.selectedNodes.remove(n);
+		this.iconController.resetSingleNode(n);
+	}
+
 	private void deselectNodes() {
 		this.iconController.deselectAllNodes();
 		this.selectedNodes.clear();
-		System.out.println(this.selectedNodes.size());
 	}
 
 	// This method is commented out because it is outdated and was only used when there was singular node selection
@@ -758,26 +766,18 @@ public class EditorController
 		this.nameField.setText(name);
 	}
 
+	private void setDisplayNameField(String displayName) {
+		this.displayNameField.setText(displayName);
+	}
+
 	private void setDescriptField(String desc) {
 		this.descriptField.setText(desc);
 	}
 
-	private void setRoomFields(String name, String desc) {
+	private void setRoomFields(String name, String displayName, String desc) {
 		this.setNameField(name);
+		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
-	}
-
-	/** Updates the node/room fields based off of the most recently selected node (or room)
-	 *
-	 */
-	private void updateFields() {
-		if(selectedNodes.size() == 0) {
-			return;
-		}
-		this.setFields(selectedNodes.get(this.selectedNodes.size() - 1).getX(), selectedNodes.get(this.selectedNodes.size() - 1).getY());
-
-		selectedNodes.get(this.selectedNodes.size() - 1).applyToRoom(room ->
-				this.setRoomFields(room.getName(), room.getDescription()));
 	}
 
 	/**
@@ -855,12 +855,12 @@ public class EditorController
 		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
-	/*
-	To set the kiosk, bind this line to a "set kiosk" button
-	*/
+	/**
+	 * Make the room of the currently-selected node into the kiosk
+	 */
 	@FXML
 	public void selectKioskClicked() {
-		if (selectedNodes.size() == 1) selectedNodes.get(0).applyToRoom(room -> directory.setKiosk(room));
+		if (selectedNodes.isSingular()) selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
 	}
 	@FXML
 	private void helpBtnClicked() throws IOException {

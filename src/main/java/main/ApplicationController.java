@@ -1,7 +1,7 @@
 package main;
 
 //import controllers.SMSController;
-import controllers.icons.IconController;
+import entities.icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +17,11 @@ public class ApplicationController extends Application
 
 	private static Directory directory;
 	private static IconController iconController;
+	private static Stage stage;
+
+	public static Stage getStage() {
+		return ApplicationController.stage;
+	}
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
@@ -47,6 +52,7 @@ public class ApplicationController extends Application
 	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
 		Scene user = new Scene(root, 1174, 722);

@@ -1,17 +1,16 @@
 package controllers.shared;
 
-import controllers.icons.IconController;
+import entities.icons.IconController;
 import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -52,10 +51,8 @@ public abstract class MapDisplayController
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
-	@FXML
-	protected Slider zoomSlider;
-	@FXML
-	protected BorderPane parentBorderPane;
+	@FXML protected Slider zoomSlider;
+	@FXML protected BorderPane parentBorderPane;
 
 	// TODO: move shared initializaton to MDC
 //	@Override
@@ -86,79 +83,84 @@ public abstract class MapDisplayController
 	 *
 	 * @param nodes A collection of nodes to draw edges between
 	 */
-	public void redrawEdges(Collection<Node> nodes) {
+	public void redrawEdges(Collection<Node> nodes) {}
+
+	/**
+	 * Method to redisplay anything that should be drawn on the map
+	 */
+	protected abstract void redisplayMapItems();
+
+	protected void changeFloor(FloorImage floor) {
+		Image map = this.directory.switchFloors(floor);
+		this.imageViewMap.setImage(map);
+		this.redisplayMapItems();
 	}
+
 
 	protected void setScrollZoom() {
 
-		this.contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override
-			public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor = (event.getDeltaY() > 0)
-									 ? SCALE_DELTA
-									 : 1/SCALE_DELTA;
-
-				if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
-					Bounds viewPort = mapScroll.getViewportBounds();
-					Bounds contentSize = contentAnchor.getBoundsInParent();
-
-					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
-					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
-
-					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
-					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					currentScale *= scaleFactor;
-
-					double newCenterX = centerPosX * scaleFactor;
-					double newCenterY = centerPosY * scaleFactor;
-
-					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
-					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
-				}
-
-				if (scaleFactor * currentScale <= 1) {
-					currentScale = 1/scaleFactor;
-					zoomSlider.setValue(0);
-
-				}else if(scaleFactor * currentScale >= 5.5599173134922495) {
-					currentScale = 6 / scaleFactor;
-					zoomSlider.setValue(100);
-
-				}else {
-					zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
-				}
-
+		this.contentAnchor.setOnScroll(event -> {
+			event.consume();
+			if (event.getDeltaY() == 0) {
+				return;
 			}
+			double scaleFactor = (event.getDeltaY() > 0)
+								 ? SCALE_DELTA
+								 : 1/SCALE_DELTA;
+
+			if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
+				Bounds viewPort = mapScroll.getViewportBounds();
+				Bounds contentSize = contentAnchor.getBoundsInParent();
+
+				double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+
+				double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+
+				mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+				mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+				currentScale *= scaleFactor;
+
+				double newCenterX = centerPosX * scaleFactor;
+				double newCenterY = centerPosY * scaleFactor;
+
+				mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+				mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+			}
+
+			if (scaleFactor * currentScale <= 1) {
+				zoomSlider.setValue(0);
+
+			}else if(scaleFactor * currentScale >= 5.5599173134922495) {
+				zoomSlider.setValue(100);
+			}else {
+				zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
+			}
+
 		});
 
 	}
 
-	@FXML
-	protected void increaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent+=.2;
-		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
-	protected void decreaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent-=.2;
-		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
+//	@FXML
+//	protected void increaseZoomButtonPressed() {
+//		double zoomPercent = (zoomSlider.getValue()/100);
+//		zoomPercent+=.2;
+//		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
+//		zoomSlider.setValue(zoomPercent*100);
+//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+//		contentAnchor.setScaleX(zoomCoefficient);
+//		contentAnchor.setScaleY(zoomCoefficient);
+//	}
+//
+//	@FXML
+//	protected void decreaseZoomButtonPressed() {
+//		double zoomPercent = (zoomSlider.getValue()/100);
+//		zoomPercent-=.2;
+//		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
+//		zoomSlider.setValue(zoomPercent*100);
+//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
+//		contentAnchor.setScaleX(zoomCoefficient);
+//		contentAnchor.setScaleY(zoomCoefficient);
+//	}
 
 	/** This is the section for key listeners.
 	 *  Press Back Space for Deleting selected nodes
@@ -172,11 +174,13 @@ public abstract class MapDisplayController
 	 */
 	protected void setHotkeys() {
 		parentBorderPane.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-				increaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-				decreaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+			//TODO add functionality for zooming with hotkeys
+//			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+//				increaseZoomButtonPressed();
+//			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+//				decreaseZoomButtonPressed();
+//			}
+			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
 			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);

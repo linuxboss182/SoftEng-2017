@@ -50,8 +50,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <JFXTextField fx:id="usernameField" promptText="Enter username" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXPasswordField fx:id="passwordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <JFXTextField onKeyPressed="#enterPressed1" fx:id="usernameField" promptText="Enter username" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <JFXPasswordField onKeyPressed="#enterPressed" fx:id="passwordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <JFXButton fx:id="loginBtn" buttonType="RAISED" onMouseClicked="#loginBtnClicked" prefHeight="43.0" prefWidth="151.0" style="-fx-background-color: #5087b4;" text="Login" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label text="Admin Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <font>
