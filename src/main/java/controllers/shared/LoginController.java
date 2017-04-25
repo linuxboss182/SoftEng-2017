@@ -20,9 +20,11 @@ import javafx.scene.input.KeyEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
+
 	@FXML
 	private Label errorLbl;
 	@FXML
@@ -56,25 +58,28 @@ public class LoginController implements Initializable{
 
 
 
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		logins.addAccount("Frank", "12345", true);
+	}
 
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-//		boolean success = true;
-		boolean success = this.usernameField.getText().equals("admin")
-		               && this.passwordField.getText().equals("password");
-
-		if(success) {
+		byte success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
+//		boolean success = adminLogins.get(this.passwordField.getText()).equals(this.usernameField.getText());
+		if(success == 2) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
-		} else {
-			usernameField.setText("");
-			passwordField.setText("");
-			usernameField.requestFocus();
+		}
+		else if (success == 1){
+			//TODO: Figure out what to do with logged-in professionals
+		}
+		else {
+
 			this.errorLbl.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
 		}
-
 	}
 
 	@FXML
@@ -102,6 +107,7 @@ public class LoginController implements Initializable{
 		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		errorLbl.getScene().setRoot(destUI);
 	}
+
 
 
 }
