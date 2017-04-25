@@ -34,6 +34,7 @@ public enum RoomType
 		return name;
 	}
 
-
-
+	public Image getImage() {
+		return image;
+	}
 }
