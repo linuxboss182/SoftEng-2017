@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -24,7 +25,12 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import entities.Room;
@@ -117,8 +123,12 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 
@@ -323,7 +333,7 @@ public class UserPathController
 		Collection<Node> visited = new HashSet<>();
 
 		// This can be any collection type;
-		Collection<Line> path = new HashSet<>();
+		Collection<Arrow> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i+1);
@@ -332,7 +342,7 @@ public class UserPathController
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(line);
+				path.add(new Arrow(line));
 			}
 		}
 		this.linePane.getChildren().setAll(path);

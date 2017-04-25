@@ -1,6 +1,5 @@
 package entities;
 
-import controllers.shared.MapDisplayController;
 import javafx.scene.image.Image;
 
 import java.util.Comparator;
@@ -26,6 +25,9 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
+	private Set<String> users;
+	private Set<String> passHashes;
+	private Set<String> permissions;
 	private Room kiosk;
 
 	// default to floor 1
@@ -45,6 +47,9 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
+		this.users = new HashSet<>();
+		this.passHashes = new HashSet<>();
+		this.permissions = new HashSet<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -95,6 +100,25 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
+	public void addUser(String user, String password, String permission){
+		//some password criteria here
+		//hashing
+		this.users.add(user);
+		this.passHashes.add(password);
+		this.permissions.add(permission);
+	}
+
+	public Set<String> getUsers(){
+		return this.users;
+	}
+
+	public Set<String> getPassHashes(){
+		return this.passHashes;
+	}
+
+	public Set<String> getPermissions(){
+		return this.permissions;
+	}
 	/* Element removal methods */
 
 	/** @deprecated May be restored once nodeless rooms are possible */
@@ -142,8 +166,8 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String desc) {
-		Room newRoom = new Room(name, desc);
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
 		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
@@ -151,26 +175,12 @@ public class Directory
 		this.rooms.add(newRoom);
 		return newNode;
 	}
-	@Deprecated
-	public Node addNewRoomNode(double x, double y, int floor, String buildingName, String name, String desc) {
-		Room newRoom = new Room(name, desc);
-		Node newNode = new Node(x, y, floor, buildingName);
-		newRoom.setLocation(newNode);
-		newNode.setRoom(newRoom);
-		this.nodes.add(newNode);
-		this.rooms.add(newRoom);
-		return newNode;
-	}
-	@Deprecated
-	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
-		return this.addNewRoomNode(x, y, floor, "DEFAULT", name, desc);
-	}
 
 	/**
 	 * Add a new room with the given attributes to the given node
 	 */
-	public void addNewRoomToNode(Node node, String name, String desc) {
-		Room room = new Room(name, desc);
+	public void addNewRoomToNode(Node node, String name, String shortName, String desc) {
+		Room room = new Room(name, shortName, desc);
 		node.setRoom(room);
 		room.setLocation(node);
 		this.rooms.add(room);
@@ -181,8 +191,8 @@ public class Directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
 	 */
-	public Room addNewRoom(String name, String desc) {
-		Room newRoom = new Room(name, desc);
+	public Room addNewRoom(String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
@@ -192,8 +202,8 @@ public class Directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
 	 */
-	public Room addNewRoom(String name, String desc, double labelX, double labelY) {
-		Room newRoom = new Room(name, desc, labelX, labelY);
+	public Room addNewRoom(String name, String shortName, String desc, double labelX, double labelY) {
+		Room newRoom = new Room(name, desc, shortName, labelX, labelY);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
@@ -280,8 +290,9 @@ public class Directory
 		n1.connect(n2);
 	}
 
-	public void updateRoom(Room room, String name, String description) {
+	public void updateRoom(Room room, String name, String shortName, String description) {
 		room.setName(name);
+		room.setDisplayName(shortName);
 		room.setDescription(description);
 	}
 

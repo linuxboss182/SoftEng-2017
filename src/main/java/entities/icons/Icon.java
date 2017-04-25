@@ -1,10 +1,9 @@
-package controllers.icons;
+package entities.icons;
 
 import java.util.function.Consumer;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
 
 public class Icon
 		extends Group

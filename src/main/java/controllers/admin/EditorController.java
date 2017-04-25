@@ -49,6 +49,7 @@ public class EditorController
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
 	@FXML private TextField nameField;
+	@FXML private TextField displayNameField;
 	@FXML private TextArea descriptField;
 	@FXML private TextField xCoordField;
 	@FXML private TextField yCoordField;
@@ -98,8 +99,6 @@ public class EditorController
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
-	protected boolean draggingNode = false; // This is so that the selection box does not show up when dragging a node or group of nodes
-	protected boolean draggedANode = false; // This is to prevent deselection of a node after dragging it
 
 	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
@@ -287,9 +286,9 @@ public class EditorController
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, description);
+			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
 		} else {
-			this.addNodeRoom(x, y, name, description);
+			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
 		}
 		this.redisplayAll();
 	}
@@ -298,7 +297,8 @@ public class EditorController
 	public void modifyRoomBtnClicked() {
 		if(! this.selectedNodes.isSingular()) return;
 
-		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(), this.descriptField.getText());
+		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
+				this.displayNameField.getText(), this.descriptField.getText());
 	}
 
 	@FXML
@@ -411,9 +411,6 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
-		node.getShape().setOnMousePressed((MouseEvent event) -> {
-			this.draggingNode = true;
-		});
 	}
 
 	private double readX() {
@@ -429,9 +426,9 @@ public class EditorController
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
 	 */
-	private void addNodeRoom(double x, double y, String name, String description) {
+	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
 		// TODO: Review this assumption
-		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, description);
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
@@ -456,9 +453,9 @@ public class EditorController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String description) {
+	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
-			directory.updateRoom(room, name, description);
+			directory.updateRoom(room, name, displayName, description);
 			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
 			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
@@ -538,7 +535,9 @@ public class EditorController
 			//Create node on double click
 			if(e.getClickCount() == 2) {
 				Node newNode = this.addNode(e.getX(), e.getY());
-				// adding nodes:
+				if (newNode == null) {
+					return;
+				}
 				if (e.isShiftDown()) {
 					// shift double click:
 					// if one node is selected, connect to new, then select only new
@@ -550,6 +549,8 @@ public class EditorController
 						this.selectedNodes.forEach(n -> this.directory.connectNodes(n, newNode));
 						this.selectNode(newNode);
 					}
+				} else {
+					this.selectSingleNode(newNode);
 				}
 			} else if (! e.isShiftDown()) {
 				this.deselectNodes();
@@ -561,6 +562,7 @@ public class EditorController
 		setScrollZoom();
 
 		contentAnchor.setOnMousePressed(e -> {
+			e.consume();
 			clickedX = e.getX();
 			clickedY = e.getY();
 			if(e.isShiftDown()) {
@@ -571,8 +573,7 @@ public class EditorController
 
 		contentAnchor.setOnMouseDragged(e-> {
 			e.consume();
-			this.draggedANode = true;
-			if(e.isShiftDown() && !draggingNode) {
+			if(e.isShiftDown()) {
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -593,9 +594,7 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
-			}
-
-			if(! this.toggleShowRooms) {
+			} else if(! this.toggleShowRooms) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
 			}
@@ -603,7 +602,7 @@ public class EditorController
 
 		contentAnchor.setOnMouseReleased(e->{
 			e.consume();
-			if(e.isShiftDown() && !this.draggingNode) { // this is so that you are allowed to release shift after pressing it at the start of the drag
+			if (e.isShiftDown()) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
 				this.selectionEndY = e.getY();
 				this.redisplayAll(); // this is to clear the rectangle off of the pane
@@ -630,31 +629,27 @@ public class EditorController
 				// Loop through and select/deselect all nodes in the bounds
 				this.directory.getNodesOnFloor(this.directory.getFloor()).forEach(n -> {
 					if(n.getX() > topLeftX && n.getX() < botRightX && n.getY() > topLeftY && n.getY() < botRightY) {
-						// Within the bounds, select or deselect it
-						this.selectOrDeselectNode(n);
+						this.selectNode(n);
 					}
 				});
 			}
 			if(this.toggleShowRooms) {
 				this.displayAdminSideRooms();
 			}
-			this.draggingNode = false;
 			this.redisplayGraph();
 		});
 	}
 
 	public void clickNodeListener(MouseEvent e, Node node) {
 		e.consume();
+
 		// update text fields
 		this.setFields(node.getX(), node.getY());
-		if(this.draggedANode) {
-			this.draggedANode = false;
-			return;
-		}
-		// single left click to select a node
-		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY)) {
+
+		// single left click without drag to select nodes
+		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
 			this.setFields(node.getX(), node.getY());
-			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDescription()));
+			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
 			if (! e.isShiftDown()) {
 				this.deselectNodes(); // no-shift click will deselect all others
 			}
@@ -663,7 +658,7 @@ public class EditorController
 				node.getNeighbors().forEach(this::selectNode);
 			}
 
-			this.selectNode(node);
+			this.selectOrDeselectNode(node);
 			this.redisplayGraph();
 
 		} else if (!this.selectedNodes.isEmpty() && (e.getButton() == MouseButton.SECONDARY)) {
@@ -676,7 +671,6 @@ public class EditorController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
-		this.draggingNode = true;
 		if (this.selectedNodes.contains(n)) {
 			if (e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
@@ -696,11 +690,8 @@ public class EditorController
 		this.releasedX = e.getX();
 		this.releasedY = e.getY();
 
-		// if the releasedX or Y is negative we want to remove the node
-
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
-
 	}
 
 	/**
@@ -770,12 +761,17 @@ public class EditorController
 		this.nameField.setText(name);
 	}
 
+	private void setDisplayNameField(String displayName) {
+		this.displayNameField.setText(displayName);
+	}
+
 	private void setDescriptField(String desc) {
 		this.descriptField.setText(desc);
 	}
 
-	private void setRoomFields(String name, String desc) {
+	private void setRoomFields(String name, String displayName, String desc) {
 		this.setNameField(name);
+		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
 	}
 
