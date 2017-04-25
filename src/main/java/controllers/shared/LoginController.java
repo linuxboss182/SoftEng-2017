@@ -64,6 +64,7 @@ public class LoginController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		logins = new LoginHandler();
 		logins.addAccount("admin", "password", true);
 	}
 
@@ -80,7 +81,6 @@ public class LoginController implements Initializable{
 			//TODO: Figure out what to do with logged-in professionals
 		}
 		else {
-
 			this.errorLbl.setText("Incorrect Username or Password");
 			// They didn't login successfully so they should probably be punished in some way
 		}
