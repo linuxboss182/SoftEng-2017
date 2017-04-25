@@ -17,6 +17,11 @@ public class ApplicationController extends Application
 
 	private static Directory directory;
 	private static IconController iconController;
+	private static Stage stage;
+
+	public static Stage getStage() {
+		return ApplicationController.stage;
+	}
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
@@ -30,23 +35,24 @@ public class ApplicationController extends Application
 	public static void main(String[] args) {
 
 		try {
-			DatabaseWrapper.init();
+			DatabaseWrapper.getInstance().init();
 		} catch (DatabaseException e) {
 			System.out.println("ERROR IN DATABASE INITIALIZATION:\n" + e.getMessage());
 			return;
 		}
 
-		ApplicationController.directory = DatabaseWrapper.getDirectory();
+		ApplicationController.directory = DatabaseWrapper.getInstance().getDirectory();
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
 
-		DatabaseWrapper.close();
+		DatabaseWrapper.getInstance().close();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
 		Scene user = new Scene(root, 1174, 722);
