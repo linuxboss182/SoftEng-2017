@@ -166,13 +166,13 @@ public class UserMasterController
 
 	}
 
-//	@FXML
-//	public void logAsAdminClicked()
-//			throws IOException, InvocationTargetException {
-//		// Unset navigation targets for after logout
-//		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-//		this.getScene().setRoot(loginPrompt);
-//	}
+	@FXML
+	public void logAsAdminClicked()
+			throws IOException, InvocationTargetException {
+		// Unset navigation targets for after logout
+		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+		this.getScene().setRoot(loginPrompt);
+	}
 
 	/**
 	 * Called by MapDisplayController when changing floor

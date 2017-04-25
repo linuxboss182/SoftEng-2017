@@ -60,12 +60,15 @@
          <right>
             <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" BorderPane.alignment="CENTER" />
          </right>
+         <center>
+            <JFXButton fx:id="logAsAdmin" onMouseClicked="#logAsAdminClicked" text="Admin" BorderPane.alignment="CENTER" />
+         </center>
       </JFXToolbar>
    </top>
    <right>
       <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER" />
    </right>
    <left>
-      <JFXDrawer fx:id="navDrawer" defaultDrawerSize="320.0" BorderPane.alignment="CENTER" />
+      <JFXDrawer fx:id="navDrawer" defaultDrawerSize="380.0" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>

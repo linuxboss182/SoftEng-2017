@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.*;
 import javafx.scene.layout.VBox;
+import main.ApplicationController;
 
 import java.awt.*;
 import java.awt.Image;
@@ -44,8 +45,9 @@ public class NavDrawerController
 //		javafx.scene.image.Image startIcon;
 //		startIcon = new javafx.scene.image.Image("/startIcon.png", true);
 //		startImageView.setImage(startIcon);
+		this.directory = ApplicationController.getDirectory();
 		startField.setText("Your Location");
-		//populateListView();
+		populateListView();
 	}
 
 //	protected void clickRoomAction(Room room) {
@@ -56,9 +58,11 @@ public class NavDrawerController
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
+
 		this.resultsListView.setItems(this.listProperty);
+
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-		System.out.println("directory = " + directory);
+		System.out.println("begin");
 
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
