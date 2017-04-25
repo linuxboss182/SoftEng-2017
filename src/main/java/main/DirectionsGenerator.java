@@ -1,11 +1,14 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import entities.Direction;
 import entities.Node;
 import entities.RoomType;
+import entities.icons.IconType;
 import main.algorithms.Pathfinder;
 
 //TODO: Clean up getTextDirections (see notes)
@@ -44,7 +47,7 @@ public class DirectionsGenerator
 	 *
 	 * @return Directions for the path, as a string.
 	 */
-	public static String fromPath(List<Node> path) {
+	public static List<Direction> fromPath(List<Node> path) {
 		LinkedList<Node> asArray = new LinkedList<>();
 		int i = 0;
 		for (Node n : path) {
@@ -60,9 +63,9 @@ public class DirectionsGenerator
 	 * @param path the nodes along the path
 	 * @return String directions that tell how to reach a destination
 	 */
-	private static String getTextDirections(LinkedList<Node> path) {
-		StringBuilder  directions = new StringBuilder();
-		directions.append("First, ");
+	private static List<Direction> getTextDirections(LinkedList<Node> path) {
+		List<Direction>  directions = new ArrayList<Direction>();
+		directions.add(new Direction("First, ", IconType.PORTAL));
 
 		int leftTurns = 0, rightTurns = 0;
 //		if (path.length > 1 && isElevator(path[0], path[1])) {
@@ -78,7 +81,7 @@ public class DirectionsGenerator
 				// if PORTAL is read, check to see what type of next node is
 				case PORTAL:
 					if (path.get(i + 1).getBuildingName().equals("outside")) {
-						directions.append("Go outside,\nThen ");
+						directions.add(new Direction("Go outside", IconType.PORTAL));
 						while ((path.get(i + 1).getBuildingName().equals("outside")) || (path.get(i + 1) == null)) {
 
 
@@ -88,23 +91,20 @@ public class DirectionsGenerator
 
 						}
 					} else {
-						directions.append("Go into ").append(path.get(i).getBuildingName());
-						directions.append("\nThen ");
+						directions.add(new Direction("Go into "+path.get(i).getBuildingName(), IconType.PORTAL));
 					}
 					break;
 				case STAIRS:
 					while (path.get(i + 1).getType() == RoomType.STAIRS) {
 						i++;
 					}
-					directions.append("Take the stairs to the ").append(path.get(i).getFloor());
-					directions.append("\nThen");
+					directions.add(new Direction("Take the stairs to the "+path.get(i).getFloor(), IconType.STAIRS));
 					break;
 				case ELEVATOR:
 					while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
 						i++;
 					}
-					directions.append("Take the elevator to the ").append(path.get(i).getFloor());
-					directions.append(("\nThen "));
+					directions.add(new Direction("Take the elevator to the "+path.get(i).getFloor(), IconType.ELEVATOR));
 					break;
 				default:
 					// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
@@ -115,12 +115,10 @@ public class DirectionsGenerator
 					if (isRightTurn(turnAngle)) {
 						// Right Turn
 						if (rightTurns == 0) {
-							directions.append("take a right turn,\nThen ");
+							directions.add(new Direction("Take a right turn", IconType.HRIGHT));
 						} else {
 							rightTurns++;
-							directions.append("continue straight and take the ").append(rightTurns);
-							directions.append(getTurnPostfix(rightTurns)).append(" right,\nThen ");
-
+							directions.add(new Direction("Continue straight and take the "+rightTurns+" right", IconType.HRIGHT));
 						}
 						// if you take a turn, then the count for turns should be reset
 						// to 0
@@ -132,7 +130,7 @@ public class DirectionsGenerator
 
 							continue;
 						// Soft Right Turn
-						directions.append("take a soft right turn,\nThen ");
+						directions.add(new Direction("Take a soft right turn", IconType.SRIGHT));
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
@@ -157,37 +155,37 @@ public class DirectionsGenerator
 								()[0])
 							continue;
 						// Soft Left Turn
-						directions.append("take a soft left turn\nThen ");
+						directions.add(new Direction("Take a soft left turn", IconType.SLEFT));
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isLeftTurn(turnAngle)) {
 						// Left Turn
 						if (leftTurns == 0) {
-							directions.append("take a left turn,\nThen ");
+							directions.add(new Direction("Take a left turn", IconType.HLEFT));
 						} else {
 							leftTurns++;
-							directions.append("continue straight and take the ").append(leftTurns);
-							directions.append(getTurnPostfix(leftTurns)).append(" left,\nThen ");
+							directions.add(new Direction("Continue straight and take the "+leftTurns+" left", IconType.HLEFT));
 						}
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isHardLeftTurn(turnAngle)) {
 						// Hard Left Turn
-						directions.append("take a hard left turn\nThen ");
+						directions.add(new Direction("Take a hard left turn", IconType.HLEFT));
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isBackwards(turnAngle)) {
 						// Turn Around
-						directions.append("turn around\nThen ");
+						//directions.add(new Direction("Turn around", IconType.PORTAL));
+						//actually don't
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isHardRightTurn(turnAngle)) {
 						// Hard Right Turn
-						directions.append("take a hard right turn\nThen ");
+						directions.add(new Direction("Take a hard right turn", IconType.HRIGHT));
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
@@ -196,8 +194,8 @@ public class DirectionsGenerator
 			}
 //		}
 		}
-		directions.append("you are at your destination.");
-		return directions.toString();
+		directions.add(new Direction("You are at your destination.", IconType.PORTAL));
+		return directions;
 	}
 
 	/** Determines if the angle given corresponds to a right turn

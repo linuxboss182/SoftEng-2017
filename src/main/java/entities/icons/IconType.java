@@ -13,8 +13,8 @@ public enum IconType
 	HRIGHT("HRIGHT", new Image("/MysteryRoom.png")),
 	SRIGHT("SRIGHT", new Image("/MysteryRoom.png")),
 	ELEVATOR("ELEVATOR", new Image("/MysteryRoom.png")),
-	OUTSIDE("OUTSIDE", new Image("/MysteryRoom.png"))
-
+	STAIRS("STAIRS", new Image("/MysteryRoom.png")),
+	PORTAL("PORTAL", new Image("/MysteryRoom.png")),
 	;
 
 	private String name;
