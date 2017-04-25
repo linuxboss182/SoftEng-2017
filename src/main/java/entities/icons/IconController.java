@@ -111,22 +111,25 @@ public class IconController
 	// (incomplete)
 
 	private void resetRoom(Room room) {
+		return;
+	}
+	private void resetRoom(Room room, Boolean b) {
 		if (room == null || room.getLocation() == null) return;
 
 		Shape shape = (Shape) room.getUserSideShape().getChildren().get(0);
-		ROOM.DEFAULT.applyTo(shape);
+//		ROOM.DEFAULT.applyTo(shape);
 
 		//if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
 		if (room == this.directory.getKiosk()) {
-			ROOM.KIOSK.applyTo(shape);
+//			ROOM.KIOSK.applyTo(shape);
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-			ROOM.ELEVATOR.applyTo(shape);
+//			ROOM.ELEVATOR.applyTo(shape);
 		}
 
 		if (room == this.endRoom) {
-			ROOM.END.applyTo(shape);
+//			ROOM.END.applyTo(shape);
 		} else if (room == this.startRoom) {
-			ROOM.START.applyTo(shape);
+//			ROOM.START.applyTo(shape);
 		}
 	}
 
@@ -145,13 +148,13 @@ public class IconController
 	public void selectEndRoom(Room room) {
 		this.endRoom = room;
 		this.resetAllRoomsExcept(this.startRoom);
-		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
+//		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
 	}
 
 	public void selectStartRoom(Room room) {
 		this.startRoom = room;
 		this.resetAllRoomsExcept(this.endRoom);
-		ROOM.START.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
+//		ROOM.START.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
 	}
 
 //	/**

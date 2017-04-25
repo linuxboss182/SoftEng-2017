@@ -7,27 +7,27 @@ import javafx.scene.image.Image;
  */
 public enum RoomType
 {
-	DEFAULT("Default Room", new Image("/MysteryRoom.png")),
-	KIOSK("Kiosk", new Image("/MysteryRoom.png")),
-	ELEVATOR("Elevator", new Image("/Elevator.png")),
-	STAIRS("Stairs", new Image("/MysteryRoom.png")),
-	PORTAL("Portal", new Image("/MysteryRoom.png")),
-	PARKING("Parking", new Image("/MysteryRoom.png")),
-	HALLWAY("Hallway", new Image("/MysteryRoom.png")),
-	BATHROOM_M("Male Bathroom", new Image("/Bathroom.png")),
-	BATHROOM_F("Women's Bathroom", new Image("/Bathroom.png")),
-	BATHROOM_U("Unisex Bathroom", new Image("/Bathroom.png")),
-	SHOP("Gift Shop", new Image("/MysteryRoom.png")),
-	CAFE("Cafe", new Image("/MysteryRoom.png")),
+	DEFAULT("Default Room", "/MysteryRoom.png"),
+	KIOSK("Kiosk", "/MysteryRoom.png"),
+	ELEVATOR("Elevator", "/Elevator.png"),
+	STAIRS("Stairs", "/MysteryRoom.png"),
+	PORTAL("Portal", "/MysteryRoom.png"),
+	PARKING("Parking", "/MysteryRoom.png"),
+	HALLWAY("Hallway", "/MysteryRoom.png"),
+	BATHROOM_M("Male Bathroom", "/Bathroom.png"),
+	BATHROOM_F("Women's Bathroom", "/Bathroom.png"),
+	BATHROOM_U("Unisex Bathroom", "/Bathroom.png"),
+	SHOP("Gift Shop", "/MysteryRoom.png"),
+	CAFE("Cafe", "/MysteryRoom.png"),
 	;
 
 	private String name;
 	private Image image;
 
 	//Constructor
-	RoomType(String name, Image image) {
+	RoomType(String name, String imagePath) {
 		this.name = name;
-		this.image = image;
+		this.image = new Image(imagePath);
 	}
 
 	public String getName() {

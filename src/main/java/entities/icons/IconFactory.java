@@ -29,19 +29,22 @@ public class IconFactory
 
 
 	//Takes in a room and creates an icon at the room's position
-	public void makeIcon(Room room) {
+	public Icon makeIcon(Room room) {
 		RoomType type = room.getType();
 		String name = room.getDisplayName();
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
 		ImageView image = new ImageView(type.getImage());
-
 		Label label = new Label(name);
+
+		image.setLayoutX(x);
+		image.setLayoutY(y);
 		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
 		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
-	}
 
+		return new Icon(image, label);
+	}
 }

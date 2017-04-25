@@ -1,5 +1,6 @@
 package entities;
 
+import entities.icons.IconFactory;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -63,10 +64,11 @@ public class Room
 
 	/* Constructors */
 	Room(String name, String displayName, String description) {
-		this.location = null;
 		this.name = name;
 		this.displayName = displayName;
 		this.description = description;
+		this.location = null;
+		this.type = RoomType.DEFAULT;
 		this.professionals = new HashSet<>();
 		this.makeUserSideShape();
 	}
@@ -170,25 +172,26 @@ public class Room
 
 	private void makeUserSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
-			Circle shape = new Circle(this.location.getX(), this.location.getY(), CIRCLE_RADIUS);//			this.shape = shape;
-			shape.setStroke(stroke);
-			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-			shape.setFill(fill);
-
-			Label label = new Label(this.name);
-			label.setLayoutX(shape.getCenterX() + this.labelOffsetX);
-			label.setLayoutY(shape.getCenterY() + this.labelOffsetY);
-			label.setFont(new Font(FONT_SIZE));
-			label.setTextFill(Color.LIGHTGRAY);
-			label.setBackground(LABEL_BACKGROUND);
-
-			// A pane with the text on top of the shape; this is what actually represents the room
-			Icon icon = new Icon(shape, label);
-			this.shape = icon;
-//			icon.setLayoutX(this.location.getX());
-//			icon.setLayoutY(this.location.getY());
-			//icon.setAlignment(Pos.TOP_LEFT);
-		//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
+			this.shape = new IconFactory().makeIcon(this);
+//			Circle shape = new Circle(this.location.getX(), this.location.getY(), CIRCLE_RADIUS);//			this.shape = shape;
+//			shape.setStroke(stroke);
+//			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+//			shape.setFill(fill);
+//
+//			Label label = new Label(this.name);
+//			label.setLayoutX(shape.getCenterX() + this.labelOffsetX);
+//			label.setLayoutY(shape.getCenterY() + this.labelOffsetY);
+//			label.setFont(new Font(FONT_SIZE));
+//			label.setTextFill(Color.LIGHTGRAY);
+//			label.setBackground(LABEL_BACKGROUND);
+//
+//			// A pane with the text on top of the shape; this is what actually represents the room
+//			Icon icon = new Icon(shape, label);
+//			this.shape = icon;
+////			icon.setLayoutX(this.location.getX());
+////			icon.setLayoutY(this.location.getY());
+//			//icon.setAlignment(Pos.TOP_LEFT);
+//		//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
 		}
 	}
 
