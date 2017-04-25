@@ -20,9 +20,9 @@ public class DatabaseTester
 	public void tester(){
 		Directory dir = new Directory();
 		//Create 3 Rooms
-		Room roomA = dir.addNewRoom("A", "A");
-		Room roomB = dir.addNewRoom("B", "B");
-		Room roomC = dir.addNewRoom("C", "C");
+		Room roomA = dir.addNewRoom("A", "", "A");
+		Room roomB = dir.addNewRoom("B", "", "B");
+		Room roomC = dir.addNewRoom("C", "", "C");
 
 		//Create Nodes attached to Rooms
 		Node roomNodeA = dir.addNewNode(1, 1, 4);

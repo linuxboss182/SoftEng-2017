@@ -109,6 +109,9 @@ public class UserMasterController
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+
+		// Enable search; if this becomes more than one line, make it a function
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 	}
 
 	private void setMouseMapListeners() {
@@ -118,8 +121,13 @@ public class UserMasterController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 	}
