@@ -173,24 +173,24 @@ public abstract class MapDisplayController
 	 *  Press Shift + down to move the view to the down
 	 */
 	protected void setHotkeys() {
-		parentBorderPane.setOnKeyPressed(e -> {
-			//TODO add functionality for zooming with hotkeys
-//			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-//				increaseZoomButtonPressed();
-//			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-//				decreaseZoomButtonPressed();
+//		parentBorderPane.setOnKeyPressed(e -> {
+//			//TODO add functionality for zooming with hotkeys
+////			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
+////				increaseZoomButtonPressed();
+////			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
+////				decreaseZoomButtonPressed();
+////			}
+//			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+//			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+//				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+//			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+//			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+//				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
 //			}
-			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
-			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
-			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
-			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
-			}
-			e.consume();
-		});
+//			e.consume();
+//		});
 	}
 
 	protected void setZoomSliding() {

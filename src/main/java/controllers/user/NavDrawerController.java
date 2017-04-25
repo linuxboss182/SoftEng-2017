@@ -7,9 +7,11 @@ import entities.Room;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.*;
 import javafx.scene.layout.VBox;
 
+import java.awt.*;
+import java.awt.Image;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
@@ -35,9 +37,13 @@ public class NavDrawerController
 
 	@FXML private JFXTextField destinationField;
 
+
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+//		javafx.scene.image.Image startIcon;
+//		startIcon = new javafx.scene.image.Image("/startIcon.png", true);
+//		startImageView.setImage(startIcon);
 	}
 
 	protected void clickRoomAction(Room room) {

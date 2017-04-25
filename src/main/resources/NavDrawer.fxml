@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.NavDrawerController">
+<VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="418.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.NavDrawerController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
+      <HBox prefHeight="50.0" prefWidth="200.0" />
       <HBox>
          <children>
-            <ImageView fx:id="destImageView" fitHeight="53.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" />
-            <JFXTextField fx:id="destinationField" promptText="Choose destination...">
+            <Label fx:id="startIconLbl" prefHeight="85.0" prefWidth="74.0" />
+            <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
                <HBox.margin>
-                  <Insets right="70.0" />
+                  <Insets bottom="30.0" right="50.0" top="30.0" />
                </HBox.margin>
             </JFXTextField>
          </children>
       </HBox>
       <HBox>
          <children>
-            <ImageView fx:id="startImageView" fitHeight="53.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" />
-            <JFXTextField fx:id="startField" promptText="Choose starting point, or click place on map" />
+            <Label fx:id="destIconLbl" prefHeight="67.0" prefWidth="76.0" />
+            <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
+               <HBox.margin>
+                  <Insets bottom="30.0" top="15.0" />
+               </HBox.margin></JFXTextField>
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />

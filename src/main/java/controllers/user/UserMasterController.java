@@ -125,7 +125,7 @@ public class UserMasterController
 
 			navDrawer.setSidePane(box);
 			navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
-			navDrawer.prefWidthProperty().bind(parentBorderPane.widthProperty());
+			//navDrawer.prefWidthProperty().bind(parentBorderPane.widthProperty());
 		} catch (IOException ex) {
 			//Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
 		}
