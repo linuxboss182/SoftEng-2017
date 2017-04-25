@@ -15,19 +15,17 @@ import java.util.function.Function;
 public class Node
 {
 	@Deprecated
-	public Type getType() {
-		Type t = this.mapToRoom(room -> {
+	public RoomType getType() {
+		RoomType t = this.mapToRoom(room -> {
 			switch (room.getDescription()) {
 				case "elevator":
-					return Type.ELEVATOR;
+					return RoomType.ELEVATOR;
 				case "stairs":
-					return Type.STAIRS;
+					return RoomType.STAIRS;
 				case "portal":
-					return Type.PORTAL;
+					return RoomType.PORTAL;
 				case "hallway":
-					return Type.HALLWAY;
-				case "outside":
-					return Type.OUTSIDE;
+					return RoomType.HALLWAY;
 				default:
 					return null;
 			}

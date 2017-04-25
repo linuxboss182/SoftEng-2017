@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import entities.Node;
-import entities.Type;
+import entities.RoomType;
 import main.algorithms.Pathfinder;
 
 //TODO: Clean up getTextDirections (see notes)
@@ -45,10 +45,10 @@ public class DirectionsGenerator
 	 * @return Directions for the path, as a string.
 	 */
 	public static String fromPath(List<Node> path) {
-		Node[] asArray = new Node[path.size()];
+		LinkedList<Node> asArray = new LinkedList<>();
 		int i = 0;
 		for (Node n : path) {
-			asArray[i] = n;
+			asArray.add(n);
 			i++;
 		}
 		return DirectionsGenerator.getTextDirections(asArray);
@@ -60,130 +60,138 @@ public class DirectionsGenerator
 	 * @param path the nodes along the path
 	 * @return String directions that tell how to reach a destination
 	 */
-	private static String getTextDirections(Node[] path) {
+	private static String getTextDirections(LinkedList<Node> path) {
 		StringBuilder  directions = new StringBuilder();
 		directions.append("First, ");
 
 		int leftTurns = 0, rightTurns = 0;
-		if (path.length > 1 && isElevator(path[0], path[1])) {
-			directions.append("Take the elevator to the ").append(path[1].getFloor());
-			directions.append(getTurnPostfix(path[1].getFloor())).append(" floor\nThen ");
-		}
+//		if (path.length > 1 && isElevator(path[0], path[1])) {
+//			directions.append("Take the elevator to the ").append(path[1].getFloor());
+//			directions.append(getTurnPostfix(path[1].getFloor())).append(" floor\nThen ");
+//		}
 		// redo text directions with switch cases based on types of nodes
-		for(int i = 1; i < path.length - 1; i++) {
-			switch(path[i].getType()) {
-				// if PORTAL is read, check to see what type of next node is
-				case PORTAL:
-					if (path[i + 1].getBuildingName().equals("outside")) {
-						directions.append("Go outside,\nThen ");
-						while ((path[i + 1].getBuildingName().equals("outside")) || (path[i + 1] == null)) {
+		for(int i = 1; i < path.size() - 1; i++) {
+			if(path.get(i).getType().getName() == null){
+				System.out.println("");
+			} else {
+				switch (path.get(i).getType().getName()) {
+					// if PORTAL is read, check to see what type of next node is
+					case "Portal":
+						if (path.get(i+1).getBuildingName().equals("outside")) {
+							directions.append("Go outside,\nThen ");
+							while ((path.get(i + 1).getBuildingName().equals("outside")) || (path.get(i + 1) == null)) {
+
+								i++;
+							}
+							if (path.get(i + 1) == null) {
+
+							}
+						} else {
+							directions.append("Go into ").append(path.get(i).getBuildingName());
+							directions.append("\nThen ");
+						}
+						break;
+					case "Stairs":
+						while (path.get(i + 1).getType() == RoomType.STAIRS) {
 							i++;
 						}
-						if (path[i + 1] == null) {
-
+						directions.append("Take the stairs to the ").append(path.get(i).getFloor());
+						directions.append("\nThen");
+						break;
+					case "Elevator":
+						while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
+							i++;
 						}
-					} else {
-						directions.append("Go into ").append(path[i].getBuildingName());
-						directions.append("\nThen ");
-					}
-					break;
-				case STAIRS:
-					while (path[i + 1].getType() == Type.STAIRS) {
-						i++;
-					}
-					directions.append("Take the stairs to the ").append(path[i].getFloor());
-					directions.append("\nThen");
-					break;
-				case ELEVATOR:
-					while (path[i + 1].getType() == Type.ELEVATOR) {
-						i++;
-					}
-					directions.append("Take the elevator to the ").append(path[i].getFloor());
-					directions.append(("\nThen "));
-					break;
-				default:
-					// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
-					// During testing, this method worked how we wanted, but when implementing
-					// this code, turns were reversed. (right turns were left turns)
-		            // double turnAngle = path[i].angle(path[i+1], path[i-1]);
-					double turnAngle = path[i].angle(path[i + 1], path[i - 1]);
-					if (isRightTurn(turnAngle)) {
-						// Right Turn
-						if (rightTurns == 0) {
-							directions.append("take a right turn,\nThen ");
-						} else {
-							rightTurns++;
-							directions.append("continue straight and take the ").append(rightTurns);
-							directions.append(getTurnPostfix(rightTurns)).append(" right,\nThen ");
-						}
-						// if you take a turn, then the count for turns should be reset to 0
-
-						rightTurns = 0;
-						leftTurns = 0;
-					} else if (isSoftRightTurn(turnAngle)) {
-						if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList()[0])
-							continue;
-						// Soft Right Turn
-						directions.append("take a soft right turn,\nThen ");
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					} else if (isStraight(turnAngle)) {
-						// Straight (NO TURN!!!)
-						//				directions += "continue straight,\nThen "; // we don't want to spam them with this
-						// Figure out if there is a left or right turn available as well, then increment the counters
-						Set<Node> forks = path[i].getNeighbors();
-						for (Node fork : forks) {
-							// TODO: This was also reversed, similar to above
-							int forkAngle = (int) path[i].angle(fork, path[i - 1]);
-
-							if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
+						directions.append("Take the elevator to the ").append(path.get(i).getFloor());
+						directions.append(("\nThen "));
+						break;
+					default:
+						// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
+						// During testing, this method worked how we wanted, but when implementing
+						// this code, turns were reversed. (right turns were left turns)
+						// double turnAngle = path[i].angle(path[i+1], path[i-1]);
+						double turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
+						if (isRightTurn(turnAngle)) {
+							// Right Turn
+							if (rightTurns == 0) {
+								directions.append("take a right turn,\nThen ");
+							} else {
 								rightTurns++;
+								directions.append("continue straight and take the ").append(rightTurns);
+								directions.append(getTurnPostfix(rightTurns)).append(" right,\nThen ");
+
 							}
-							if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
+							// if you take a turn, then the count for turns should be reset to 0
+
+							rightTurns = 0;
+							leftTurns = 0;
+						} else if (isSoftRightTurn(turnAngle)) {
+							if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList()[0])
+
+								continue;
+							// Soft Right Turn
+							directions.append("take a soft right turn,\nThen ");
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
+						} else if (isStraight(turnAngle)) {
+							// Straight (NO TURN!!!)
+							//				directions += "continue straight,\nThen "; // we don't want to spam them with this
+							// Figure out if there is a left or right turn available as well, then increment the counters
+							Set<Node> forks = path.get(i).getNeighbors();
+							for (Node fork : forks) {
+								// TODO: This was also reversed, similar to above
+								int forkAngle = (int) path.get(i).angle(fork, path.get(i - 1));
+
+								if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
+									rightTurns++;
+								}
+								if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
+									leftTurns++;
+								}
+							}
+						} else if (isSoftLeftTurn(turnAngle)) {
+							if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList
+									()[0])
+								continue;
+							// Soft Left Turn
+							directions.append("take a soft left turn\nThen ");
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
+						} else if (isLeftTurn(turnAngle)) {
+							// Left Turn
+							if (leftTurns == 0) {
+								directions.append("take a left turn,\nThen ");
+							} else {
 								leftTurns++;
+								directions.append("continue straight and take the ").append(leftTurns);
+								directions.append(getTurnPostfix(leftTurns)).append(" left,\nThen ");
 							}
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
+						} else if (isHardLeftTurn(turnAngle)) {
+							// Hard Left Turn
+							directions.append("take a hard left turn\nThen ");
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
+						} else if (isBackwards(turnAngle)) {
+							// Turn Around
+							directions.append("turn around\nThen ");
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
+						} else if (isHardRightTurn(turnAngle)) {
+							// Hard Right Turn
+							directions.append("take a hard right turn\nThen ");
+							// if you take a turn, then the count for turns should be reset to 0
+							leftTurns = 0;
+							rightTurns = 0;
 						}
-					} else if (isSoftLeftTurn(turnAngle)) {
-						if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList()[0])
-							continue;
-						// Soft Left Turn
-						directions.append("take a soft left turn\nThen ");
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					} else if (isLeftTurn(turnAngle)) {
-						// Left Turn
-						if (leftTurns == 0) {
-							directions.append("take a left turn,\nThen ");
-						} else {
-							leftTurns++;
-							directions.append("continue straight and take the ").append(leftTurns);
-							directions.append(getTurnPostfix(leftTurns)).append(" left,\nThen ");
-						}
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					} else if (isHardLeftTurn(turnAngle)) {
-						// Hard Left Turn
-						directions.append("take a hard left turn\nThen ");
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					} else if (isBackwards(turnAngle)) {
-						// Turn Around
-						directions.append("turn around\nThen ");
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					} else if (isHardRightTurn(turnAngle)) {
-						// Hard Right Turn
-						directions.append("take a hard right turn\nThen ");
-						// if you take a turn, then the count for turns should be reset to 0
-						leftTurns = 0;
-						rightTurns = 0;
-					}
-					break;
+						break;
+				}
 			}
 		}
 		directions.append("you are at your destination.");
