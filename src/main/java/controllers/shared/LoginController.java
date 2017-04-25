@@ -40,9 +40,10 @@ public class LoginController implements Initializable{
 	@FXML
 	private BorderPane parentBorderPane;
 
-	/*
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		logins = new LoginHandler();
+		logins.addAccount("admin", "password", true);
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
 				try{
@@ -57,15 +58,6 @@ public class LoginController implements Initializable{
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
-	}
-	*/
-
-
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		logins = new LoginHandler();
-		logins.addAccount("admin", "password", true);
 	}
 
 
@@ -82,6 +74,9 @@ public class LoginController implements Initializable{
 		}
 		else {
 			this.errorLbl.setText("Incorrect Username or Password");
+			this.usernameField.setText("");
+			this.passwordField.setText("");
+			this.usernameField.requestFocus();
 			// They didn't login successfully so they should probably be punished in some way
 		}
 	}
