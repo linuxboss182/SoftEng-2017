@@ -1,4 +1,4 @@
-package entities.icons;
+package controllers.icons;
 
 import javafx.scene.Group;
 import javafx.scene.Node;

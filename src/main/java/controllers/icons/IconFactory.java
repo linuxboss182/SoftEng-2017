@@ -1,4 +1,4 @@
-package entities.icons;
+package controllers.icons;
 
 import entities.Room;
 import entities.RoomType;
