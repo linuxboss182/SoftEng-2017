@@ -4,6 +4,8 @@ import entities.icons.IconController;
 import entities.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
@@ -211,4 +213,55 @@ public abstract class MapDisplayController
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
+
+	/**
+	 * Rescale the map to be based off of the Scroll Pane
+	 * Divides the content anchor's width and height to be based on the
+	 */
+	protected void initWindowResizeListener() {
+		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number
+					oldValue, Number newValue) {
+
+				double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
+				double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+
+				double potentialX = 0;
+				double potentialY = 0;
+				contentAnchor.setTranslateX(potentialX);
+				contentAnchor.setTranslateY(potentialY);
+				if(potentialScaleX < potentialScaleY) {
+					contentAnchor.setScaleX(potentialScaleX);
+					contentAnchor.setScaleY(potentialScaleX);
+				} else {
+					contentAnchor.setScaleX(potentialScaleY);
+					contentAnchor.setScaleY(potentialScaleY);
+				}
+			}
+		});
+
+		this.parentBorderPane.heightProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number
+					oldValue, Number newValue) {
+				double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
+				double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+
+				double potentialX = 0;
+				double potentialY = 0;
+				contentAnchor.setTranslateX(potentialX);
+				contentAnchor.setTranslateY(potentialY);
+				if(potentialScaleX < potentialScaleY) {
+					contentAnchor.setScaleX(potentialScaleX);
+					contentAnchor.setScaleY(potentialScaleX);
+				} else {
+					contentAnchor.setScaleX(potentialScaleY);
+					contentAnchor.setScaleY(potentialScaleY);
+				}
+			}
+		});
+	}
 }
