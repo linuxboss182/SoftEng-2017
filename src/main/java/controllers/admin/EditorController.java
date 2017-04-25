@@ -45,6 +45,8 @@ public class EditorController
 		extends MapDisplayController
 		implements Initializable
 {
+
+
 	// TODO: Add the other buttons, and pull listeners out of the FXMLs
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
@@ -94,7 +96,9 @@ public class EditorController
 		}
 	}
 
+
 	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
+
 	protected double selectionStartX;
 	protected double selectionStartY;
 	protected double selectionEndX;
