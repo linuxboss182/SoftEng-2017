@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
@@ -219,49 +220,37 @@ public abstract class MapDisplayController
 	 * Divides the content anchor's width and height to be based on the
 	 */
 	protected void initWindowResizeListener() {
-		this.parentBorderPane.widthProperty().addListener(new ChangeListener<Number>()
+
+		fitMapSize();
+		this.parentBorderPane.boundsInLocalProperty().addListener(new ChangeListener<Bounds>()
+
+
 		{
 			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number
-					oldValue, Number newValue) {
-
-				double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
-				double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
-
-				double potentialX = 0;
-				double potentialY = 0;
-				contentAnchor.setTranslateX(potentialX);
-				contentAnchor.setTranslateY(potentialY);
-				if(potentialScaleX < potentialScaleY) {
-					contentAnchor.setScaleX(potentialScaleX);
-					contentAnchor.setScaleY(potentialScaleX);
-				} else {
-					contentAnchor.setScaleX(potentialScaleY);
-					contentAnchor.setScaleY(potentialScaleY);
-				}
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds
+					oldValue, Bounds newValue) {
+				fitMapSize();
 			}
 		});
+	}
 
-		this.parentBorderPane.heightProperty().addListener(new ChangeListener<Number>()
-		{
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number
-					oldValue, Number newValue) {
-				double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
-				double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+	private void fitMapSize() {
+		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
+		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 
-				double potentialX = 0;
-				double potentialY = 0;
-				contentAnchor.setTranslateX(potentialX);
-				contentAnchor.setTranslateY(potentialY);
-				if(potentialScaleX < potentialScaleY) {
-					contentAnchor.setScaleX(potentialScaleX);
-					contentAnchor.setScaleY(potentialScaleX);
-				} else {
-					contentAnchor.setScaleX(potentialScaleY);
-					contentAnchor.setScaleY(potentialScaleY);
-				}
-			}
-		});
+		if(potentialScaleX < potentialScaleY) {
+			contentAnchor.setScaleX(potentialScaleX);
+			contentAnchor.setScaleY(potentialScaleX);
+		} else {
+			contentAnchor.setScaleX(potentialScaleY);
+			contentAnchor.setScaleY(potentialScaleY);
+		}
+
+		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		contentAnchor.setTranslateX(potentialX);
+
+		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+		contentAnchor.setTranslateY(potentialY);
+
 	}
 }
