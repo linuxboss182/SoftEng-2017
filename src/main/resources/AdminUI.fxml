@@ -82,10 +82,11 @@
                                             </rowConstraints>
                                             <children>
                                                 <Text fx:id="roomName" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="xPos" />
-                                                <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                <GridPane GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Display Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="4" fx:id="xPos" />
+                                                <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <GridPane GridPane.columnIndex="2" GridPane.rowIndex="6">
                                                     <columnConstraints>
                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -101,15 +102,16 @@
                                                     </children>
                                                 </GridPane>
                                                 <JFXTextField fx:id="nameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <JFXTextArea fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                                <JFXTextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xCoordField" />
-                                                <JFXTextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                <JFXTextField fx:id="displayNameField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <JFXTextArea fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                <JFXTextField GridPane.columnIndex="2" GridPane.rowIndex="4" fx:id="xCoordField" />
+                                                <JFXTextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                                 <Label text="Selected Room" GridPane.columnIndex="1" GridPane.columnSpan="2">
                                                     <font>
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Label>
-                                                <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                                                <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                             </children>
                                         </GridPane>
                                     </children>

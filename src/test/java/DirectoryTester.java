@@ -26,7 +26,7 @@ public class DirectoryTester
 	public void testAddProfessional() {
 		Directory d = new Directory();
 		Node n = d.addNewNode(20, 30, 4);
-		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		Room r = d.addNewRoom("aRoom", "", "desc"); //Create a new node
 		d.setRoomLocation(r, n);
 		Professional doctor = d.addNewProfessional("FirstName", "LastName", "Dr."); //Create a Professional
 		d.addRoomToProfessional(r, doctor);
@@ -39,7 +39,7 @@ public class DirectoryTester
 	public void testAddNewRoom() {
 		Directory d = new Directory(); //Create a new directory
 		Node n = d.addNewNode(20, 30, 4);
-		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		Room r = d.addNewRoom("aRoom", "", "desc"); //Create a new node
 		d.setRoomLocation(r, n);
 
 		Assert.assertEquals(1, d.getRooms().size());
@@ -75,7 +75,7 @@ public class DirectoryTester
 	public void testRemoveProfessional() {
 		Directory d = new Directory();
 		Node n = d.addNewNode(20, 30, 4);
-		Room r = d.addNewRoom("aRoom", "desc"); //Create a new node
+		Room r = d.addNewRoom("aRoom","", "desc"); //Create a new node
 		d.setRoomLocation(r, n);
 
 		Professional doctor = d.addNewProfessional("FirstName", "LastName", "Dr."); //Create a Professional

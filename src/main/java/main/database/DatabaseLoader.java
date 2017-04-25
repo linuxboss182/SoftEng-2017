@@ -161,6 +161,7 @@ class DatabaseLoader
 			while (resultRooms.next()) {
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = directory.addNewRoom(resultRooms.getString("roomName"),
+				                                 resultRooms.getString("roomDisplayName"),
 				                                 resultRooms.getString("roomDescription"),
 												 resultRooms.getDouble("labelX"),
 												 resultRooms.getDouble("labelY"));
@@ -264,12 +265,14 @@ class DatabaseLoader
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
 																	r.getLocation().hashCode(),
 																	r.getName(),
+																	r.getDisplayName(),
 																	r.getDescription(),
 																	r.getLabelOffsetX(),
 																	r.getLabelOffsetY());
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 														r.getName(),
+														r.getDisplayName(),
 														r.getDescription(),
 														r.getLabelOffsetX(),
 														r.getLabelOffsetY());

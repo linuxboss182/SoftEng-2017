@@ -39,11 +39,11 @@ public class FileParserTest
 		this.dirExpect = new Directory();
 		Directory dirActual = new Directory();
 		Map<Integer, Room> map = new HashMap<>();
-		map.put(2, this.dirExpect.addNewRoom("Room 2", ""));
-		map.put(1, this.dirExpect.addNewRoom("Room 1", ""));
-		map.put(3, this.dirExpect.addNewRoom("Room 3", ""));
-		map.put(4, this.dirExpect.addNewRoom("Room 4", ""));
-		map.put(5, this.dirExpect.addNewRoom("Room 5", ""));
+		map.put(2, this.dirExpect.addNewRoom("Room 2", "", ""));
+		map.put(1, this.dirExpect.addNewRoom("Room 1", "", ""));
+		map.put(3, this.dirExpect.addNewRoom("Room 3", "", ""));
+		map.put(4, this.dirExpect.addNewRoom("Room 4", "", ""));
+		map.put(5, this.dirExpect.addNewRoom("Room 5", "", ""));
 		for (Room r : this.dirExpect.getRooms()) {
 			dirActual.addRoom(r);
 		}

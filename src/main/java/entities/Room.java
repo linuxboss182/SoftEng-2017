@@ -33,7 +33,6 @@ public class Room
 	private static final String KIOSK_NAME = "You Are Here";
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 	private static final int FONT_SIZE = 9;
-
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(BACKGROUND_COLOR,
 	                                                      new CornerRadii(0),
@@ -44,10 +43,11 @@ public class Room
 	/* Attributes */
 	private Node location;
 	private String name;
+	private String displayName;
 	private String description;
 	private Set<Professional> professionals;
-	private String image; // The String path of the image for this room
 	private Icon shape;
+	private RoomType type;
 	private Group adminShape;
 	private double labelOffsetX;
 
@@ -62,21 +62,17 @@ public class Room
 	private double labelOffsetY;
 
 	/* Constructors */
-	Room(String name, String description, String image) {
+	Room(String name, String displayName, String description) {
 		this.location = null;
 		this.name = name;
+		this.displayName = displayName;
 		this.description = description;
-		this.professionals = new HashSet<Professional>();
-		this.image = image;
+		this.professionals = new HashSet<>();
 		this.makeUserSideShape();
 	}
 
-	Room(String name, String description) {
-		this(name, description, Room.DEFAULT_IMAGE_PATH);
-	}
-
-	Room(String name, String description, double x, double y) {
-		this(name, description);
+	Room(String name, String description, String displayName, double x, double y) {
+		this(name, displayName, description);
 		this.labelOffsetX=x;
 		this.labelOffsetY=y;
 	}
@@ -93,16 +89,20 @@ public class Room
 		return this.name;
 	}
 
+	public String getDisplayName() {
+		return this.displayName;
+	}
+
 	public String getDescription() {
 		return this.description;
 	}
 
-	public String getImage() {
-		return this.image;
-	}
-
 	public Node getLocation() {
 		return this.location;
+	}
+
+	public RoomType getType() {
+		return type;
 	}
 
 	/** Get this room's shape to be displayed to a non-admin, and create it if it does not exist */
@@ -117,17 +117,21 @@ public class Room
 		this.name = name;
 	}
 
-	void setDescription(String description) {
-		this.description = description;
+	void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
-	void setImage(String imagepath) {
-		this.image = imagepath;
+	void setDescription(String description) {
+		this.description = description;
 	}
 
 //	public void setShape(StackPane icon) {
 //		this.icon = icon;
 //	}
+
+	public void setType(RoomType type) {
+		this.type = type;
+	}
 
 	void setLocation(Node location) {
 		this.location = location;
