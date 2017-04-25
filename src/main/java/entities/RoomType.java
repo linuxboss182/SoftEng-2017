@@ -19,6 +19,7 @@ public enum RoomType
 	BATHROOM_U("Unisex Bathroom", new Image("/Bathroom.png")),
 	SHOP("Gift Shop", new Image("/MysteryRoom.png")),
 	CAFE("Cafe", new Image("/MysteryRoom.png")),
+	NONE("NO ROOM", new Image("/MysteryRoom.png"))
 	;
 
 	private String name;

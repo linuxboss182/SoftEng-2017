@@ -15,7 +15,9 @@ import java.util.function.Function;
 public class Node
 {
 	public RoomType getType() {
-		RoomType t = this.mapToRoom(room -> {
+		if(this.room == null) {
+			return RoomType.NONE;
+		} else {
 			switch (room.getDescription()) {
 				case "elevator":
 					return RoomType.ELEVATOR;
@@ -26,10 +28,9 @@ public class Node
 				case "hallway":
 					return RoomType.HALLWAY;
 				default:
-					return null;
+					return RoomType.DEFAULT;
 			}
-		});
-		return null;
+		}
 	}
 	private double x;
 	private double y;
