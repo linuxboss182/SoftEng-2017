@@ -100,7 +100,7 @@ public class UserMasterController
 
 		initfloorComboBox();
 
-		//this.displayRooms();
+		this.displayRooms();
 		iconController.resetAllRooms();
 
 		//this.populateListView();
@@ -179,7 +179,7 @@ public class UserMasterController
 	 */
 	@Override
 	protected void redisplayMapItems() {
-		//this.displayRooms();
+		this.displayRooms();
 	}
 
 	/**
