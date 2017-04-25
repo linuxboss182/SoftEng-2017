@@ -1,6 +1,6 @@
 package entities;
 
-import controllers.icons.IconFactory;
+import controllers.icons.IconManager;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.layout.Background;
@@ -170,7 +170,7 @@ public class Room
 
 	private void makeUserSideShape(Color stroke, Color fill) {
 		if (this.location != null) {
-			this.shape = new IconFactory().makeIcon(this);
+			this.shape = new IconManager().makeIcon(this);
 //			Circle shape = new Circle(this.location.getX(), this.location.getY(), CIRCLE_RADIUS);//			this.shape = shape;
 //			shape.setStroke(stroke);
 //			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
