@@ -1,5 +1,6 @@
 package entities;
 
+import entities.icons.RoomType;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -33,7 +34,6 @@ public class Room
 	private static final String KIOSK_NAME = "You Are Here";
 	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
 	private static final int FONT_SIZE = 9;
-
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(BACKGROUND_COLOR,
 	                                                      new CornerRadii(0),
@@ -48,6 +48,7 @@ public class Room
 	private String description;
 	private Set<Professional> professionals;
 	private Icon shape;
+	private RoomType type;
 	private Group adminShape;
 	private double labelOffsetX;
 
@@ -101,6 +102,10 @@ public class Room
 		return this.location;
 	}
 
+	public RoomType getType() {
+		return type;
+	}
+
 	/** Get this room's shape to be displayed to a non-admin, and create it if it does not exist */
 	public Icon getUserSideShape() {
 		if (this.shape == null) {
@@ -124,6 +129,10 @@ public class Room
 //	public void setShape(StackPane icon) {
 //		this.icon = icon;
 //	}
+
+	public void setType(RoomType type) {
+		this.type = type;
+	}
 
 	void setLocation(Node location) {
 		this.location = location;
