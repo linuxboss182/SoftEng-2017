@@ -119,10 +119,11 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			}
-			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			}
 			event.consume();

@@ -66,7 +66,7 @@ public class EditorController
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
-
+	@FXML private SplitPane mapSplitPane;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -593,8 +593,13 @@ public class EditorController
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
 			} else if(! this.toggleShowRooms) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				// Limits the dragging for x and y coordinates. (panning I mean)
+				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				}
+				if(e.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && e.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				}
 			}
 		});
 
