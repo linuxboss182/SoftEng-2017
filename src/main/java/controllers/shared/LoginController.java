@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
 
+	private LoginHandler logins;
+
 	@FXML
 	private Label errorLbl;
 	@FXML
@@ -38,6 +40,7 @@ public class LoginController implements Initializable{
 	@FXML
 	private BorderPane parentBorderPane;
 
+	/*
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		parentBorderPane.setOnKeyPressed(e -> {
@@ -55,12 +58,13 @@ public class LoginController implements Initializable{
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
 	}
+	*/
 
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		logins.addAccount("Frank", "12345", true);
+		logins.addAccount("admin", "password", true);
 	}
 
 
