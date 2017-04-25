@@ -13,20 +13,20 @@
       <HBox>
          <children>
             <Label fx:id="startIconLbl" prefHeight="85.0" prefWidth="74.0" />
-            <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
+            <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
                <HBox.margin>
-                  <Insets bottom="30.0" right="50.0" top="30.0" />
-               </HBox.margin>
-            </JFXTextField>
+                  <Insets bottom="30.0" top="15.0" />
+               </HBox.margin></JFXTextField>
          </children>
       </HBox>
       <HBox>
          <children>
             <Label fx:id="destIconLbl" prefHeight="67.0" prefWidth="76.0" />
-            <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
+            <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
                <HBox.margin>
-                  <Insets bottom="30.0" top="15.0" />
-               </HBox.margin></JFXTextField>
+                  <Insets bottom="30.0" right="50.0" top="30.0" />
+               </HBox.margin>
+            </JFXTextField>
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />

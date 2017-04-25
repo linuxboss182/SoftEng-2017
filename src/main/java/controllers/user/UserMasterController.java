@@ -136,9 +136,6 @@ public class UserMasterController
 			navDrawer.close();
 		else
 			navDrawer.open();
-
-
-
 	}
 
 
@@ -154,9 +151,6 @@ public class UserMasterController
 			event.consume();
 		});
 	}
-
-
-
 
 	/**
 	 * Initialize the floor's choice box with 1-7 (the floors)
@@ -191,31 +185,31 @@ public class UserMasterController
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-//	public void displayRooms() {
-//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-//		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-//			roomShapes.add(room.getUserSideShape());
-//
-//			// Add listener to select rooms on click
-//			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-//				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-//			});
-//
-//			// Add listener for context menus (right click)
-//			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-//
-//				ContextMenu optionsMenu = new ContextMenu();
-//
-//				MenuItem startRoomItem = new MenuItem("Set as starting location");
-//				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-//				MenuItem endRoomItem = new MenuItem("Set as destination");
-//				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-//				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-//				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-//			});
-//		}
-//		this.nodePane.getChildren().setAll(roomShapes);
-//	}
+	public void displayRooms() {
+		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
+			roomShapes.add(room.getUserSideShape());
+
+			// Add listener to select rooms on click
+			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
+				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+			});
+
+			// Add listener for context menus (right click)
+			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
+
+				ContextMenu optionsMenu = new ContextMenu();
+
+				MenuItem startRoomItem = new MenuItem("Set as starting location");
+				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
+				MenuItem endRoomItem = new MenuItem("Set as destination");
+				endRoomItem.setOnAction(e2-> selectEndRoom(room));
+				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
+			});
+		}
+		this.nodePane.getChildren().setAll(roomShapes);
+	}
 
 
 
@@ -265,14 +259,14 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-//	protected void selectRoomAction(Room room) {
-//		if (this.changeStartBtn.isDisabled()) {
-//			this.selectStartRoom(room);
-//			this.changeStartBtn.setDisable(false);
-//		} else {
-//			this.selectEndRoom(room);
-//		}
-//	}
+	protected void selectRoomAction(Room room) {
+		if (this.changeStartBtn.isDisabled()) {
+			this.selectStartRoom(room);
+			this.changeStartBtn.setDisable(false);
+		} else {
+			this.selectEndRoom(room);
+		}
+	}
 
 //	@FXML
 //	public void changeStartClicked() throws IOException, InvocationTargetException {
@@ -281,24 +275,24 @@ public class UserMasterController
 //		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 //	}
 
-//	protected void selectStartRoom(Room r) {
-//		if(r == null) return;
-//		startRoom = r;
-//		this.enableOrDisableNavigationButtons();
-////		this.enableDirectionsBtn();
-//		iconController.selectStartRoom(r);
-//		this.displayRooms();
-//	}
-//
-//	protected void selectEndRoom(Room r) {
-//		if(r == null) return;
-//		endRoom = r;
-//		this.enableOrDisableNavigationButtons();
-////		this.enableDirectionsBtn();
-////		this.enableChangeStartBtn();
-//		iconController.selectEndRoom(r);
-//		this.displayRooms();
-//	}
+	protected void selectStartRoom(Room r) {
+		if(r == null) return;
+		startRoom = r;
+		//this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
+		iconController.selectStartRoom(r);
+		this.displayRooms();
+	}
+
+	protected void selectEndRoom(Room r) {
+		if(r == null) return;
+		endRoom = r;
+		//this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
+//		this.enableChangeStartBtn();
+		iconController.selectEndRoom(r);
+		this.displayRooms();
+	}
 
 //	@FXML
 //	public void aboutBtnClicked () throws IOException {
