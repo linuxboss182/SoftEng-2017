@@ -98,6 +98,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
+		Platform.runLater(()->this.fitMapSize());
 	}
 
 
@@ -226,7 +227,7 @@ public abstract class MapDisplayController
 	}
 
 	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
-	private void fitMapSize() {
+	public void fitMapSize() {
 		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 

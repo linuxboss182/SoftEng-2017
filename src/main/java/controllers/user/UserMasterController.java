@@ -113,9 +113,10 @@ public class UserMasterController
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater( () -> initWindowResizeListener());
-
+//		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
 	}
 
 	private void setMouseMapListeners() {
