@@ -237,10 +237,13 @@ public class UserMasterController
 				MenuItem startRoomItem = new MenuItem("Set as starting location");
 				startRoomItem.setOnAction(e1 -> {
 					selectStartRoom(room);
-					//startField.setText(room.getName());
+					startField.setText(room.getName());
 				});
 				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
+				endRoomItem.setOnAction(e2-> {
+					selectEndRoom(room);
+					destinationField.setText(room.getName());
+				});
 				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
 				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
 			});
