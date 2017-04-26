@@ -110,7 +110,7 @@ public class UserPathController
 		setZoomSliding();
 
 		this.displayRooms();
-		iconController.resetAllRooms();
+		//iconController.resetAllRooms();
 
 		setScrollZoom();
 

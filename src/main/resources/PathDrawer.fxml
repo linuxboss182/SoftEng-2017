@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
@@ -23,11 +24,11 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </HBox.margin>
             </ImageView>
-            <JFXTextField fx:id="startField" editable="false" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
+            <Label fx:id="startLbl" prefHeight="17.0" prefWidth="267.0">
                <HBox.margin>
-                  <Insets bottom="30.0" top="15.0" />
+                  <Insets bottom="30.0" right="50.0" top="30.0" />
                </HBox.margin>
-            </JFXTextField>
+            </Label>
          </children>
       </HBox>
       <HBox fx:id="destHBox">
@@ -37,11 +38,11 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </HBox.margin>
             </ImageView>
-            <JFXTextField fx:id="destinationField" editable="false" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
+            <Label fx:id="destLbl" prefHeight="17.0" prefWidth="304.0">
                <HBox.margin>
                   <Insets bottom="30.0" right="50.0" top="30.0" />
                </HBox.margin>
-            </JFXTextField>
+            </Label>
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />

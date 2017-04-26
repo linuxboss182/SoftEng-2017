@@ -68,8 +68,8 @@ public class UserMasterController
 	protected Room startRoom;
 	protected Room endRoom;
 
-	protected boolean isStart;
-	protected boolean isDest;
+	public boolean isStart;
+	public boolean isDest;
 
 	HamburgerBackArrowBasicTransition back;
 

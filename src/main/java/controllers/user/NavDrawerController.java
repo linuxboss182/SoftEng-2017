@@ -265,7 +265,7 @@ public class NavDrawerController
 		drawerVBox.getChildren().clear();
 		drawerVBox.getChildren().add(FXMLLoader.load(getClass().getResource("/PathDrawer.fxml")));
 		/* change to a scene with the path if possible */
-//		//if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+//		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 //			ApplicationController.getStage().setScene(new Scene(pane));
 //			ApplicationController.getStage().show();
 
