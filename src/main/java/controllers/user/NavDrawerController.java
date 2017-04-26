@@ -179,7 +179,7 @@ public class NavDrawerController
 			if (isDest) {
 				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
 				System.out.println("end clicked");
-				startField.setText(newValue.getName());
+				destinationField.setText(newValue.getName());
 				//resultsListView.getSelectionModel().clearSelection();
 
 				//isStart = false;

@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -20,7 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import java.awt.*;
+
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
@@ -43,12 +44,12 @@ public class PathDrawerController
 	@FXML private ImageView aboutBtn;
 	@FXML private ImageView backImageView;
 	@FXML protected VBox drawerVBox;
-	@FXML
-	private HBox destHBox;
-	@FXML
-	private HBox startHBox;
-	@FXML
-	private HBox bottomHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox startHBox;
+	@FXML private HBox bottomHBox;
+	@FXML protected Label startLbl;
+	@FXML protected Label destLbl;
+
 	private Room selectedListRoom;
 
 
@@ -84,15 +85,21 @@ public class PathDrawerController
 		javafx.scene.image.Image about = new javafx.scene.image.Image("/about.png");
 		aboutBtn.setImage(about);
 
+		//Call listeners
 		listViewListener();
-
 		onLoginImageClicked();
 		onAboutButtonClicked();
 		onBackImageClicked();
 
+		//Attempt to resize the listview
 		resultsListView.setPrefHeight(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
 		System.out.println(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
 
+		//Set the start and end labels
+		//startLbl.setText(startRoom.getName());
+		System.out.println("startRoom = " + startRoom);
+		System.out.println("destRoom = " + endRoom);
+		//destLbl.setText(endRoom.getName());
 
 
 	}

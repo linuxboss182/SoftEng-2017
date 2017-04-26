@@ -115,7 +115,7 @@ public class EditorController
 
 		//Load
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		//iconController = ApplicationController.getIconController();
+		iconController = ApplicationController.getIconController();
 
 		this.changeFloor(this.directory.getFloor());
 

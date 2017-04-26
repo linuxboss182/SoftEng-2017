@@ -224,6 +224,7 @@ public class UserMasterController
 	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
+			System.out.println("Adding room: " + room.getName() );
 			roomShapes.add(room.getUserSideShape());
 			// Add listener to select rooms on click
 			roomClickListener(room);
