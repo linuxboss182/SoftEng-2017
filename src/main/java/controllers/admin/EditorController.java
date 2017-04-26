@@ -1,6 +1,7 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.icons.IconManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -95,6 +96,7 @@ public class EditorController
 	}
 
 	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
+	private IconManager iconManager;
 	protected double selectionStartX;
 	protected double selectionStartY;
 	protected double selectionEndX;
@@ -125,6 +127,12 @@ public class EditorController
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
+
+		this.iconManager = new IconManager();
+		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
+			event.consume();
+//			room.setLabelOffset(event.getSceneX() - room.getLocation().getX(), event.getSceneY() - room.getLocation().getY());
+		});
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -466,11 +474,9 @@ public class EditorController
 
 	private void updateSelectedNodes(double x, double y) {
 		this.selectedNodes.forEach(n -> {
-			double newX = n.getX() - this.clickedX + x;
-			double newY = n.getY() - this.clickedY + y;
+			double newX = (n.getX() - this.clickedX) + x;
+			double newY = (n.getY() - this.clickedY) + y;
 			n.moveTo(newX, newY);
-			n.getShape().setCenterX(newX);
-			n.getShape().setCenterY(newY);
 		});
 		this.clickedX = x;
 		this.clickedY = y;
@@ -658,7 +664,7 @@ public class EditorController
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
 		if (this.selectedNodes.contains(n)) {
-			if (e.isPrimaryButtonDown()) {
+			if (e.getButton() == MouseButton.PRIMARY) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
@@ -825,15 +831,17 @@ public class EditorController
 	 * Show the rooms with editable labels to the admin
 	 */
 	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getAdminSideShape());
-			/* This is code to make a context menu appear when you right click on the shape for a room
-			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-			 * that is reallllllllly helpful for a lot of stuff
-			 */
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+
+//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+//		for (Room room : directory.getRoomsOnFloor(floor)) {
+//			roomShapes.add(room.getAdminSideShape());
+//			/* This is code to make a context menu appear when you right click on the shape for a room
+//			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+//			 * that is reallllllllly helpful for a lot of stuff
+//			 */
+//		}
+//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**

@@ -6,7 +6,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,15 +17,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
-import main.ApplicationController;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -51,7 +47,8 @@ public class IconManager
 
 	MassMap<Room, Icon> roomIcons;
 	//Map<EventType<? extends Event>, Function<Room, EventHandler<? super Event>>> handlers;
-	BiConsumer<Room, MouseEvent> onMouseClickedOnSymbolHandler;
+	BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
+	BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
@@ -77,12 +74,19 @@ public class IconManager
 	 *
 	 * The handler function should produce a handler that operates on a room.
 	 *
-	 * @param handler A function that takes a room and returns an event handler that
-	 *                operates on that room
+	 * @param handler A function that consumes a room and a mouse event
 	 */
-
 	public void setOnMouseClickedOnSymbol(BiConsumer<Room, MouseEvent> handler) {
-		this.onMouseClickedOnSymbolHandler = handler;
+		this.onMouseClickedOnRoomHandler = handler;
+	}
+
+	/**
+	 * Prepare a mouse drag handler for the icons' labels
+	 *
+	 * @param handler A function that consumes a room, and a mouse event
+	 */
+	public void setOnMouseDraggedOnLabel(BiConsumer<Room, MouseEvent> handler) {
+		this.onMouseDraggedOnLabelHandler = handler;
 	}
 
 	/**
@@ -105,42 +109,50 @@ public class IconManager
 		Image originalImage = type.getImage();
 		double imageHeight = originalImage.getHeight();
 		double imageWidth = originalImage.getWidth();
+
+		Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
 		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
 		image.setLayoutX(x - imageWidth/2);
 		image.setLayoutY(y - imageHeight/2);
+
 		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
 		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
 
-		Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
-
 		ROOM.DEFAULT.applyTo(circle);
-
-		this.applySymbolListeners(circle, room);
 
 		//handlers.forEach((t, handler) -> circle.addEventHandler(t, handler.apply(room)));
 
 		Icon icon = new Icon(room, circle, label);
+
+		this.applyListeners(room, icon);
+
 		room.setIcon(icon);
 		return icon;
 	}
 
 	/**
-	 * Generate and apply listeners for the main symbol
+	 * Generate and apply listeners to the room and icon
 	 *
-	 * @param symbol The node to apply listeners to
 	 * @param room The room to reference in the listeners
+	 * @param icon The room's icon
 	 */
-	private void applySymbolListeners(Shape symbol, Room room) {
-		if (onMouseClickedOnSymbolHandler != null) {
-//			EventHandler<MouseEvent> handler = onMouseClickedOnSymbolHandler.accept();
-
+	private void applyListeners(Room room, Icon icon) {
+		if (onMouseClickedOnRoomHandler != null) {
+			Shape symbol = icon.getSymbol();
 			symbol.setOnMouseClicked(event -> {
-				onMouseClickedOnSymbolHandler.accept(room, event);
+				onMouseClickedOnRoomHandler.accept(room, event);
+			});
+		}
+
+		if (onMouseDraggedOnLabelHandler != null) {
+			Label label = icon.getLabel();
+			label.setOnMouseDragged(event -> {
+				onMouseDraggedOnLabelHandler.accept(room, event);
 			});
 		}
 	}

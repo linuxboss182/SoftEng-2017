@@ -100,8 +100,10 @@ public class Icon
 	public void setLabelOffset(double x, double y) {
 		this.labelOffsetX = x;
 		this.labelOffsetY = y;
-		this.label.setTranslateX(x);
-		this.label.setTranslateY(y);
+//		this.label.setTranslateX(x);
+//		this.label.setTranslateY(y);
+		this.label.setLayoutX(x);
+		this.label.setLayoutY(y);
 		// TODO: if the above lines work, remove the lines below, and the labelOffset fields
 //		this.label.setLayoutX(this.label.getLayoutX() + this.labelOffsetX);
 //		this.label.setLayoutY(this.label.getLayoutY() + this.labelOffsetY);

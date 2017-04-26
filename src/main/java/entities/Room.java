@@ -85,6 +85,7 @@ public class Room
 	public void setLabelOffset(double x, double y) {
 		this.labelOffsetX = x;
 		this.labelOffsetY = y;
+		this.icon.setLabelOffset(x, y);
 	}
 
 	public String getName() {
