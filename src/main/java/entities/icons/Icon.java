@@ -1,16 +1,25 @@
-package controllers.icons;
+package entities.icons;
 
 import java.util.function.Consumer;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
+import javafx.scene.image.ImageView;
 
 public class Icon
 		extends Group
 {
 	private Node symbol;
 	private Label label;
+	private ImageView image;
+	private double labelOffsetX = 0;
+	private double labelOffsetY = 0;
+
+	Icon(ImageView image, Label label) {
+		super(image, label);
+		this.image = image;
+		this.label = label;
+	}
 
 	public Icon(Node symbol, Label label) {
 		super(symbol, label);
@@ -18,7 +27,7 @@ public class Icon
 		this.label = label;
 	}
 
-	public Icon(Node symbol) {
+	Icon(Node symbol) {
 		this(symbol, null);
 	}
 
@@ -42,6 +51,20 @@ public class Icon
 
 	void setLabel(Label label) {
 		this.label = label;
+	}
+
+	public void moveTo(double x, double y) {
+		this.image.setLayoutX(x);
+		this.image.setLayoutY(y);
+		this.label.setLayoutX(x + this.labelOffsetX);
+		this.label.setLayoutY(y + this.labelOffsetY);
+	}
+
+	public void setLabelOffset(double x, double y) {
+		this.labelOffsetX = x;
+		this.labelOffsetY = y;
+		this.label.setLayoutX(this.label.getLayoutX() + this.labelOffsetX);
+		this.label.setLayoutY(this.label.getLayoutY() + this.labelOffsetY);
 	}
 
 	/**
