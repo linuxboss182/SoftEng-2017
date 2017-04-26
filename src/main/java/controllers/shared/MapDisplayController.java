@@ -221,46 +221,31 @@ public abstract class MapDisplayController
 	 * Divides the content anchor's width and height to be based on the
 	 */
 	protected void initWindowResizeListener() {
-
-//		fitMapSize();
-		this.parentBorderPane.boundsInLocalProperty().addListener(new ChangeListener<Bounds>()
-
-
-		{
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds
-					oldValue, Bounds newValue) {
-				fitMapSize();
-			}
-		});
+		this.parentBorderPane.boundsInLocalProperty().addListener((observable, oldValue,
+		                                                           newValue) -> fitMapSize());
 	}
 
+	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	private void fitMapSize() {
-		System.out.println("MapDisplayController.fitMapSize");
-		System.out.println("mapScroll = " + mapScroll);
-		System.out.println("contentAnchor = " + contentAnchor);
-		System.out.println("contentAnchor = " + contentAnchor.getTranslateX());
-		
-		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth();
+		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 
-		if(potentialScaleX < potentialScaleY) {
+		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
 			contentAnchor.setScaleX(potentialScaleX);
 			contentAnchor.setScaleY(potentialScaleX);
+			currentScale = potentialScaleX;
 		} else {
 			contentAnchor.setScaleX(potentialScaleY);
 			contentAnchor.setScaleY(potentialScaleY);
+			currentScale = potentialScaleY;
 		}
-		System.out.println("potentialScaleX = " + potentialScaleX);
-		System.out.println("potentialScaleY = " + potentialScaleY);
 
+		//Fixes the offset to center
 		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		contentAnchor.setTranslateX(potentialX);
-
 		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
-		System.out.println("potentialX = " + potentialX);
-		System.out.println("potentialY = " + potentialY);
 
+		zoomSlider.setValue(0);
 	}
 }
