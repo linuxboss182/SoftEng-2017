@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -46,9 +48,9 @@ public class IconManager
 	);
 	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
 
-	MassMap<Room, Node> roomIcons;
+	MassMap<Room, Icon> roomIcons;
 	//Map<EventType<? extends Event>, Function<Room, EventHandler<? super Event>>> handlers;
-	Function<Room, EventHandler<MouseEvent>> onMouseClickedOnSymbolHandler;
+	BiConsumer<Room, MouseEvent> onMouseClickedOnSymbolHandler;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
@@ -78,7 +80,7 @@ public class IconManager
 	 *                operates on that room
 	 */
 
-	public void setOnMouseClickedOnSymbol(Function<Room, EventHandler<MouseEvent>> handler) {
+	public void setOnMouseClickedOnSymbol(BiConsumer<Room, MouseEvent> handler) {
 		this.onMouseClickedOnSymbolHandler = handler;
 	}
 
@@ -90,7 +92,7 @@ public class IconManager
 	 *
 	 * @note No guarantees are made about the specific contents of the returned set
 	 */
-	public Set<Node> getIcons (Collection<Room> rooms) {
+	public Set<Icon> getIcons (Collection<Room> rooms) {
 		return roomIcons.computeAllIfAbsent(rooms, this::makeIcon);
 	}
 
@@ -129,21 +131,28 @@ public class IconManager
 	 */
 	private void applySymbolListeners(Shape symbol, Room room) {
 		if (onMouseClickedOnSymbolHandler != null) {
-			EventHandler<MouseEvent> handler = onMouseClickedOnSymbolHandler.apply(room);
+//			EventHandler<MouseEvent> handler = onMouseClickedOnSymbolHandler.accept();
 
-			symbol.setOnMouseClicked(onMouseClickedOnSymbolHandler.apply(room));
-			//symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> ROOM.END.applyTo(symbol));
-			symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-				System.out.println("HERE");
-				symbol.setFill(Color.BLACK);
+			symbol.setOnMouseClicked(event -> {
+				onMouseClickedOnSymbolHandler.accept(room, event);
+
+				roomIcons.values().forEach(icon -> ROOM.DEFAULT.applyTo((Shape)icon.getSymbol()));
+				ROOM.END.applyTo(symbol);
 			});
+			//symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> ROOM.END.applyTo(symbol));
+//			symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+//				System.out.println("HERE");
+//				symbol.setFill(Color.BLACK);
+//			});
 		}
-
 	}
 
 
 	private class MassMap<K, V> extends HashMap<K, V>
 	{
+		public MassMap() {
+			super();
+		}
 		/**
 		 * Get the values for the given keys, computing values for missing keys
 		 *
@@ -153,11 +162,7 @@ public class IconManager
 		                                 Function<? super K, ? extends V> mappingFunction) {
 			Set<V> values = new HashSet<>();
 			for (K key : keys) {
-				if (containsKey(key)) {
-					values.add(get(key));
-				} else {
-					values.add(mappingFunction.apply(key));
-				}
+				values.add(computeIfAbsent(key, mappingFunction));
 			}
 			return values;
 		}

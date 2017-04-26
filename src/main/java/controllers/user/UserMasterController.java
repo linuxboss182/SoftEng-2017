@@ -89,7 +89,7 @@ public class UserMasterController
 		if (startRoom == null) startRoom = directory.getKiosk();
 
 		this.iconManager = new IconManager();
-		iconManager.setOnMouseClickedOnSymbol(room -> event -> {
+		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 		});
 
@@ -295,9 +295,7 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 		this.changeStartBtn.setDisable(true);
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 	}
 
 	protected void selectStartRoom(Room r) {
