@@ -8,6 +8,7 @@ import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -137,6 +138,13 @@ public class UserMasterController
 		back.setRate(-1);
 
 
+
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater( () -> initWindowResizeListener());
+//		Platform.runLater( () -> this.fitMapSize());
+		// Enable search; if this becomes more than one line, make it a function
+		//this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
 	}
 
 	private void setDrawerContents() {
@@ -175,8 +183,13 @@ public class UserMasterController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 	}
@@ -278,6 +291,20 @@ public class UserMasterController
 
 
 
+	@FXML
+	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+		BorderPane pane = loader.load();
+		UserPathController controller = loader.getController();
+
+		/* change to a scene with the path if possible */
+//		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+//			this.getScene().setRoot(pane);
+//		} else {
+//			this.redisplayMapItems();
+//		}
+	}
 
 	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path

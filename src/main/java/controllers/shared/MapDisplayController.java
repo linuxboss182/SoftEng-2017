@@ -1,9 +1,12 @@
 package controllers.shared;
 
-import controllers.icons.IconController;
+import entities.icons.IconController;
 import entities.*;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
@@ -12,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
@@ -27,9 +31,9 @@ public abstract class MapDisplayController
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
 
-	@FXML public AnchorPane contentAnchor = new AnchorPane();
+	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
-	@FXML protected ScrollPane mapScroll= new ScrollPane();
+	@FXML protected ScrollPane mapScroll;
 
 	protected Directory directory;
 	protected IconController iconController;
@@ -94,6 +98,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
+		Platform.runLater(()->this.fitMapSize());
 	}
 
 
@@ -211,4 +216,37 @@ public abstract class MapDisplayController
 	}
 
 	// To switch floors, call switchFloors(newFloorNumber); then this.imageViewMap.setImage(map);
+
+	/**
+	 * Rescale the map to be based off of the Scroll Pane
+	 * Divides the content anchor's width and height to be based on the
+	 */
+	protected void initWindowResizeListener() {
+		this.parentBorderPane.boundsInLocalProperty().addListener((observable, oldValue,
+		                                                           newValue) -> fitMapSize());
+	}
+
+	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
+	public void fitMapSize() {
+		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
+		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+
+		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
+			contentAnchor.setScaleX(potentialScaleX);
+			contentAnchor.setScaleY(potentialScaleX);
+			currentScale = potentialScaleX;
+		} else {
+			contentAnchor.setScaleX(potentialScaleY);
+			contentAnchor.setScaleY(potentialScaleY);
+			currentScale = potentialScaleY;
+		}
+
+		//Fixes the offset to center
+		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+		contentAnchor.setTranslateX(potentialX);
+		contentAnchor.setTranslateY(potentialY);
+
+		zoomSlider.setValue(0);
+	}
 }
