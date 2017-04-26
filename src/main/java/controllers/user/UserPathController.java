@@ -169,7 +169,7 @@ public class UserPathController
 		List<Direction> directions = DirectionsGenerator.fromPath(path);
 		String textDirs = "";
 		for(Direction d: directions){
-			textDirs  = textDirs+d.getTextDirection();
+			textDirs  = textDirs+d.getTextDirection()+"\n";
 		}
 
 		textDirections.setText(textDirs);

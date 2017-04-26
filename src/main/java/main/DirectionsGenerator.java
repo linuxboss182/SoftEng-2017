@@ -75,12 +75,9 @@ public class DirectionsGenerator
 				// if PORTAL is read, check to see what type of next node is
 				case PORTAL:
 					// check case where portal leads outside
-					System.out.println(path.get(i+1).getBuildingName());
 					if (path.get(i+1).getBuildingName().equals("Outside")) {
 						directions.add(new Direction("Go outside", IconType.PORTAL));
-						while ((path.get(i+1).getType().getName().equals("Parking")) || (path.get(i + 1).getBuildingName().equals("Outside"))) {
-							i++;
-						}
+						i++;
 					} else {
 						i++;
 						directions.add(new Direction("Go into "+path.get(i).getBuildingName(), IconType.PORTAL));
@@ -93,7 +90,9 @@ public class DirectionsGenerator
 					while (path.get(i + 1).getType() == RoomType.STAIRS) {
 						i++;
 					}
-					directions.add(new Direction("Take the stairs to the "+path.get(i).getFloor(), IconType.STAIRS));
+					directions.add(new Direction("Take the stairs to the " +
+							path.get(i).getFloor() + getTurnPostfix(path.get(i).getFloor())
+							+ " floor", IconType.STAIRS));
 					rightTurns = 0;
 					leftTurns = 0;
 					break;
@@ -101,15 +100,12 @@ public class DirectionsGenerator
 					while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
 						i++;
 					}
-
-					directions.add(new Direction("Take the elevator to the "+path.get(i).getFloor(), IconType.ELEVATOR));
+					directions.add(new Direction("Take the elevator to the " +
+							path.get(i).getFloor() + getTurnPostfix(path.get(i).getFloor())
+							+ " floor", IconType.ELEVATOR));
 					rightTurns = 0;
 					leftTurns = 0;
 					break;
-				case PARKING:
-					if (path.get(i+1).getBuildingName().equals("Outside")) {
-
-					}
 				default:
 					double turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
 					if (isRightTurn(turnAngle)) {
@@ -118,7 +114,8 @@ public class DirectionsGenerator
 							directions.add(new Direction("Take a right turn", IconType.HRIGHT));
 						} else {
 							rightTurns++;
-							directions.add(new Direction("Take the "+rightTurns+" right", IconType.HRIGHT));
+							directions.add(new Direction("Take the " + rightTurns
+									+ getTurnPostfix(rightTurns) + " right", IconType.HRIGHT));
 
 						}
 						// if you take a turn, then the count for turns should be reset
@@ -141,11 +138,9 @@ public class DirectionsGenerator
 							// Straight (NO TURN!!!)
 							//				directions += "continue straight,\nThen "; // we don't want to spam them with this
 							// Figure out if there is a left or right turn available as well, then increment the counters
-							System.out.println(turnAngle);
 							Set<Node> forks = path.get(i).getNeighbors();
 							for (Node fork : forks) {
-								int forkAngle = (int) path.get(i).angle(fork, path.get(i
-										- 1));
+								int forkAngle = (int) path.get(i).angle(fork, path.get(i - 1));
 
 								if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
 									rightTurns++;
@@ -156,7 +151,6 @@ public class DirectionsGenerator
 							}
 							i++;
 							turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
-							System.out.println(leftTurns + "" + rightTurns);
 						}
 						i--;
 					} else if (isSoftLeftTurn(turnAngle)) {
@@ -174,7 +168,8 @@ public class DirectionsGenerator
 							directions.add(new Direction("Take a left turn", IconType.HLEFT));
 						} else {
 							leftTurns++;
-							directions.add(new Direction("Take the "+leftTurns+" left", IconType.HLEFT));
+							directions.add(new Direction("Take the "+ leftTurns +
+									getTurnPostfix(leftTurns) + " left", IconType.HLEFT));
 						}
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
@@ -202,7 +197,7 @@ public class DirectionsGenerator
 					break;
 			}
 		}
-		directions.add(new Direction("You are at your destination.", IconType.PORTAL));
+		directions.add(new Direction("You have arrived at your destination.", IconType.PORTAL));
 		return directions;
 	}
 
