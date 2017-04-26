@@ -6,7 +6,6 @@ import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,12 +13,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
@@ -27,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -119,7 +115,6 @@ public class UserMasterController
 
 	private void initializeIcons() {
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
-			System.out.println("clicked on symbol");
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
 		});
@@ -267,13 +262,10 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
-		System.out.print("clicked on a room ");
 		if (this.changeStartBtn.isDisabled()) {
-			System.out.println("to select start");
 			this.selectStartRoom(room);
 			this.changeStartBtn.setDisable(false);
 		} else {
-			System.out.println("to select end");
 			this.selectEndRoom(room);
 		}
 	}
@@ -294,7 +286,6 @@ public class UserMasterController
 
 	protected void selectEndRoom(Room r) {
 		if(r == null) return;
-		System.out.println("selecting");
 		endRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();

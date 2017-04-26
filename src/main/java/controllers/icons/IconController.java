@@ -118,7 +118,6 @@ public class IconController
 
 		Icon icon = room.getIcon();
 		Shape shape = icon.getSymbol();
-		System.out.println("have shape: " + shape);
 
 		ROOM.DEFAULT.applyTo(shape);
 
@@ -148,7 +147,6 @@ public class IconController
 	}
 
 	public void selectEndRoom(Room room) {
-		System.out.println("selecting end");
 		this.endRoom = room;
 		this.resetAllRoomsExcept(this.startRoom);
 //		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));

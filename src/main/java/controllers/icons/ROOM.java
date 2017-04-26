@@ -28,7 +28,6 @@ enum ROOM
 
 	/** Apply this color scheme to the given shape */
 	public void applyTo(Shape shape) {
-		System.out.println(shape);
 		if (this.fill != null) shape.setFill(this.fill);
 		if (this.strokeWidth != null) shape.setStrokeWidth(this.strokeWidth);
 		if (this.stroke != null) shape.setStroke(this.stroke);
