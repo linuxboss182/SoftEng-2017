@@ -8,6 +8,7 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -99,35 +100,37 @@ public class IconManager
 		String name = room.getDisplayName();
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
-		ImageView image = new ImageView(type.getImage());
+		Image originalImage = type.getImage();
+		double imageHeight = originalImage.getHeight();
+		double imageWidth = originalImage.getWidth();
+		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
-		image.setLayoutX(x);
-		image.setLayoutY(y);
+		image.setLayoutX(x - imageWidth/2);
+		image.setLayoutY(y - imageHeight/2);
 		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
 		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
 
-		Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
+		//Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
 
-		ROOM.DEFAULT.applyTo(circle);
+		//ROOM.DEFAULT.applyTo(circle);
 
-		this.applySymbolListeners(circle, room);
+		this.applySymbolListeners(image, room);
 
 		//handlers.forEach((t, handler) -> circle.addEventHandler(t, handler.apply(room)));
 
-		return new Icon(circle, label);
+		return new Icon(image, label);
 	}
 
 	/**
 	 * Generate and apply listeners for the main symbol
-	 *
-	 * @param symbol The node to apply listeners to
+	 *  @param symbol The node to apply listeners to
 	 * @param room The room to reference in the listeners
 	 */
-	private void applySymbolListeners(Shape symbol, Room room) {
+	private void applySymbolListeners(ImageView symbol, Room room) {
 		if (onMouseClickedOnSymbolHandler != null) {
 			EventHandler<MouseEvent> handler = onMouseClickedOnSymbolHandler.apply(room);
 
@@ -135,7 +138,7 @@ public class IconManager
 			//symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> ROOM.END.applyTo(symbol));
 			symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 				System.out.println("HERE");
-				symbol.setFill(Color.BLACK);
+				//symbol.setFill(Color.BLACK);
 			});
 		}
 
