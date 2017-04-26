@@ -1,5 +1,6 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -114,7 +115,7 @@ public class DirectionsGenerator
 							directions.add(new Direction("Take a right turn", IconType.HRIGHT));
 						} else {
 							rightTurns++;
-							directions.add(new Direction("Continue straight and take the "+rightTurns+" right", IconType.HRIGHT));
+							directions.add(new Direction("Take the "+rightTurns+" right", IconType.HRIGHT));
 
 						}
 						// if you take a turn, then the count for turns should be reset
@@ -132,7 +133,7 @@ public class DirectionsGenerator
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isStraight(turnAngle)) {
-						directions.append("Continue straight\n");
+						directions.add(new Direction("Continue straight", IconType.STRAIGHT));
 						while(isStraight(turnAngle)) {
 							// Straight (NO TURN!!!)
 							//				directions += "continue straight,\nThen "; // we don't want to spam them with this
@@ -170,7 +171,7 @@ public class DirectionsGenerator
 							directions.add(new Direction("Take a left turn", IconType.HLEFT));
 						} else {
 							leftTurns++;
-							directions.add(new Direction("Continue straight and take the "+leftTurns+" left", IconType.HLEFT));
+							directions.add(new Direction("Take the "+leftTurns+" left", IconType.HLEFT));
 						}
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
