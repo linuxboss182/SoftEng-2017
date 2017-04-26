@@ -293,9 +293,14 @@ public class EditorController
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
+			Node node = this.selectedNodes.getSoleElement();
+			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(node);
+			selectNode(node);
 		} else {
-			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(newNode);
+			selectNode(newNode);
 		}
 		this.redisplayAll();
 	}
@@ -432,25 +437,30 @@ public class EditorController
 	/**
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
+	 *
+	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
+	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
 		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
 			this.directory.connectOrDisconnectNodes(n, newNode);
 		});
-		selectNode(newNode);
+		return newNode;
 	}
 
-	/** Add a new node to the directory at the given coordinates */
+	/**
+	 * Add a new node to the directory at the given coordinates
+	 *
+	 * This function should _only_ add a node, and do nothing else
+	 */
 	private Node addNode(double x, double y) {
 		if(x < 0 || y < 0) {
 			return null;
 		}
 		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
-		selectNode(newNode);
 		return newNode;
 	}
 
