@@ -3,18 +3,25 @@ package controllers.user;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import entities.FloorProxy;
 import entities.Room;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.image.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import main.ApplicationController;
 
 import java.awt.*;
 import java.awt.Image;
+import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
@@ -28,11 +35,11 @@ public class NavDrawerController
 {
 	@FXML private ImageView startImageView;
 
-	@FXML private JFXHamburger settingsHamburgerBtn;
-
 	@FXML private JFXListView<Room> resultsListView;
 
 	@FXML private ImageView destImageView;
+	@FXML private ImageView logAsAdmin;
+	@FXML private ImageView aboutBtn;
 
 
 
@@ -48,11 +55,20 @@ public class NavDrawerController
 		populateListView();
 		resultsListView.setVisible(false);
 
+		//set lock icon
+		javafx.scene.image.Image login = new javafx.scene.image.Image("/lock.png");
+		logAsAdmin.setImage(login);
+
+		//set about page icon
+		javafx.scene.image.Image about = new javafx.scene.image.Image("/about.png");
+		aboutBtn.setImage(about);
+
 		startFieldListener();
 		destFieldListener();
 		listViewListener();
 		startFieldFocusedListener();
 		destinationFieldFocusedListener();
+		onLoginImageClicked();
 
 	}
 
@@ -109,8 +125,6 @@ public class NavDrawerController
 		});
 	}
 
-
-
 	/**
 	 * Populates the list of rooms
 	 */
@@ -119,7 +133,6 @@ public class NavDrawerController
 		this.resultsListView.setItems(this.listProperty);
 
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-
 
 	}
 
@@ -171,4 +184,40 @@ public class NavDrawerController
 			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
+
+	public void onLoginImageClicked() {
+		logAsAdmin.setOnMouseClicked(e-> {
+			Scene loginScene = null;
+			try {
+				FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(this.getClass().getResource("/LoginPrompt.fxml"));
+				loginScene = new Scene(loader.load());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			ApplicationController.getStage().setScene(loginScene);
+
+
+
+		});
+	}
+
+//		@FXML
+//	public void logAsAdminClicked()
+//			throws IOException, InvocationTargetException {
+//		// Unset navigation targets for after logout
+//		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+//		this.getScene().setRoot(loginPrompt);
+//	}
+
+//	public void aboutBtnClicked() throws IOException {
+//		UserAboutPage aboutPageController = new UserAboutPage();
+//		FXMLLoader loader = new FXMLLoader();
+//		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+//		Scene addAboutScene = new Scene(loader.load());
+//		Stage addAboutStage = new Stage();
+//		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
+//		addAboutStage.setScene(addAboutScene);
+//		addAboutStage.showAndWait();
+//	}
 }

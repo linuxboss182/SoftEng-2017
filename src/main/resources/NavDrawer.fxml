@@ -30,6 +30,11 @@
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />
-      <HBox prefHeight="100.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
    </children>
 </VBox>

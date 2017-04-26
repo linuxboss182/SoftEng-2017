@@ -12,15 +12,32 @@ import javafx.stage.Stage;
 import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
 
+import java.io.IOException;
+
 public class ApplicationController extends Application
 {
 
 	private static Directory directory;
 	private static IconController iconController;
+	private static Scene scene;
+	public static Scene loginScene;
 	private static Stage stage;
+
+
+	public static Scene getScene() {
+		return ApplicationController.scene;
+	}
 
 	public static Stage getStage() {
 		return ApplicationController.stage;
+	}
+
+	public static Scene getLoginScene() {
+		return ApplicationController.loginScene;
+	}
+
+	public static void setScene(Scene scene) {
+		ApplicationController.scene = scene;
 	}
 
 	public static Directory getDirectory() {
@@ -33,7 +50,6 @@ public class ApplicationController extends Application
 
 
 	public static void main(String[] args) {
-
 		try {
 			DatabaseWrapper.getInstance().init();
 		} catch (DatabaseException e) {
@@ -44,14 +60,20 @@ public class ApplicationController extends Application
 		ApplicationController.directory = DatabaseWrapper.getInstance().getDirectory();
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
+
+
 		Application.launch(args);
 
 		DatabaseWrapper.getInstance().close();
+
+
 	}
+
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
 		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");

@@ -42,7 +42,7 @@ public class UserMasterController
 		extends MapDisplayController
 		implements Initializable
 {
-	@FXML private JFXButton logAsAdmin;
+	//@FXML private JFXButton logAsAdmin;
 	@FXML private ListView<Room> directoryView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
@@ -53,7 +53,7 @@ public class UserMasterController
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
-	@FXML private Button aboutBtn;
+	//@FXML private Button aboutBtn;
 	@FXML private ImageView logoImageView;
 	@FXML private JFXDrawer navDrawer;
 	@FXML private JFXHamburger navHamburgerBtn;
@@ -148,7 +148,7 @@ public class UserMasterController
 			this.startField = controller.startField;
 
 			navDrawer.setSidePane(box);
-			navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
+			//navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
 
 			//navDrawer.prefWidthProperty().bind(parentBorderPane.widthProperty());
 		} catch (IOException ex) {
@@ -195,13 +195,7 @@ public class UserMasterController
 
 	}
 
-	@FXML
-	public void logAsAdminClicked()
-			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.getScene().setRoot(loginPrompt);
-	}
+
 
 	/**
 	 * Called by MapDisplayController when changing floor

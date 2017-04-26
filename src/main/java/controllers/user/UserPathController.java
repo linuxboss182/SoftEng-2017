@@ -99,7 +99,7 @@ public class UserPathController
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
-		iconController = ApplicationController.getIconController();
+		//iconController = ApplicationController.getIconController();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
