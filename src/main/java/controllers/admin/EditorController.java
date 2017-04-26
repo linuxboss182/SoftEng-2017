@@ -1,6 +1,7 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -145,6 +146,8 @@ public class EditorController
 
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
+
+		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
 	}
 
 
