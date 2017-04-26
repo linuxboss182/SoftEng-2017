@@ -1,6 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.icons.IconManager;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
@@ -190,29 +191,36 @@ public class UserMasterController
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
+		IconManager iconManager = new IconManager();
+		iconManager.addHandler(MouseEvent.MOUSE_CLICKED, room -> (MouseEvent event) -> {
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+		});
 
-			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-			});
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 
-			// Add listener for context menus (right click)
-			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-
-				ContextMenu optionsMenu = new ContextMenu();
-
-				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-			});
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+//		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
+//			roomShapes.add(room.getUserSideShape());
+//
+//			// Add listener to select rooms on click
+//			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
+//				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+//			});
+//
+//			// Add listener for context menus (right click)
+//			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
+//
+//				ContextMenu optionsMenu = new ContextMenu();
+//
+//				MenuItem startRoomItem = new MenuItem("Set as starting location");
+//				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
+//				MenuItem endRoomItem = new MenuItem("Set as destination");
+//				endRoomItem.setOnAction(e2-> selectEndRoom(room));
+//				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
+//				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
+//			});
+//		}
+//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**

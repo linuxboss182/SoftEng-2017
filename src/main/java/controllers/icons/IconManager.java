@@ -2,6 +2,8 @@ package controllers.icons;
 
 import entities.Room;
 import entities.RoomType;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -10,16 +12,19 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import main.ApplicationController;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 /**
- *
+ * Class for managing room icons
  */
 public class IconManager
 {
@@ -34,10 +39,26 @@ public class IconManager
 			new Insets(0, -2, 0, -2)
 	);
 	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
+
 	MassMap<Room, Node> roomIcons;
+	Map<EventType<?>, Function<Room, EventHandler<?>>> handlers;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
+		this.handlers = new HashMap<>();
+	}
+
+	/**
+	 * Prepare a handler to add to each icon
+	 *
+	 * The handler function should produce a handler that operates on a room.
+	 *
+	 * @param type The type of event to handle
+	 * @param handler A function that takes a room and returns an event handler that
+	 *                operates on that room
+	 */
+	public void addHandler(EventType<?> type, Function<Room, EventHandler<?>> handler) {
+		this.handlers.put(type, handler);
 	}
 
 	/**
@@ -68,11 +89,21 @@ public class IconManager
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
 
-		return new Icon(image, label);
+		Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
+
+		ROOM.DEFAULT.applyTo(circle);
+
+		return new Icon(circle, label);
 	}
+
 
 	private class MassMap<K, V> extends HashMap<K, V>
 	{
+		/**
+		 * Get the values for the given keys, computing values for missing keys
+		 *
+		 * The computed values are storred in the map
+		 */
 		public Set<V> computeAllIfAbsent(Collection<K> keys,
 		                                 Function<? super K, ? extends V> mappingFunction) {
 			Set<V> values = new HashSet<>();
