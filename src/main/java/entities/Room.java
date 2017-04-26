@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static entities.RoomType.DEFAULT;
+
 
 /**
  * A class for Room(s).
@@ -47,7 +49,7 @@ public class Room
 	private String description;
 	private Set<Professional> professionals;
 	private Icon shape;
-	private RoomType type;
+	private RoomType type = DEFAULT;
 	private Group adminShape;
 	private double labelOffsetX;
 
