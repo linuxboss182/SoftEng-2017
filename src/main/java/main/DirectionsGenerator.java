@@ -74,10 +74,11 @@ public class DirectionsGenerator
 					// check case where portal leads outside
 					System.out.println(path.get(i+1).getBuildingName());
 					if (path.get(i+1).getBuildingName().equals("Outside")) {
-						directions.append("Go Outside,\n");
-						while ((path.get(i + 1).getBuildingName().equals("Outside"))) {
-							i++;
-						}
+						directions.append("Go Outside\n");
+//						while ((i == (path.size() - 2)) ||
+//								(path.get(i + 1).getBuildingName().equals("Outside"))) {
+//							i++;
+//						}
 					} else {
 						i++;
 						directions.append("Head inside ").append(path.get(i).getBuildingName());
@@ -111,11 +112,11 @@ public class DirectionsGenerator
 					if (isRightTurn(turnAngle)) {
 						// Right Turn
 						if (rightTurns == 0) {
-							directions.append("Take a right turn,\n");
+							directions.append("Take the next right turn,\n");
 						} else {
 							rightTurns++;
-							directions.append("Continue straight\nTake the ").append(rightTurns);
-							directions.append(getTurnPostfix(rightTurns)).append(" right,\nThen ");
+							directions.append("Take the ").append(rightTurns);
+							directions.append(getTurnPostfix(rightTurns)).append(" right,\n");
 
 						}
 						// if you take a turn, then the count for turns should be reset
@@ -133,20 +134,29 @@ public class DirectionsGenerator
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isStraight(turnAngle)) {
-						// Straight (NO TURN!!!)
-						//				directions += "continue straight,\nThen "; // we don't want to spam them with this
-						// Figure out if there is a left or right turn available as well, then increment the counters
-						Set<Node> forks = path.get(i).getNeighbors();
-						for (Node fork : forks) {
-							int forkAngle = (int) path.get(i).angle(fork, path.get(i - 1));
+						directions.append("Continue straight\n");
+						while(isStraight(turnAngle)) {
+							// Straight (NO TURN!!!)
+							//				directions += "continue straight,\nThen "; // we don't want to spam them with this
+							// Figure out if there is a left or right turn available as well, then increment the counters
+							System.out.println(turnAngle);
+							Set<Node> forks = path.get(i).getNeighbors();
+							for (Node fork : forks) {
+								int forkAngle = (int) path.get(i).angle(fork, path.get(i
+										- 1));
 
-							if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
-								rightTurns++;
+								if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
+									rightTurns++;
+								}
+								if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
+									leftTurns++;
+								}
 							}
-							if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
-								leftTurns++;
-							}
+							i++;
+							turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
+							System.out.println(leftTurns + "" + rightTurns);
 						}
+						i--;
 					} else if (isSoftLeftTurn(turnAngle)) {
 						if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList
 								()[0])
@@ -159,11 +169,11 @@ public class DirectionsGenerator
 					} else if (isLeftTurn(turnAngle)) {
 						// Left Turn
 						if (leftTurns == 0) {
-							directions.append("Take a left turn,\n");
+							directions.append("Take the next left turn,\n");
 						} else {
 							leftTurns++;
-							directions.append("Continue straight\nTake the ").append(leftTurns);
-							directions.append(getTurnPostfix(leftTurns)).append(" left,\nThen ");
+							directions.append("Take the ").append(leftTurns);
+							directions.append(getTurnPostfix(leftTurns)).append(" left,\n");
 						}
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
