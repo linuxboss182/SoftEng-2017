@@ -434,13 +434,13 @@ public class EditorController
 	 * Also add a new node associated with the room.
 	 */
 	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
-		// TODO: Review this assumption
 		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
 			this.directory.connectOrDisconnectNodes(n, newNode);
 		});
+		selectNode(newNode);
 	}
 
 	/** Add a new node to the directory at the given coordinates */
@@ -450,6 +450,7 @@ public class EditorController
 		}
 		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
 		this.addNodeListeners(newNode);
+		selectNode(newNode);
 		return newNode;
 	}
 
