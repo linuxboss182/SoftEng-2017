@@ -96,10 +96,8 @@ public class PathDrawerController
 		System.out.println(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
 
 		//Set the start and end labels
-		//startLbl.setText(startRoom.getName());
-		System.out.println("startRoom = " + startRoom);
-		System.out.println("destRoom = " + endRoom);
-		//destLbl.setText(endRoom.getName());
+		startLbl.setText(startRoom.getName());
+		destLbl.setText(endRoom.getName());
 
 
 	}
