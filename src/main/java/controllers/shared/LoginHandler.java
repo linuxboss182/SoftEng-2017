@@ -2,37 +2,31 @@ package controllers.shared;
 
 import entities.Directory;
 import main.ApplicationController;
-
 import java.util.HashMap;
 
-/**
- * Created by Walt on 4/21/2017.
- */
 public class LoginHandler
 {
-	private HashMap<String, String> adminLogins;
-	private HashMap <String, String> professionalLogins;
 	Directory directory = ApplicationController.getDirectory();
 
-	public LoginHandler(HashMap<String, String> adminMap){
-		this.adminLogins = adminMap;
-		this.professionalLogins = new HashMap();
-	}
+	public LoginHandler(){}
 
 	public void addAccount(String username, String password, Boolean isAdmin){
+		HashMap<String, String> adminLogins = directory.getAdminUsers();
+		HashMap <String, String> professionalLogins = directory.getProfessionalUsers();
+
 		String uppercasedUsername = username.toUpperCase();
 		if (isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)){
-			this.adminLogins.put(uppercasedUsername, password);
 			directory.addUser(uppercasedUsername, password, "admin");
-			System.out.println("I... did it?");
 		}
 		else if (!isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)) {
-			this.professionalLogins.put(uppercasedUsername, password);
 			directory.addUser(uppercasedUsername, password, "professional");
 		}
 	}
 
 	public void removeAccount(String username){
+		HashMap<String, String> adminLogins = directory.getAdminUsers();
+		HashMap <String, String> professionalLogins = directory.getProfessionalUsers();
+
 		String uppercasedUsername = username.toUpperCase();
 		if (adminLogins.containsKey(uppercasedUsername)){
 			adminLogins.remove(uppercasedUsername);
@@ -43,6 +37,9 @@ public class LoginHandler
 	}
 
 	public void changePassword(String username, String oldPassword, String newPassword){
+		HashMap<String, String> adminLogins = directory.getAdminUsers();
+		HashMap <String, String> professionalLogins = directory.getProfessionalUsers();
+
 		String uppercasedUsername = username.toUpperCase();
 		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(oldPassword))){
 			adminLogins.put(uppercasedUsername, newPassword);
@@ -56,19 +53,28 @@ public class LoginHandler
 	}
 
 	public byte checkLogin(String username, String password){
+		HashMap<String, String> adminLogins = directory.getAdminUsers();
+		HashMap <String, String> professionalLogins = directory.getProfessionalUsers();
+
 		String uppercasedUsername = username.toUpperCase();
 		System.out.println(adminLogins.keySet());
 		System.out.println(adminLogins.values());
 		System.out.println(adminLogins.get(uppercasedUsername));
 		System.out.println(adminLogins.isEmpty());
 		System.out.println(adminLogins.containsKey("admin"));
+
 		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(password))){
+			System.out.println("ret 2");
 			return 2;
 		}
 		else if (professionalLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(professionalLogins.get(uppercasedUsername).equals(password))){
+			System.out.println("ret 1");
+
 			return 1;
 		}
 		else{
+			System.out.println("ret 0");
+
 			return 0;
 		}
 	}

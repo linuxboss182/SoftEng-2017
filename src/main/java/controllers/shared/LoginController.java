@@ -42,7 +42,7 @@ public class LoginController implements Initializable{
 //		logins.addAccount("admin", "password", true);
 
 		directory.addUser("admin", "password", "admin");
-		logins = new LoginHandler(directory.getUsers());
+		logins = new LoginHandler();
 
 //		Set<String> passwordSet = directory.getPassHashes();
 //		Set<String> permissionSet = directory.getPermissions();
@@ -73,6 +73,7 @@ public class LoginController implements Initializable{
 				}
 			}
 		});
+
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
@@ -82,20 +83,17 @@ public class LoginController implements Initializable{
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
 		byte success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
-//		boolean success = adminLogins.get(this.passwordField.getText()).equals(this.usernameField.getText());
 		if(success == 2) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
 		}
 		else if (success == 1){
-			//TODO: Figure out what to do with logged-in professionals
+			Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+			errorLbl.getScene().setRoot(destUI);
 		}
 		else {
 			this.errorLbl.setText("Incorrect Username or Password");
-//			this.usernameField.setText(""); TODO verify this should be commented out
-//			this.passwordField.setText("");
 			this.usernameField.requestFocus();
-			// They didn't login successfully so they should probably be punished in some way
 		}
 	}
 

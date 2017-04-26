@@ -20,8 +20,6 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private HashMap<String, String> users;
-//	private Set<String> passHashes;
-//	private Set<String> permissions;
 	private Room kiosk;
 
 	// default to floor 1
@@ -104,6 +102,14 @@ public class Directory
 
 	public HashMap<String, String> getUsers(){
 		return this.users;
+	}
+
+	public HashMap<String, String> getProfessionalUsers(){
+		return this.users; //TODO
+	}
+
+	public HashMap<String, String> getAdminUsers(){
+		return this.users; //TODO
 	}
 //
 //	public Set<String> getPassHashes(){
