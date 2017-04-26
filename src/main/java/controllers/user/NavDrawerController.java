@@ -23,6 +23,7 @@ import main.ApplicationController;
 import java.awt.*;
 import java.awt.Image;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
@@ -41,7 +42,7 @@ public class NavDrawerController
 	@FXML private ImageView destImageView;
 	@FXML private ImageView logAsAdmin;
 	@FXML private ImageView aboutBtn;
-	@FXML protected VBox drawerVBox;
+
 	@FXML
 	private HBox destHBox;
 	@FXML
@@ -133,7 +134,8 @@ public class NavDrawerController
 	}
 
 	public void startFieldListener() {
-
+		//selectedListRoom = null;
+		//startField.setText("");
 		// Enable search; if this becomes more than one line, make it a function
 		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> {
 			isStart = true;
@@ -252,6 +254,27 @@ public class NavDrawerController
 
 		});
 	}
+
+	@FXML
+	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/PathDrawer.fxml"));
+		PathDrawerController controller = loader.getController();
+//		this.destinationField = controller.destinationField;
+//		this.startField = controller.startField;
+		drawerVBox.getChildren().clear();
+		drawerVBox.getChildren().add(FXMLLoader.load(getClass().getResource("/PathDrawer.fxml")));
+		/* change to a scene with the path if possible */
+//		//if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+//			ApplicationController.getStage().setScene(new Scene(pane));
+//			ApplicationController.getStage().show();
+
+		//} else {
+		//this.redisplayMapItems();
+		//}
+	}
+
+
 
 //		@FXML
 //	public void logAsAdminClicked()

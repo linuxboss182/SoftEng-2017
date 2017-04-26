@@ -38,7 +38,7 @@
       </HBox>
       <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <JFXButton fx:id="getDirectionsBtn" alignment="CENTER" buttonType="RAISED" prefHeight="27.0" prefWidth="107.0" style="-fx-background-color: #5087b4;" text="Go">
+            <JFXButton fx:id="getDirectionsBtn" alignment="CENTER" buttonType="RAISED" onMouseClicked="#getDirectionsClicked" prefHeight="27.0" prefWidth="107.0" style="-fx-background-color: #5087b4;" text="Go">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </HBox.margin>

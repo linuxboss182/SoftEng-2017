@@ -8,6 +8,11 @@
 
 <VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="418.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.PathDrawerController">
    <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <ImageView fx:id="backImageView" fitHeight="59.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
       <HBox fx:id="startHBox">
          <children>
             <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">

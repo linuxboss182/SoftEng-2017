@@ -55,12 +55,12 @@ public class UserMasterController
 	@FXML private GridPane destGridPane;
 	//@FXML private Button aboutBtn;
 	@FXML private ImageView logoImageView;
-	@FXML private JFXDrawer navDrawer;
+	@FXML protected JFXDrawer navDrawer;
 	@FXML private JFXHamburger navHamburgerBtn;
 
 	////NavDrawer Elements
 	@FXML protected JFXTextField startField;
-
+	@FXML protected VBox drawerVBox;
 	@FXML protected JFXTextField destinationField;
 
 	private double clickedX;
@@ -277,21 +277,7 @@ public class UserMasterController
 
 
 
-//	@FXML
-//	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-//		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
-//		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
-//		BorderPane pane = loader.load();
-//		UserPathController controller = loader.getController();
-//
-//		/* change to a scene with the path if possible */
-//		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-//			ApplicationController.getStage().setScene(new Scene(pane));
-//			ApplicationController.getStage().show();
-//		} else {
-//			this.redisplayMapItems();
-//		}
-//	}
+
 
 	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
