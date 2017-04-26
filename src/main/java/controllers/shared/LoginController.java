@@ -18,9 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
-import main.database.DatabaseWrapper;
-
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -47,9 +44,10 @@ public class LoginController implements Initializable{
 	@FXML
 	private BorderPane parentBorderPane;
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+//		logins = new LoginHandler();
+//		logins.addAccount("admin", "password", true);
 
 		Directory directory = DatabaseWrapper.getInstance().getDirectory();
 		directory.addUser("admin", "password", "admin");
@@ -102,6 +100,9 @@ public class LoginController implements Initializable{
 		}
 		else {
 			this.errorLbl.setText("Incorrect Username or Password");
+//			this.usernameField.setText(""); TODO verify this should be commented out
+//			this.passwordField.setText("");
+			this.usernameField.requestFocus();
 			// They didn't login successfully so they should probably be punished in some way
 		}
 	}

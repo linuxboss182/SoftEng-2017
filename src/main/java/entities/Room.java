@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
 /**
  * A class for Room(s).
  *
@@ -63,6 +64,7 @@ public class Room
 
 	/* Constructors */
 	Room(String name, String displayName, String description) {
+		this.type = RoomType.DEFAULT;
 		this.location = null;
 		this.name = name;
 		this.displayName = displayName;
