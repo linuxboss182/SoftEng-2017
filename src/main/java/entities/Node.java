@@ -27,6 +27,8 @@ public class Node
 					return RoomType.PORTAL;
 				case "hallway":
 					return RoomType.HALLWAY;
+				case "parking lot":
+					return RoomType.PARKING;
 				default:
 					return RoomType.DEFAULT;
 			}

@@ -78,10 +78,9 @@ public class DirectionsGenerator
 					System.out.println(path.get(i+1).getBuildingName());
 					if (path.get(i+1).getBuildingName().equals("Outside")) {
 						directions.add(new Direction("Go outside", IconType.PORTAL));
-//						while ((i == (path.size() - 2)) ||
-//								(path.get(i + 1).getBuildingName().equals("Outside"))) {
-//							i++;
-//						}
+						while ((path.get(i+1).getType().getName().equals("Parking")) || (path.get(i + 1).getBuildingName().equals("Outside"))) {
+							i++;
+						}
 					} else {
 						i++;
 						directions.add(new Direction("Go into "+path.get(i).getBuildingName(), IconType.PORTAL));
@@ -107,6 +106,10 @@ public class DirectionsGenerator
 					rightTurns = 0;
 					leftTurns = 0;
 					break;
+				case PARKING:
+					if (path.get(i+1).getBuildingName().equals("Outside")) {
+
+					}
 				default:
 					double turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
 					if (isRightTurn(turnAngle)) {
