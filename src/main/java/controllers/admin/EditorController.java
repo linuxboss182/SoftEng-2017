@@ -1,6 +1,7 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -70,6 +71,7 @@ public class EditorController
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
 	@FXML private SplitPane mapSplitPane;
+	@FXML private JFXToggleButton showRoomsToggleBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -102,8 +104,6 @@ public class EditorController
 	protected double selectionStartY;
 	protected double selectionEndX;
 	protected double selectionEndY;
-
-	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
@@ -150,6 +150,8 @@ public class EditorController
 
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
+
+		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
 		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
 	}
@@ -344,20 +346,13 @@ public class EditorController
 	 * If debugging, display all nodes
 	 */
 	private void redisplayGraph() {
-//		if (EditorController.DEBUGGING) {
-//			this.displayNodes(directory.getNodes());
-//			this.redrawLines(directory.getNodes());
-//		} else {
-		this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
-		this.redrawLines();
-//		}
-	}
-
-	/**
-	 * This function is currently for testing purposes only
-	 * Using it will modifier listeners that the user can access; be careful
-	 */
-	public void displayRoomsOnFloor() {
+		if (this.showRoomsToggleBtn.isSelected()) {
+			this.displayRooms();
+			this.linePane.getChildren().clear();
+		} else {
+			this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
+			this.redrawLines();
+		}
 	}
 
 	//Editor
@@ -601,7 +596,7 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
-			} else if(! this.toggleShowRooms) {
+			} else if(! this.showRoomsToggleBtn.isSelected()) {
 				// Limits the dragging for x and y coordinates. (panning I mean)
 				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
 					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
@@ -645,7 +640,7 @@ public class EditorController
 					}
 				});
 			}
-			if(this.toggleShowRooms) {
+			if(this.showRoomsToggleBtn.isSelected()) {
 				this.displayRooms();
 			}
 			this.redisplayGraph();
@@ -839,21 +834,21 @@ public class EditorController
 
 	@FXML
 	public void setToggleShowRooms() {
-		this.toggleShowRooms = !toggleShowRooms;
-		if(toggleShowRooms) {
-			// for now, disable dragging
-			this.imageViewMap.setDisable(true);
-			this.linePane.setDisable(true);
-			this.linePane.getChildren().clear();
-			this.nodePane.getChildren().clear();
-			this.displayRooms();
-
-		} else {
-			// re-enable dragging
-			this.imageViewMap.setDisable(false);
-			this.linePane.setDisable(false);
-			this.redisplayAll();
-		}
+//		this.toggleShowRooms = !toggleShowRooms;
+//		if(toggleShowRooms) {
+//			// for now, disable dragging
+//			this.imageViewMap.setDisable(true);
+//			this.linePane.setDisable(true);
+//			this.linePane.getChildren().clear();
+//			this.nodePane.getChildren().clear();
+//			this.displayRooms();
+//
+//		} else {
+//			// re-enable dragging
+//			this.imageViewMap.setDisable(false);
+//			this.linePane.setDisable(false);
+//			this.redisplayAll();
+//		}
 	}
 
 	/**
