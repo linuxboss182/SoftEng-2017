@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.ApplicationController;
@@ -50,7 +51,7 @@ public class NavDrawerController
 	@FXML
 	private HBox bottomHBox;
 	private Room selectedListRoom;
-
+	@FXML public Pane linePane;
 
 
 
@@ -259,12 +260,14 @@ public class NavDrawerController
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		System.out.println("this.linePane = " + this.linePane);
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/PathDrawer.fxml"));
 		PathDrawerController controller = loader.getController();
 //		this.destinationField = controller.destinationField;
 //		this.startField = controller.startField;
 		drawerVBox.getChildren().clear();
 		drawerVBox.getChildren().add(FXMLLoader.load(getClass().getResource("/PathDrawer.fxml")));
+		
 		/* change to a scene with the path if possible */
 //		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 //			ApplicationController.getStage().setScene(new Scene(pane));

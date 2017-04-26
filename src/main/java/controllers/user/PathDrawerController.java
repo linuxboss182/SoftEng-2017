@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.ApplicationController;
@@ -49,9 +50,8 @@ public class PathDrawerController
 	@FXML private HBox bottomHBox;
 	@FXML protected Label startLbl;
 	@FXML protected Label destLbl;
-
 	private Room selectedListRoom;
-
+	@FXML public Pane linePane;
 
 
 
@@ -60,6 +60,7 @@ public class PathDrawerController
 //		javafx.scene.image.Image startIcon;
 //		startIcon = new javafx.scene.image.Image("/startIcon.png", true);
 //		startImageView.setImage(startIcon);
+		System.out.println("this.linePane = " + this.linePane);
 		this.directory = ApplicationController.getDirectory();
 		//startField.setText("Your Location");
 		populateListView();
@@ -99,6 +100,10 @@ public class PathDrawerController
 		startLbl.setText(startRoom.getName());
 		destLbl.setText(endRoom.getName());
 
+
+		if(startRoom != null && endRoom != null) {
+			drawDirections(startRoom, endRoom);
+		}
 
 	}
 
