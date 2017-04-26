@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,8 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.event.EventHandler;
+//import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -40,6 +42,8 @@ import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 import entities.FloorProxy;
 
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.BLUE;
 import static javafx.scene.paint.Color.GRAY;
 
 public class EditorController
@@ -86,6 +90,9 @@ public class EditorController
 	private boolean beingDragged; //Protects the imageView for being dragged
 	double contextRad = 120;
 	double contextWidth = 60;
+	Arc selectionWedge = new Arc();
+	Group contextMenu = new Group();
+	private int contextSelection = -1; //default to -1
 
 
 	@Override
@@ -125,15 +132,33 @@ public class EditorController
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
 	}
+/*
+	private EventHandler nodeButtonMouseDrag = new EventHandler<MouseEvent>(){
+		@Override
+		public void handle(MouseEvent e){
+			if (e.isSecondaryButtonDown()){
+				displayContextMenu(e);
+			}
+		}
+	};
+	*/
+
+
+	void displayContextMenu(MouseEvent e){
+		if(e.isSecondaryButtonDown()){
+			populateRoundPane(e, e.getX(),e.getY());
+		}
+	}
 
 	/**
 	 * Setup a radial context menu
 	 */
-	public void populateRoundPane(ContextMenuEvent e){
+	public void populateRoundPane(MouseEvent e, double x, double y){
 
-		Group contextMenu = new Group();
+		contextMenu.setLayoutX(x);
+		contextMenu.setLayoutY(y);
 
-		Arc roundPanel = new Arc(e.getX(), e.getY(), contextRad, contextRad, 0, 360);
+		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);
 		roundPanel.setStrokeWidth(contextWidth);
 		roundPanel.setStroke(Color.GRAY);
@@ -142,41 +167,91 @@ public class EditorController
 		roundPanel.setOpacity(0.9);
 
 		Line split1 = new Line();
-		split1.setStartX(e.getX());
-		split1.setStartY(e.getY());
-		split1.setEndX(e.getX() - contextRad / Math.sqrt(2));
-		split1.setEndY(e.getY() - contextRad / Math.sqrt(2));
+		split1.setStartX(0);
+		split1.setStartY(0);
+		split1.setEndX( - contextRad / Math.sqrt(2));
+		split1.setEndY( - contextRad / Math.sqrt(2));
 
 		Line split2 = new Line();
-		split2.setStartX(e.getX());
-		split2.setStartY(e.getY());
-		split2.setEndX(e.getX() + contextRad / Math.sqrt(2));
-		split2.setEndY(e.getY() - contextRad / Math.sqrt(2));
+		split2.setStartX(0);
+		split2.setStartY(0);
+		split2.setEndX( + contextRad / Math.sqrt(2));
+		split2.setEndY( - contextRad / Math.sqrt(2));
 
 		Line split3 = new Line();
-		split3.setStartX(e.getX());
-		split3.setStartY(e.getY());
-		split3.setEndX(e.getX() - contextRad / Math.sqrt(2));
-		split3.setEndY(e.getY() + contextRad / Math.sqrt(2));
+		split3.setStartX(0);
+		split3.setStartY(0);
+		split3.setEndX( - contextRad / Math.sqrt(2));
+		split3.setEndY( + contextRad / Math.sqrt(2));
 
 		Line split4 = new Line();
-		split4.setStartX(e.getX());
-		split4.setStartY(e.getY());
-		split4.setEndX(e.getX() + contextRad / Math.sqrt(2));
-		split4.setEndY(e.getY() + contextRad / Math.sqrt(2));
+		split4.setStartX(0);
+		split4.setStartY(0);
+		split4.setEndX( + contextRad / Math.sqrt(2));
+		split4.setEndY( + contextRad / Math.sqrt(2));
 
+		selectionWedge = new Arc(0, 0, contextRad, contextRad, 0,0);
+		selectionWedge.setType(ArcType.ROUND);
+		selectionWedge.setStrokeWidth(contextWidth);
+		selectionWedge.setStroke(Color.BLUEVIOLET);
+		selectionWedge.setStrokeType(StrokeType.INSIDE);
+		selectionWedge.setFill(null);
+		selectionWedge.setOpacity(0.2);
 
 		contextMenu.getChildren().add(roundPanel);
+		contextMenu.getChildren().add(selectionWedge);
 		contextMenu.getChildren().add(split1);
 		contextMenu.getChildren().add(split2);
 		contextMenu.getChildren().add(split3);
 		contextMenu.getChildren().add(split4);
 		this.nodePane.getChildren().add(contextMenu);
-
 	}
 
+	private void updateCurrentXY(MouseEvent e){
+		double xdif = e.getX() - contextMenu.getLayoutX();
+		double ydif = e.getY() - contextMenu.getLayoutY();
 
+		System.out.println(contextMenu.getLayoutX());
+		System.out.println(contextMenu.getLayoutY());
+		System.out.println(xdif);
+		System.out.println(ydif);
 
+		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 2)){
+			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
+			System.out.println(Math.toDegrees(Math.atan2(ydif, xdif)));
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = -1;
+		}
+	}
+
+	private void modifyRadialSelection(double angle){
+
+		if (angle < -45 && angle > -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(45);
+			System.out.println("i");
+			contextSelection = 0;
+		}else if (angle > -45 && angle < 45){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(315);
+			contextSelection = 1;
+			System.out.println("2");
+		}else if (angle > 45 && angle < 135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(225);
+			contextSelection = 2;
+			System.out.println("3");
+		}else if (angle > 135 || angle < -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(135);
+			contextSelection = 3;
+			System.out.println("4");
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = -1;
+		}
+	}
 
 
 	// TODO: rename descriptively
@@ -414,12 +489,15 @@ public class EditorController
 	 */
 	private void addNodeListeners(Node node) {
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
-		node.getShape().setOnContextMenuRequested((e -> populateRoundPane(e)));
+		//node.getShape().setOnMouse((e -> displayContextMenu(e, node.getX(), node.getY())));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
+			if (event.isSecondaryButtonDown()){
+				displayContextMenu(event);
+			}
 			this.draggingNode = true;
 		});
 	}
@@ -732,7 +810,9 @@ public class EditorController
 	public void dragNodeListener(MouseEvent e, Node n) {
 		this.beingDragged = true;
 		this.draggingNode = true;
-		if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
+		if (e.isSecondaryButtonDown()){
+			updateCurrentXY(e);
+		}else if(this.selectedNodes.size() != 0 && this.selectedNodes.contains(n)) {
 			if(e.isPrimaryButtonDown()) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
@@ -753,6 +833,8 @@ public class EditorController
 
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
+
+		contextMenu.getChildren().clear();
 
 		this.beingDragged = false;
 	}
