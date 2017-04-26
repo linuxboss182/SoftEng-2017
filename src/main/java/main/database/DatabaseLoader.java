@@ -267,7 +267,7 @@ class DatabaseLoader
 						r.getDescription(),
 						r.getLabelOffsetX(),
 						r.getLabelOffsetY(),
-						r.getType().getName());
+						r.getType().name());
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
 						r.getName(),
@@ -275,7 +275,7 @@ class DatabaseLoader
 						r.getDescription(),
 						r.getLabelOffsetX(),
 						r.getLabelOffsetY(),
-						r.getType().getName());
+						r.getType().name());
 			}
 			db.executeUpdate(query);
 		}

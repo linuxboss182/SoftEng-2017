@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static entities.RoomType.DEFAULT;
 
 
 /**
@@ -49,7 +48,7 @@ public class Room
 	private String description;
 	private Set<Professional> professionals;
 	private Icon shape;
-	private RoomType type = DEFAULT;
+	private RoomType type;
 	private Group adminShape;
 	private double labelOffsetX;
 
@@ -65,6 +64,7 @@ public class Room
 
 	/* Constructors */
 	Room(String name, String displayName, String description) {
+		this.type = RoomType.DEFAULT;
 		this.location = null;
 		this.name = name;
 		this.displayName = displayName;
