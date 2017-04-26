@@ -66,8 +66,8 @@ public class UserMasterController
 
 	private double clickedX;
 	private double clickedY;
-	protected Room startRoom;
-	protected Room endRoom;
+	protected static Room startRoom;
+	protected static Room endRoom;
 
 	public boolean isStart;
 	public boolean isDest;
