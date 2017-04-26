@@ -1,5 +1,6 @@
 package controllers.icons;
 
+import entities.Room;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -12,6 +13,7 @@ import javafx.scene.image.ImageView;
 public class Icon
 		extends Group
 {
+	private Room room;
 	@Deprecated
 	private Node symbol;
 	private Label label;
@@ -20,6 +22,9 @@ public class Icon
 	private double labelOffsetY = 0;
 
 	Icon(ImageView image, Label label) {
+		this(null, image, label);
+	}
+	Icon(Room room, ImageView image, Label label) {
 		super(image, label);
 		this.image = image;
 		this.label = label;
@@ -27,7 +32,12 @@ public class Icon
 
 	@Deprecated
 	public Icon(Node symbol, Label label) {
+		this(null, symbol, label);
+	}
+
+	public Icon(Room room, Node symbol, Label label) {
 		super(symbol, label);
+		this.room = room;
 		this.symbol = symbol;
 		this.label = label;
 	}
