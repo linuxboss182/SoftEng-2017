@@ -60,7 +60,7 @@ public class UserMasterController
 
 	////NavDrawer Elements
 	@FXML protected JFXTextField startField;
-	@FXML protected VBox drawerVBox;
+
 	@FXML protected JFXTextField destinationField;
 
 	private double clickedX;

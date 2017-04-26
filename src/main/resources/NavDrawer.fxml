@@ -9,19 +9,26 @@
 
 <VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="418.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.NavDrawerController">
    <children>
-      <HBox prefHeight="50.0" prefWidth="200.0" />
-      <HBox>
+      <HBox fx:id="startHBox">
          <children>
-            <Label fx:id="startIconLbl" prefHeight="85.0" prefWidth="74.0" />
+            <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+            </ImageView>
             <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
                <HBox.margin>
                   <Insets bottom="30.0" top="15.0" />
                </HBox.margin></JFXTextField>
          </children>
       </HBox>
-      <HBox>
+      <HBox fx:id="destHBox">
          <children>
-            <Label fx:id="destIconLbl" prefHeight="67.0" prefWidth="76.0" />
+            <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+            </ImageView>
             <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
                <HBox.margin>
                   <Insets bottom="30.0" right="50.0" top="30.0" />
@@ -30,7 +37,7 @@
          </children>
       </HBox>
       <JFXListView fx:id="resultsListView" />
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox fx:id="bottomHBox">
          <children>
             <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />

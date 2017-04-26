@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.ApplicationController;
@@ -40,6 +41,13 @@ public class NavDrawerController
 	@FXML private ImageView destImageView;
 	@FXML private ImageView logAsAdmin;
 	@FXML private ImageView aboutBtn;
+	@FXML protected VBox drawerVBox;
+	@FXML
+	private HBox destHBox;
+	@FXML
+	private HBox startHBox;
+	@FXML
+	private HBox bottomHBox;
 
 
 
@@ -59,6 +67,14 @@ public class NavDrawerController
 		javafx.scene.image.Image login = new javafx.scene.image.Image("/lock.png");
 		logAsAdmin.setImage(login);
 
+		//set start icon
+		javafx.scene.image.Image start = new javafx.scene.image.Image("/aPin.png");
+		startImageView.setImage(start);
+
+		//set dest icon
+		javafx.scene.image.Image dest = new javafx.scene.image.Image("/bPin.png");
+		destImageView.setImage(dest);
+
 		//set about page icon
 		javafx.scene.image.Image about = new javafx.scene.image.Image("/about.png");
 		aboutBtn.setImage(about);
@@ -70,6 +86,11 @@ public class NavDrawerController
 		destinationFieldFocusedListener();
 		onLoginImageClicked();
 		onAboutButtonClicked();
+
+		resultsListView.setPrefHeight(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
+		System.out.println(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
+
+
 
 	}
 
