@@ -69,6 +69,7 @@ public class NavDrawerController
 		startFieldFocusedListener();
 		destinationFieldFocusedListener();
 		onLoginImageClicked();
+		onAboutButtonClicked();
 
 	}
 
@@ -196,6 +197,26 @@ public class NavDrawerController
 				e1.printStackTrace();
 			}
 			ApplicationController.getStage().setScene(loginScene);
+
+
+
+		});
+	}
+
+	public void onAboutButtonClicked() {
+		aboutBtn.setOnMouseClicked(e-> {
+			Scene aboutScene = null;
+			try {
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
+				aboutScene = new Scene(loader.load());
+
+				/////
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			ApplicationController.getStage().setScene(aboutScene);
 
 
 

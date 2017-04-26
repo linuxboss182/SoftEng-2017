@@ -52,7 +52,7 @@ public abstract class MapDisplayController
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
 	@FXML protected Slider zoomSlider;
-	@FXML protected BorderPane parentBorderPane;
+	@FXML public BorderPane parentBorderPane;
 
 	// TODO: move shared initializaton to MDC
 //	@Override
