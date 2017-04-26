@@ -8,6 +8,7 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -101,11 +102,14 @@ public class IconManager
 		String name = room.getDisplayName();
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
-		ImageView image = new ImageView(type.getImage());
+		Image originalImage = type.getImage();
+		double imageHeight = originalImage.getHeight();
+		double imageWidth = originalImage.getWidth();
+		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
-		image.setLayoutX(x);
-		image.setLayoutY(y);
+		image.setLayoutX(x - imageWidth/2);
+		image.setLayoutY(y - imageHeight/2);
 		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
 		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
 		label.setFont(new Font(FONT_SIZE));
@@ -139,11 +143,6 @@ public class IconManager
 				roomIcons.values().forEach(icon -> ROOM.DEFAULT.applyTo((Shape)icon.getSymbol()));
 				ROOM.END.applyTo(symbol);
 			});
-			//symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> ROOM.END.applyTo(symbol));
-//			symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-//				System.out.println("HERE");
-//				symbol.setFill(Color.BLACK);
-//			});
 		}
 	}
 
