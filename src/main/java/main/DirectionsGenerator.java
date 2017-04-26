@@ -1,6 +1,5 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -68,49 +67,46 @@ public class DirectionsGenerator
 		directions.add(new Direction("First, ", IconType.PORTAL));
 
 		int leftTurns = 0, rightTurns = 0;
-//		if (path.length > 1 && isElevator(path[0], path[1])) {
-//			directions.append("Take the elevator to the ").append(path[1].getFloor());
-//			directions.append(getTurnPostfix(path[1].getFloor())).append(" floor\nThen ");
-//		}
 		// redo text directions with switch cases based on types of nodes
 		for(int i = 1; i < path.size() - 1; i++) {
-//			if(path.get(i).getType() == null){
-//				System.out.println("Howdy");
-//			} else {
+			System.out.println(path.get(i).getType().getName());
 			switch (path.get(i).getType()) {
 				// if PORTAL is read, check to see what type of next node is
 				case PORTAL:
-					if (path.get(i + 1).getBuildingName().equals("outside")) {
+					// check case where portal leads outside
+					System.out.println(path.get(i+1).getBuildingName());
+					if (path.get(i+1).getBuildingName().equals("Outside")) {
 						directions.add(new Direction("Go outside", IconType.PORTAL));
-						while ((path.get(i + 1).getBuildingName().equals("outside")) || (path.get(i + 1) == null)) {
-
-
-							i++;
-						}
-						if (path.get(i + 1) == null) {
-
-						}
+//						while ((i == (path.size() - 2)) ||
+//								(path.get(i + 1).getBuildingName().equals("Outside"))) {
+//							i++;
+//						}
 					} else {
+						i++;
 						directions.add(new Direction("Go into "+path.get(i).getBuildingName(), IconType.PORTAL));
 					}
+					// reset num of right and left turns after entering / exiting building
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				case STAIRS:
 					while (path.get(i + 1).getType() == RoomType.STAIRS) {
 						i++;
 					}
 					directions.add(new Direction("Take the stairs to the "+path.get(i).getFloor(), IconType.STAIRS));
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				case ELEVATOR:
 					while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
 						i++;
 					}
+
 					directions.add(new Direction("Take the elevator to the "+path.get(i).getFloor(), IconType.ELEVATOR));
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				default:
-					// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
-					// During testing, this method worked how we wanted, but when implementing
-					// this code, turns were reversed. (right turns were left turns)
-					// double turnAngle = path[i].angle(path[i+1], path[i-1]);
 					double turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
 					if (isRightTurn(turnAngle)) {
 						// Right Turn
@@ -119,6 +115,7 @@ public class DirectionsGenerator
 						} else {
 							rightTurns++;
 							directions.add(new Direction("Continue straight and take the "+rightTurns+" right", IconType.HRIGHT));
+
 						}
 						// if you take a turn, then the count for turns should be reset
 						// to 0
@@ -135,21 +132,29 @@ public class DirectionsGenerator
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isStraight(turnAngle)) {
-						// Straight (NO TURN!!!)
-						//				directions += "continue straight,\nThen "; // we don't want to spam them with this
-						// Figure out if there is a left or right turn available as well, then increment the counters
-						Set<Node> forks = path.get(i).getNeighbors();
-						for (Node fork : forks) {
-							// TODO: This was also reversed, similar to above
-							int forkAngle = (int) path.get(i).angle(fork, path.get(i - 1));
+						directions.append("Continue straight\n");
+						while(isStraight(turnAngle)) {
+							// Straight (NO TURN!!!)
+							//				directions += "continue straight,\nThen "; // we don't want to spam them with this
+							// Figure out if there is a left or right turn available as well, then increment the counters
+							System.out.println(turnAngle);
+							Set<Node> forks = path.get(i).getNeighbors();
+							for (Node fork : forks) {
+								int forkAngle = (int) path.get(i).angle(fork, path.get(i
+										- 1));
 
-							if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
-								rightTurns++;
+								if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
+									rightTurns++;
+								}
+								if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
+									leftTurns++;
+								}
 							}
-							if (isLeftTurn(forkAngle) || isSoftLeftTurn(forkAngle) || isHardLeftTurn(forkAngle)) {
-								leftTurns++;
-							}
+							i++;
+							turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
+							System.out.println(leftTurns + "" + rightTurns);
 						}
+						i--;
 					} else if (isSoftLeftTurn(turnAngle)) {
 						if (Pathfinder.getStrategy() != Pathfinder.getAlgorithmList
 								()[0])
@@ -192,7 +197,6 @@ public class DirectionsGenerator
 					}
 					break;
 			}
-//		}
 		}
 		directions.add(new Direction("You are at your destination.", IconType.PORTAL));
 		return directions;
