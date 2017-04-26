@@ -312,10 +312,11 @@ class DatabaseLoader
 //			query = StoredProcedures.procInsertUser(dir.getUsers().toArray()[i].toString(),
 //					dir.getPassHashes().toArray()[i].toString(),
 //					dir.getPermissions().toArray()[i].toString());
+
 		for (Map.Entry<String, String> user : dir.getUsers().entrySet()) {
 			query = StoredProcedures.procInsertUser(user.getKey(),
 													user.getValue(),
-													"admin");
+													dir.getPermissions(user.getKey()));
 			db.executeQuery(query);
 		}
 
