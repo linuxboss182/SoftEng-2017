@@ -36,7 +36,6 @@ public class UserHelpController  implements Initializable
 				"Using the scroll wheel on your mouse or the slider will zoom in and out");
 
 		userHelpTextFlow.getChildren().add(userHelp);
-		userHelpTextFlow.setStyle("-fx-border-color: black;");
 
 
 	}

@@ -26,17 +26,17 @@ public class AdminHelpController  implements Initializable
 		Text commands = new Text();
 		commands.setTextAlignment(TextAlignment.CENTER);
 		commands.setStyle("-fx-font-size: 16.0;");
-		commands.setText("Press Back Space for Deleting selected nodes\n" +
-				"Press Ctrl + A for selecting all nodes\n" +
-				"Press Ctrl + Open Bracket for zoom in\n" +
-				"Press Ctrl + Close Bracket for zoom out\n" +
+		commands.setText("Press Back Space to Delete selected nodes\n" +
+				"Press Ctrl + A to select all nodes\n" +
+				"Press Ctrl + Open Bracket to zoom in\n" +
+				"Press Ctrl + Close Bracket to zoom out\n" +
 				"Press Shift + Right to move the view to the right\n" +
 				"Press Shift + Left to move the view to the left\n" +
-				"Press Shift + Up to move the view to the up\n" +
-				"Press Shift + down to move the view to the down");
+				"Press Shift + Up to raise the view\n" +
+				"Press Shift + down to lower the view");
 
 		commandTextFlow.getChildren().add(commands);
-		commandTextFlow.setStyle("-fx-border-color: black;");
+
 		
 
 	}
