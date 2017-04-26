@@ -27,7 +27,7 @@ public class StoredProcedures
 					+" , roomDescription varchar(1000)"
 					+" , labelX double precision NOT NULL"
 					+" , labelY double precision NOT NULL"
-					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL)"
+					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL"
 					+" , roomType   varchar(100) NOT NULL)",
 			"CREATE TABLE Employees ("
 					+" employeeID        integer PRIMARY KEY"
