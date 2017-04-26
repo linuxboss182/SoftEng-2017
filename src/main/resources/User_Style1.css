@@ -1,0 +1,8 @@
+#HBox{
+    -fx-background-color: whitesmoke;
+    -fx-alignment: baseline-center;
+    -fx-fill-height: true;
+}
+#VBox{
+    -fx-border-width: 2px;
+}

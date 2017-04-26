@@ -48,7 +48,7 @@ public class NavDrawerController
 	private HBox startHBox;
 	@FXML
 	private HBox bottomHBox;
-
+	private Room selectedListRoom;
 
 
 
@@ -101,12 +101,15 @@ public class NavDrawerController
 	public void startFieldFocusedListener() {
 		startField.focusedProperty().addListener(new ChangeListener<Boolean>()
 		{
+
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
 				if (newPropertyValue) {
 					isStart = true;
+
 				}
 				else {
+
 					isStart = false;
 				}
 			}
@@ -118,6 +121,7 @@ public class NavDrawerController
 		{
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+
 				if (newPropertyValue) {
 					isDest = true;
 				}
@@ -161,8 +165,11 @@ public class NavDrawerController
 	protected void listViewListener() {
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
 			if (isStart) {
-				this.selectStartRoom(resultsListView.getSelectionModel().getSelectedItem());
+				selectedListRoom = resultsListView.getSelectionModel().getSelectedItem();
+				this.selectStartRoom(selectedListRoom);
 				System.out.println("start clicked");
+				startField.setText(newValue.getName());
+				//resultsListView.getSelectionModel().clearSelection();
 
 				//isDest = false;
 			}
@@ -170,6 +177,8 @@ public class NavDrawerController
 			if (isDest) {
 				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
 				System.out.println("end clicked");
+				startField.setText(newValue.getName());
+				//resultsListView.getSelectionModel().clearSelection();
 
 				//isStart = false;
 			}

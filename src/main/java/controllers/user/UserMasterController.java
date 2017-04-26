@@ -146,7 +146,7 @@ public class UserMasterController
 			NavDrawerController controller = loader.getController();
 			this.destinationField = controller.destinationField;
 			this.startField = controller.startField;
-
+			box.getStylesheets().add("/User_Style1.css");
 			navDrawer.setSidePane(box);
 			//navDrawer.prefHeightProperty().bind(parentBorderPane.heightProperty());
 
