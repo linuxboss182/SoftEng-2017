@@ -70,7 +70,6 @@ public class DirectionsGenerator
 		int leftTurns = 0, rightTurns = 0;
 		// redo text directions with switch cases based on types of nodes
 		for(int i = 1; i < path.size() - 1; i++) {
-			System.out.println(path.get(i).getType().getName());
 			switch (path.get(i).getType()) {
 				// if PORTAL is read, check to see what type of next node is
 				case PORTAL:
