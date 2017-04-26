@@ -65,60 +65,56 @@ public class DirectionsGenerator
 		directions.append("First, ");
 
 		int leftTurns = 0, rightTurns = 0;
-//		if (path.length > 1 && isElevator(path[0], path[1])) {
-//			directions.append("Take the elevator to the ").append(path[1].getFloor());
-//			directions.append(getTurnPostfix(path[1].getFloor())).append(" floor\nThen ");
-//		}
 		// redo text directions with switch cases based on types of nodes
 		for(int i = 1; i < path.size() - 1; i++) {
-//			if(path.get(i).getType() == null){
-//				System.out.println("Howdy");
-//			} else {
+			System.out.println(path.get(i).getType().getName());
 			switch (path.get(i).getType()) {
 				// if PORTAL is read, check to see what type of next node is
 				case PORTAL:
-					if (path.get(i + 1).getBuildingName().equals("outside")) {
-						directions.append("Go outside,\nThen ");
-						while ((path.get(i + 1).getBuildingName().equals("outside")) || (path.get(i + 1) == null)) {
-
-
+					// check case where portal leads outside
+					System.out.println(path.get(i+1).getBuildingName());
+					if (path.get(i+1).getBuildingName().equals("Outside")) {
+						directions.append("Go Outside,\n");
+						while ((path.get(i + 1).getBuildingName().equals("Outside"))) {
 							i++;
 						}
-						if (path.get(i + 1) == null) {
-
-						}
 					} else {
-						directions.append("Go into ").append(path.get(i).getBuildingName());
-						directions.append("\nThen ");
+						i++;
+						directions.append("Head inside ").append(path.get(i).getBuildingName());
+						directions.append("\n");
 					}
+					// reset num of right and left turns after entering / exiting building
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				case STAIRS:
 					while (path.get(i + 1).getType() == RoomType.STAIRS) {
 						i++;
 					}
 					directions.append("Take the stairs to the ").append(path.get(i).getFloor());
-					directions.append("\nThen");
+					directions.append(getTurnPostfix(path.get(i).getFloor())).append((" floor\n"));
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				case ELEVATOR:
 					while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
 						i++;
 					}
+
 					directions.append("Take the elevator to the ").append(path.get(i).getFloor());
-					directions.append(("\nThen "));
+					directions.append(getTurnPostfix(path.get(i).getFloor())).append((" floor\n"));
+					rightTurns = 0;
+					leftTurns = 0;
 					break;
 				default:
-					// TODO: These were somehow reversed, but that didn't make sense so we need to figure out why
-					// During testing, this method worked how we wanted, but when implementing
-					// this code, turns were reversed. (right turns were left turns)
-					// double turnAngle = path[i].angle(path[i+1], path[i-1]);
 					double turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
 					if (isRightTurn(turnAngle)) {
 						// Right Turn
 						if (rightTurns == 0) {
-							directions.append("take a right turn,\nThen ");
+							directions.append("Take a right turn,\n");
 						} else {
 							rightTurns++;
-							directions.append("continue straight and take the ").append(rightTurns);
+							directions.append("Continue straight\nTake the ").append(rightTurns);
 							directions.append(getTurnPostfix(rightTurns)).append(" right,\nThen ");
 
 						}
@@ -132,7 +128,7 @@ public class DirectionsGenerator
 
 							continue;
 						// Soft Right Turn
-						directions.append("take a soft right turn,\nThen ");
+						directions.append("Take a soft right turn,\n");
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
@@ -142,7 +138,6 @@ public class DirectionsGenerator
 						// Figure out if there is a left or right turn available as well, then increment the counters
 						Set<Node> forks = path.get(i).getNeighbors();
 						for (Node fork : forks) {
-							// TODO: This was also reversed, similar to above
 							int forkAngle = (int) path.get(i).angle(fork, path.get(i - 1));
 
 							if (isRightTurn(forkAngle) || isSoftRightTurn(forkAngle) || isHardRightTurn(forkAngle)) {
@@ -157,17 +152,17 @@ public class DirectionsGenerator
 								()[0])
 							continue;
 						// Soft Left Turn
-						directions.append("take a soft left turn\nThen ");
+						directions.append("Take a soft left turn\n");
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isLeftTurn(turnAngle)) {
 						// Left Turn
 						if (leftTurns == 0) {
-							directions.append("take a left turn,\nThen ");
+							directions.append("Take a left turn,\n");
 						} else {
 							leftTurns++;
-							directions.append("continue straight and take the ").append(leftTurns);
+							directions.append("Continue straight\nTake the ").append(leftTurns);
 							directions.append(getTurnPostfix(leftTurns)).append(" left,\nThen ");
 						}
 						// if you take a turn, then the count for turns should be reset to 0
@@ -175,28 +170,27 @@ public class DirectionsGenerator
 						rightTurns = 0;
 					} else if (isHardLeftTurn(turnAngle)) {
 						// Hard Left Turn
-						directions.append("take a hard left turn\nThen ");
+						directions.append("Take a hard left turn\n");
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isBackwards(turnAngle)) {
 						// Turn Around
-						directions.append("turn around\nThen ");
+						directions.append("Turn around\n");
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					} else if (isHardRightTurn(turnAngle)) {
 						// Hard Right Turn
-						directions.append("take a hard right turn\nThen ");
+						directions.append("Take a hard right turn\n");
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
 						rightTurns = 0;
 					}
 					break;
 			}
-//		}
 		}
-		directions.append("you are at your destination.");
+		directions.append("you have arrived at your destination.");
 		return directions.toString();
 	}
 
