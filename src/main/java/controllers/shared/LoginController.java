@@ -25,8 +25,6 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
 
-	private LoginHandler logins;
-
 	@FXML private Label errorLbl;
 	@FXML private Button cancelBtn;
 	@FXML private TextField usernameField;
@@ -41,8 +39,8 @@ public class LoginController implements Initializable{
 //		logins = new LoginHandler();
 //		logins.addAccount("admin", "password", true);
 
-		directory.addUser("admin", "password", "admin");
-		logins = new LoginHandler();
+		directory.addUser("ADMIN", "password", "admin");
+		directory.addUser("TEST", "password", "professional");
 
 //		Set<String> passwordSet = directory.getPassHashes();
 //		Set<String> permissionSet = directory.getPermissions();
@@ -82,7 +80,7 @@ public class LoginController implements Initializable{
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-		byte success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
+		byte success = LoginHandler.checkLogin(this.usernameField.getText(), this.passwordField.getText());
 		if(success == 2) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);

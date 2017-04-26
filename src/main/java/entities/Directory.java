@@ -20,6 +20,7 @@ public class Directory
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
 	private HashMap<String, String> users;
+	private HashMap<String, String> permissions;
 	private Room kiosk;
 
 	// default to floor 1
@@ -40,8 +41,7 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.users = new HashMap<>();
-//		this.passHashes = new HashSet<>();
-//		this.permissions = new HashSet<>();
+		this.permissions = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -93,32 +93,18 @@ public class Directory
 	}
 
 	public void addUser(String user, String password, String permission){
-		//some password criteria here
-		//hashing
 		this.users.put(user, password);
-//		this.passHashes.add(password);
-//		this.permissions.add(permission);
+		this.permissions.put(user, permission);
 	}
 
 	public HashMap<String, String> getUsers(){
 		return this.users;
 	}
 
-	public HashMap<String, String> getProfessionalUsers(){
-		return this.users; //TODO
+	public String getPermissions(String username){
+		return permissions.get(username);
 	}
 
-	public HashMap<String, String> getAdminUsers(){
-		return this.users; //TODO
-	}
-//
-//	public Set<String> getPassHashes(){
-//		return this.passHashes;
-//	}
-//
-//	public Set<String> getPermissions(){
-//		return this.permissions;
-//	}
 	/* Element removal methods */
 
 	/** @deprecated May be restored once nodeless rooms are possible */
