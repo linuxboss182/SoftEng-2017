@@ -111,7 +111,7 @@
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Label>
-                                                <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                                                <JFXToggleButton fx:id="showRoomsToggleBtn" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                             </children>
                                         </GridPane>
                                     </children>
