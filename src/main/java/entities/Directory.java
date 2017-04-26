@@ -54,14 +54,14 @@ public class Directory
 
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
-	}
+	} //TODO Add permissions
 
 	/**
 	 * Get a copy of this directory's rooms, sorted by name
 	 */
 	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator); //TODO Add permissions
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
@@ -225,7 +225,7 @@ public class Directory
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
 	//TODO: Make this take a Floor instead
-	public Set<Node> getNodesOnFloor(FloorImage floor) {
+	public Set<Node> getNodesOnFloor(FloorImage floor) { //TODO Add permissions
 		return this.filterNodes(node ->
 				(node.getFloor() == floor.getNumber())
 						&&
@@ -241,7 +241,7 @@ public class Directory
 	 * @param floor
 	 * @return
 	 */
-	public Set<Room> getRoomsOnFloor(FloorImage floor) {
+	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
 		return this.filterRooms(room -> room.getLocation() != null
 				&& room.getLocation().getFloor() == floor.getNumber()
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName()));
@@ -250,14 +250,14 @@ public class Directory
 	/**
 	 * Gets all nodes in this directory that match the given predicate
 	 */
-	public Set<Node> filterNodes(Predicate<Node> predicate) {
+	public Set<Node> filterNodes(Predicate<Node> predicate) { //TODO Add permissions
 		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
 	/**
 	 * Gets all rooms in this directory that match the given predicate
 	 */
-	public Set<Room> filterRooms(Predicate<Room> predicate) {
+	public Set<Room> filterRooms(Predicate<Room> predicate) { //TODO Add permissions
 		return this.rooms.stream().filter(predicate)
 				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
@@ -270,11 +270,11 @@ public class Directory
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
-	}
+	} //TODO Add permissions
 
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
-	}
+	} //TODO Add permissions
 
 	public void updateRoom(Room room, String name, String shortName, String description) {
 		room.setName(name);
@@ -292,22 +292,22 @@ public class Directory
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public Image switchFloors(FloorImage floor) {
+	public Image switchFloors(FloorImage floor) { //TODO Add permissions
 		this.floor = floor;
 		return this.floor.display();
 	}
 
 	public FloorImage getFloor() {
 		return this.floor;
-	}
+	} //TODO Add permissions
 
 	public int getFloorNum() {
 		return this.floor.getNumber();
-	}
+	} //TODO Add permissions
 
 	public String getFloorName() {
 		return this.floor.getName();
-	}
+	} //TODO Add permissions
 
 	public void unsetRoomLocation(Room room) {
 		Node n = room.getLocation();
@@ -346,7 +346,7 @@ public class Directory
 	 *
 	 * @return Whether all rooms are connected
 	 */
-	public boolean roomsAreConnected() {
+	public boolean roomsAreConnected() { //TODO Add permissions
 		// targets = all rooms with nodes
 		Set<Node> targets = this.rooms.stream()
 				.filter(room -> room.getLocation() != null)
