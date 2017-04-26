@@ -6,6 +6,7 @@ import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -58,6 +59,8 @@ public class UserMasterController
 	protected Room startRoom;
 	protected Room endRoom;
 
+	IconManager iconManager;
+
 
 	/**
 	 * Get the scene this is working on
@@ -84,6 +87,11 @@ public class UserMasterController
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) startRoom = directory.getKiosk();
+
+		this.iconManager = new IconManager();
+		iconManager.setOnMouseClickedOnSymbol(room -> event -> {
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+		});
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -187,15 +195,11 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
+
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		IconManager iconManager = new IconManager();
-		iconManager.addHandler(MouseEvent.MOUSE_CLICKED, room -> (MouseEvent event) -> {
-			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-		});
-
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 
 //		Set<javafx.scene.Node> roomShapes = new HashSet<>();

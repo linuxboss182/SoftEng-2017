@@ -2,17 +2,20 @@ package controllers.icons;
 
 import entities.Room;
 import entities.RoomType;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import main.ApplicationController;
 
@@ -25,6 +28,9 @@ import java.util.function.Function;
 
 /**
  * Class for managing room icons
+ *
+ * @note instance variables named "handler" in this class are functions that generate
+ * handlers, not handlers themselves
  */
 public class IconManager
 {
@@ -41,11 +47,12 @@ public class IconManager
 	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
 
 	MassMap<Room, Node> roomIcons;
-	Map<EventType<?>, Function<Room, EventHandler<?>>> handlers;
+	//Map<EventType<? extends Event>, Function<Room, EventHandler<? super Event>>> handlers;
+	Function<Room, EventHandler<MouseEvent>> onMouseClickedOnSymbolHandler;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
-		this.handlers = new HashMap<>();
+		// this.handlers = new HashMap<>();
 	}
 
 	/**
@@ -57,8 +64,22 @@ public class IconManager
 	 * @param handler A function that takes a room and returns an event handler that
 	 *                operates on that room
 	 */
-	public void addHandler(EventType<?> type, Function<Room, EventHandler<?>> handler) {
-		this.handlers.put(type, handler);
+	public void addHandler(EventType<? extends Event> type, Function<Room, EventHandler<? super Event>> handler) {
+		// this.handlers.put(type, handler);
+	}
+
+
+	/**
+	 * Prepare a mouse click handler for the main icon
+	 *
+	 * The handler function should produce a handler that operates on a room.
+	 *
+	 * @param handler A function that takes a room and returns an event handler that
+	 *                operates on that room
+	 */
+
+	public void setOnMouseClickedOnSymbol(Function<Room, EventHandler<MouseEvent>> handler) {
+		this.onMouseClickedOnSymbolHandler = handler;
 	}
 
 	/**
@@ -93,7 +114,31 @@ public class IconManager
 
 		ROOM.DEFAULT.applyTo(circle);
 
+		this.applySymbolListeners(circle, room);
+
+		//handlers.forEach((t, handler) -> circle.addEventHandler(t, handler.apply(room)));
+
 		return new Icon(circle, label);
+	}
+
+	/**
+	 * Generate and apply listeners for the main symbol
+	 *
+	 * @param symbol The node to apply listeners to
+	 * @param room The room to reference in the listeners
+	 */
+	private void applySymbolListeners(Shape symbol, Room room) {
+		if (onMouseClickedOnSymbolHandler != null) {
+			EventHandler<MouseEvent> handler = onMouseClickedOnSymbolHandler.apply(room);
+
+			symbol.setOnMouseClicked(onMouseClickedOnSymbolHandler.apply(room));
+			//symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> ROOM.END.applyTo(symbol));
+			symbol.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+				System.out.println("HERE");
+				symbol.setFill(Color.BLACK);
+			});
+		}
+
 	}
 
 
