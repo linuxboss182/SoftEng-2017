@@ -6,6 +6,7 @@ import controllers.shared.MapDisplayController;
 import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -137,6 +138,7 @@ public class UserPathController
 		});
 
 		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
 	}
 
 	/**
@@ -272,7 +274,12 @@ public class UserPathController
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
 		});
-		backgroundRectangle.setVisible(false);
+		if(buttonCount-1 > 1) {
+			backgroundRectangle.setVisible(false);
+		} else {
+			this.bgRectangle = backgroundRectangle;
+			backgroundRectangle.setVisible(true);
+		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}

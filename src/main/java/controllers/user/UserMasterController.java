@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -110,8 +111,12 @@ public class UserMasterController
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater( () -> initWindowResizeListener());
+//		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
 	}
 
 	private void setMouseMapListeners() {
@@ -262,8 +267,7 @@ public class UserMasterController
 
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-			ApplicationController.getStage().setScene(new Scene(pane));
-			ApplicationController.getStage().show();
+			this.getScene().setRoot(pane);
 		} else {
 			this.redisplayMapItems();
 		}
