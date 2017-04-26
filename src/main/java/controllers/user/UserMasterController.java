@@ -289,23 +289,6 @@ public class UserMasterController
 
 
 
-
-
-	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
-		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
-		BorderPane pane = loader.load();
-		UserPathController controller = loader.getController();
-
-		/* change to a scene with the path if possible */
-//		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-//			this.getScene().setRoot(pane);
-//		} else {
-//			this.redisplayMapItems();
-//		}
-	}
-
 	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
