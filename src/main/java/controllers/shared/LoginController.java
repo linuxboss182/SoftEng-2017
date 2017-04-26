@@ -7,51 +7,43 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
+import main.ApplicationController;
+
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import java.util.Iterator;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 public class LoginController implements Initializable{
 
 	private LoginHandler logins;
 
-	@FXML
-	private Label errorLbl;
-	@FXML
-	private Button cancelBtn;
-	@FXML
-	private TextField usernameField;
-	@FXML
-	private PasswordField passwordField;
-	@FXML
-	private Button loginBtn;
-	@FXML
-	private BorderPane parentBorderPane;
+	@FXML private Label errorLbl;
+	@FXML private Button cancelBtn;
+	@FXML private TextField usernameField;
+	@FXML private PasswordField passwordField;
+	@FXML private Button loginBtn;
+	@FXML private BorderPane parentBorderPane;
+
+	Directory directory = ApplicationController.getDirectory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 //		logins = new LoginHandler();
 //		logins.addAccount("admin", "password", true);
 
-		Directory directory = DatabaseWrapper.getInstance().getDirectory();
 		directory.addUser("admin", "password", "admin");
 		logins = new LoginHandler(directory.getUsers());
+
 //		Set<String> passwordSet = directory.getPassHashes();
 //		Set<String> permissionSet = directory.getPermissions();
 

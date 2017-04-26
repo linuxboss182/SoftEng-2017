@@ -1,6 +1,7 @@
 package controllers.shared;
 
-import main.database.DatabaseWrapper;
+import entities.Directory;
+import main.ApplicationController;
 
 import java.util.HashMap;
 
@@ -11,6 +12,7 @@ public class LoginHandler
 {
 	private HashMap<String, String> adminLogins;
 	private HashMap <String, String> professionalLogins;
+	Directory directory = ApplicationController.getDirectory();
 
 	public LoginHandler(HashMap<String, String> adminMap){
 		this.adminLogins = adminMap;
@@ -21,12 +23,12 @@ public class LoginHandler
 		String uppercasedUsername = username.toUpperCase();
 		if (isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)){
 			this.adminLogins.put(uppercasedUsername, password);
-			DatabaseWrapper.getInstance().getDirectory().addUser(uppercasedUsername, password, "admin");
+			directory.addUser(uppercasedUsername, password, "admin");
 			System.out.println("I... did it?");
 		}
 		else if (!isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)) {
 			this.professionalLogins.put(uppercasedUsername, password);
-			DatabaseWrapper.getInstance().getDirectory().addUser(uppercasedUsername, password, "professional");
+			directory.addUser(uppercasedUsername, password, "professional");
 		}
 	}
 
