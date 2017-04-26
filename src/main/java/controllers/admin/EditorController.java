@@ -98,12 +98,12 @@ public class EditorController
 		}
 	}
 
-	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
+	private SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
 	private IconManager iconManager;
-	protected double selectionStartX;
-	protected double selectionStartY;
-	protected double selectionEndX;
-	protected double selectionEndY;
+	private double selectionStartX;
+	private double selectionStartY;
+	private double selectionEndX;
+	private double selectionEndY;
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane

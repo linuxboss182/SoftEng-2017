@@ -30,6 +30,14 @@ import java.util.function.Function;
  *
  * @note instance variables named "handler" in this class are functions that generate
  * handlers, not handlers themselves
+ *
+ * If you want to add new listeners to icons, follow these instructions:
+ *
+ * 1. Add a new instance variable after the existing listener variables. This should be of
+ *    type BiConsumer&lt;Room, MouseEvent&gt; (a void function that takes a room and a
+ *    mouse event).
+ * 2. Add a setter for the variable.
+ * 3. Add it to applyListeners, following the pattern of existing listeners.
  */
 public class IconManager
 {
@@ -47,27 +55,15 @@ public class IconManager
 
 	MassMap<Room, Icon> roomIcons;
 	//Map<EventType<? extends Event>, Function<Room, EventHandler<? super Event>>> handlers;
-	BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
-	BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
+
+	/* Listener variables */
+	private BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
+	private BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
 		// this.handlers = new HashMap<>();
 	}
-
-	/**
-	 * Prepare a handler to add to each icon
-	 *
-	 * The handler function should produce a handler that operates on a room.
-	 *
-	 * @param type The type of event to handle
-	 * @param handler A function that takes a room and returns an event handler that
-	 *                operates on that room
-	 */
-	public void addHandler(EventType<? extends Event> type, Function<Room, EventHandler<? super Event>> handler) {
-		// this.handlers.put(type, handler);
-	}
-
 
 	/**
 	 * Prepare a mouse click handler for the main icon
@@ -124,8 +120,6 @@ public class IconManager
 		label.setBackground(LABEL_BACKGROUND);
 
 		ROOM.DEFAULT.applyTo(circle);
-
-		//handlers.forEach((t, handler) -> circle.addEventHandler(t, handler.apply(room)));
 
 		Icon icon = new Icon(room, circle, label);
 
