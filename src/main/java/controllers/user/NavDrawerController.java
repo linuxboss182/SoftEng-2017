@@ -107,7 +107,7 @@ public class NavDrawerController
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
 				if (newPropertyValue) {
 					isStart = true;
-
+					resultsListView.getSelectionModel().clearSelection();
 				}
 				else {
 
@@ -125,6 +125,7 @@ public class NavDrawerController
 
 				if (newPropertyValue) {
 					isDest = true;
+					resultsListView.getSelectionModel().clearSelection();
 				}
 				else {
 					isDest = false;
@@ -166,7 +167,7 @@ public class NavDrawerController
 
 	protected void listViewListener() {
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			if (isStart) {
+			if (newValue != null && isStart) {
 				selectedListRoom = resultsListView.getSelectionModel().getSelectedItem();
 				this.selectStartRoom(selectedListRoom);
 				System.out.println("start clicked");
@@ -176,7 +177,7 @@ public class NavDrawerController
 				//isDest = false;
 			}
 
-			if (isDest) {
+			if (newValue != null && isDest) {
 				this.selectEndRoom(resultsListView.getSelectionModel().getSelectedItem());
 				System.out.println("end clicked");
 				destinationField.setText(newValue.getName());
