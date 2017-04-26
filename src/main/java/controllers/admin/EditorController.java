@@ -2,6 +2,7 @@ package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.icons.IconManager;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -68,7 +69,7 @@ public class EditorController
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
-
+	@FXML private SplitPane mapSplitPane;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -149,6 +150,8 @@ public class EditorController
 
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
+
+		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
 	}
 
 
@@ -294,9 +297,14 @@ public class EditorController
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
+			Node node = this.selectedNodes.getSoleElement();
+			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(node);
+			selectNode(node);
 		} else {
-			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(newNode);
+			selectNode(newNode);
 		}
 		this.redisplayAll();
 	}
@@ -421,18 +429,24 @@ public class EditorController
 	/**
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
+	 *
+	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
-		// TODO: Review this assumption
+	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
 		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
 			this.directory.connectOrDisconnectNodes(n, newNode);
 		});
+		return newNode;
 	}
 
-	/** Add a new node to the directory at the given coordinates */
+	/**
+	 * Add a new node to the directory at the given coordinates
+	 *
+	 * This function should _only_ add a node, and do nothing else
+	 */
 	private Node addNode(double x, double y) {
 		if(x < 0 || y < 0) {
 			return null;
@@ -522,6 +536,7 @@ public class EditorController
 	public void installPaneListeners() {
 		linePane.setOnMouseClicked(e -> {
 			e.consume();
+			this.clearFields();
 			this.setFields(e.getX(), e.getY());
 
 			//Create node on double click
@@ -587,8 +602,13 @@ public class EditorController
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
 			} else if(! this.toggleShowRooms) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				// Limits the dragging for x and y coordinates. (panning I mean)
+				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				}
+				if(e.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && e.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				}
 			}
 		});
 
@@ -640,6 +660,7 @@ public class EditorController
 
 		// single left click without drag to select nodes
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
+			this.clearFields();
 			this.setFields(node.getX(), node.getY());
 			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
 			if (! e.isShiftDown()) {
@@ -765,6 +786,14 @@ public class EditorController
 		this.setNameField(name);
 		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
+	}
+
+	private void clearFields() {
+		this.xCoordField.setText("");
+		this.yCoordField.setText("");
+		this.displayNameField.setText("");
+		this.nameField.setText("");
+		this.descriptField.setText("");
 	}
 
 	/**
