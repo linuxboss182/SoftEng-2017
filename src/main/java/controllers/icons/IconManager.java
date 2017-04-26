@@ -124,7 +124,9 @@ public class IconManager
 
 		//handlers.forEach((t, handler) -> circle.addEventHandler(t, handler.apply(room)));
 
-		return new Icon(circle, label);
+		Icon icon = new Icon(room, circle, label);
+		room.setIcon(icon);
+		return icon;
 	}
 
 	/**
@@ -139,9 +141,6 @@ public class IconManager
 
 			symbol.setOnMouseClicked(event -> {
 				onMouseClickedOnSymbolHandler.accept(room, event);
-
-				roomIcons.values().forEach(icon -> ROOM.DEFAULT.applyTo((Shape)icon.getSymbol()));
-				ROOM.END.applyTo(symbol);
 			});
 		}
 	}

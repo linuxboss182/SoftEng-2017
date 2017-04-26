@@ -342,18 +342,6 @@ public class EditorController
 	 * Using it will modifier listeners that the user can access; be careful
 	 */
 	public void displayRoomsOnFloor() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getUserSideShape());
-			r.getUserSideShape().setOnMouseClicked(event -> {});
-			r.getUserSideShape().setOnContextMenuRequested(event -> {});
-			Label label = r.getUserSideShape().getLabel();
-			label.setOnMouseDragged(event -> {
-				event.consume();
-				label.relocate(event.getX(), event.getY());
-			});
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	//Editor
@@ -456,8 +444,6 @@ public class EditorController
 	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
 			directory.updateRoom(room, name, displayName, description);
-			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
-			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -634,7 +620,7 @@ public class EditorController
 				});
 			}
 			if(this.toggleShowRooms) {
-				this.displayAdminSideRooms();
+				this.displayRooms();
 			}
 			this.redisplayGraph();
 		});
@@ -825,7 +811,7 @@ public class EditorController
 			this.linePane.setDisable(true);
 			this.linePane.getChildren().clear();
 			this.nodePane.getChildren().clear();
-			this.displayAdminSideRooms();
+			this.displayRooms();
 
 		} else {
 			// re-enable dragging
@@ -838,7 +824,7 @@ public class EditorController
 	/**
 	 * Show the rooms with editable labels to the admin
 	 */
-	public void displayAdminSideRooms() {
+	public void displayRooms() {
 		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 		for (Room room : directory.getRoomsOnFloor(floor)) {
 			roomShapes.add(room.getAdminSideShape());

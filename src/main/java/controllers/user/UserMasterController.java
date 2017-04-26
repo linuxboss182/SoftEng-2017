@@ -61,7 +61,6 @@ public class UserMasterController
 
 	IconManager iconManager;
 
-
 	/**
 	 * Get the scene this is working on
 	 */
@@ -89,9 +88,7 @@ public class UserMasterController
 		if (startRoom == null) startRoom = directory.getKiosk();
 
 		this.iconManager = new IconManager();
-		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
-			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-		});
+		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -118,6 +115,15 @@ public class UserMasterController
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+	}
+
+	private void initializeIcons() {
+		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
+			System.out.println("clicked on symbol");
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+			event.consume();
+		});
+		iconManager.getIcons(directory.getRooms());
 	}
 
 	private void setMouseMapListeners() {
@@ -201,30 +207,6 @@ public class UserMasterController
 	 */
 	public void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
-
-//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-//		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-//			roomShapes.add(room.getUserSideShape());
-//
-//			// Add listener to select rooms on click
-//			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-//				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-//			});
-//
-//			// Add listener for context menus (right click)
-//			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-//
-//				ContextMenu optionsMenu = new ContextMenu();
-//
-//				MenuItem startRoomItem = new MenuItem("Set as starting location");
-//				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-//				MenuItem endRoomItem = new MenuItem("Set as destination");
-//				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-//				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-//				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-//			});
-//		}
-//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**
@@ -285,10 +267,13 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
+		System.out.print("clicked on a room ");
 		if (this.changeStartBtn.isDisabled()) {
+			System.out.println("to select start");
 			this.selectStartRoom(room);
 			this.changeStartBtn.setDisable(false);
 		} else {
+			System.out.println("to select end");
 			this.selectEndRoom(room);
 		}
 	}
@@ -309,6 +294,7 @@ public class UserMasterController
 
 	protected void selectEndRoom(Room r) {
 		if(r == null) return;
+		System.out.println("selecting");
 		endRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();

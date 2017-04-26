@@ -5,6 +5,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Shape;
 
 
 /**
@@ -15,7 +16,7 @@ public class Icon
 {
 	private Room room;
 	@Deprecated
-	private Node symbol;
+	private Shape symbol;
 	private Label label;
 	private ImageView image;
 	private double labelOffsetX = 0;
@@ -31,11 +32,11 @@ public class Icon
 	}
 
 	@Deprecated
-	public Icon(Node symbol, Label label) {
+	public Icon(Shape symbol, Label label) {
 		this(null, symbol, label);
 	}
 
-	public Icon(Room room, Node symbol, Label label) {
+	public Icon(Room room, Shape symbol, Label label) {
 		super(symbol, label);
 		this.room = room;
 		this.symbol = symbol;
@@ -43,7 +44,7 @@ public class Icon
 	}
 
 	@Deprecated
-	Icon(Node symbol) {
+	Icon(Shape symbol) {
 		this(symbol, null);
 	}
 
@@ -54,7 +55,7 @@ public class Icon
 	}
 
 	@Deprecated
-	public Node getSymbol() {
+	public Shape getSymbol() {
 		return this.symbol;
 	}
 
@@ -78,7 +79,7 @@ public class Icon
 	}
 
 	@Deprecated
-	void setSymbol(Node symbol) {
+	void setSymbol(Shape symbol) {
 		this.symbol = symbol;
 	}
 

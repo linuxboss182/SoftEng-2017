@@ -2,6 +2,7 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
+import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
@@ -68,6 +69,7 @@ public class UserPathController
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
+	private IconManager iconManager;
 
 
 	/**
@@ -97,6 +99,9 @@ public class UserPathController
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
+
+		this.iconManager = new IconManager();
+		iconManager.getIcons(directory.getRooms());
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -365,11 +370,7 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 	}
 
 	@FXML

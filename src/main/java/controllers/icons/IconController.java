@@ -110,26 +110,28 @@ public class IconController
 	/* Methods for Rooms */
 	// (incomplete)
 
+//	private void resetRoom(Room room) {
+//		return;
+//	}
 	private void resetRoom(Room room) {
-		return;
-	}
-	private void resetRoom(Room room, Boolean b) {
 		if (room == null || room.getLocation() == null) return;
 
-		Shape shape = (Shape) room.getUserSideShape().getChildren().get(0);
-//		ROOM.DEFAULT.applyTo(shape);
+		Icon icon = room.getIcon();
+		Shape shape = icon.getSymbol();
+		System.out.println("have shape: " + shape);
 
-		//if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
+		ROOM.DEFAULT.applyTo(shape);
+
 		if (room == this.directory.getKiosk()) {
-//			ROOM.KIOSK.applyTo(shape);
+			ROOM.KIOSK.applyTo(shape);
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-//			ROOM.ELEVATOR.applyTo(shape);
+			ROOM.ELEVATOR.applyTo(shape);
 		}
 
 		if (room == this.endRoom) {
-//			ROOM.END.applyTo(shape);
+			ROOM.END.applyTo(shape);
 		} else if (room == this.startRoom) {
-//			ROOM.START.applyTo(shape);
+			ROOM.START.applyTo(shape);
 		}
 	}
 
@@ -146,6 +148,7 @@ public class IconController
 	}
 
 	public void selectEndRoom(Room room) {
+		System.out.println("selecting end");
 		this.endRoom = room;
 		this.resetAllRoomsExcept(this.startRoom);
 //		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
