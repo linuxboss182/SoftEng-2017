@@ -88,6 +88,7 @@ public class PathDrawerController
 
 		onLoginImageClicked();
 		onAboutButtonClicked();
+		onBackImageClicked();
 
 		resultsListView.setPrefHeight(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
 		System.out.println(drawerVBox.getPrefHeight() - startHBox.getPrefHeight() - destHBox.getPrefHeight() - bottomHBox.getPrefHeight());
@@ -160,8 +161,7 @@ public class PathDrawerController
 		backImageView.setOnMouseClicked(e-> {
 			FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/NavDrawer.fxml"));
 			PathDrawerController controller = loader.getController();
-			this.destinationField = controller.destinationField;
-			this.startField = controller.startField;
+
 			drawerVBox.getChildren().clear();
 			try {
 				drawerVBox.getChildren().add(FXMLLoader.load(getClass().getResource("/NavDrawer.fxml")));

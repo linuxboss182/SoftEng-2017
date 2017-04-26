@@ -10,7 +10,10 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <ImageView fx:id="backImageView" fitHeight="59.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </HBox.margin></ImageView>
          </children>
       </HBox>
       <HBox fx:id="startHBox">
