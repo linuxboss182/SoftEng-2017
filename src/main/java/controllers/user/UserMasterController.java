@@ -1,6 +1,10 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.icons.IconManager;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
@@ -15,7 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -37,26 +41,32 @@ public class UserMasterController
 		extends MapDisplayController
 		implements Initializable
 {
-	@FXML private JFXButton logAsAdmin;
-	@FXML private ListView<Room> directoryView;
+	@FXML private ImageView logAsAdmin;
+	@FXML private JFXListView<Room> resultsListView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextField searchBar;
+	@FXML protected JFXTextField destinationField;
+	@FXML public ImageView destImageView;
+	@FXML protected JFXTextField startField;
+	@FXML public ImageView startImageView;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
-	@FXML private Button aboutBtn;
+	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
+	@FXML private VBox drawerVBox;
+
+	@FXML private JFXDrawer navDrawer;
 
 	private double clickedX;
 	private double clickedY;
 	protected Room startRoom;
 	protected Room endRoom;
 
-	IconManager iconManager;
+	private IconManager iconManager;
 
 	/**
 	 * Get the scene this is working on
@@ -77,6 +87,10 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
+		this.navDrawer.setContent(mapSplitPane);
+		this.navDrawer.setSidePane(drawerVBox);
+		this.navDrawer.setOverLayVisible(false);
+
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -116,9 +130,34 @@ public class UserMasterController
 		Platform.runLater( () -> initWindowResizeListener());
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
-		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
+		logAsAdmin.setImage(new Image("/Elevator.png"));
+		startImageView.setImage(new Image("/Elevator.png"));
+		destImageView.setImage(new Image("/Elevator.png"));
+		aboutBtn.setImage(new Image("/Elevator.png"));
 
 	}
+
+	@FXML private JFXHamburger navHamburgerBtn;
+	private HamburgerBackArrowBasicTransition back;
+
+	@FXML
+	public void onNavHamburgerBtnClicked() throws IOException {
+		back.setRate(back.getRate() * -1);
+		back.play();
+		if(navDrawer.isShown()) {
+			navDrawer.close();
+		} else {
+			navDrawer.open();
+		}
+	}
+
+
 
 	private void initializeIcons() {
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
@@ -152,7 +191,7 @@ public class UserMasterController
 	 * @param searchString The new string in the search bar
 	 */
 	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
 			// The Collator allows case-insensitie comparison
@@ -169,7 +208,7 @@ public class UserMasterController
 					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
 					          .contains(normed)); // check with unicode normalization
 
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
+			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
 
@@ -216,11 +255,11 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
+		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
 	}
 
 	/**
@@ -269,9 +308,9 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
+		if (this.destinationField.isFocused()) {
 			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
+//			this.changeStartBtn.setDisable(false);
 		} else {
 			this.selectEndRoom(room);
 		}
@@ -279,7 +318,7 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.changeStartBtn.setDisable(true);
+//		this.changeStartBtn.setDisable(true);
 	}
 
 	protected void selectStartRoom(Room r) {
