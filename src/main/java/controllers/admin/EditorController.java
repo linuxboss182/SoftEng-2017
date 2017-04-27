@@ -3,6 +3,7 @@ package controllers.admin;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
+import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -34,15 +35,11 @@ import java.net.URL;
 import java.util.*;
 
 import main.ApplicationController;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import entities.FloorProxy;
 
 public class EditorController
 		extends MapDisplayController
@@ -72,6 +69,7 @@ public class EditorController
 	@FXML private Button helpBtn;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private JFXToggleButton showRoomsToggleBtn;
+	@FXML private ToggleButton restrictedView;
 
 	private boolean PROFBUTTON = true;
 	/**
@@ -201,6 +199,7 @@ public class EditorController
 
 	@FXML
 	private void logoutBtnClicked() {
+		directory.professionalLogout();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
 			// true if and only if the button pressed in the alert did not say "OK"
@@ -325,6 +324,10 @@ public class EditorController
 		this.deleteSelectedNodes();
 	}
 
+	@FXML
+	public void restrictedViewBtnClicked(){
+
+	}
 
 	/* **** Non-FXML functions **** */
 
@@ -340,6 +343,8 @@ public class EditorController
 		this.redisplayGraph(); // nodes on this floor and lines between them
 		this.populateTableView();
 	}
+
+
 
 	/**
 	 * Redisplay the nodes on this floor and the lines

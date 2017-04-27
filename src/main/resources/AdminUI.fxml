@@ -178,6 +178,21 @@
                                 </AnchorPane>
                             </content>
                         </Tab>
+                        <Tab text="Permissions">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                        <Label layoutX="147.0" layoutY="37.0" text="Restricted:">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <ToggleButton fx:id="restrictedView" onMouseClicked="#restrictedViewBtnClicked">
+                                        </ToggleButton>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
                     </tabs>
                 </TabPane>
                 <GridPane>

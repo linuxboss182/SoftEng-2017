@@ -57,10 +57,6 @@ public class Directory
 		return isProfessional;
 	}
 
-	public void setProfessional(boolean professional) {
-		isProfessional = professional;
-	}
-
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
 	} //TODO Add permissions
