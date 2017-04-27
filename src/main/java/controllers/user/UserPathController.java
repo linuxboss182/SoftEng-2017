@@ -1,6 +1,9 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.extras.SMSController;
 import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
@@ -15,10 +18,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -55,15 +60,21 @@ public class UserPathController
 		implements Initializable
 {
 	@FXML private JFXButton logAsAdmin;
+	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
 	@FXML protected TextFlow directionsTextField;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
-
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
+	@FXML private JFXDrawer directionsDrawer;
+	@FXML private JFXDrawer mapIconDrawer;
+	@FXML private JFXHamburger directionsHamburgerButton;
+	@FXML private VBox drawerVBox;
+	@FXML private ImageView backImageView;
+	private HamburgerBackArrowBasicTransition back;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -95,6 +106,7 @@ public class UserPathController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.initializeDrawer();
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -144,6 +156,34 @@ public class UserPathController
 
 		setHotkeys();
 		Platform.runLater( () -> initWindowResizeListener());
+
+
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
+		backImageView.setImage(new Image("/back.png"));
+	}
+
+	@FXML
+	public void onHamburgerBtnClicked() throws IOException {
+		back.setRate(back.getRate() * -1);
+		back.play();
+		if(directionsDrawer.isShown()) {
+			directionsDrawer.close();
+		} else {
+			directionsDrawer.open();
+		}
+	}
+
+	private void initializeDrawer() {
+		this.directionsDrawer.setContent(mapSplitPane);
+		this.directionsDrawer.setSidePane(drawerVBox);
+		this.directionsDrawer.setOverLayVisible(false);
+		this.directionsDrawer.open();
+		this.mapIconDrawer.setContent(mapScroll);
+		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+		this.mapIconDrawer.setOverLayVisible(false);
+		this.mapIconDrawer.open();
 	}
 
 	/**
@@ -375,13 +415,5 @@ public class UserPathController
 
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
-	}
-
-	@FXML
-	public void logAsAdminClicked()
-			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		floorsTraveledAnchorPane.getScene().setRoot(loginPrompt);
 	}
 }
