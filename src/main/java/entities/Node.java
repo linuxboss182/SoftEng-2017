@@ -21,6 +21,7 @@ public class Node
 	private String buildingName;
 	private Room room;
 	private Circle circ;
+	private boolean isProfessional;
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
@@ -33,6 +34,7 @@ public class Node
 		this.neighbors = new HashSet<>();
 		this.buildingName = buildingName;
 		this.room = null;
+		this.isProfessional = false;
 	}
 
 	public double getX() {
@@ -51,9 +53,9 @@ public class Node
 		return this.room;
 	}
 
-	public String getBuildingName(){
-		return this.buildingName;
-	}
+	public String getBuildingName(){ return this.buildingName;	}
+
+	public boolean isProfessional() { return this.isProfessional; }
 
 	/**
 	 * Apply the given consumer function to this node's associated room, if present
@@ -87,6 +89,10 @@ public class Node
 			return function.apply(this.room);
 		}
 	}
+
+	public void makeProfessional() { this.isProfessional = true; }
+
+	public void removeProfessional() {this.isProfessional = false; }
 
 	void setRoom(Room room) {
 		this.room = room;

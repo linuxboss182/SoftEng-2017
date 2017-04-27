@@ -46,6 +46,7 @@ public class LoginHandler
 		String uppercasedUsername = username.toUpperCase();
 
 		if(logins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(logins.get(uppercasedUsername).equals(password))){
+			ApplicationController.getDirectory().professionalLogin();
 			if(ApplicationController.getDirectory().getPermissions(uppercasedUsername).equals("admin")) {
 				return 2;
 			}else{

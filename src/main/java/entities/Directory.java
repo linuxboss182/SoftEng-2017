@@ -22,6 +22,7 @@ public class Directory
 	private HashMap<String, String> users;
 	private HashMap<String, String> permissions;
 	private Room kiosk;
+	private boolean isProfessional;
 
 	// default to floor 1
 	private FloorImage floor;
@@ -45,6 +46,7 @@ public class Directory
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
+		this.isProfessional = false;
 	}
 
 
@@ -96,6 +98,10 @@ public class Directory
 		this.users.put(user, password);
 		this.permissions.put(user, permission);
 	}
+
+	public void professionalLogin(){this.isProfessional=true;}
+
+	public void professionalLogout(){this.isProfessional=false;}
 
 	public HashMap<String, String> getUsers(){
 		return this.users;
@@ -244,8 +250,9 @@ public class Directory
 	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
 		return this.filterRooms(room -> room.getLocation() != null
 				&& room.getLocation().getFloor() == floor.getNumber()
-				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName()));
-	}
+				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
+				&& ((!room.getLocation().isProfessional())
+				|| (this.isProfessional)));}
 
 	/**
 	 * Gets all nodes in this directory that match the given predicate
