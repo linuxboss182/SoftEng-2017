@@ -832,6 +832,9 @@ public class EditorController
 					a.showAndWait();
 					return;
 				}
+				// Add listeners to all nodes
+				this.directory.getNodes().forEach(this::addNodeListeners);
+				this.redisplayGraph();
 			}
 		}
 	}
