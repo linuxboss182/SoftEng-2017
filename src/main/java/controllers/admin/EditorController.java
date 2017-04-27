@@ -152,7 +152,7 @@ public class EditorController
 
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
-		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
+		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
 	}
 
 
@@ -199,7 +199,7 @@ public class EditorController
 
 	@FXML
 	private void logoutBtnClicked() {
-		directory.professionalLogout();
+		directory.logOut();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
 			// true if and only if the button pressed in the alert did not say "OK"
@@ -327,9 +327,9 @@ public class EditorController
 	@FXML
 	public void restrictedViewBtnClicked(){
 		if(restrictedView.selectedProperty().getValue()){
-			directory.professionalLogin();
+			directory.logIn();
 		}else{
-			directory.professionalLogout();
+			directory.logOut();
 		}
 		this.changeFloor(directory.getFloor());
 	}

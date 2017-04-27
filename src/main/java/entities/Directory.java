@@ -22,7 +22,7 @@ public class Directory
 	private HashMap<String, String> users;
 	private HashMap<String, String> permissions;
 	private Room kiosk;
-	private boolean isProfessional;
+	private boolean loggedIn;
 
 	// default to floor 1
 	private FloorImage floor;
@@ -46,7 +46,7 @@ public class Directory
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
-		this.isProfessional = false;
+		this.loggedIn = false;
 	}
 
 
@@ -54,7 +54,7 @@ public class Directory
 
 	/* Getters */
 	public boolean isProfessional() {
-		return isProfessional;
+		return loggedIn;
 	}
 
 	public Set<Node> getNodes() {
@@ -102,12 +102,20 @@ public class Directory
 		this.permissions.put(user, permission);
 	}
 
-	public void professionalLogin(){this.isProfessional=true;}
+	public void logIn() {
+		this.loggedIn = true;
+	}
 
-	public void professionalLogout(){this.isProfessional=false;}
+	public void logOut() {
+		this.loggedIn = false;
+	}
+
+	public boolean isLoggedIn() {
+		return this.loggedIn;
+	}
 
 	public HashMap<String, String> getUsers(){
-		return this.users;
+		return new HashMap<>(this.users);
 	}
 
 	public String getPermissions(String username){
@@ -163,7 +171,7 @@ public class Directory
 	 */
 	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
-		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), isProfessional);
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), loggedIn);
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
 		this.nodes.add(newNode);
@@ -208,13 +216,13 @@ public class Directory
 	 */
 	public Node addNewNode(double x, double y, FloorImage floor) {
 		if (floor == null) throw new RuntimeException("Tried to create node with null floor");
-		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), isProfessional);
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), loggedIn);
 		this.nodes.add(newNode);
 		return newNode;
 	}
 	//use this only for DB loading from CSV
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
-		Node newNode = new Node(x, y, floor, buildingName, isProfessional);
+		Node newNode = new Node(x, y, floor, buildingName, loggedIn);
 		this.nodes.add(newNode);
 		return newNode;
 	}
@@ -255,7 +263,7 @@ public class Directory
 				&& room.getLocation().getFloor() == floor.getNumber()
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
 				&& ((!room.getLocation().isProfessional())
-				|| (this.isProfessional)));}
+				|| (this.loggedIn)));}
 
 	/**
 	 * Gets all nodes in this directory that match the given predicate
