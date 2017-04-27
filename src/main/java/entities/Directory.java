@@ -53,6 +53,13 @@ public class Directory
 	/* Methods */
 
 	/* Getters */
+	public boolean isProfessional() {
+		return isProfessional;
+	}
+
+	public void setProfessional(boolean professional) {
+		isProfessional = professional;
+	}
 
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
