@@ -136,10 +136,10 @@ public class UserMasterController
 		back = new HamburgerBackArrowBasicTransition();
 		back.setRate(-1);
 
-		logAsAdmin.setImage(new Image("/Elevator.png"));
-		startImageView.setImage(new Image("/Elevator.png"));
-		destImageView.setImage(new Image("/Elevator.png"));
-		aboutBtn.setImage(new Image("/Elevator.png"));
+		logAsAdmin.setImage(new Image("/lock.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
 
 	}
 
