@@ -1,22 +1,22 @@
 package controllers.shared;
 
 
+import entities.Directory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import javafx.scene.input.KeyEvent;
+import main.ApplicationController;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -25,25 +25,41 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
 
-	private LoginHandler logins;
+	@FXML private Label errorLbl;
+	@FXML private Button cancelBtn;
+	@FXML private TextField usernameField;
+	@FXML private PasswordField passwordField;
+	@FXML private Button loginBtn;
+	@FXML private BorderPane parentBorderPane;
 
-	@FXML
-	private Label errorLbl;
-	@FXML
-	private Button cancelBtn;
-	@FXML
-	private TextField usernameField;
-	@FXML
-	private PasswordField passwordField;
-	@FXML
-	private Button loginBtn;
-	@FXML
-	private BorderPane parentBorderPane;
+	Directory directory = ApplicationController.getDirectory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		logins = new LoginHandler();
-		logins.addAccount("admin", "password", true);
+//		logins = new LoginHandler();
+//		logins.addAccount("admin", "password", true);
+
+		directory.addUser("ADMIN", "password", "admin");
+		directory.addUser("TEST", "password", "professional");
+
+//		Set<String> passwordSet = directory.getPassHashes();
+//		Set<String> permissionSet = directory.getPermissions();
+
+//		String[] users = userSet.toArray(new String[userSet.size()]);
+//		String[] passwords = userSet.toArray(new String[passwordSet.size()]);
+//		String[] permissions = userSet.toArray(new String[permissionSet.size()]);
+
+//		for (int n = 0; n < users.length; n++){
+//			System.out.println("YOOOOOO");
+//			logins.addAccount(users[n], passwords[n], permissions[n].equals("admin"));
+//		}
+
+
+
+//		logins.addAccount("admin", "password", true);
+//		logins.addAccount("admin2", "admin, too?", true);
+
+
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
 				try{
@@ -55,6 +71,7 @@ public class LoginController implements Initializable{
 				}
 			}
 		});
+
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
@@ -63,21 +80,18 @@ public class LoginController implements Initializable{
 
 	@FXML
 	public void loginBtnClicked() throws IOException, InvocationTargetException {
-		byte success = logins.checkLogin(this.usernameField.getText(), this.passwordField.getText());
-//		boolean success = adminLogins.get(this.passwordField.getText()).equals(this.usernameField.getText());
+		byte success = LoginHandler.checkLogin(this.usernameField.getText(), this.passwordField.getText());
 		if(success == 2) {
 			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
 			errorLbl.getScene().setRoot(adminUI);
 		}
 		else if (success == 1){
-			//TODO: Figure out what to do with logged-in professionals
+			Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+			errorLbl.getScene().setRoot(destUI);
 		}
 		else {
 			this.errorLbl.setText("Incorrect Username or Password");
-			this.usernameField.setText("");
-			this.passwordField.setText("");
 			this.usernameField.requestFocus();
-			// They didn't login successfully so they should probably be punished in some way
 		}
 	}
 
