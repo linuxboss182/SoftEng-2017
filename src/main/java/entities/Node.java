@@ -106,6 +106,10 @@ public class Node
 	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
+		if (this.circ != null) {
+			this.circ.setCenterX(x);
+			this.circ.setCenterY(y);
+		}
 	}
 
 	/**

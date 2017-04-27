@@ -16,8 +16,8 @@ public class ProfessionalTester
 	@Test
 	public void addLocationTester() {
 		Directory dir = new Directory();
-		Room r = dir.addNewRoom("Room 1", "the first room");
-		Room r1 = dir.addNewRoom("Room 2", "the second room");
+		Room r = dir.addNewRoom("Room 1", "", "the first room");
+		Room r1 = dir.addNewRoom("Room 2", "", "the second room");
 
 		Professional doctor = dir.addNewProfessional("FirstName", "LastName", "Dr.");
 		dir.addRoomToProfessional(r, doctor);

@@ -1,15 +1,8 @@
 package entities;
 
-import controllers.shared.MapDisplayController;
 import javafx.scene.image.Image;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -26,6 +19,8 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
+	private HashMap<String, String> users;
+	private HashMap<String, String> permissions;
 	private Room kiosk;
 
 	// default to floor 1
@@ -45,6 +40,8 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
+		this.users = new HashMap<>();
+		this.permissions = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -57,14 +54,14 @@ public class Directory
 
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
-	}
+	} //TODO Add permissions
 
 	/**
 	 * Get a copy of this directory's rooms, sorted by name
 	 */
 	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator); //TODO Add permissions
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
@@ -93,6 +90,19 @@ public class Directory
 
 	public void addProfessional(Professional professional) {
 		this.professionals.add(professional);
+	}
+
+	public void addUser(String user, String password, String permission){
+		this.users.put(user, password);
+		this.permissions.put(user, permission);
+	}
+
+	public HashMap<String, String> getUsers(){
+		return this.users;
+	}
+
+	public String getPermissions(String username){
+		return permissions.get(username);
 	}
 
 	/* Element removal methods */
@@ -142,8 +152,8 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String desc) {
-		Room newRoom = new Room(name, desc);
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
 		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
@@ -151,26 +161,12 @@ public class Directory
 		this.rooms.add(newRoom);
 		return newNode;
 	}
-	@Deprecated
-	public Node addNewRoomNode(double x, double y, int floor, String buildingName, String name, String desc) {
-		Room newRoom = new Room(name, desc);
-		Node newNode = new Node(x, y, floor, buildingName);
-		newRoom.setLocation(newNode);
-		newNode.setRoom(newRoom);
-		this.nodes.add(newNode);
-		this.rooms.add(newRoom);
-		return newNode;
-	}
-	@Deprecated
-	public Node addNewRoomNode(double x, double y, int floor, String name, String desc) {
-		return this.addNewRoomNode(x, y, floor, "DEFAULT", name, desc);
-	}
 
 	/**
 	 * Add a new room with the given attributes to the given node
 	 */
-	public void addNewRoomToNode(Node node, String name, String desc) {
-		Room room = new Room(name, desc);
+	public void addNewRoomToNode(Node node, String name, String shortName, String desc) {
+		Room room = new Room(name, shortName, desc);
 		node.setRoom(room);
 		room.setLocation(node);
 		this.rooms.add(room);
@@ -181,8 +177,8 @@ public class Directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
 	 */
-	public Room addNewRoom(String name, String desc) {
-		Room newRoom = new Room(name, desc);
+	public Room addNewRoom(String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
@@ -192,8 +188,8 @@ public class Directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
 	 */
-	public Room addNewRoom(String name, String desc, double labelX, double labelY) {
-		Room newRoom = new Room(name, desc, labelX, labelY);
+	public Room addNewRoom(String name, String shortName, String desc, double labelX, double labelY) {
+		Room newRoom = new Room(name, desc, shortName, labelX, labelY);
 		this.rooms.add(newRoom);
 		return newRoom;
 	}
@@ -229,7 +225,7 @@ public class Directory
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
 	//TODO: Make this take a Floor instead
-	public Set<Node> getNodesOnFloor(FloorImage floor) {
+	public Set<Node> getNodesOnFloor(FloorImage floor) { //TODO Add permissions
 		return this.filterNodes(node ->
 				(node.getFloor() == floor.getNumber())
 						&&
@@ -245,7 +241,7 @@ public class Directory
 	 * @param floor
 	 * @return
 	 */
-	public Set<Room> getRoomsOnFloor(FloorImage floor) {
+	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
 		return this.filterRooms(room -> room.getLocation() != null
 				&& room.getLocation().getFloor() == floor.getNumber()
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName()));
@@ -254,14 +250,14 @@ public class Directory
 	/**
 	 * Gets all nodes in this directory that match the given predicate
 	 */
-	public Set<Node> filterNodes(Predicate<Node> predicate) {
+	public Set<Node> filterNodes(Predicate<Node> predicate) { //TODO Add permissions
 		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
 	/**
 	 * Gets all rooms in this directory that match the given predicate
 	 */
-	public Set<Room> filterRooms(Predicate<Room> predicate) {
+	public Set<Room> filterRooms(Predicate<Room> predicate) { //TODO Add permissions
 		return this.rooms.stream().filter(predicate)
 				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
@@ -274,14 +270,15 @@ public class Directory
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
-	}
+	} //TODO Add permissions
 
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
-	}
+	} //TODO Add permissions
 
-	public void updateRoom(Room room, String name, String description) {
+	public void updateRoom(Room room, String name, String shortName, String description) {
 		room.setName(name);
+		room.setDisplayName(shortName);
 		room.setDescription(description);
 	}
 
@@ -295,22 +292,22 @@ public class Directory
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public Image switchFloors(FloorImage floor) {
+	public Image switchFloors(FloorImage floor) { //TODO Add permissions
 		this.floor = floor;
 		return this.floor.display();
 	}
 
 	public FloorImage getFloor() {
 		return this.floor;
-	}
+	} //TODO Add permissions
 
 	public int getFloorNum() {
 		return this.floor.getNumber();
-	}
+	} //TODO Add permissions
 
 	public String getFloorName() {
 		return this.floor.getName();
-	}
+	} //TODO Add permissions
 
 	public void unsetRoomLocation(Room room) {
 		Node n = room.getLocation();
@@ -349,7 +346,7 @@ public class Directory
 	 *
 	 * @return Whether all rooms are connected
 	 */
-	public boolean roomsAreConnected() {
+	public boolean roomsAreConnected() { //TODO Add permissions
 		// targets = all rooms with nodes
 		Set<Node> targets = this.rooms.stream()
 				.filter(room -> room.getLocation() != null)

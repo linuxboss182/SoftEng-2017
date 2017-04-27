@@ -31,15 +31,15 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
     <center>
-        <SplitPane orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
             <items>
-                <ScrollPane fx:id="mapScroll">
+                <ScrollPane fx:id="mapScroll" minHeight="-Infinity" minWidth="-Infinity">
                     <content>
-                        <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                        <AnchorPane fx:id="contentAnchor">
                             <children>
                                 <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                                <Pane fx:id="linePane" prefHeight="479.0" prefWidth="825.0" />
-                                <Pane fx:id="nodePane" prefHeight="477.0" prefWidth="885.0" />
+                                <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                                <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -82,10 +82,11 @@
                                             </rowConstraints>
                                             <children>
                                                 <Text fx:id="roomName" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="xPos" />
-                                                <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                <GridPane GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Display Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Room Description" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label text="X Position" GridPane.columnIndex="1" GridPane.rowIndex="4" fx:id="xPos" />
+                                                <Text fx:id="yPos" strokeType="OUTSIDE" strokeWidth="0.0" text="Y Position" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <GridPane GridPane.columnIndex="2" GridPane.rowIndex="6">
                                                     <columnConstraints>
                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -101,15 +102,16 @@
                                                     </children>
                                                 </GridPane>
                                                 <JFXTextField fx:id="nameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <JFXTextArea fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                                <JFXTextField GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xCoordField" />
-                                                <JFXTextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                <JFXTextField fx:id="displayNameField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <JFXTextArea fx:id="descriptField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                <JFXTextField GridPane.columnIndex="2" GridPane.rowIndex="4" fx:id="xCoordField" />
+                                                <JFXTextField fx:id="yCoordField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                                 <Label text="Selected Room" GridPane.columnIndex="1" GridPane.columnSpan="2">
                                                     <font>
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Label>
-                                                <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                                                <JFXToggleButton fx:id="showRoomsToggleBtn" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                             </children>
                                         </GridPane>
                                     </children>

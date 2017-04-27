@@ -23,6 +23,7 @@
 .idea/tasks.xml
 /out/
 .idea/inspectionProfiles/
+/classes/
 
 .gradle
 /build/

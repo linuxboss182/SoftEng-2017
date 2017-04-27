@@ -2,15 +2,18 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
-import controllers.icons.IconController;
+import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -24,12 +27,7 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import entities.Room;
@@ -72,6 +70,9 @@ public class UserPathController
 	private double clickedY;
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
+	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
+	private IconManager iconManager;
+
 
 	/**
 	 * Inner class for generating and comparing floors quickly
@@ -101,6 +102,9 @@ public class UserPathController
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 
+		this.iconManager = new IconManager();
+		iconManager.getIcons(directory.getRooms());
+
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
@@ -120,8 +124,13 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
+			}
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+			}
 			event.consume();
 		});
 
@@ -134,6 +143,7 @@ public class UserPathController
 		});
 
 		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
 	}
 
 	/**
@@ -156,26 +166,32 @@ public class UserPathController
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
 		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
 
-		List<Node> ret = this.getPathOrAlert(startRoom, endRoom);
-		if (ret == null) {
+		List<Node> path= this.getPathOrAlert(startRoom, endRoom);
+		if (path == null) {
 			return false;
 		}
-
-		this.paintPath(this.getPathOnFloor(startFloor, ret));
 		this.directionsTextField.getChildren().clear();
-
-		textDirections.setText(DirectionsGenerator.fromPath(ret));
+		textDirections.setText(DirectionsGenerator.fromPath(path));
 		//Call text directions
 		this.directionsTextField.getChildren().add(textDirections);
 
 		/* Draw the buttons for each floor on a multi-floor path. */
-		drawMiniMaps(ret);
-
-//		startRoom.getUserSideShape().setScaleX(1.5);
-//		startRoom.getUserSideShape().setScaleY(1.5);
-//		endRoom.getUserSideShape().setScaleX(1.5);
-//		endRoom.getUserSideShape().setScaleY(1.5);
-
+		// segment paths by floor and place them in a LinkedList
+		LinkedList<Node> seg = new LinkedList<>();
+		for(int i = 0; i < path.size()-1; i++){
+			seg.add(path.get(i));
+			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
+					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
+				pathSegments.add(seg);
+				seg = new LinkedList<>();
+			}
+		}
+		seg.add(path.get(path.size()-1));
+		pathSegments.addLast(seg);
+		paintPath(pathSegments.get(0));
+		this.directionsTextField.getChildren().add(textDirections);
+		// pathSegment now has all segments
+		drawMiniMaps(path);
 		return true;
 	}
 
@@ -186,35 +202,27 @@ public class UserPathController
 	 */
 	private void drawMiniMaps(List<Node> path) {
 		List<MiniFloor> floors = new ArrayList<>();
-
-		MiniFloor last = new MiniFloor(0, "");
 		MiniFloor here = new MiniFloor(path.get(0).getFloor(), path.get(0).getBuildingName());
-		MiniFloor next = new MiniFloor(path.get(path.size()-1).getFloor(), path.get(path.size()-1).getBuildingName());
 		// add starting floor
 		floors.add(here);
-		this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-		//prints all the floors on the path in order
-// 		System.out.println(path.stream().map(Node::getFloorNum).collect(Collectors.toList()).toString());
-
-		System.out.println(path);
-		System.out.println(path.stream().map(n -> n.getBuildingName()).collect(Collectors.toList()));
-		for (int i = 1; i < path.size()-1; ++i) {
-			System.out.println(here.building + " " + here.number);
-			last = here;
-			here = new MiniFloor(path.get(i).getFloor(), path.get(i).getBuildingName());
-			next = new MiniFloor(path.get(i+1).getFloor(), path.get(i+1).getBuildingName());
-//			System.out.println(last+" "+here+" "+next);
-			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
+		for (int i = 0; i < pathSegments.size(); i++) {
+			if((pathSegments.get(i).size() > 1)) {
+				Node n = pathSegments.get(i).get(0);
+				here = new MiniFloor(n.getFloor(), n.getBuildingName());
 				floors.add(here);
-				this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
+				LinkedList<Node> seg = pathSegments.get(i);
+				this.createNewFloorButton(here, seg, floors.size());
 			}
 		}
-		// Check that the last node's floor (which will always be 'next') is in the list
-		last = floors.get(floors.size()-1);
-		if (! last.isSameFloor(next)) {
-			floors.add(next);
-			this.createNewFloorButton(next, this.getPathOnFloor(next, path), floors.size());
+		// take into account the fact that an elevator or staircase could be chosen as
+		// the destination and would (possibly) have only one node shown in the
+		// path list
+		if(pathSegments.getLast().size() == 1){
+			Node n = pathSegments.getLast().get(0);
+			here = new MiniFloor(n.getFloor(), n.getBuildingName());
+			floors.add(here);
+			LinkedList<Node> seg = pathSegments.getLast();
+			this.createNewFloorButton(here, seg, floors.size());
 		}
 	}
 
@@ -256,7 +264,12 @@ public class UserPathController
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
 		});
-		backgroundRectangle.setVisible(false);
+		if(buttonCount-1 > 1) {
+			backgroundRectangle.setVisible(false);
+		} else {
+			this.bgRectangle = backgroundRectangle;
+			backgroundRectangle.setVisible(true);
+		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
@@ -265,7 +278,9 @@ public class UserPathController
 	private ArrayList<Node> getPathOnFloor(MiniFloor floor, List<Node> allPath) {
 		ArrayList<Node> path = new ArrayList<>();
 		for(Node n : allPath) {
-			if (n.getFloor() == floor.number && n.getBuildingName().equalsIgnoreCase(floor.building)) path.add(n);
+			if (n.getFloor() == floor.number && n.getBuildingName().equalsIgnoreCase(floor.building)) {
+				path.add(n);
+			}
 		}
 		return path;
 	}
@@ -290,18 +305,18 @@ public class UserPathController
 //		alert.setContentText("Sorry, SMS is currently unavailable.");
 //		alert.showAndWait();
 
-		 FXMLLoader loader = new FXMLLoader();
-		 loader.setLocation(this.getClass().getResource("/sms.fxml"));
-		 try {
-		 	Scene smsScene = new Scene(loader.load());
-		 	((SMSController)loader.getController()).setText(textDirections.getText());
-		 	Stage smsStage = new Stage();
-		 	smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
-		 	smsStage.setScene(smsScene);
-		 	smsStage.showAndWait();
-		 } catch (Exception e){
-		 	System.out.println("Error making SMS popup");
-		 }
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/sms.fxml"));
+		try {
+			Scene smsScene = new Scene(loader.load());
+			((SMSController)loader.getController()).setText(textDirections.getText());
+			Stage smsStage = new Stage();
+			smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
+			smsStage.setScene(smsScene);
+			smsStage.showAndWait();
+		} catch (IOException e) {
+			System.out.println("Error making SMS popup");
+			throw new RuntimeException(e);
+		}
 	}
 
 
@@ -313,17 +328,20 @@ public class UserPathController
 	// TODO: Fix bug where separate paths on one floor are connected
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
-
 		// This can be any collection type;
-		Collection<Line> path = new HashSet<>();
+		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
-			Node there = directionNodes.get(i + 1);
+			Node there = directionNodes.get(i+1);
 			if (here.getFloor() == this.directory.getFloorNum() && here.getFloor() == there.getFloor()) {
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(line);
+				if((i % 3) == 0) {
+					path.add(new Arrow(line));
+				} else {
+					path.add(new Group(line));
+				}
 			}
 		}
 		this.linePane.getChildren().setAll(path);
@@ -356,11 +374,7 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 	}
 
 	@FXML
