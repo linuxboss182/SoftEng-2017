@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -182,7 +183,6 @@ public class UserPathController
 			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
 					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
 				pathSegments.add(seg);
-				// TODO: Look over this
 				seg = new LinkedList<>();
 			}
 		}
@@ -206,32 +206,24 @@ public class UserPathController
 		// add starting floor
 		floors.add(here);
 		for (int i = 0; i < pathSegments.size(); i++) {
-			Node n = pathSegments.get(i).get(1);
+			if((pathSegments.get(i).size() > 1)) {
+				Node n = pathSegments.get(i).get(0);
+				here = new MiniFloor(n.getFloor(), n.getBuildingName());
+				floors.add(here);
+				LinkedList<Node> seg = pathSegments.get(i);
+				this.createNewFloorButton(here, seg, floors.size());
+			}
+		}
+		// take into account the fact that an elevator or staircase could be chosen as
+		// the destination and would (possibly) have only one node shown in the
+		// path list
+		if(pathSegments.getLast().size() == 1){
+			Node n = pathSegments.getLast().get(0);
 			here = new MiniFloor(n.getFloor(), n.getBuildingName());
 			floors.add(here);
-			LinkedList<Node> seg = pathSegments.get(i);
+			LinkedList<Node> seg = pathSegments.getLast();
 			this.createNewFloorButton(here, seg, floors.size());
 		}
-
-//		this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-//
-//		for (int i = 1; i < path.size()-1; ++i) {
-//			last = here;
-//			here = new MiniFloor(path.get(i).getFloor(), path.get(i).getBuildingName());
-//			next = new MiniFloor(path.get(i+1).getFloor(), path.get(i+1).getBuildingName());
-//
-//			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-//			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
-//				floors.add(here);
-//				this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-//			}
-//		}
-//		// Check that the last node's floor (which will always be 'next') is in the list
-//		last = floors.get(floors.size()-1);
-//		if (! last.isSameFloor(next)) {
-//			floors.add(next);
-//			this.createNewFloorButton(next, this.getPathOnFloor(next, path), floors.size());
-//		}
 	}
 
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
@@ -337,7 +329,7 @@ public class UserPathController
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		// This can be any collection type;
-		Collection<Arrow> path = new HashSet<>();
+		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i+1);
@@ -345,7 +337,11 @@ public class UserPathController
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(new Arrow(line));
+				if((i % 3) == 0) {
+					path.add(new Arrow(line));
+				} else {
+					path.add(new Group(line));
+				}
 			}
 		}
 		this.linePane.getChildren().setAll(path);

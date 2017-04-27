@@ -307,11 +307,16 @@ class DatabaseLoader
 			}
 		}
 
-		//save user data
-		for (int i=0;i<dir.getUsers().toArray().length;i++){
-			query = StoredProcedures.procInsertUser(dir.getUsers().toArray()[i].toString(),
-					dir.getPassHashes().toArray()[i].toString(),
-					dir.getPermissions().toArray()[i].toString());
+//		//save user data
+//		for (int i=0;i<dir.getUsers().toArray().length;i++){
+//			query = StoredProcedures.procInsertUser(dir.getUsers().toArray()[i].toString(),
+//					dir.getPassHashes().toArray()[i].toString(),
+//					dir.getPermissions().toArray()[i].toString());
+
+		for (Map.Entry<String, String> user : dir.getUsers().entrySet()) {
+			query = StoredProcedures.procInsertUser(user.getKey(),
+													user.getValue(),
+													dir.getPermissions(user.getKey()));
 			db.executeQuery(query);
 		}
 

@@ -1,63 +1,63 @@
 package controllers.shared;
 
+import entities.Directory;
+import main.ApplicationController;
 import java.util.HashMap;
 
-/**
- * Created by Walt on 4/21/2017.
- */
 public class LoginHandler
 {
-	private HashMap<String, String> adminLogins;
-	private HashMap <String, String> professionalLogins;
+	private Directory directory = ApplicationController.getDirectory();
 
-	public LoginHandler(){
-		this.adminLogins = new HashMap<>();
-		this.professionalLogins = new HashMap();
-	}
+	public LoginHandler(){}
 
 	public void addAccount(String username, String password, Boolean isAdmin){
+		HashMap<String, String> logins = directory.getUsers();
+
 		String uppercasedUsername = username.toUpperCase();
-		if (isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)){
-			this.adminLogins.put(uppercasedUsername, password);
+		if (isAdmin && !logins.containsKey(uppercasedUsername) && !logins.containsKey(uppercasedUsername)){
+			directory.addUser(uppercasedUsername, password, "admin");
 		}
-		else if (!isAdmin && !adminLogins.containsKey(uppercasedUsername) && !professionalLogins.containsKey(uppercasedUsername)) {
-			this.professionalLogins.put(uppercasedUsername, password);
+		else if (!isAdmin && !logins.containsKey(uppercasedUsername) && !logins.containsKey(uppercasedUsername)) {
+			directory.addUser(uppercasedUsername, password, "professional");
 		}
 	}
 
 	public void removeAccount(String username){
+		HashMap<String, String> logins = directory.getUsers();
+
 		String uppercasedUsername = username.toUpperCase();
-		if (adminLogins.containsKey(uppercasedUsername)){
-			adminLogins.remove(uppercasedUsername);
-		}
-		else if (professionalLogins.containsKey(uppercasedUsername)) {
-			professionalLogins.remove(uppercasedUsername);
+		if (logins.containsKey(uppercasedUsername)){
+			logins.remove(uppercasedUsername);
 		}
 	}
 
 	public void changePassword(String username, String oldPassword, String newPassword){
+		HashMap<String, String> logins = directory.getUsers();
+
 		String uppercasedUsername = username.toUpperCase();
-		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(oldPassword))){
-			adminLogins.put(uppercasedUsername, newPassword);
-		}
-		else if (professionalLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(professionalLogins.get(uppercasedUsername).equals(oldPassword))){
-			professionalLogins.put(uppercasedUsername, newPassword);
-		}
-		else{
-			//throw an error or something idk
+		if(logins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(logins.get(uppercasedUsername).equals(oldPassword))){
+			logins.put(uppercasedUsername, newPassword);
 		}
 	}
 
-	public byte checkLogin(String username, String password){
+	public static byte checkLogin(String username, String password){
+		HashMap<String, String> logins = ApplicationController.getDirectory().getUsers();
+
 		String uppercasedUsername = username.toUpperCase();
-		if(adminLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(adminLogins.get(uppercasedUsername).equals(password))){
-			return 2;
-		}
-		else if (professionalLogins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(professionalLogins.get(uppercasedUsername).equals(password))){
-			return 1;
+
+		if(logins.containsKey(uppercasedUsername) && Boolean.TRUE.equals(logins.get(uppercasedUsername).equals(password))){
+			if(ApplicationController.getDirectory().getPermissions(uppercasedUsername).equals("admin")) {
+				return 2;
+			}else{
+				return 1;
+			}
 		}
 		else{
 			return 0;
 		}
+	}
+
+	private enum LoginStatus {
+		ADMIN, USER, FAILURE;
 	}
 }
