@@ -158,9 +158,9 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
-	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
+	public Node addNewRoomNode(double x, double y, FloorImage floor, boolean isProfessional, String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
-		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), isProfessional);
 		newRoom.setLocation(newNode);
 		newNode.setRoom(newRoom);
 		this.nodes.add(newNode);
@@ -203,15 +203,15 @@ public class Directory
 	/**
 	 * Create a new node in this directory
 	 */
-	public Node addNewNode(double x, double y, FloorImage floor) {
+	public Node addNewNode(double x, double y, FloorImage floor, boolean isProfessional) {
 		if (floor == null) throw new RuntimeException("Tried to create node with null floor");
-		Node newNode = new Node(x, y, floor.getNumber(), floor.getName());
+		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), isProfessional);
 		this.nodes.add(newNode);
 		return newNode;
 	}
 	@Deprecated
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
-		Node newNode = new Node(x, y, floor, buildingName);
+		Node newNode = new Node(x, y, floor, buildingName, true);
 		this.nodes.add(newNode);
 		return newNode;
 	}

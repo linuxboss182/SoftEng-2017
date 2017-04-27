@@ -27,14 +27,14 @@ public class Node
 	// TODO: Fix all Node shape operations
 	private static final double CIRCLE_RADIUS = 5;
 
-	Node(double x, double y, int floor, String buildingName) {
+	Node(double x, double y, int floor, String buildingName, boolean isProfessional) {
 		this.x = x;
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
 		this.buildingName = buildingName;
 		this.room = null;
-		this.isProfessional = false;
+		this.isProfessional = isProfessional;
 	}
 
 	public double getX() {

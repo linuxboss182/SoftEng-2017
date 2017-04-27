@@ -73,6 +73,7 @@ public class EditorController
 	@FXML private SplitPane mapSplitPane;
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 
+	private boolean PROFBUTTON = true;
 	/**
 	 * Class implemented for use in multiple selection
 	 *
@@ -304,7 +305,7 @@ public class EditorController
 			iconController.resetSingleNode(node);
 			selectNode(node);
 		} else {
-			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, PROFBUTTON, name, this.displayNameField.getText(), description);
 			iconController.resetSingleNode(newNode);
 			selectNode(newNode);
 		}
@@ -427,8 +428,8 @@ public class EditorController
 	 *
 	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
-		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
+	private Node addNodeRoom(double x, double y, boolean isProfessional, String name, String displayName, String description) {
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), isProfessional, name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
@@ -446,7 +447,7 @@ public class EditorController
 		if(x < 0 || y < 0) {
 			return null;
 		}
-		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor());
+		Node newNode = this.directory.addNewNode(x, y, this.directory.getFloor(), PROFBUTTON);
 		this.addNodeListeners(newNode);
 		return newNode;
 	}
