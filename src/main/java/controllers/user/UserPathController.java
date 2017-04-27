@@ -182,7 +182,6 @@ public class UserPathController
 			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
 					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
 				pathSegments.add(seg);
-				// TODO: Look over this
 				seg = new LinkedList<>();
 			}
 		}
