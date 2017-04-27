@@ -7,9 +7,9 @@ import javafx.scene.image.Image;
  */
 public enum RoomType
 {
-	DEFAULT("Default Room", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	KIOSK("Kiosk", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	ELEVATOR("Elevator", "/Elevator.png", "/MysteryRoom.png", "/Bathroom.png"),
+	DEFAULT("Default Room", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
+	KIOSK("Kiosk", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
+	ELEVATOR("Elevator", "/Elevator.png", "/ElevatorOrigin.png", "/ElevatorDest.png"),
 	STAIRS("Stairs", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
 	PORTAL("Portal", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
 	PARKING("Parking", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
