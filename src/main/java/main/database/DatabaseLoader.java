@@ -317,7 +317,7 @@ class DatabaseLoader
 			query = StoredProcedures.procInsertUser(user.getKey(),
 													user.getValue(),
 													dir.getPermissions(user.getKey()));
-			db.executeQuery(query);
+			db.executeUpdate(query);
 		}
 
 		db.close();
