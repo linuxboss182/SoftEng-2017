@@ -132,21 +132,12 @@ public class EditorController
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
 	}
-/*
-	private EventHandler nodeButtonMouseDrag = new EventHandler<MouseEvent>(){
-		@Override
-		public void handle(MouseEvent e){
-			if (e.isSecondaryButtonDown()){
-				displayContextMenu(e);
-			}
-		}
-	};
-	*/
 
-
+	
+	//check if secondary button is down before populating round panel
 	void displayContextMenu(MouseEvent e){
 		if(e.isSecondaryButtonDown()){
-			populateRoundPane(e, e.getX(),e.getY());
+			populateRoundPane(e, e.getX(), e.getY());
 		}
 	}
 
@@ -207,46 +198,38 @@ public class EditorController
 		this.nodePane.getChildren().add(contextMenu);
 	}
 
+	// update the XY value of the cursor everytime it moves
 	private void updateCurrentXY(MouseEvent e){
 		double xdif = e.getX() - contextMenu.getLayoutX();
 		double ydif = e.getY() - contextMenu.getLayoutY();
 
-		System.out.println(contextMenu.getLayoutX());
-		System.out.println(contextMenu.getLayoutY());
-		System.out.println(xdif);
-		System.out.println(ydif);
-
 		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 2)){
 			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
-			System.out.println(Math.toDegrees(Math.atan2(ydif, xdif)));
 		}else{
 			selectionWedge.setLength(0);
 			contextSelection = -1;
 		}
 	}
 
+	// check the angle between the cursor and the center of panel
 	private void modifyRadialSelection(double angle){
 
 		if (angle < -45 && angle > -135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(45);
-			System.out.println("i");
 			contextSelection = 0;
 		}else if (angle > -45 && angle < 45){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(315);
 			contextSelection = 1;
-			System.out.println("2");
 		}else if (angle > 45 && angle < 135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(225);
 			contextSelection = 2;
-			System.out.println("3");
 		}else if (angle > 135 || angle < -135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(135);
 			contextSelection = 3;
-			System.out.println("4");
 		}else{
 			selectionWedge.setLength(0);
 			contextSelection = -1;
@@ -833,6 +816,15 @@ public class EditorController
 
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
+
+		switch(contextSelection){
+			case 0:
+
+				deleteSelectedNodes();
+				break;
+			case 1:
+
+		}
 
 		contextMenu.getChildren().clear();
 
