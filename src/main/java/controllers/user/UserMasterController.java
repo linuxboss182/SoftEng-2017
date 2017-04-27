@@ -100,7 +100,6 @@ public class UserMasterController
 		initfloorComboBox();
 
 		this.displayRooms();
-		iconController.resetAllRooms();
 
 		this.populateListView();
 

@@ -129,9 +129,10 @@ public class EditorController
 
 		this.iconManager = new IconManager();
 		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
-			event.consume();
-//			room.setLabelOffset(event.getSceneX() - room.getLocation().getX(), event.getSceneY() - room.getLocation().getY());
-		});
+					event.consume();
+					room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
+							event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
+				});
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -822,6 +823,29 @@ public class EditorController
 					return;
 				}
 				this.populateTableView();
+			}
+		}
+	}
+	@FXML
+	private void loadNodesFile() {
+		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
+				+ "contains nodes who are already in the application, they will be duplicated.");
+
+		// true if and only if the button pressed in the alert said "OK"
+		if (ask.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
+			FileChooser fc = new FileChooser();
+			File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+			if (f != null) {
+				try {
+					FileParser.parseNodes(f, directory);
+				} catch (FileNotFoundException e) {
+					Alert a = new Alert(Alert.AlertType.ERROR, "Unable to read file");
+					a.showAndWait();
+					return;
+				}
+				// Add listeners to all nodes
+				this.directory.getNodes().forEach(this::addNodeListeners);
+				this.redisplayGraph();
 			}
 		}
 	}

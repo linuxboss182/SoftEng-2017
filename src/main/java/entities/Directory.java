@@ -212,7 +212,7 @@ public class Directory
 		this.nodes.add(newNode);
 		return newNode;
 	}
-	@Deprecated
+	//use this only for DB loading from CSV
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
 		Node newNode = new Node(x, y, floor, buildingName, isProfessional);
 		this.nodes.add(newNode);
