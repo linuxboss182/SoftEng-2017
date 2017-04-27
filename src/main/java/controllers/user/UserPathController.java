@@ -130,6 +130,17 @@ public class UserPathController
 
 		setScrollZoom();
 
+		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
+
+
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
+		backImageView.setImage(new Image("/back.png"));
+	}
+
+	private void setContentAnchorListeners() {
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();
@@ -146,26 +157,16 @@ public class UserPathController
 			event.consume();
 		});
 
-
 		// Redraw rooms when the background is released
 		// TODO: Fix bug where clicking rooms un-draws them
 		contentAnchor.setOnMouseReleased(event -> {
 			iconController.resetAllRooms();
 			this.displayRooms();
 		});
-
-		setHotkeys();
-		Platform.runLater( () -> initWindowResizeListener());
-
-
-		back = new HamburgerBackArrowBasicTransition();
-		back.setRate(-1);
-
-		backImageView.setImage(new Image("/back.png"));
 	}
 
 	@FXML
-	public void onHamburgerBtnClicked() throws IOException {
+	private void onHamburgerBtnClicked() throws IOException {
 		back.setRate(back.getRate() * -1);
 		back.play();
 		if(directionsDrawer.isShown()) {
