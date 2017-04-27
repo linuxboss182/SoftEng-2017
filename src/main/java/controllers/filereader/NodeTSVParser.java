@@ -37,7 +37,11 @@ import java.util.regex.Pattern;
  */
 /*
    Expected Format:
-   1,2,1,FAULKNER
+   10,20,1,FAULKNER
+
+   Populate your sheet with column names for readability:
+   X    Y   Floor   Buildingname
+   10   20  1       FAULKNER
  */
 public class NodeTSVParser {
 	private static Pattern nodePattern = Pattern.compile(
