@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -328,7 +329,7 @@ public class UserPathController
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		// This can be any collection type;
-		Collection<Arrow> path = new HashSet<>();
+		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i+1);
@@ -336,7 +337,11 @@ public class UserPathController
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(new Arrow(line));
+				if((i % 3) == 0) {
+					path.add(new Arrow(line));
+				} else {
+					path.add(new Group(line));
+				}
 			}
 		}
 		this.linePane.getChildren().setAll(path);
