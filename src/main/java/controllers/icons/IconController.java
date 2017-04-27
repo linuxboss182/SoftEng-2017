@@ -1,29 +1,25 @@
 package controllers.icons;
 
+import entities.RoomType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Shape;
 
 import entities.Directory;
 import entities.Node;
 import entities.Room;
 
+
 // TODO: Move to entities; complete integration with Room
 // How much of IconController should be exposed?
 
 /**
- * This is the only class that should ever change entities' colors
- *
+ * This class manages icon modification
  * This is facade and a decorator.
  */
 public class IconController
 {
-	private static final double LABEL_FONT_SIZE = 15;
-	private static final String BATHROOM_ICON_PATH = "/Bathroom.png";
-	private static final String ELEVATOR_ICON_PATH = "/Elevator.png";
-
-	private static final double ROOM_RECTANGLE_WIDTH = 7;
-	private static final double ROOM_RECTANGLE_HEIGHT = 7;
-
-	private final Directory directory;
+	private Directory directory;
 
 	// Keeping state here is not ideal, but simpliflies usage immensely
 	private Room startRoom;
@@ -113,20 +109,12 @@ public class IconController
 		if (room == null || room.getLocation() == null) return;
 
 		Icon icon = room.getIcon();
-		Shape shape = icon.getSymbol();
-
-		ROOM.DEFAULT.applyTo(shape);
+		icon.setImage(RoomType.DEFAULT.getImage());
 
 		if (room == this.directory.getKiosk()) {
-			ROOM.KIOSK.applyTo(shape);
+			icon.setImage(RoomType.KIOSK.getImage());
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-			ROOM.ELEVATOR.applyTo(shape);
-		}
-
-		if (room == this.endRoom) {
-			ROOM.END.applyTo(shape);
-		} else if (room == this.startRoom) {
-			ROOM.START.applyTo(shape);
+			icon.setImage(RoomType.ELEVATOR.getImage());
 		}
 	}
 
@@ -136,19 +124,21 @@ public class IconController
 		this.directory.getRooms().forEach(this::resetRoom);
 	}
 
-	private void resetAllRoomsExcept(Room keep) {
-		this.directory.getRooms().forEach(r -> {
-			if (r != keep) this.resetRoom(r);
-		});
-	}
+//	private void resetAllRoomsExcept(Room keep) {
+//		this.directory.getRooms().forEach(r -> {
+//			if (r != keep) this.resetRoom(r);
+//		});
+//	}
 
 	public void selectEndRoom(Room room) {
-		this.endRoom = room;
-		this.resetAllRoomsExcept(this.startRoom);
+		if (endRoom != null) this.resetRoom(endRoom);
+		endRoom = room;
+		room.getIcon().setImage(room.getType().getDestImage());
 	}
 
 	public void selectStartRoom(Room room) {
-		this.startRoom = room;
-		this.resetAllRoomsExcept(this.endRoom);
+		if (startRoom != null) this.resetRoom(startRoom);
+		startRoom = room;
+		room.getIcon().setImage(room.getType().getOriginImage());
 	}
 }

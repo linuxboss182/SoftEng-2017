@@ -3,6 +3,7 @@ package entities;
 import controllers.icons.IconManager;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -48,8 +49,6 @@ public class Room
 	private RoomType type;
 	private Icon icon;
 
-	@Deprecated
-	private Icon shape;
 	@Deprecated
 	private Group adminShape;
 	private double labelOffsetX;
@@ -105,7 +104,11 @@ public class Room
 	}
 
 	public RoomType getType() {
-		return type;
+		if ("ELEVATOR".equalsIgnoreCase(this.description)) {
+			return RoomType.ELEVATOR;
+		} else {
+			return type;
+		}
 	}
 
 	public Icon getIcon() {
@@ -197,7 +200,7 @@ public class Room
 			text.setOnMouseDragged(e->{
 				this.labelOffsetX = e.getX() - shape.getX();
 				this.labelOffsetY = e.getY() - shape.getY();
-				this.shape = null;
+				this.icon = null;
 				this.makeAdminSideShape();
 			});
 

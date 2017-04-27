@@ -2,9 +2,6 @@ package controllers.icons;
 
 import entities.Room;
 import entities.RoomType;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,8 +11,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 
 import java.util.Collection;
@@ -44,7 +39,7 @@ public class IconManager
 
 	private static final double DEFAULT_LABEL_X_OFFSET = 0;
 	private static final double DEFAULT_LABEL_Y_OFFSET = 0;
-	private static final int FONT_SIZE = 9;
+	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
 			BACKGROUND_COLOR,
@@ -97,34 +92,39 @@ public class IconManager
 		return roomIcons.computeAllIfAbsent(rooms, this::makeIcon);
 	}
 
+	/**
+	 * Makes an icon and adds it to a room
+	 *
+	 * @param room The room we are adding the icon to
+	 * @return The Icon
+	 *
+	 */
 	public Icon makeIcon(Room room) {
 		RoomType type = room.getType();
 		String name = room.getDisplayName();
+		Image originalImage = type.getImage();
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
-		Image originalImage = type.getImage();
 		double imageHeight = originalImage.getHeight();
 		double imageWidth = originalImage.getWidth();
 
-		Circle circle = new Circle(room.getLocation().getX(), room.getLocation().getY(), 5);
 		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
+		//Image settings
 		image.setLayoutX(x - imageWidth/2);
 		image.setLayoutY(y - imageHeight/2);
 
+		//Label settings
 		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
 		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
 
-		ROOM.DEFAULT.applyTo(circle);
-
-		Icon icon = new Icon(room, circle, label);
-
+		//Create Icon and link to room
+		Icon icon = new Icon(room, image, label);
 		this.applyListeners(room, icon);
-
 		room.setIcon(icon);
 		return icon;
 	}
@@ -137,8 +137,9 @@ public class IconManager
 	 */
 	private void applyListeners(Room room, Icon icon) {
 		if (onMouseClickedOnRoomHandler != null) {
-			Shape symbol = icon.getSymbol();
-			symbol.setOnMouseClicked(event -> {
+//			Shape symbol = icon.getSymbol();
+			ImageView image = icon.getImage();
+			image.setOnMouseClicked(event -> {
 				onMouseClickedOnRoomHandler.accept(room, event);
 			});
 		}
