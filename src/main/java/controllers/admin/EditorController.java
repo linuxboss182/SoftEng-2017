@@ -1,6 +1,9 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXToggleButton;
+import controllers.icons.IconManager;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -67,7 +70,8 @@ public class EditorController
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
-
+	@FXML private SplitPane mapSplitPane;
+	@FXML private JFXToggleButton showRoomsToggleBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -94,13 +98,12 @@ public class EditorController
 		}
 	}
 
-	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
-	protected double selectionStartX;
-	protected double selectionStartY;
-	protected double selectionEndX;
-	protected double selectionEndY;
-
-	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
+	private SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
+	private IconManager iconManager;
+	private double selectionStartX;
+	private double selectionStartY;
+	private double selectionEndX;
+	private double selectionEndY;
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
@@ -126,6 +129,12 @@ public class EditorController
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
 
+		this.iconManager = new IconManager();
+		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
+			event.consume();
+//			room.setLabelOffset(event.getSceneX() - room.getLocation().getX(), event.getSceneY() - room.getLocation().getY());
+		});
+
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
 		this.contentAnchor.setPickOnBounds(false);
@@ -141,6 +150,10 @@ public class EditorController
 
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
+
+		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
+
+		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
 	}
 
 
@@ -286,9 +299,14 @@ public class EditorController
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
-			directory.addNewRoomToNode(this.selectedNodes.getSoleElement(), name, this.displayNameField.getText(), description);
+			Node node = this.selectedNodes.getSoleElement();
+			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(node);
+			selectNode(node);
 		} else {
-			this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			iconController.resetSingleNode(newNode);
+			selectNode(newNode);
 		}
 		this.redisplayAll();
 	}
@@ -328,32 +346,13 @@ public class EditorController
 	 * If debugging, display all nodes
 	 */
 	private void redisplayGraph() {
-//		if (EditorController.DEBUGGING) {
-//			this.displayNodes(directory.getNodes());
-//			this.redrawLines(directory.getNodes());
-//		} else {
-		this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
-		this.redrawLines();
-//		}
-	}
-
-	/**
-	 * This function is currently for testing purposes only
-	 * Using it will modifier listeners that the user can access; be careful
-	 */
-	public void displayRoomsOnFloor() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getUserSideShape());
-			r.getUserSideShape().setOnMouseClicked(event -> {});
-			r.getUserSideShape().setOnContextMenuRequested(event -> {});
-			Label label = r.getUserSideShape().getLabel();
-			label.setOnMouseDragged(event -> {
-				event.consume();
-				label.relocate(event.getX(), event.getY());
-			});
+		if (this.showRoomsToggleBtn.isSelected()) {
+			this.displayRooms();
+			this.linePane.getChildren().clear();
+		} else {
+			this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
+			this.redrawLines();
 		}
-		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	//Editor
@@ -425,18 +424,24 @@ public class EditorController
 	/**
 	 * Add a new room with the given information to the directory.
 	 * Also add a new node associated with the room.
+	 *
+	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private void addNodeRoom(double x, double y, String name, String displayName, String description) {
-		// TODO: Review this assumption
+	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
 		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
 			this.directory.connectOrDisconnectNodes(n, newNode);
 		});
+		return newNode;
 	}
 
-	/** Add a new node to the directory at the given coordinates */
+	/**
+	 * Add a new node to the directory at the given coordinates
+	 *
+	 * This function should _only_ add a node, and do nothing else
+	 */
 	private Node addNode(double x, double y) {
 		if(x < 0 || y < 0) {
 			return null;
@@ -456,8 +461,6 @@ public class EditorController
 	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
 			directory.updateRoom(room, name, displayName, description);
-			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
-			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -480,11 +483,9 @@ public class EditorController
 
 	private void updateSelectedNodes(double x, double y) {
 		this.selectedNodes.forEach(n -> {
-			double newX = n.getX() - this.clickedX + x;
-			double newY = n.getY() - this.clickedY + y;
+			double newX = (n.getX() - this.clickedX) + x;
+			double newY = (n.getY() - this.clickedY) + y;
 			n.moveTo(newX, newY);
-			n.getShape().setCenterX(newX);
-			n.getShape().setCenterY(newY);
 		});
 		this.clickedX = x;
 		this.clickedY = y;
@@ -530,6 +531,7 @@ public class EditorController
 	public void installPaneListeners() {
 		linePane.setOnMouseClicked(e -> {
 			e.consume();
+			this.clearFields();
 			this.setFields(e.getX(), e.getY());
 
 			//Create node on double click
@@ -594,9 +596,14 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
-			} else if(! this.toggleShowRooms) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+			} else if(! this.showRoomsToggleBtn.isSelected()) {
+				// Limits the dragging for x and y coordinates. (panning I mean)
+				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
+					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
+				}
+				if(e.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && e.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
+					contentAnchor.setTranslateY(contentAnchor.getTranslateY() + e.getY() - clickedY);
+				}
 			}
 		});
 
@@ -633,8 +640,8 @@ public class EditorController
 					}
 				});
 			}
-			if(this.toggleShowRooms) {
-				this.displayAdminSideRooms();
+			if(this.showRoomsToggleBtn.isSelected()) {
+				this.displayRooms();
 			}
 			this.redisplayGraph();
 		});
@@ -648,6 +655,7 @@ public class EditorController
 
 		// single left click without drag to select nodes
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
+			this.clearFields();
 			this.setFields(node.getX(), node.getY());
 			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
 			if (! e.isShiftDown()) {
@@ -672,7 +680,7 @@ public class EditorController
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
 		if (this.selectedNodes.contains(n)) {
-			if (e.isPrimaryButtonDown()) {
+			if (e.getButton() == MouseButton.PRIMARY) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
@@ -775,6 +783,14 @@ public class EditorController
 		this.setDescriptField(desc);
 	}
 
+	private void clearFields() {
+		this.xCoordField.setText("");
+		this.yCoordField.setText("");
+		this.displayNameField.setText("");
+		this.nameField.setText("");
+		this.descriptField.setText("");
+	}
+
 	/**
 	 * Upload professonals from a file
 	 */
@@ -818,36 +834,38 @@ public class EditorController
 
 	@FXML
 	public void setToggleShowRooms() {
-		this.toggleShowRooms = !toggleShowRooms;
-		if(toggleShowRooms) {
-			// for now, disable dragging
-			this.imageViewMap.setDisable(true);
-			this.linePane.setDisable(true);
-			this.linePane.getChildren().clear();
-			this.nodePane.getChildren().clear();
-			this.displayAdminSideRooms();
-
-		} else {
-			// re-enable dragging
-			this.imageViewMap.setDisable(false);
-			this.linePane.setDisable(false);
-			this.redisplayAll();
-		}
+//		this.toggleShowRooms = !toggleShowRooms;
+//		if(toggleShowRooms) {
+//			// for now, disable dragging
+//			this.imageViewMap.setDisable(true);
+//			this.linePane.setDisable(true);
+//			this.linePane.getChildren().clear();
+//			this.nodePane.getChildren().clear();
+//			this.displayRooms();
+//
+//		} else {
+//			// re-enable dragging
+//			this.imageViewMap.setDisable(false);
+//			this.linePane.setDisable(false);
+//			this.redisplayAll();
+//		}
 	}
 
 	/**
 	 * Show the rooms with editable labels to the admin
 	 */
-	public void displayAdminSideRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getAdminSideShape());
-			/* This is code to make a context menu appear when you right click on the shape for a room
-			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-			 * that is reallllllllly helpful for a lot of stuff
-			 */
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+	public void displayRooms() {
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+
+//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+//		for (Room room : directory.getRoomsOnFloor(floor)) {
+//			roomShapes.add(room.getAdminSideShape());
+//			/* This is code to make a context menu appear when you right click on the shape for a room
+//			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+//			 * that is reallllllllly helpful for a lot of stuff
+//			 */
+//		}
+//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**

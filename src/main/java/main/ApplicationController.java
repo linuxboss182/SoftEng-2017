@@ -1,7 +1,7 @@
 package main;
 
 //import controllers.SMSController;
-import entities.icons.IconController;
+import controllers.icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
 import javafx.fxml.FXMLLoader;

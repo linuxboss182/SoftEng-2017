@@ -2,9 +2,11 @@ package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
 import controllers.extras.SMSController;
+import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
 import entities.FloorProxy;
 import entities.Node;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -68,6 +70,7 @@ public class UserPathController
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
+	private IconManager iconManager;
 
 
 	/**
@@ -98,6 +101,9 @@ public class UserPathController
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 
+		this.iconManager = new IconManager();
+		iconManager.getIcons(directory.getRooms());
+
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
@@ -117,10 +123,11 @@ public class UserPathController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			}
-			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			}
 			event.consume();
@@ -135,6 +142,7 @@ public class UserPathController
 		});
 
 		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
 	}
 
 	/**
@@ -256,7 +264,12 @@ public class UserPathController
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
 		});
-		backgroundRectangle.setVisible(false);
+		if(buttonCount-1 > 1) {
+			backgroundRectangle.setVisible(false);
+		} else {
+			this.bgRectangle = backgroundRectangle;
+			backgroundRectangle.setVisible(true);
+		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
 	}
@@ -357,11 +370,7 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 	}
 
 	@FXML

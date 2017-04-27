@@ -1,9 +1,11 @@
 package controllers.user;
 
 import com.jfoenix.controls.JFXButton;
+import controllers.icons.IconManager;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,12 +14,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
@@ -25,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -57,6 +56,7 @@ public class UserMasterController
 	protected Room startRoom;
 	protected Room endRoom;
 
+	IconManager iconManager;
 
 	/**
 	 * Get the scene this is working on
@@ -84,6 +84,9 @@ public class UserMasterController
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) startRoom = directory.getKiosk();
 
+		this.iconManager = new IconManager();
+		initializeIcons();
+
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
 
@@ -109,6 +112,21 @@ public class UserMasterController
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater( () -> initWindowResizeListener());
+//		Platform.runLater( () -> this.fitMapSize());
+		// Enable search; if this becomes more than one line, make it a function
+		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+	}
+
+	private void initializeIcons() {
+		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
+			event.consume();
+		});
+		iconManager.getIcons(directory.getRooms());
 	}
 
 	private void setMouseMapListeners() {
@@ -118,10 +136,11 @@ public class UserMasterController
 		});
 
 		contentAnchor.setOnMouseDragged(event -> {
-			if (contentAnchor.getTranslateX() + event.getX() - clickedX >= 0 && contentAnchor.getTranslateX() + event.getX() - clickedX + this.imageViewMap.getFitWidth() <= mapSplitPane.getWidth()) {
+			// Limits the dragging for x and y coordinates. (panning I mean)
+			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
 				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
 			}
-			if(contentAnchor.getTranslateY() + event.getY() - clickedY >= 0 && contentAnchor.getTranslateY() + event.getY() - clickedY + this.imageViewMap.getFitHeight() <= mapSplitPane.getHeight()) {
+			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			}
 			event.consume();
@@ -186,33 +205,12 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
+
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-
-			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-			});
-
-			// Add listener for context menus (right click)
-			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-
-				ContextMenu optionsMenu = new ContextMenu();
-
-				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-			});
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
 	}
 
 	/**
@@ -258,8 +256,7 @@ public class UserMasterController
 
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
-			ApplicationController.getStage().setScene(new Scene(pane));
-			ApplicationController.getStage().show();
+			this.getScene().setRoot(pane);
 		} else {
 			this.redisplayMapItems();
 		}
@@ -283,9 +280,7 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 		this.changeStartBtn.setDisable(true);
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
 	}
 
 	protected void selectStartRoom(Room r) {

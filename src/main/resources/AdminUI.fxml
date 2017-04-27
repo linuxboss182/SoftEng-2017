@@ -31,15 +31,15 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
     <center>
-        <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
             <items>
-                <ScrollPane fx:id="mapScroll">
+                <ScrollPane fx:id="mapScroll" minHeight="-Infinity" minWidth="-Infinity">
                     <content>
-                        <AnchorPane fx:id="contentAnchor" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                        <AnchorPane fx:id="contentAnchor">
                             <children>
                                 <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                                <Pane fx:id="linePane" prefHeight="479.0" prefWidth="825.0" />
-                                <Pane fx:id="nodePane" prefHeight="477.0" prefWidth="885.0" />
+                                <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                                <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -111,7 +111,7 @@
                                                         <Font size="18.0" />
                                                     </font>
                                                 </Label>
-                                                <JFXToggleButton onMouseClicked="#setToggleShowRooms" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                                                <JFXToggleButton fx:id="showRoomsToggleBtn" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                             </children>
                                         </GridPane>
                                     </children>

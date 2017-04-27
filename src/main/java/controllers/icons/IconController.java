@@ -1,4 +1,4 @@
-package entities.icons;
+package controllers.icons;
 
 import javafx.scene.shape.Shape;
 
@@ -108,15 +108,15 @@ public class IconController
 
 
 	/* Methods for Rooms */
-	// (incomplete)
 
 	private void resetRoom(Room room) {
 		if (room == null || room.getLocation() == null) return;
 
-		Shape shape = (Shape) room.getUserSideShape().getChildren().get(0);
+		Icon icon = room.getIcon();
+		Shape shape = icon.getSymbol();
+
 		ROOM.DEFAULT.applyTo(shape);
 
-		//if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
 		if (room == this.directory.getKiosk()) {
 			ROOM.KIOSK.applyTo(shape);
 		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
@@ -145,65 +145,10 @@ public class IconController
 	public void selectEndRoom(Room room) {
 		this.endRoom = room;
 		this.resetAllRoomsExcept(this.startRoom);
-		ROOM.END.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
 	}
 
 	public void selectStartRoom(Room room) {
 		this.startRoom = room;
 		this.resetAllRoomsExcept(this.endRoom);
-		ROOM.START.applyTo((Shape)room.getUserSideShape().getChildren().get(0));
-	}
-
-//	/**
-//	 * Set the shape of the icon for the given room
-//	 *
-//	 * @note This creates a new shape whenever this is called; this is the intended
-//	 *       behavior, but is likely to change in future iterations.
-//	 */
-//	// TODO: Actually use IconController for user-side Rooms
-//	private void resetRoom(Room room) {
-//		if (room == null || room.getLocation() == null) return;
-//
-//		// TODO: Use javafx.scene.control.Label instead of Text
-//		Text label = new Text(room.getName());
-//		label.setFont(new Font(IconController.LABEL_FONT_SIZE));
-//
-//		javafx.scene.Node icon;
-//		if (room.getName().equalsIgnoreCase("YOU ARE HERE")) {
-//			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
-//					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
-//			ROOM.DEFAULT.applyTo(iconShape);
-//			ROOM.KIOSK.applyTo(iconShape);
-//			icon = iconShape;
-//		} else if (room.getDescription().equalsIgnoreCase("BATHROOM")) {
-//			Image iconimg = new Image(IconController.BATHROOM_ICON_PATH);
-//			double width = iconimg.getWidth();
-//			icon = new ImageView(iconimg);
-//		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-//			Image iconimg = new Image(IconController.ELEVATOR_ICON_PATH);
-//			double width = iconimg.getWidth();
-//			icon = new ImageView(iconimg);
-//		} else {
-//			Rectangle iconShape = new Rectangle(room.getLocation().getX(), room.getLocation().getY(),
-//					IconController.ROOM_RECTANGLE_WIDTH, IconController.ROOM_RECTANGLE_HEIGHT);
-//			ROOM.DEFAULT.applyTo(iconShape);
-//			icon = iconShape;
-//		}
-//		room.setShape(new StackPane(icon, label));
-//	}
-
-//	// TODO: Finish implementation
-//	public void selectStartRoom(Room room) {
-//		if (room == null) return; // TODO: remove; we shouldn't need this check
-//		this.resetAllRooms();
-////		ROOM.START.applyTo(SOMETHING);
-//	}
-
-	public void setElevatorIcon(Room room) {
-		//TODO: Implement
-	}
-
-	public void setBathroomIcon(Room room) {
-		//TODO: Implement
 	}
 }
