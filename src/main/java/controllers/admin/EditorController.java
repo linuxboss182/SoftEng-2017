@@ -815,7 +815,7 @@ public class EditorController
 			}
 		}
 	}
-
+	@FXML
 	private void loadNodesFile() {
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains nodes who are already in the application, they will be duplicated.");

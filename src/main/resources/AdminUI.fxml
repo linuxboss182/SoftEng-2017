@@ -142,6 +142,7 @@
                                                 <JFXButton fx:id="deleteProfBtn" buttonType="RAISED" onMouseClicked="#deleteProfBtnClicked" style="-fx-background-color: #5087b4;" text="Delete Professional" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                                 <JFXButton fx:id="addCustomProBtn" buttonType="RAISED" onMouseClicked="#addCustomProBtnPressed" style="-fx-background-color: #5087b4;" text="Add Professional" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                                 <JFXButton fx:id="importBtn" buttonType="RAISED" onMouseClicked="#loadProfessionalsFile" style="-fx-background-color: #5087b4;" text="Add from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+                                                <JFXButton fx:id="importNodeBtn" buttonType="RAISED" onMouseClicked="#loadNodesFile" style="-fx-background-color: #5087b4;" text="Add Nodes from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
                                                 <Label text="Add/Delete Professionals From Rooms" GridPane.columnIndex="1" GridPane.columnSpan="2">
                                                     <font>
                                                         <Font size="18.0" />
