@@ -815,6 +815,29 @@ public class EditorController
 			}
 		}
 	}
+	@FXML
+	private void loadNodesFile() {
+		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
+				+ "contains nodes who are already in the application, they will be duplicated.");
+
+		// true if and only if the button pressed in the alert said "OK"
+		if (ask.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
+			FileChooser fc = new FileChooser();
+			File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+			if (f != null) {
+				try {
+					FileParser.parseNodes(f, directory);
+				} catch (FileNotFoundException e) {
+					Alert a = new Alert(Alert.AlertType.ERROR, "Unable to read file");
+					a.showAndWait();
+					return;
+				}
+				// Add listeners to all nodes
+				this.directory.getNodes().forEach(this::addNodeListeners);
+				this.redisplayGraph();
+			}
+		}
+	}
 
 	/**
 	 * Get a choice box that sets the active algorithm

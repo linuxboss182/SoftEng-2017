@@ -20,4 +20,16 @@ public class FileParser
 		reader.parseToDirectory();
 		reader.close();
 	}
+	/**
+	 * Parse nodes from the given file into the given directory
+	 *
+	 * See {@link NodeTSVParser} for details.
+	 */
+	public static void parseNodes(File file, Directory directory)
+			throws FileNotFoundException{
+		NodeTSVParser reader = new NodeTSVParser(file, directory);
+		reader.open();
+		reader.parseToDirectory();
+		reader.close();
+	}
 }
