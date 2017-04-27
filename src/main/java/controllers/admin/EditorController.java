@@ -131,9 +131,10 @@ public class EditorController
 
 		this.iconManager = new IconManager();
 		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
-			event.consume();
-//			room.setLabelOffset(event.getSceneX() - room.getLocation().getX(), event.getSceneY() - room.getLocation().getY());
-		});
+					event.consume();
+					room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
+							event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
+				});
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);

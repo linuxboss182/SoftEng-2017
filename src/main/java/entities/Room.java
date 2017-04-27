@@ -82,8 +82,8 @@ public class Room
 	/* Methods */
 
 	public void setLabelOffset(double x, double y) {
-		this.labelOffsetX = x;
-		this.labelOffsetY = y;
+		this.labelOffsetX = x - this.getLocation().getX();
+		this.labelOffsetY = y - this.getLocation().getY();
 		this.icon.setLabelOffset(x, y);
 	}
 
