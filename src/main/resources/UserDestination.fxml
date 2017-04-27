@@ -40,11 +40,9 @@
                     </padding>
                 </JFXHamburger>
             </left>
-            <right>
+         <center>
                 <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" BorderPane.alignment="CENTER" />
-            </right>
-            <center>
-            </center>
+         </center>
         </JFXToolbar>
     </top>
     <right>
@@ -53,7 +51,6 @@
     <center>
         <JFXDrawer fx:id="navDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
                 <children>
-
                     <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
                         <items>
                             <ScrollPane fx:id="mapScroll">
@@ -112,18 +109,12 @@
                             <JFXListView fx:id="resultsListView" />
                             <HBox>
                                 <children>
-                                    <ImageView fx:id="logAsAdmin" onMouseClicked="#logAsAdminClicked" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />
-                                    <ImageView fx:id="aboutBtn" onMouseClicked="#aboutBtnClicked" fitHeight="63.0" fitWidth="81.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true" />
                                 </children>
                             </HBox>
                         </children>
                     </VBox>
-
-
-
-
-
-
 
                 </children>
         </JFXDrawer>

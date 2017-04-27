@@ -58,8 +58,9 @@ public class UserMasterController
 	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
 	@FXML private VBox drawerVBox;
-
 	@FXML private JFXDrawer navDrawer;
+	@FXML private JFXHamburger navHamburgerBtn;
+	private HamburgerBackArrowBasicTransition back;
 
 	private double clickedX;
 	private double clickedY;
@@ -87,9 +88,7 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-		this.navDrawer.setContent(mapSplitPane);
-		this.navDrawer.setSidePane(drawerVBox);
-		this.navDrawer.setOverLayVisible(false);
+		this.initializeDrawer();
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -143,9 +142,6 @@ public class UserMasterController
 
 	}
 
-	@FXML private JFXHamburger navHamburgerBtn;
-	private HamburgerBackArrowBasicTransition back;
-
 	@FXML
 	public void onNavHamburgerBtnClicked() throws IOException {
 		back.setRate(back.getRate() * -1);
@@ -157,7 +153,11 @@ public class UserMasterController
 		}
 	}
 
-
+	private void initializeDrawer() {
+		this.navDrawer.setContent(mapSplitPane);
+		this.navDrawer.setSidePane(drawerVBox);
+		this.navDrawer.setOverLayVisible(false);
+	}
 
 	private void initializeIcons() {
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
