@@ -225,12 +225,20 @@ public class Directory
 		this.nodes.add(newNode);
 		return newNode;
 	}
+
 	//use this only for DB loading from CSV
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
 		Node newNode = new Node(x, y, floor, buildingName, loggedIn);
 		this.nodes.add(newNode);
 		return newNode;
 	}
+
+	public Node addNewNode(double x, double y, int floor, String buildingName, boolean isRestricted) {
+		Node newNode = new Node(x, y, floor, buildingName, isRestricted);
+		this.nodes.add(newNode);
+		return newNode;
+	}
+
 	@Deprecated
 	public Node addNewNode(double x, double y, int floor) {
 		return this.addNewNode(x, y, floor, "NO BUILDING");
@@ -267,7 +275,7 @@ public class Directory
 		return this.filterRooms(room -> (room.getLocation() != null)
 				&& (room.getLocation().getFloor() == floor.getNumber())
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
-				&& (! room.getLocation().isProfessionalOnly() || this.loggedIn));
+				&& (! room.getLocation().isRestricted() || this.loggedIn));
 	}
 
 	/**
@@ -366,7 +374,7 @@ public class Directory
 	public Set<Node> getNodeNeighbors(Node node) {
 		Set<Node> neighbors = node.getNeighbors();
 		if (! this.loggedIn) {
-			neighbors.removeIf(Node::isProfessionalOnly);
+			neighbors.removeIf(Node::isRestricted);
 		}
 		return neighbors;
 	}

@@ -146,7 +146,8 @@ class DatabaseLoader
 				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
 						resultNodes.getDouble("nodeY"),
 						resultNodes.getInt("floor"),
-						resultNodes.getString("buildingName"));
+						resultNodes.getString("buildingName"),
+						resultNodes.getBoolean("isRestricted"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 				directory.addNode(node);
 			}
@@ -253,7 +254,8 @@ class DatabaseLoader
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
 					n.getFloor(), n.mapToRoom(Object::hashCode),
-					n.getBuildingName());
+					n.getBuildingName(),
+					n.isRestricted());
 			db.executeUpdate(query);
 		}
 

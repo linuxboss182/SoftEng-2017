@@ -21,20 +21,20 @@ public class Node
 	private String buildingName;
 	private Room room;
 	private Circle circ;
-	private boolean professionalOnly;
+	private boolean isRestricted;
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
 	private static final double CIRCLE_RADIUS = 5;
 
-	Node(double x, double y, int floor, String buildingName, boolean professionalOnly) {
+	Node(double x, double y, int floor, String buildingName, boolean isRestricted) {
 		this.x = x;
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
 		this.buildingName = buildingName;
 		this.room = null;
-		this.professionalOnly = professionalOnly;
+		this.isRestricted = isRestricted;
 	}
 
 	public double getX() {
@@ -55,7 +55,7 @@ public class Node
 
 	public String getBuildingName(){ return this.buildingName;	}
 
-	public boolean isProfessionalOnly() { return this.professionalOnly; }
+	public boolean isRestricted() { return this.isRestricted; }
 
 	/**
 	 * Apply the given consumer function to this node's associated room, if present
@@ -90,9 +90,9 @@ public class Node
 		}
 	}
 
-	public void makeProfessional() { this.professionalOnly = true; }
+	public void makeProfessional() { this.isRestricted = true; }
 
-	public void removeProfessional() {this.professionalOnly = false; }
+	public void removeProfessional() {this.isRestricted = false; }
 
 	void setRoom(Room room) {
 		this.room = room;
