@@ -49,18 +49,25 @@ public class IconController
 	 */
 	private void resetNode(Node node) {
 		if (node == null) return;
-		NODE.DEFAULT.applyTo(node.getShape());
 
-		// Set elevator colors
-		// TODO: Use a different color for portals
-		if (directory.getNodeNeighbors(node).stream()
-				.anyMatch(n -> (node.getFloor() != n.getFloor())
-				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
-			NODE.ELEVATOR.applyTo(node.getShape());
-		} else if (node.getRoom() != null) {
-			NODE.ROOM.applyTo(node.getShape());
-		} else { // no room
-			// do nothing else
+		boolean isElevator = directory.getNodeNeighbors(node).stream()
+				.anyMatch(n -> (node.getFloor() != n.getFloor()));
+
+		boolean isPortal = directory.getNodeNeighbors(node).stream()
+				.anyMatch(n -> (!node.getBuildingName().equalsIgnoreCase(n.getBuildingName())));
+
+		if (node.isProfessionalOnly()) {
+			NODE.RESTRICTED.applyTo(node.getShape());
+
+			if (isElevator) NODE.RESTRICTED_ELEVATOR.applyTo(node.getShape());
+			else if (isPortal) NODE.RESTRICTED_PORTAL.applyTo(node.getShape());
+			else if (node.getRoom() != null) NODE.ROOM.applyTo(node.getShape());
+		} else {
+			NODE.DEFAULT.applyTo(node.getShape());
+
+			if (isElevator) NODE.ELEVATOR.applyTo(node.getShape());
+			else if (isPortal) NODE.PORTAL.applyTo(node.getShape());
+			else if (node.getRoom() != null) NODE.ROOM.applyTo(node.getShape());
 		}
 	}
 
