@@ -15,6 +15,7 @@ public class StoredProcedures
 					+ ", nodeY  double precision NOT NULL "
 					+ ", buildingName varchar(200) NOT NULL "
 					+ ", floor integer NOT NULL "
+					+ ", isRestricted boolean NOT NULL "
 					+  ", roomID integer)",/*references Rooms(roomID))",*/ // foreign key would cause drop problems
 			"CREATE TABLE Edges ("
 					+" node1 integer references Nodes(nodeID) ON DELETE CASCADE"
@@ -162,10 +163,10 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName, boolean isRestricted){
 		//query needs work
 		buildingName = sanitize(buildingName);
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", '"+buildingName+"')";
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, isRestricted, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+isRestricted+", "+roomID+", '"+buildingName+"')";
 	}
 
 	public static String procInsertRoom(int roomID, String roomName, String roomDisplayName, String roomDescription, double labelX, double labelY, String roomType){
