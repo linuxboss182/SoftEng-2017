@@ -3,6 +3,11 @@ package controllers.admin;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
+import entities.FloorProxy;
+import entities.Node;
+import entities.Professional;
+import entities.Room;
+import entities.RoomType;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -36,15 +41,11 @@ import java.net.URL;
 import java.util.*;
 
 import main.ApplicationController;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import entities.FloorProxy;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.BLUE;
@@ -118,7 +119,12 @@ public class EditorController
 	double contextWidth = 60;
 	Arc selectionWedge = new Arc();
 	Group contextMenu = new Group();
-	private int contextSelection = -1; //default to -1
+	private MenuButton contextSelection = MenuButton.NONE;
+
+	private enum MenuButton
+	{
+		UP, DOWN, RIGHT, LEFT, NONE;
+	}
 
 
 	@Override
@@ -172,7 +178,7 @@ public class EditorController
 
 	//check if secondary button is down before populating round panel
 	void displayContextMenu(MouseEvent e){
-		if(e.isSecondaryButtonDown()){
+		if(e.isSecondaryButtonDown()) {
 			populateRoundPane(e, e.getX(), e.getY());
 		}
 	}
@@ -225,6 +231,12 @@ public class EditorController
 		selectionWedge.setFill(null);
 		selectionWedge.setOpacity(0.2);
 
+		selectionWedge.lengthProperty().addListener((ignored, oldValue, newValue) -> {
+			System.out.println("Showing context menu");
+		});
+
+//		selectionWedge.setOnMouseDragReleased(__ -> System.out.println("released wedge"));
+//		roundPanel.setOnMouseDragReleased(__ -> System.out.println("released panel"));
 		contextMenu.getChildren().add(roundPanel);
 		contextMenu.getChildren().add(selectionWedge);
 		contextMenu.getChildren().add(split1);
@@ -239,36 +251,45 @@ public class EditorController
 		double xdif = e.getX() - contextMenu.getLayoutX();
 		double ydif = e.getY() - contextMenu.getLayoutY();
 
-		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 2)){
+		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 1.8)){
 			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
 		}else{
 			selectionWedge.setLength(0);
-			contextSelection = -1;
+			contextSelection = MenuButton.NONE;
 		}
 	}
 
 	// check the angle between the cursor and the center of panel
 	private void modifyRadialSelection(double angle){
+//		double xdif = e.getX() - contextMenu.getLayoutX();
+//		double ydif = e.getY() - contextMenu.getLayoutY();
+//
+//		if (! (Math.hypot(xdif, ydif) > Math.pow(contextRad - contextWidth, 1.8))) {
+//			selectionWedge.setLength(0);
+//			contextSelection = MenuButton.NONE;
+//			return;
+//		}
+//		double angle = Math.toDegrees(Math.atan2(ydif, xdif));
 
 		if (angle < -45 && angle > -135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(45);
-			contextSelection = 0;
+			contextSelection = MenuButton.UP;
 		}else if (angle > -45 && angle < 45){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(315);
-			contextSelection = 1;
+			contextSelection = MenuButton.RIGHT;
 		}else if (angle > 45 && angle < 135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(225);
-			contextSelection = 2;
+			contextSelection = MenuButton.DOWN;
 		}else if (angle > 135 || angle < -135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(135);
-			contextSelection = 3;
+			contextSelection = MenuButton.LEFT;
 		}else{
 			selectionWedge.setLength(0);
-			contextSelection = -1;
+			contextSelection = MenuButton.NONE;
 		}
 	}
 
@@ -531,9 +552,9 @@ public class EditorController
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
 			if (event.isSecondaryButtonDown()){
+				selectNode(node);
 				displayContextMenu(event);
 			}
-			this.draggingNode = true;
 		});
 	}
 
@@ -828,15 +849,41 @@ public class EditorController
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
 
-		switch(contextSelection){
-			case 0:
-
-				deleteSelectedNodes();
+		Room room;
+		switch(contextSelection) {
+			case UP: // make into bathroom
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "bathroom", "", "");
+					iconController.resetSingleNode(n);
+					room = n.getRoom();
+				}
+				room.setType(RoomType.BATHROOM_U);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
 				break;
-			case 1:
+			case RIGHT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "Kiosk", "You are here","");
+					room = n.getRoom();
+				}
+				room.setType(RoomType.KIOSK);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				directory.setKiosk(room);
+				iconController.resetSingleNode(n);
+				this.redisplayGraph();
+				break;
+			case DOWN:
+				break;
+			case LEFT:
+				break;
+			default:
 
 		}
 
+		nodePane.getChildren().remove(contextMenu);
 		contextMenu.getChildren().clear();
 
 		this.beingDragged = false;
