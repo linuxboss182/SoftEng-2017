@@ -20,6 +20,13 @@
     -fx-alignment: center;
 }
 
+.label {
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-font-family: "Trebuchet MS";
+}
+
 
 .vbox {
     -fx-max-width: 418px;
@@ -41,6 +48,11 @@
     -fx-font-size: 14px;
     -fx-prompt-text-fill: #d5d5d5;
 
+}
+.blue-button {
+    -fx-background-color: #5087b4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
 }
 
 .drawer {
@@ -65,5 +77,5 @@
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #0288D1;
     -fx-font-size: 14px;
-    -fx-font-weight: 200;
+    -fx-font-weight: 200px;
 }

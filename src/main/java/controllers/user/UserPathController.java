@@ -172,6 +172,7 @@ public class UserPathController
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
 		directionsLbl.getStyleClass().add("path-label");
+		doneBtn.getStyleClass().add("blue-button");
 
 	}
 

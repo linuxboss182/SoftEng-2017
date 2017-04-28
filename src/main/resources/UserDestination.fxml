@@ -38,7 +38,7 @@
             <left>
                 <JFXHamburger fx:id="navHamburgerBtn" onMouseClicked="#onNavHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
-                        <Insets left="30.0" right="30.0" />
+                        <Insets left="15.0" right="30.0" />
                     </padding>
                 </JFXHamburger>
             </left>
