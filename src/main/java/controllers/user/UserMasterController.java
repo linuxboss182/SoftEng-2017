@@ -68,6 +68,12 @@ public class UserMasterController
 	protected Room endRoom;
 
 
+
+	@FXML private HBox startHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox goHBox;
+	@FXML private HBox bottomHBox;
+
 	/**
 	 * Get the scene this is working on
 	 */
@@ -87,6 +93,11 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox");
+		bottomHBox.getStyleClass().add("hbox");
+
 		this.initializeDrawer();
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
