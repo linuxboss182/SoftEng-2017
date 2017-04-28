@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.paint.*?>
 <?import com.jfoenix.controls.*?>
@@ -29,8 +30,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
-
 <?import java.net.URL?>
+
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
     <top>
         <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
@@ -52,6 +53,59 @@
     <center>
         <JFXDrawer fx:id="navDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
                 <children>
+            <Pane fx:id="parentDrawerPane" prefWidth="418.0">
+               <children>
+      
+                          <VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="418.0">
+                              <children>
+                                  <HBox fx:id="startHBox">
+                                      <children>
+                                          <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                              <HBox.margin>
+                                                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                              </HBox.margin>
+                                          </ImageView>
+                                          <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
+                                              <HBox.margin>
+                                                  <Insets bottom="30.0" top="15.0" />
+                                              </HBox.margin>
+                              </JFXTextField>
+                                      </children>
+                                  </HBox>
+                                  <HBox fx:id="destHBox">
+                                      <children>
+                                          <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                              <HBox.margin>
+                                                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                              </HBox.margin>
+                                          </ImageView>
+                                          <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
+                                              <HBox.margin>
+                                                  <Insets bottom="30.0" right="50.0" top="30.0" />
+                                              </HBox.margin>
+                                          </JFXTextField>
+                                      </children>
+                                  </HBox>
+                                  <HBox fx:id="goHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                      <children>
+                                          <JFXButton fx:id="getDirectionsBtn" alignment="CENTER" buttonType="RAISED" onMouseClicked="#getDirectionsClicked" prefHeight="27.0" prefWidth="107.0" style="-fx-background-color: #5087b4;" text="Go">
+                                              <HBox.margin>
+                                                  <Insets bottom="10.0" top="10.0" />
+                                              </HBox.margin>
+                                          </JFXButton>
+                                      </children>
+                                  </HBox>
+                                  <JFXListView fx:id="resultsListView" />
+                                  <HBox fx:id="bottomHBox">
+                                      <children>
+                                          <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
+                                          <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true" />
+                                      </children>
+                                  </HBox>
+                              </children>
+                          </VBox>
+               </children>
+            </Pane>
                     <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
                         <items>
                             <ScrollPane fx:id="mapScroll">
@@ -67,54 +121,6 @@
                             </ScrollPane>
                         </items>
                     </SplitPane>
-
-                    <VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="418.0">
-                        <children>
-                            <HBox fx:id="startHBox">
-                                <children>
-                                    <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
-                                        <HBox.margin>
-                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                        </HBox.margin>
-                                    </ImageView>
-                                    <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
-                                        <HBox.margin>
-                                            <Insets bottom="30.0" top="15.0" />
-                                        </HBox.margin></JFXTextField>
-                                </children>
-                            </HBox>
-                            <HBox fx:id="destHBox">
-                                <children>
-                                    <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
-                                        <HBox.margin>
-                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                        </HBox.margin>
-                                    </ImageView>
-                                    <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination...">
-                                        <HBox.margin>
-                                            <Insets bottom="30.0" right="50.0" top="30.0" />
-                                        </HBox.margin>
-                                    </JFXTextField>
-                                </children>
-                            </HBox>
-                            <HBox fx:id="goHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
-                                <children>
-                                    <JFXButton fx:id="getDirectionsBtn" alignment="CENTER" buttonType="RAISED" onMouseClicked="#getDirectionsClicked" prefHeight="27.0" prefWidth="107.0" style="-fx-background-color: #5087b4;" text="Go">
-                                        <HBox.margin>
-                                            <Insets bottom="10.0" top="10.0" />
-                                        </HBox.margin>
-                                    </JFXButton>
-                                </children>
-                            </HBox>
-                            <JFXListView fx:id="resultsListView" />
-                            <HBox fx:id="bottomHBox">
-                                <children>
-                                    <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
-                                    <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true" />
-                                </children>
-                            </HBox>
-                        </children>
-                    </VBox>
 
                 </children>
             <stylesheets>

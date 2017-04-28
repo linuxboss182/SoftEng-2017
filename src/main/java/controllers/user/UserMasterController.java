@@ -58,6 +58,7 @@ public class UserMasterController
 	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
 	@FXML private VBox drawerVBox;
+	@FXML private Pane parentDrawerPane;
 
 	@FXML private JFXHamburger navHamburgerBtn;
 	private HamburgerBackArrowBasicTransition back;
@@ -171,7 +172,7 @@ public class UserMasterController
 
 	private void initializeDrawer() {
 		this.navDrawer.setContent(mapSplitPane);
-		this.navDrawer.setSidePane(drawerVBox);
+		this.navDrawer.setSidePane(parentDrawerPane);
 		this.navDrawer.setOverLayVisible(false);
 	}
 
