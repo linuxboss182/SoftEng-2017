@@ -9,6 +9,9 @@
     -fx-max-width: inherit;
 }
 
+.hbox-bottom {
+    -fx-background-color: #FFFFFF;
+}
 
 .vbox {
     -fx-max-width: 418px;
@@ -33,7 +36,7 @@
 }
 
 .drawer {
-
+    -fx-effect: dropshadow(one-pass-box, darkgrey, 2, 1.0, 2, 2);
 }
 
 .jfx-list-view {

@@ -59,6 +59,7 @@ public class UserMasterController
 	@FXML private VBox drawerVBox;
 	@FXML private Pane parentDrawerPane;
 	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
 
 	@FXML private JFXHamburger navHamburgerBtn;
 	private HamburgerBackArrowBasicTransition back;
@@ -173,7 +174,7 @@ public class UserMasterController
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
 		goHBox.getStyleClass().add("hbox-go");
-		//bottomHBox.getStyleClass().add("hbox");
+		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		parentDrawerPane.getStyleClass().add("drawer");

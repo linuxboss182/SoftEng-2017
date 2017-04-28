@@ -39,7 +39,7 @@
 TOP: Menu bar
 -->
     <top>
-        <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+        <JFXToolbar prefHeight="45.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="directionsHamburgerButton" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -57,39 +57,68 @@ TOP: Menu bar
     </top>
 
 <!--
-RIGHT: Zoom slider
--->
-    <right>
-        <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER" />
-    </right>
-
-<!--
 CENTER: Drawer
 -->
     <center>
         <JFXDrawer fx:id="directionsDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="drawerVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="418.0">
-                    <children>
-                        <Label prefHeight="17.0" prefWidth="161.0" text="Directions:" GridPane.columnIndex="1">
-                            <font>
-                                <Font size="15.0" />
-                            </font>
-                        </Label>
-                        <TextFlow fx:id="directionsTextField" prefHeight="408.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                        <HBox prefHeight="100.0" prefWidth="200.0">
-                            <children>
-                                <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
-                                    <HBox.margin>
-                                        <Insets left="15.0" right="15.0" />
-                                    </HBox.margin>
-                                </ImageView>
-                            </children>
+            <Pane fx:id="parentPathDrawerPane" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                      <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
+                          <children>
+      
+                              <HBox fx:id="backHBox">
+                                  <children>
+                                      <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                          <HBox.margin>
+                                              <Insets left="15.0" right="15.0" />
+                                          </HBox.margin>
+                                      </ImageView>
+                                  </children>
+                              </HBox>
+                        <HBox fx:id="startLblHBox">
+                           <children>
+                              <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label fx:id="startLbl" alignment="CENTER" prefHeight="17.0" prefWidth="250.0" text="Label">
+                                 <HBox.margin>
+                                    <Insets bottom="30.0" right="50.0" top="30.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
                         </HBox>
-                    </children>
-                </VBox>
+                        <HBox fx:id="destHLblBox">
+                           <children>
+                              <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label fx:id="destLbl" prefHeight="17.0" prefWidth="295.0" text="Label">
+                                 <HBox.margin>
+                                    <Insets bottom="30.0" right="50.0" top="30.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="directionsLblHBox" alignment="TOP_CENTER">
+                           <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="17.0" prefWidth="161.0" text="Directions:">
+                                        <font>
+                                            <Font size="15.0" />
+                                        </font>
+                                    </Label>
+                           </children>
+                        </HBox>
+                        <JFXListView fx:id="directionsListView" />
+                              <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                          </children>
+                      </VBox>
+               </children>
+            </Pane>
 
                 <JFXDrawer fx:id="mapIconDrawer" defaultDrawerSize="100.0" direction="BOTTOM">
                     <children>
@@ -112,6 +141,15 @@ CENTER: Drawer
                         <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
                     </children>
                 </JFXDrawer>
+            <BorderPane fx:id="floatingBorderPane">
+               <right>
+                  <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="100.0" right="30.0" top="100.0" />
+                     </BorderPane.margin>
+                  </Slider>
+               </right>
+            </BorderPane>
 
             </children>
         </JFXDrawer>

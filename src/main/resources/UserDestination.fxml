@@ -47,12 +47,18 @@
          </center>
         </JFXToolbar>
     </top>
-    <right>
-        <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER" />
-    </right>
     <center>
         <JFXDrawer fx:id="navDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
                 <children>
+            <BorderPane fx:id="floatingBorderPane">
+               <right>
+                    <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="100.0" right="30.0" top="100.0" />
+                     </BorderPane.margin>
+                  </Slider>
+               </right>
+            </BorderPane>
             <Pane fx:id="parentDrawerPane" prefWidth="418.0">
                <children>
       
@@ -65,7 +71,7 @@
                                                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                               </HBox.margin>
                                           </ImageView>
-                                          <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map" unFocusColor="white" focusColor="#BDBDBD">
+                                          <JFXTextField fx:id="startField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map" unFocusColor="white">
                                               <HBox.margin>
                                                   <Insets bottom="30.0" right="50.0" top="30.0" />
                                               </HBox.margin>
@@ -79,14 +85,14 @@
                                                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                               </HBox.margin>
                                           </ImageView>
-                                          <JFXTextField fx:id="destinationField" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination..." unFocusColor="white" focusColor="#BDBDBD">
+                                          <JFXTextField fx:id="destinationField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination..." unFocusColor="white">
                                               <HBox.margin>
                                                   <Insets bottom="30.0" right="50.0" top="30.0" />
                                               </HBox.margin>
                                           </JFXTextField>
                                       </children>
                                   </HBox>
-                                  <HBox fx:id="goHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                  <HBox fx:id="goHBox" alignment="TOP_CENTER">
                                       <children>
                                           <JFXButton fx:id="getDirectionsBtn" alignment="CENTER" buttonType="RAISED" onMouseClicked="#getDirectionsClicked" prefHeight="27.0" prefWidth="107.0" text="GO">
                                               <HBox.margin>
