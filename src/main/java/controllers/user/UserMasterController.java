@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -27,6 +28,8 @@ import java.text.Collator;
 import java.text.Normalizer;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -57,6 +60,8 @@ public class UserMasterController
 	protected Room endRoom;
 
 	IconManager iconManager;
+
+	private Timer timer = new Timer();
 
 	/**
 	 * Get the scene this is working on
@@ -117,6 +122,8 @@ public class UserMasterController
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+		this.resetTimer();
 	}
 
 	private void initializeIcons() {
@@ -142,6 +149,7 @@ public class UserMasterController
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			}
 			event.consume();
+			this.resetTimer();
 		});
 	}
 
@@ -190,6 +198,7 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
+		this.resetTimer();
 		// Unset navigation targets for after logout
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
@@ -247,6 +256,7 @@ public class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+		this.resetTimer();
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -258,6 +268,7 @@ public class UserMasterController
 		} else {
 			this.redisplayMapItems();
 		}
+
 	}
 
 	/*
@@ -278,6 +289,7 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
+		this.resetTimer();
 		this.changeStartBtn.setDisable(true);
 	}
 
@@ -302,6 +314,7 @@ public class UserMasterController
 
 	@FXML
 	public void aboutBtnClicked () throws IOException {
+		this.resetTimer();
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
@@ -310,5 +323,48 @@ public class UserMasterController
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
+	}
+
+	private void resetTimer() {
+		if(!this.directory.isLoggedIn()) return;
+		try{
+			timer.cancel();
+		} catch(Exception e) {
+			// just please end it. this thing is so annoying
+		}
+
+		try{
+			timer = new Timer();
+			timer.schedule(getTimerTask(), directory.getTimeout());
+		} catch(Exception e) {
+			// just please end it. this thing is so annoying
+		}
+	}
+
+	private TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				timeout();
+			}
+		};
+	}
+
+	private void timeout() {
+		//TODO: MEMENTO CALL GOES HERE
+
+	}
+
+	public UserState getState() {// TODO: adjust this to work with the text field
+		return new UserState(this.getScene().getRoot(), this.directory.isLoggedIn(), this.startRoom, this.endRoom, "" );
+	}
+
+	public void setState(UserState state) {
+		this.getScene().setRoot(state.getRoot());
+		if(state.getLoggedIn()) {
+			this.directory.logIn();
+		} else {
+			this.directory.logOut();
+		}
 	}
 }
