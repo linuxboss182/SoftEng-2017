@@ -70,6 +70,7 @@ public class EditorController
 	@FXML private SplitPane mapSplitPane;
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 	@FXML private ToggleButton restrictedView;
+	@FXML private JFXButton modifyAccountBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -333,6 +334,19 @@ public class EditorController
 		}
 		this.changeFloor(directory.getFloor());
 	}
+
+	@FXML
+	public void modifyAccountBtnPressed() throws IOException{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AccountPopup.fxml"));
+		Scene addProScene = new Scene(loader.load());
+		Stage addProStage = new Stage();
+		addProStage.initOwner(contentAnchor.getScene().getWindow());
+		addProStage.setScene(addProScene);
+		addProStage.showAndWait();
+	}
+
+
 
 	/* **** Non-FXML functions **** */
 
