@@ -34,7 +34,7 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
     <top>
-        <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="navHamburgerBtn" onMouseClicked="#onNavHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -67,7 +67,7 @@
                                           </ImageView>
                                           <JFXTextField fx:id="startField" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map">
                                               <HBox.margin>
-                                                  <Insets bottom="30.0" top="15.0" />
+                                                  <Insets bottom="30.0" right="50.0" top="30.0" />
                                               </HBox.margin>
                               </JFXTextField>
                                       </children>

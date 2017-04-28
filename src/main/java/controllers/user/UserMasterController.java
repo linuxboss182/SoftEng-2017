@@ -1,15 +1,14 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXDrawer;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.icons.IconManager;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,6 +58,7 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private VBox drawerVBox;
 	@FXML private Pane parentDrawerPane;
+	@FXML private JFXToolbar topToolBar;
 
 	@FXML private JFXHamburger navHamburgerBtn;
 	private HamburgerBackArrowBasicTransition back;
@@ -94,19 +94,22 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-		startHBox.getStyleClass().add("hbox");
-		destHBox.getStyleClass().add("hbox");
-		goHBox.getStyleClass().add("hbox");
-		bottomHBox.getStyleClass().add("hbox");
+
 
 		this.initializeDrawer();
+
+		//Set IDs for CSS
+		setStyleIDs();
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
-		if (startRoom == null) startRoom = directory.getKiosk();
+		if (startRoom == null) {
+			startRoom = directory.getKiosk();
+			startField.setText("Your Location");
+		}
 
 
 		initializeIcons();
@@ -151,8 +154,27 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
+
+
+		System.out.print(677 - (startHBox.getHeight() + destHBox.getHeight() + goHBox.getHeight() + bottomHBox.getHeight()));
+		parentDrawerPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				System.out.println("Height: " + newSceneHeight);
+				resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+			}
+		});
+
 		navDrawer.open();
 		isDrawerOpen = true;
+
+	}
+
+	public void setStyleIDs() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox");
+		bottomHBox.getStyleClass().add("hbox");
+		topToolBar.getStyleClass().add("tool-bar");
 
 	}
 

@@ -2,7 +2,7 @@
     -fx-text-fill: green;
 }
 .hbox {
-    -fx-background-color: #4285f4;
+    -fx-background-color: rgba(66, 133, 244, 0.38);
     -fx-animated: inherit;
     -fx-fill-height: true;
     -fx-fit-to-height: true;
@@ -17,7 +17,7 @@
     -fx-fit-to-height: inherit;
 
 }
-.jfx-tool-bar {
+.tool-bar {
     -fx-background-color: whitesmoke;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .jfx-text-field{
-    -fx-background-color: #689bf0;
+    -fx-background-color: rgba(66, 133, 244, 0.16);
     -fx-prompt-text-fill: white;
 
 }
