@@ -1,5 +1,6 @@
 package entities;
 
+import controllers.user.Caretaker;
 import javafx.scene.image.Image;
 
 import java.util.*;
@@ -21,7 +22,9 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 	private boolean loggedIn;
+
 	private long timeout;
+	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
 
 	private FloorImage floor;
@@ -511,5 +514,11 @@ public class Directory
 	public long getTimeout() {
 		return this.timeout;
 	}
+
+	public Caretaker getCaretaker() {
+		if(this.caretaker == null) this.caretaker = new Caretaker();
+		return this.caretaker;
+	}
+
 }
 
