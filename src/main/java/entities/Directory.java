@@ -23,6 +23,7 @@ public class Directory
 	private HashMap<String, String> permissions;
 	private Room kiosk;
 	private boolean loggedIn;
+	private long timeout;
 
 	// default to floor 1
 	private FloorImage floor;
@@ -412,6 +413,14 @@ public class Directory
 
 		targets.removeAll(visited);
 		return targets.isEmpty();
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
+	public long getTimeout() {
+		return this.timeout;
 	}
 }
 
