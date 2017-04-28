@@ -1,6 +1,8 @@
 package main.algorithms;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 import javafx.util.StringConverter;
 
@@ -29,5 +31,6 @@ public interface Algorithm
 	};
 
 	String getName(); // Algorithms need a display name.
-	List<Node> findPath(Node start, Node dest) throws PathNotFoundException; // Strategy execution.
+	List<Node> findPath(Node start, Node dest, Function<Node,
+	                    Set<Node>> nodeNeighborGetter) throws PathNotFoundException;
 }

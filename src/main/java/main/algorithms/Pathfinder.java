@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import entities.Node;
+import javafx.application.Application;
+import main.ApplicationController;
 
 
 /**
@@ -47,10 +49,10 @@ public class Pathfinder
 	 *
 	 * @param a The node to start the path from
 	 * @param b The node the path should lead to
-	 *   
+	 *
 	 * @return A list of nodes representing the path
 	 */
 	public static List<Node> findPath(Node a, Node b) throws PathNotFoundException {
-		return Pathfinder.strategy.findPath(a, b);
+		return Pathfinder.strategy.findPath(a, b, ApplicationController.getDirectory()::getNodeNeighbors);
 	}
 }

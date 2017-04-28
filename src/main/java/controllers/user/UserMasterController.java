@@ -369,7 +369,6 @@ public class UserMasterController
 			this.selectStartRoom(room);
 			startField.setText(room.getName());
 		}
-
 	}
 
 	@FXML

@@ -53,7 +53,7 @@ public class IconController
 
 		// Set elevator colors
 		// TODO: Use a different color for portals
-		if (node.getNeighbors().stream()
+		if (directory.getNodeNeighbors(node).stream()
 				.anyMatch(n -> (node.getFloor() != n.getFloor())
 				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
 			NODE.ELEVATOR.applyTo(node.getShape());
@@ -111,11 +111,7 @@ public class IconController
 		Icon icon = room.getIcon();
 		icon.setImage(RoomType.DEFAULT.getImage());
 
-		if (room == this.directory.getKiosk()) {
-			icon.setImage(RoomType.KIOSK.getImage());
-		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-			icon.setImage(RoomType.ELEVATOR.getImage());
-		}
+		room.getIcon().setImage(room.getType().getImage());
 	}
 
 	public void resetAllRooms() {

@@ -104,7 +104,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
-		Platform.runLater(()->this.fitMapSize());
+		Platform.runLater(this::fitMapSize);
 	}
 
 
