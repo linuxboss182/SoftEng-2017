@@ -74,6 +74,7 @@ public class UserPathController
 	@FXML private JFXListView<?> directionsListView;
 	@FXML private HBox destLblHBox;
 	@FXML private Label destLbl;
+	@FXML private Label directionsLbl;
 	@FXML private VBox pathVBox;
 	@FXML private Pane parentPathDrawerPane;
 	@FXML private HBox backHBox;
@@ -169,6 +170,8 @@ public class UserPathController
 		parentPathDrawerPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
+		sendToPhoneBtn.getStyleClass().add("jfx-button");
+		directionsLbl.getStyleClass().add("path-label");
 
 	}
 
@@ -370,6 +373,13 @@ public class UserPathController
 //		endRoom.getUserSideShape().setScaleX(1);
 //		endRoom.getUserSideShape().setScaleY(1);
 
+		iconController.resetAllRooms();
+		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		this.mapScroll.getScene().setRoot(userPath);
+	}
+
+	@FXML
+	public void backBtnClicked() throws IOException {
 		iconController.resetAllRooms();
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		this.mapScroll.getScene().setRoot(userPath);

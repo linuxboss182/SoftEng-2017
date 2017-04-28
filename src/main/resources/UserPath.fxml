@@ -80,7 +80,7 @@ CENTER: Drawer
       
                               <HBox fx:id="backHBox">
                                   <children>
-                                      <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                      <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" onMouseClicked="#backBtnClicked" pickOnBounds="true" preserveRatio="true">
                                           <HBox.margin>
                                               <Insets left="15.0" right="15.0" />
                                           </HBox.margin>
@@ -117,16 +117,23 @@ CENTER: Drawer
                         </HBox>
                         <HBox fx:id="directionsLblHBox" alignment="TOP_CENTER">
                            <children>
-                                    <Label alignment="TOP_LEFT" prefHeight="17.0" prefWidth="161.0" text="Directions:">
+                                    <Label fx:id="directionsLbl" alignment="TOP_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:">
                                         <font>
                                             <Font size="15.0" />
                                         </font>
+                                 <HBox.margin>
+                                    <Insets bottom="15.0" right="50.0" top="15.0" />
+                                 </HBox.margin>
                                     </Label>
+                                    <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" text="Send Directions to Phone" textFill="WHITE">
+                                 <HBox.margin>
+                                    <Insets bottom="15.0" left="50.0" top="15.0" />
+                                 </HBox.margin>
+                              </JFXButton>
                            </children>
                         </HBox>
                         <TextFlow fx:id="directionsTextField" prefHeight="200.0" prefWidth="200.0" />
                         <JFXListView fx:id="directionsListView" />
-                              <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                           </children>
                       </VBox>
                </children>
