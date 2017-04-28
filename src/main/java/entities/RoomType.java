@@ -7,18 +7,18 @@ import javafx.scene.image.Image;
  */
 public enum RoomType
 {
-	DEFAULT("Default Room", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
-	KIOSK("Kiosk", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
+	DEFAULT("Default Room", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	KIOSK("Kiosk", "/Kiosk.png", "/KioskOrigin.png", "/KioskDest.png"),
 	ELEVATOR("Elevator", "/Elevator.png", "/ElevatorOrigin.png", "/ElevatorDest.png"),
-	STAIRS("Stairs", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	PORTAL("Portal", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	PARKING("Parking", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	HALLWAY("Hallway", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	BATHROOM_M("Male Bathroom", "/Bathroom.png", "/Elevator.png", "/Bathroom.png"),
-	BATHROOM_F("Women's Bathroom", "/Bathroom.png", "/Elevator.png", "/MysteryRoom.png"),
-	BATHROOM_U("Unisex Bathroom", "/Bathroom.png", "/Elevator.png", "/MysteryRoom.png"),
-	SHOP("Gift Shop", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	CAFE("Cafe", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
+	STAIRS("Stairs", "/Stairs.png", "/StairsOrigin.png", "/StairsDest.png"),
+	PORTAL("Portal", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	PARKING("Parking", "/Parking.png", "/ParkingOrigin.png", "/ParkingDest.png"),
+	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	BATHROOM_M("Male Bathroom", "/Bathroom_M.png", "/Bathroom_MOrigin.png", "/Bathroom_MDest.png"),
+	BATHROOM_W("Women's Bathroom", "/Bathroom_W.png", "/Bathroom_WOrigin.png", "/Bathroom_WDest.png"),
+	BATHROOM_U("Unisex Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
+	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	CAFE("Cafe", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	;
 
 	private String name;

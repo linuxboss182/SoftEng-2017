@@ -1,11 +1,14 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.icons.IconManager;
 import entities.FloorProxy;
 import controllers.shared.MapDisplayController;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -37,26 +40,42 @@ public class UserMasterController
 		extends MapDisplayController
 		implements Initializable
 {
-	@FXML private JFXButton logAsAdmin;
-	@FXML private ListView<Room> directoryView;
+	@FXML private ImageView logAsAdmin;
+	@FXML private JFXListView<Room> resultsListView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextField searchBar;
+	@FXML protected JFXTextField destinationField;
+	@FXML public ImageView destImageView;
+	@FXML protected JFXTextField startField;
+	@FXML public ImageView startImageView;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
-	@FXML private Button aboutBtn;
+	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
+	@FXML private VBox drawerVBox;
+	@FXML private Pane parentDrawerPane;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXDrawer navDrawer;
+
+	@FXML private JFXHamburger navHamburgerBtn;
+	private HamburgerBackArrowBasicTransition back;
 
 	private double clickedX;
 	private double clickedY;
 	protected Room startRoom;
 	protected Room endRoom;
 
-	IconManager iconManager;
+
+
+	@FXML private HBox startHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox goHBox;
+	@FXML private HBox bottomHBox;
 
 	/**
 	 * Get the scene this is working on
@@ -77,14 +96,24 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
+
+
+		this.initializeDrawer();
+
+		//Set IDs for CSS
+		setStyleIDs();
+
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
-		if (startRoom == null) startRoom = directory.getKiosk();
+		if (startRoom == null) {
+			startRoom = directory.getKiosk();
+			startField.setText("Your Location");
+		}
 
-		this.iconManager = new IconManager();
+
 		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
@@ -113,10 +142,74 @@ public class UserMasterController
 		setHotkeys();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater(this::initWindowResizeListener);
+		Platform.runLater( () -> {
+			initWindowResizeListener();
+			resizeDrawerListener(parentDrawerPane.getHeight());
+
+		});
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
-		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
+		logAsAdmin.setImage(new Image("/lock.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
+
+		parentDrawerPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				resizeDrawerListener((double)newSceneHeight);
+			}
+		});
+		resizeDrawerListener(677.0);
+
+		navDrawer.open();
+		isDrawerOpen = true;
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
+
+	}
+
+	public void resizeDrawerListener(Double newSceneHeight) {
+		System.out.println("Height: " + newSceneHeight);
+		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	}
+
+	public void setStyleIDs() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox-go");
+		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
+		getDirectionsBtn.getStyleClass().add("jfx-button");
+		topToolBar.getStyleClass().add("tool-bar");
+		parentDrawerPane.getStyleClass().add("drawer");
+
+	}
+
+	@FXML
+	public void onNavHamburgerBtnClicked() throws IOException {
+		back.setRate(back.getRate() * -1);
+		back.play();
+		if(navDrawer.isShown()) {
+			navDrawer.close();
+			isDrawerOpen = false;
+		} else {
+			navDrawer.open();
+			isDrawerOpen = true;
+		}
+		initWindowResizeListener();
+	}
+
+	private void initializeDrawer() {
+		this.navDrawer.setContent(mapSplitPane);
+		this.navDrawer.setSidePane(parentDrawerPane);
+		this.navDrawer.setOverLayVisible(false);
 	}
 
 	private void initializeIcons() {
@@ -151,7 +244,7 @@ public class UserMasterController
 	 * @param searchString The new string in the search bar
 	 */
 	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
 			// The Collator allows case-insensitie comparison
@@ -168,7 +261,7 @@ public class UserMasterController
 					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
 					          .contains(normed)); // check with unicode normalization
 
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
+			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
 
@@ -215,11 +308,13 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
+		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
+			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
+
+		});
 	}
 
 	/**
@@ -268,17 +363,20 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
-			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
-		} else {
+		if (this.destinationField.isFocused()) {
 			this.selectEndRoom(room);
+			destinationField.setText(room.getName());
+
+//			this.changeStartBtn.setDisable(false);
+		} else {
+			this.selectStartRoom(room);
+			startField.setText(room.getName());
 		}
 	}
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.changeStartBtn.setDisable(true);
+//		this.changeStartBtn.setDisable(true);
 	}
 
 	protected void selectStartRoom(Room r) {

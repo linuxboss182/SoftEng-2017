@@ -1,6 +1,7 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.extras.SMSController;
 import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
@@ -15,10 +16,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -55,15 +55,35 @@ public class UserPathController
 		implements Initializable
 {
 	@FXML private JFXButton logAsAdmin;
+	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
 	@FXML protected TextFlow directionsTextField;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
-
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
+	@FXML private JFXHamburger directionsHamburgerButton;
+	@FXML private VBox drawerVBox;
+	@FXML private ImageView backImageView;
+	@FXML private Label startLbl;
+	@FXML private HBox directionsLblHBox;
+	@FXML private ImageView startImageView;
+	@FXML private JFXDrawer directionsDrawer;
+	@FXML private JFXListView<?> directionsListView;
+	@FXML private HBox destLblHBox;
+	@FXML private Label destLbl;
+	@FXML private Label directionsLbl;
+	@FXML private VBox pathVBox;
+	@FXML private Pane parentPathDrawerPane;
+	@FXML private HBox backHBox;
+	@FXML private HBox startLblHBox;
+	@FXML private ImageView destImageView;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXDrawer mapIconDrawer;
+	private HamburgerBackArrowBasicTransition back;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -71,7 +91,7 @@ public class UserPathController
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
-	private IconManager iconManager;
+
 
 
 	/**
@@ -95,6 +115,7 @@ public class UserPathController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.initializeDrawer();
 
 		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -118,6 +139,44 @@ public class UserPathController
 
 		setScrollZoom();
 
+		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
+
+
+		back = new HamburgerBackArrowBasicTransition();
+		back.setRate(-1);
+
+		backImageView.setImage(new Image("/back.png"));
+
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		//parentPathDrawerPane.setPickOnBounds(false);
+		//floatingBorderPane.setPickOnBounds(false);
+		//mapIconDrawer.setPickOnBounds(true);
+
+		//Set IDs for CSS
+		setStyleIDs();
+
+
+
+	}
+
+	public void setStyleIDs() {
+		backHBox.getStyleClass().add("hbox");
+		startLblHBox.getStyleClass().add("hbox");
+		destLblHBox.getStyleClass().add("hbox");
+		directionsLblHBox.getStyleClass().add("hbox-go");
+		topToolBar.getStyleClass().add("tool-bar");
+		parentPathDrawerPane.getStyleClass().add("drawer");
+		startLbl.getStyleClass().add("path-label");
+		destLbl.getStyleClass().add("path-label");
+		sendToPhoneBtn.getStyleClass().add("jfx-button");
+		directionsLbl.getStyleClass().add("path-label");
+		doneBtn.getStyleClass().add("blue-button");
+
+	}
+
+	private void setContentAnchorListeners() {
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();
@@ -134,16 +193,37 @@ public class UserPathController
 			event.consume();
 		});
 
-
 		// Redraw rooms when the background is released
 		// TODO: Fix bug where clicking rooms un-draws them
 		contentAnchor.setOnMouseReleased(event -> {
 			iconController.resetAllRooms();
 			this.displayRooms();
 		});
+	}
 
-		setHotkeys();
-		Platform.runLater( () -> initWindowResizeListener());
+	@FXML
+	private void onHamburgerBtnClicked() throws IOException {
+		back.setRate(back.getRate() * -1);
+		back.play();
+		if(directionsDrawer.isShown()) {
+			directionsDrawer.close();
+			isDirectionsOpen = false;
+		} else {
+			directionsDrawer.open();
+			isDirectionsOpen = true;
+		}
+	}
+
+	private void initializeDrawer() {
+		this.directionsDrawer.setContent(mapSplitPane);
+		this.directionsDrawer.setSidePane(parentPathDrawerPane);
+		this.directionsDrawer.setOverLayVisible(false);
+		this.directionsDrawer.open();
+		isDirectionsOpen = true;
+		this.mapIconDrawer.setContent(mapScroll);
+		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+		this.mapIconDrawer.setOverLayVisible(false);
+		this.mapIconDrawer.open();
 	}
 
 	/**
@@ -161,6 +241,8 @@ public class UserPathController
 		if ((startRoom == null) || (endRoom == null)) {
 			return false;
 		}
+		startLbl.setText(startRoom.getName());
+		destLbl.setText(endRoom.getName());
 
 		Node startNode = startRoom.getLocation();
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
@@ -233,7 +315,7 @@ public class UserPathController
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 0;
+		int centerX = 430;
 
 
 		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
@@ -294,7 +376,14 @@ public class UserPathController
 
 		iconController.resetAllRooms();
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.floorsTraveledAnchorPane.getScene().setRoot(userPath);
+		this.mapScroll.getScene().setRoot(userPath);
+	}
+
+	@FXML
+	public void backBtnClicked() throws IOException {
+		iconController.resetAllRooms();
+		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		this.mapScroll.getScene().setRoot(userPath);
 	}
 
 	@FXML
@@ -375,13 +464,5 @@ public class UserPathController
 
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
-	}
-
-	@FXML
-	public void logAsAdminClicked()
-			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		floorsTraveledAnchorPane.getScene().setRoot(loginPrompt);
 	}
 }
