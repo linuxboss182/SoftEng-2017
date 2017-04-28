@@ -361,6 +361,9 @@ public class UserMasterController
 
 	public void setState(UserState state) {
 		this.getScene().setRoot(state.getRoot());
+		this.startRoom = state.getStartRoom();
+		this.endRoom = state.getEndRoom();
+		// TODO: text field?
 		if(state.getLoggedIn()) {
 			this.directory.logIn();
 		} else {
