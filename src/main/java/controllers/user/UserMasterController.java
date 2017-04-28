@@ -172,9 +172,11 @@ public class UserMasterController
 	public void setStyleIDs() {
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
-		goHBox.getStyleClass().add("hbox");
-		bottomHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox-go");
+		//bottomHBox.getStyleClass().add("hbox");
+		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
+		parentDrawerPane.getStyleClass().add("drawer");
 
 	}
 
