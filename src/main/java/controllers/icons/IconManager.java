@@ -111,7 +111,10 @@ public class IconManager
 		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
-		//Image settings
+		image.setScaleX(0.25);
+		image.setScaleY(0.25);
+
+		//Center image on the coordinates.
 		image.setLayoutX(x - imageWidth/2);
 		image.setLayoutY(y - imageHeight/2);
 

@@ -111,11 +111,7 @@ public class IconController
 		Icon icon = room.getIcon();
 		icon.setImage(RoomType.DEFAULT.getImage());
 
-		if (room == this.directory.getKiosk()) {
-			icon.setImage(RoomType.KIOSK.getImage());
-		} else if (room.getDescription().equalsIgnoreCase("ELEVATOR")) {
-			icon.setImage(RoomType.ELEVATOR.getImage());
-		}
+		room.getIcon().setImage(room.getType().getImage());
 	}
 
 	public void resetAllRooms() {
