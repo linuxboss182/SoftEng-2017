@@ -43,7 +43,8 @@ import java.util.regex.Pattern;
    X    Y   Floor   Buildingname
    10   20  1       FAULKNER
  */
-public class NodeTSVParser {
+public class NodeCSVParser
+{
 	private static Pattern nodePattern = Pattern.compile(
 			"^(?<x>\\d{1,2}),(?<y>\\d{1,2}),(?<floor>\\d{1,2}),(?<buildingname>\\w+$)");
 
@@ -58,7 +59,7 @@ public class NodeTSVParser {
 	 * @param file The file to read data from
 	 * @param directory The directory to add the parsed data to
 	 */
-	public NodeTSVParser(File file, Directory directory) {
+	public NodeCSVParser(File file, Directory directory) {
 		this.file = file;
 		this.dir = directory;
 	}
