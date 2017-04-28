@@ -385,7 +385,7 @@ public class EditorController
 	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
 		for (Node node : directory.getNodesOnFloor(directory.getFloor())) {
-			for (Node neighbor : node.getNeighbors()) {
+			for (Node neighbor : directory.getNodeNeighbors(node)) {
 				if ((node.getFloor() == neighbor.getFloor()) &&
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
@@ -674,7 +674,7 @@ public class EditorController
 			}
 			// control click to select neighbors instead of target node
 			if (e.isControlDown()) {
-				node.getNeighbors().forEach(this::selectNode);
+				directory.getNodeNeighbors(node).forEach(this::selectNode);
 			}
 
 			this.selectOrDeselectNode(node);

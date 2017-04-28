@@ -102,6 +102,8 @@ public class Directory
 		this.permissions.put(user, permission);
 	}
 
+
+	/* User/login functions */
 	public void logIn() {
 		this.loggedIn = true;
 	}
@@ -121,6 +123,9 @@ public class Directory
 	public String getPermissions(String username){
 		return permissions.get(username);
 	}
+
+
+
 
 	/* Element removal methods */
 
@@ -259,11 +264,11 @@ public class Directory
 	 * @return
 	 */
 	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
-		return this.filterRooms(room -> room.getLocation() != null
-				&& room.getLocation().getFloor() == floor.getNumber()
+		return this.filterRooms(room -> (room.getLocation() != null)
+				&& (room.getLocation().getFloor() == floor.getNumber())
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
-				&& ((!room.getLocation().isProfessional())
-				|| (this.loggedIn)));}
+				&& (! room.getLocation().isProfessionalOnly() || this.loggedIn));
+	}
 
 	/**
 	 * Gets all nodes in this directory that match the given predicate
@@ -351,6 +356,21 @@ public class Directory
 	}
 
 	/* Program logic functions */
+
+	/**
+	 * Gets the login-aware neighbors of the given node
+	 *
+	 * @param node The node to get neighbors for
+	 * @return The currently-available neighbors of the node
+	 */
+	public Set<Node> getNodeNeighbors(Node node) {
+		Set<Node> neighbors = node.getNeighbors();
+		if (! this.loggedIn) {
+			neighbors.removeIf(Node::isProfessionalOnly);
+		}
+		return neighbors;
+	}
+
 
 	/** return whether this directory has a kiosk */
 	public boolean hasKiosk() {
