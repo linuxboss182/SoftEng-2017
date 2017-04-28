@@ -64,7 +64,6 @@ public class UserPathController
 	@FXML private ImageView logoImageView;
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
-	@FXML private JFXDrawer mapIconDrawer;
 	@FXML private JFXHamburger directionsHamburgerButton;
 	@FXML private VBox drawerVBox;
 	@FXML private ImageView backImageView;
@@ -81,6 +80,8 @@ public class UserPathController
 	@FXML private HBox startLblHBox;
 	@FXML private ImageView destImageView;
 	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXDrawer mapIconDrawer;
 	private HamburgerBackArrowBasicTransition back;
 
 	private static final double PATH_WIDTH = 4.0;
@@ -148,6 +149,9 @@ public class UserPathController
 
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
+		//parentPathDrawerPane.setPickOnBounds(false);
+		//floatingBorderPane.setPickOnBounds(false);
+		//mapIconDrawer.setPickOnBounds(true);
 
 		//Set IDs for CSS
 		setStyleIDs();
@@ -368,7 +372,7 @@ public class UserPathController
 
 		iconController.resetAllRooms();
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.floorsTraveledAnchorPane.getScene().setRoot(userPath);
+		this.mapScroll.getScene().setRoot(userPath);
 	}
 
 	@FXML

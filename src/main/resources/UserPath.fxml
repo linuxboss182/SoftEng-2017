@@ -64,6 +64,15 @@ CENTER: Drawer
     <center>
         <JFXDrawer fx:id="directionsDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
             <children>
+            <BorderPane fx:id="floatingBorderPane">
+               <right>
+                  <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="100.0" right="30.0" top="100.0" />
+                     </BorderPane.margin>
+                  </Slider>
+               </right>
+            </BorderPane>
             <Pane fx:id="parentPathDrawerPane" prefHeight="200.0" prefWidth="200.0">
                <children>
                       <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
@@ -144,15 +153,6 @@ CENTER: Drawer
                         <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
                     </children>
                 </JFXDrawer>
-            <BorderPane fx:id="floatingBorderPane">
-               <right>
-                  <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="100.0" right="30.0" top="100.0" />
-                     </BorderPane.margin>
-                  </Slider>
-               </right>
-            </BorderPane>
 
             </children>
             <stylesheets>

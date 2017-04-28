@@ -60,6 +60,7 @@ public class UserMasterController
 	@FXML private Pane parentDrawerPane;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXDrawer navDrawer;
 
 	@FXML private JFXHamburger navHamburgerBtn;
 	private HamburgerBackArrowBasicTransition back;
@@ -166,10 +167,12 @@ public class UserMasterController
 		});
 		resizeDrawerListener(677.0);
 
-
-
 		navDrawer.open();
 		isDrawerOpen = true;
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
 
 	}
 
