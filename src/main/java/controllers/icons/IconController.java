@@ -56,7 +56,7 @@ public class IconController
 		boolean isPortal = directory.getNodeNeighbors(node).stream()
 				.anyMatch(n -> (!node.getBuildingName().equalsIgnoreCase(n.getBuildingName())));
 
-		if (node.isProfessionalOnly()) {
+		if (node.isRestricted()) {
 			NODE.RESTRICTED.applyTo(node.getShape());
 
 			if (isElevator) NODE.RESTRICTED_ELEVATOR.applyTo(node.getShape());
