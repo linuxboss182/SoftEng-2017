@@ -141,7 +141,11 @@ public class UserMasterController
 		setHotkeys();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater( () -> initWindowResizeListener());
+		Platform.runLater( () -> {
+			initWindowResizeListener();
+			resizeDrawerListener(parentDrawerPane.getHeight());
+
+		});
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
@@ -155,19 +159,23 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-
-
-		System.out.print(677 - (startHBox.getHeight() + destHBox.getHeight() + goHBox.getHeight() + bottomHBox.getHeight()));
 		parentDrawerPane.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				System.out.println("Height: " + newSceneHeight);
-				resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+				resizeDrawerListener((double)newSceneHeight);
 			}
 		});
+		resizeDrawerListener(677.0);
+
+
 
 		navDrawer.open();
 		isDrawerOpen = true;
 
+	}
+
+	public void resizeDrawerListener(Double newSceneHeight) {
+		System.out.println("Height: " + newSceneHeight);
+		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	public void setStyleIDs() {

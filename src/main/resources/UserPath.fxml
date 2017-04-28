@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
@@ -32,6 +33,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import java.net.URL?>
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
 
@@ -39,7 +41,7 @@
 TOP: Menu bar
 -->
     <top>
-        <JFXToolbar prefHeight="45.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
+        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="directionsHamburgerButton" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -90,7 +92,7 @@ CENTER: Drawer
                               </Label>
                            </children>
                         </HBox>
-                        <HBox fx:id="destHLblBox">
+                        <HBox fx:id="destLblHBox">
                            <children>
                               <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
                                  <HBox.margin>
@@ -113,6 +115,7 @@ CENTER: Drawer
                                     </Label>
                            </children>
                         </HBox>
+                        <TextFlow fx:id="directionsTextField" prefHeight="200.0" prefWidth="200.0" />
                         <JFXListView fx:id="directionsListView" />
                               <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" prefWidth="154.0" style="-fx-background-color: #5087b4;" text="Send Directions to Phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                           </children>
@@ -152,6 +155,9 @@ CENTER: Drawer
             </BorderPane>
 
             </children>
+            <stylesheets>
+                <URL value="@/DrawerStyle.css" />
+            </stylesheets>
         </JFXDrawer>
    </center>
 </BorderPane>

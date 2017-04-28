@@ -1,9 +1,6 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDrawer;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.extras.SMSController;
 import controllers.icons.IconManager;
@@ -76,13 +73,14 @@ public class UserPathController
 	@FXML private ImageView startImageView;
 	@FXML private JFXDrawer directionsDrawer;
 	@FXML private JFXListView<?> directionsListView;
-	@FXML private HBox destHLblBox;
+	@FXML private HBox destLblHBox;
 	@FXML private Label destLbl;
 	@FXML private VBox pathVBox;
 	@FXML private Pane parentPathDrawerPane;
 	@FXML private HBox backHBox;
 	@FXML private HBox startLblHBox;
 	@FXML private ImageView destImageView;
+	@FXML private JFXToolbar topToolBar;
 	private HamburgerBackArrowBasicTransition back;
 
 	private static final double PATH_WIDTH = 4.0;
@@ -147,6 +145,27 @@ public class UserPathController
 		back.setRate(-1);
 
 		backImageView.setImage(new Image("/back.png"));
+
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+
+		//Set IDs for CSS
+		setStyleIDs();
+
+
+
+	}
+
+	public void setStyleIDs() {
+		backHBox.getStyleClass().add("hbox");
+		startLblHBox.getStyleClass().add("hbox");
+		destLblHBox.getStyleClass().add("hbox");
+		directionsLblHBox.getStyleClass().add("hbox-go");
+		topToolBar.getStyleClass().add("tool-bar");
+		parentPathDrawerPane.getStyleClass().add("drawer");
+		startLbl.getStyleClass().add("path-label");
+		destLbl.getStyleClass().add("path-label");
+
 	}
 
 	private void setContentAnchorListeners() {
@@ -214,6 +233,8 @@ public class UserPathController
 		if ((startRoom == null) || (endRoom == null)) {
 			return false;
 		}
+		startLbl.setText(startRoom.getName());
+		destLbl.setText(endRoom.getName());
 
 		Node startNode = startRoom.getLocation();
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
@@ -223,10 +244,10 @@ public class UserPathController
 		if (path == null) {
 			return false;
 		}
-		//this.directionsTextField.getChildren().clear();
-		//textDirections.setText(DirectionsGenerator.fromPath(path));
+		this.directionsTextField.getChildren().clear();
+		textDirections.setText(DirectionsGenerator.fromPath(path));
 		//Call text directions
-		//this.directionsTextField.getChildren().add(textDirections);
+		this.directionsTextField.getChildren().add(textDirections);
 
 		/* Draw the buttons for each floor on a multi-floor path. */
 		// segment paths by floor and place them in a LinkedList
@@ -242,7 +263,7 @@ public class UserPathController
 		seg.add(path.get(path.size()-1));
 		pathSegments.addLast(seg);
 		paintPath(pathSegments.get(0));
-		//this.directionsTextField.getChildren().add(textDirections);
+		this.directionsTextField.getChildren().add(textDirections);
 		// pathSegment now has all segments
 		drawMiniMaps(path);
 		return true;
@@ -312,7 +333,7 @@ public class UserPathController
 			this.changeFloor(FloorProxy.getFloor(floor.building, floor.number));
 			this.paintPath(path);
 			//Call text directions
-			//this.directionsTextField.getChildren().add(textDirections);
+			this.directionsTextField.getChildren().add(textDirections);
 			if(this.bgRectangle != null) this.bgRectangle.setVisible(false);
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
@@ -380,7 +401,7 @@ public class UserPathController
 	 */
 	// TODO: Fix bug where separate paths on one floor are connected
 	public void paintPath(List<Node> directionNodes) {
-		//this.directionsTextField.getChildren().clear();
+		this.directionsTextField.getChildren().clear();
 		// This can be any collection type;
 		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
