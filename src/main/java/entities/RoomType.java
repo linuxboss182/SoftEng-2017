@@ -19,6 +19,7 @@ public enum RoomType
 	BATHROOM_U("Unisex Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
 	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	CAFE("Cafe", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"))
 	;
 
 	private String name;

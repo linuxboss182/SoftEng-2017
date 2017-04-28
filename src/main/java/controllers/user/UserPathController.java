@@ -5,6 +5,7 @@ import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.extras.SMSController;
 import controllers.icons.IconManager;
 import controllers.shared.MapDisplayController;
+import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
@@ -253,7 +254,13 @@ public class UserPathController
 			return false;
 		}
 		this.directionsTextField.getChildren().clear();
-		textDirections.setText(DirectionsGenerator.fromPath(path));
+		List<Direction> directions = DirectionsGenerator.fromPath(path);
+		String textDirs = "";
+		for(Direction d: directions){
+			textDirs  = textDirs+d.getTextDirection()+"\n";
+		}
+
+		textDirections.setText(textDirs);
 		//Call text directions
 		this.directionsTextField.getChildren().add(textDirections);
 
