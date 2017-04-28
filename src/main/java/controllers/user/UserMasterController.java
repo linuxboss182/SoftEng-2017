@@ -117,7 +117,6 @@ public class UserMasterController
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
-
 	}
 
 	private void initializeIcons() {

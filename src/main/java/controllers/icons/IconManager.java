@@ -100,6 +100,8 @@ public class IconManager
 	 *
 	 */
 	public Icon makeIcon(Room room) {
+		System.out.println("IconManager.makeIcon");
+
 		RoomType type = room.getType();
 		String name = room.getDisplayName();
 		Image originalImage = type.getImage();
@@ -116,8 +118,8 @@ public class IconManager
 		image.setLayoutY(y - imageHeight/2);
 
 		//Label settings
-		label.setLayoutX(x + DEFAULT_LABEL_X_OFFSET);
-		label.setLayoutY(y + DEFAULT_LABEL_Y_OFFSET);
+		label.setLayoutX(x + room.getLabelOffsetX());
+		label.setLayoutY(y + room.getLabelOffsetY());
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);

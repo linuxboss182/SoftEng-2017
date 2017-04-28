@@ -49,6 +49,7 @@ public class LoginHandler
 			if(ApplicationController.getDirectory().getPermissions(uppercasedUsername).equals("admin")) {
 				return 2;
 			}else{
+				ApplicationController.getDirectory().professionalLogin();
 				return 1;
 			}
 		}
