@@ -69,7 +69,6 @@ public class UserPathController
 	@FXML private ImageView logoImageView;
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
-	@FXML private JFXDrawer directionsDrawer;
 	@FXML private JFXDrawer mapIconDrawer;
 	@FXML private JFXHamburger directionsHamburgerButton;
 	@FXML private VBox drawerVBox;
@@ -82,7 +81,7 @@ public class UserPathController
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
-	private IconManager iconManager;
+
 
 
 	/**
@@ -171,8 +170,10 @@ public class UserPathController
 		back.play();
 		if(directionsDrawer.isShown()) {
 			directionsDrawer.close();
+			isDirectionsOpen = false;
 		} else {
 			directionsDrawer.open();
+			isDirectionsOpen = true;
 		}
 	}
 
@@ -181,6 +182,7 @@ public class UserPathController
 		this.directionsDrawer.setSidePane(drawerVBox);
 		this.directionsDrawer.setOverLayVisible(false);
 		this.directionsDrawer.open();
+		isDirectionsOpen = true;
 		this.mapIconDrawer.setContent(mapScroll);
 		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
 		this.mapIconDrawer.setOverLayVisible(false);
@@ -274,7 +276,7 @@ public class UserPathController
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 0;
+		int centerX = 430;
 
 
 		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);

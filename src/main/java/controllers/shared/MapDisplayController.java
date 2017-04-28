@@ -1,6 +1,8 @@
 package controllers.shared;
 
+import com.jfoenix.controls.JFXDrawer;
 import controllers.icons.IconController;
+import controllers.icons.IconManager;
 import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -34,7 +36,10 @@ public abstract class MapDisplayController
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
 	@FXML protected ScrollPane mapScroll;
-
+	@FXML protected JFXDrawer navDrawer;
+	@FXML protected JFXDrawer directionsDrawer;
+	protected boolean isDrawerOpen = false;
+	protected boolean isDirectionsOpen = false;
 	protected Directory directory;
 	protected IconController iconController;
 
@@ -57,6 +62,7 @@ public abstract class MapDisplayController
 
 	@FXML protected Slider zoomSlider;
 	@FXML protected BorderPane parentBorderPane;
+	protected IconManager iconManager = new IconManager();
 
 	// TODO: move shared initializaton to MDC
 //	@Override
@@ -241,9 +247,17 @@ public abstract class MapDisplayController
 			currentScale = potentialScaleY;
 		}
 
-		//Fixes the offset to center
 		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
 		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+
+		//Fixes the offset to center
+		if (isDrawerOpen || isDirectionsOpen) {
+			System.out.println("drawer open");
+			potentialX += 420;
+		} else {
+			potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		}
+
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
 

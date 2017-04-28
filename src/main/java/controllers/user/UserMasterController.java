@@ -58,7 +58,7 @@ public class UserMasterController
 	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
 	@FXML private VBox drawerVBox;
-	@FXML private JFXDrawer navDrawer;
+
 	@FXML private JFXHamburger navHamburgerBtn;
 	private HamburgerBackArrowBasicTransition back;
 
@@ -67,7 +67,6 @@ public class UserMasterController
 	protected Room startRoom;
 	protected Room endRoom;
 
-	private IconManager iconManager;
 
 	/**
 	 * Get the scene this is working on
@@ -97,7 +96,7 @@ public class UserMasterController
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) startRoom = directory.getKiosk();
 
-		this.iconManager = new IconManager();
+
 		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
@@ -140,6 +139,9 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
+		navDrawer.open();
+		isDrawerOpen = true;
+
 	}
 
 	@FXML
@@ -148,9 +150,12 @@ public class UserMasterController
 		back.play();
 		if(navDrawer.isShown()) {
 			navDrawer.close();
+			isDrawerOpen = false;
 		} else {
 			navDrawer.open();
+			isDrawerOpen = true;
 		}
+		initWindowResizeListener();
 	}
 
 	private void initializeDrawer() {
@@ -258,8 +263,10 @@ public class UserMasterController
 		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
+			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
+
+		});
 	}
 
 	/**
@@ -309,14 +316,15 @@ public class UserMasterController
 	 */
 	protected void selectRoomAction(Room room) {
 		if (this.destinationField.isFocused()) {
-
 			this.selectEndRoom(room);
 			destinationField.setText(room.getName());
+
 //			this.changeStartBtn.setDisable(false);
 		} else {
 			this.selectStartRoom(room);
 			startField.setText(room.getName());
 		}
+
 	}
 
 	@FXML
