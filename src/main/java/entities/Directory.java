@@ -21,6 +21,7 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 	private boolean loggedIn;
+	private long timeout;
 	private Map<String, Account> Accounts;
 
 	private FloorImage floor;
@@ -501,6 +502,14 @@ public class Directory
 
 		targets.removeAll(visited);
 		return targets.isEmpty();
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
+	public long getTimeout() {
+		return this.timeout;
 	}
 }
 

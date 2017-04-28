@@ -82,6 +82,8 @@ public class EditorController
 	@FXML private ToggleButton restrictedView;
 	@FXML private JFXButton modifyAccountBtn;
 
+	private Timer timer;
+
 	/**
 	 * Class implemented for use in multiple selection
 	 *
@@ -173,6 +175,14 @@ public class EditorController
 		setHotkeys();
 
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
+		if(this.directory.isLoggedIn()) {
+			timer.schedule(new TimerTask()
+			{
+				public void run() {
+
+				}
+			}, directory.getTimeout());
+		}
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
 	}
