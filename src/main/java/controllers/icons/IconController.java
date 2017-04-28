@@ -53,7 +53,7 @@ public class IconController
 
 		// Set elevator colors
 		// TODO: Use a different color for portals
-		if (node.getNeighbors().stream()
+		if (directory.getNodeNeighbors(node).stream()
 				.anyMatch(n -> (node.getFloor() != n.getFloor())
 				|| !node.getBuildingName().equalsIgnoreCase(n.getBuildingName()))) {
 			NODE.ELEVATOR.applyTo(node.getShape());

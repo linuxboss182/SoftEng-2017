@@ -152,7 +152,7 @@ public class EditorController
 
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
-		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
+		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
 	}
 
 
@@ -199,7 +199,7 @@ public class EditorController
 
 	@FXML
 	private void logoutBtnClicked() {
-		directory.professionalLogout();
+		directory.logOut();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
 			// true if and only if the button pressed in the alert did not say "OK"
@@ -327,9 +327,9 @@ public class EditorController
 	@FXML
 	public void restrictedViewBtnClicked(){
 		if(restrictedView.selectedProperty().getValue()){
-			directory.professionalLogin();
+			directory.logIn();
 		}else{
-			directory.professionalLogout();
+			directory.logOut();
 		}
 		this.changeFloor(directory.getFloor());
 	}
@@ -385,7 +385,7 @@ public class EditorController
 	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
 		for (Node node : directory.getNodesOnFloor(directory.getFloor())) {
-			for (Node neighbor : node.getNeighbors()) {
+			for (Node neighbor : directory.getNodeNeighbors(node)) {
 				if ((node.getFloor() == neighbor.getFloor()) &&
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
@@ -674,7 +674,7 @@ public class EditorController
 			}
 			// control click to select neighbors instead of target node
 			if (e.isControlDown()) {
-				node.getNeighbors().forEach(this::selectNode);
+				directory.getNodeNeighbors(node).forEach(this::selectNode);
 			}
 
 			this.selectOrDeselectNode(node);

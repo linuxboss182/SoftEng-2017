@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
@@ -32,15 +33,15 @@ public class LoginController implements Initializable{
 	@FXML private Button loginBtn;
 	@FXML private BorderPane parentBorderPane;
 
-	Directory directory = ApplicationController.getDirectory();
+	private Directory directory = ApplicationController.getDirectory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 //		logins = new LoginHandler();
 //		logins.addAccount("admin", "password", true);
 
-		directory.addUser("ADMIN", "password", "admin");
-		directory.addUser("TEST", "password", "professional");
+		directory.addUser("admin", "password", "admin");
+		directory.addUser("test", "password", "professional");
 
 //		Set<String> passwordSet = directory.getPassHashes();
 //		Set<String> permissionSet = directory.getPermissions();
@@ -62,12 +63,11 @@ public class LoginController implements Initializable{
 
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
-				try{
+				try {
 					cancelBtnClicked();
-				}catch(IOException e1){
-
-				}catch(InvocationTargetException e2){
-
+				} catch (IOException ex) {
+					System.err.println("IOException while cancelling login attempt");
+					throw new RuntimeException(ex);
 				}
 			}
 		});
@@ -79,19 +79,22 @@ public class LoginController implements Initializable{
 
 
 	@FXML
-	public void loginBtnClicked() throws IOException, InvocationTargetException {
-		byte success = LoginHandler.checkLogin(this.usernameField.getText(), this.passwordField.getText());
-		if(success == 2) {
-			Parent adminUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
-			errorLbl.getScene().setRoot(adminUI);
-		}
-		else if (success == 1){
-			Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-			errorLbl.getScene().setRoot(destUI);
-		}
-		else {
-			this.errorLbl.setText("Incorrect Username or Password");
-			this.usernameField.requestFocus();
+	public void loginBtnClicked() throws IOException {
+		LoginStatus status = checkLogin(this.usernameField.getText(), this.passwordField.getText());
+		switch (status) {
+			case ADMIN:
+				// directory.logIn(); // Admins start viewing the user screen
+				Parent adminUI = FXMLLoader.load(this.getClass().getResource("/AdminUI.fxml"));
+				errorLbl.getScene().setRoot(adminUI);
+				break;
+			case PROFESSIONAL:
+				directory.logIn();
+				Parent destUI = FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+				errorLbl.getScene().setRoot(destUI);
+				break;
+			default:
+				this.errorLbl.setText("Incorrect Username or Password");
+				this.usernameField.requestFocus();
 		}
 	}
 
@@ -100,10 +103,9 @@ public class LoginController implements Initializable{
 		if ( e.getCode() == KeyCode.ENTER){
 			try {
 				this.loginBtnClicked();
-			}catch(IOException e1){
-
-			}catch(InvocationTargetException e2){
-
+			} catch (IOException ex) {
+				System.err.println("IOException during login attempt");
+				throw new RuntimeException(ex);
 			}
 		}
 	}
@@ -116,11 +118,48 @@ public class LoginController implements Initializable{
 	}
 
 	@FXML
-	public void cancelBtnClicked() throws IOException, InvocationTargetException {
+	public void cancelBtnClicked() throws IOException {
 		Parent destUI = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		errorLbl.getScene().setRoot(destUI);
 	}
 
 
 
+	/**
+	 * Check if a given username and password form a valid log-in ID
+	 *
+	 * @param username The username to test
+	 * @param password The password to test
+	 * @return 2 for admins, 1 for professionals, or 0 for failed logins
+	 */
+	public LoginStatus checkLogin(String username, String password) {
+		HashMap<String, String> logins = directory.getUsers();
+
+
+		// Branches:
+		// contains key and password is value and is admin
+		// contains key and password is value and not admin
+		// does not contain key or does not contain value
+
+
+		;
+
+		// Safe because the empty string is not a valid password
+		if (logins.getOrDefault(username, "").equals(password)) {
+			switch (directory.getPermissions(username).toUpperCase()) {
+				case "ADMIN":
+					return LoginStatus.ADMIN;
+				case "PROFESSIONAL":
+					return LoginStatus.PROFESSIONAL;
+				default:
+					return LoginStatus.FAILURE;
+			}
+		} else {
+			return LoginStatus.FAILURE;
+		}
+	}
+
+	public enum LoginStatus {
+		ADMIN, PROFESSIONAL, FAILURE;
+	}
 }

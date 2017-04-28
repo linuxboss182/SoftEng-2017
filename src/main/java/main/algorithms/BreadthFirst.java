@@ -3,6 +3,7 @@ package main.algorithms;
 import entities.Node;
 
 import java.util.*;
+import java.util.function.Function;
 
 
 enum BreadthFirst
@@ -19,22 +20,22 @@ enum BreadthFirst
 	}
 
 	@Override
-	public List<Node> findPath(Node start, Node dest)
-			throws PathNotFoundException {
-		// list nodes already visited
-		Set<Node> visited = new HashSet<>();
-		// list of nodes that need to be visited
-		Queue<Node> next = new LinkedList<>();
-		//get to key from value
-		Map<Node, Node> pathHistory = new HashMap<>();
+	public List<Node> findPath(Node start, Node dest,
+	                           Function<Node, Set<Node>> nodeNeighborGetter)
+	                           throws PathNotFoundException {
+
+		Set<Node> visited = new HashSet<>(); // list nodes already visited
+		Queue<Node> next = new LinkedList<>(); // list of nodes that need to be visited
+		Map<Node, Node> pathHistory = new HashMap<>(); // got to keys from values
 		next.add(start);
-		while (! next.isEmpty()){
+
+		while (! next.isEmpty()) {
 			Node current = next.remove();
 			visited.add(current);
-			if(current == dest){
+			if (current == dest) {
 				return makePath(pathHistory, current);
 			}
-			for (Node neighbor: current.getNeighbors()){
+			for (Node neighbor: nodeNeighborGetter.apply(current)) {
 				if (!visited.contains(neighbor)) {
 					pathHistory.put(neighbor, current);
 					next.add(neighbor);

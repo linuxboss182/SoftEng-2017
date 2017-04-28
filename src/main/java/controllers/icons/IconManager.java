@@ -100,8 +100,6 @@ public class IconManager
 	 *
 	 */
 	public Icon makeIcon(Room room) {
-		System.out.println("IconManager.makeIcon");
-
 		RoomType type = room.getType();
 		String name = room.getDisplayName();
 		Image originalImage = type.getImage();
