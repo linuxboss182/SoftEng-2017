@@ -121,8 +121,8 @@ public class Room
 
 	void setDisplayName(String displayName) {
 		this.displayName = displayName;
-		if ((this.icon != null) && (this.icon.getLabel() != null)) {
-			this.icon.getLabel().setText(displayName);
+		if (this.icon != null) {
+			this.icon.updateLabel(displayName);
 		}
 	}
 

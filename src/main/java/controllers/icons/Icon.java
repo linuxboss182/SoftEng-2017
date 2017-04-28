@@ -34,15 +34,16 @@ public class Icon
 		this.label.relocate(x, y);
 	}
 
-	public ImageView getImage() {
+	ImageView getImage() {
 		return this.image;
 	}
 
-	public void setImage(Image image) {
+	Label getLabel() {
+		return this.label;
+	}
+
+	void setImage(Image image) {
 		this.image.setImage(image);
-		System.out.println(this.room);
-		System.out.println(this.room.getLocation());
-		System.out.println(this.room.getLocation().getX());
 		double x = this.room.getLocation().getX();
 		double y = this.room.getLocation().getY();
 		double imageHeight = image.getHeight();
@@ -54,19 +55,15 @@ public class Icon
 		this.image.setLayoutY(y - imageHeight/2);
 	}
 
-	@Deprecated
-	public Label getLabel() {
-		return this.label;
-	}
-
 	/**
-	 * Set the label text for this icon, or hide the label if given an empty string
+	 * Update the label text for this icon, or hide the label if given an empty string
 	 *
 	 * @param text The text to display, or the empty string
 	 */
-	void setLabelText(String text) {
-		if ("".equals(text)) {
+	public void updateLabel(String text) {
+		if ("".equals(text) || text == null) {
 			this.label.setVisible(false);
+			this.label.setText("");
 		} else {
 			this.label.setVisible(true);
 			this.label.setText(text);
