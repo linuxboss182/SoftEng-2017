@@ -14,6 +14,26 @@ import java.util.function.Function;
  */
 public class Node
 {
+	public RoomType getType() {
+		if(this.room == null) {
+			return RoomType.NONE;
+		} else {
+			switch (room.getDescription()) {
+				case "elevator":
+					return RoomType.ELEVATOR;
+				case "stairs":
+					return RoomType.STAIRS;
+				case "portal":
+					return RoomType.PORTAL;
+				case "hallway":
+					return RoomType.HALLWAY;
+				case "parking lot":
+					return RoomType.PARKING;
+				default:
+					return RoomType.DEFAULT;
+			}
+		}
+	}
 	private double x;
 	private double y;
 	private int floor;

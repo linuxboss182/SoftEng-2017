@@ -59,7 +59,7 @@ TOP: Menu bar
 CENTER: Drawer
 -->
     <center>
-        <JFXDrawer fx:id="directionsDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
+        <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
             <children>
             <BorderPane fx:id="floatingBorderPane">
                <right>
@@ -70,11 +70,11 @@ CENTER: Drawer
                   </Slider>
                </right>
             </BorderPane>
-            <Pane fx:id="parentPathDrawerPane" prefHeight="200.0" prefWidth="200.0">
+            <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
                <children>
                       <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
                           <children>
-      
+
                               <HBox fx:id="backHBox">
                                   <children>
                                       <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" onMouseClicked="#backBtnClicked" pickOnBounds="true" preserveRatio="true">
