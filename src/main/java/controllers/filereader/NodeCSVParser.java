@@ -5,6 +5,7 @@ package controllers.filereader;
  */
 
 import entities.Directory;
+import entities.FloorProxy;
 import entities.Node;
 
 import java.io.*;
@@ -36,17 +37,21 @@ import java.util.regex.Pattern;
  * unexpected results may occur.</p>
  */
 /*
-   Expected Format:
-   10,20,1,FAULKNER
+   Expected Format for Nodes:
+   Node,10,20,1,FAULKNER
+
+   Expected Format for Rooms:
+   Room,10,30,1,FAULKNER,Name,ShortName,Description
 
    Populate your sheet with column names for readability:
-   X    Y   Floor   Buildingname
-   10   20  1       FAULKNER
+   Type     X   Y   Floor   BuildingName    Name    ShortName   Description
+   Node     10  20  1       FAULKNER
+   Room     10  30  2       FAULKNER        TestName    TN      A Room
  */
 public class NodeCSVParser
 {
 	private static Pattern nodePattern = Pattern.compile(
-			"^(?<x>\\d{1,2}),(?<y>\\d{1,2}),(?<floor>\\d{1,2}),(?<buildingname>\\w+$)");
+			"^(?<type>\\w+),(?<x>\\d{1,2}),(?<y>\\d{1,2}),(?<floor>\\d{1,2}),(?<buildingname>(\\w+\\s*\\w*)*),(?<name>(\\w+\\s*\\w*)*),(?<sname>(\\w+\\s*\\w*)*),(?<desc>(\\w+\\s*\\w*)*$)");
 
 	private File file;
 	private Directory dir = null;
@@ -115,8 +120,19 @@ public class NodeCSVParser
 			Matcher match = nodePattern.matcher(line);
 			if (match.matches()) {
 				// make a node
-				dir.addNewNode(Double.valueOf(match.group("x")), Double.valueOf(match.group("y")),
-							   Integer.valueOf(match.group("floor")), match.group("buildingname"));
+				if(match.group("type").equals("Node")) {
+					System.out.println("Node");
+					dir.addNewNode(Double.valueOf(match.group("x")), Double.valueOf(match.group("y")),
+							Integer.valueOf(match.group("floor")), match.group("buildingname"));
+				} else if (match.group("type").equals("Room")){
+					System.out.println("Room");
+					dir.addNewRoomNode(Double.valueOf(match.group("x")), Double.valueOf(match.group("y")),
+									   FloorProxy.getFloor(match.group("buildingname"), Integer.valueOf(match.group("floor"))),
+									   match.group("name"), match.group("sname"), match.group("desc"));
+				} else{
+					//ya done fucked up
+					throw new IOException();
+				}
 			}
 		}
 	}
