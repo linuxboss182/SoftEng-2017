@@ -43,7 +43,7 @@ public class IconManager
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
 			BACKGROUND_COLOR,
-			new CornerRadii(0),
+			new CornerRadii(2),
 			new Insets(0, -2, 0, -2)
 	);
 	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
@@ -54,10 +54,10 @@ public class IconManager
 	/* Listener variables */
 	private BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
 	private BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
+	private boolean showFullNamesOnHover = true;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
-		// this.handlers = new HashMap<>();
 	}
 
 	/**
@@ -78,6 +78,17 @@ public class IconManager
 	 */
 	public void setOnMouseDraggedOnLabel(BiConsumer<Room, MouseEvent> handler) {
 		this.onMouseDraggedOnLabelHandler = handler;
+	}
+
+	/**
+	 * Set whether icons should show full room names when the mouse hovers over the room
+	 *
+	 * The default value is true
+	 *
+	 * @param value true to show full names on hover, false to never show full names
+	 */
+	public void showFullNamesOnHover(boolean value) {
+		this.showFullNamesOnHover = value;
 	}
 
 	/**
@@ -141,6 +152,18 @@ public class IconManager
 	 * @param icon The room's icon
 	 */
 	private void applyListeners(Room room, Icon icon) {
+		if (showFullNamesOnHover) {
+			ImageView image = icon.getImage();
+			Label label = icon.getLabel();
+			image.setOnMouseEntered(event -> {
+				icon.updateLabel(room.getName());
+			});
+			image.setOnMouseExited(event -> {
+				icon.updateLabel(room.getDisplayName());
+			});
+		}
+
+
 		if (onMouseClickedOnRoomHandler != null) {
 //			Shape symbol = icon.getSymbol();
 			ImageView image = icon.getImage();
