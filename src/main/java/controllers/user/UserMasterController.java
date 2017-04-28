@@ -309,10 +309,13 @@ public class UserMasterController
 	 */
 	protected void selectRoomAction(Room room) {
 		if (this.destinationField.isFocused()) {
-			this.selectStartRoom(room);
+
+			this.selectEndRoom(room);
+			destinationField.setText(room.getName());
 //			this.changeStartBtn.setDisable(false);
 		} else {
-			this.selectEndRoom(room);
+			this.selectStartRoom(room);
+			startField.setText(room.getName());
 		}
 	}
 
