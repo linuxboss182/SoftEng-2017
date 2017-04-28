@@ -1,6 +1,5 @@
 package controllers.filereader;
 
-import javafx.scene.control.Alert;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -23,11 +22,11 @@ public class FileParser
 	/**
 	 * Parse nodes from the given file into the given directory
 	 *
-	 * See {@link NodeTSVParser} for details.
+	 * See {@link NodeCSVParser} for details.
 	 */
 	public static void parseNodes(File file, Directory directory)
 			throws FileNotFoundException{
-		NodeTSVParser reader = new NodeTSVParser(file, directory);
+		NodeCSVParser reader = new NodeCSVParser(file, directory);
 		reader.open();
 		reader.parseToDirectory();
 		reader.close();
