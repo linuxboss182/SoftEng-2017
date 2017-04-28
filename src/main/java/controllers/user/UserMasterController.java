@@ -1,10 +1,7 @@
 package controllers.user;
 
 import com.jfoenix.controls.*;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
-import controllers.icons.IconManager;
 import entities.FloorProxy;
-import controllers.shared.MapDisplayController;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -37,7 +34,7 @@ import main.ApplicationController;
 
 
 public class UserMasterController
-		extends MapDisplayController
+		extends DrawerController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
@@ -52,23 +49,14 @@ public class UserMasterController
 	@FXML public ImageView startImageView;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
-	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
 	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
-	@FXML private VBox drawerVBox;
-	@FXML private Pane parentDrawerPane;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
-	@FXML private JFXDrawer navDrawer;
 
-	@FXML private JFXHamburger navHamburgerBtn;
-	private HamburgerBackArrowBasicTransition back;
-
-	private double clickedX;
-	private double clickedY;
-	protected Room startRoom;
-	protected Room endRoom;
+	private Room startRoom;
+	private Room endRoom;
 
 
 
@@ -96,15 +84,11 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-
-
-		this.initializeDrawer();
+		super.initialize();
 
 		//Set IDs for CSS
 		setStyleIDs();
 
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -112,7 +96,6 @@ public class UserMasterController
 			startRoom = directory.getKiosk();
 			startField.setText("Your Location");
 		}
-
 
 		initializeIcons();
 
@@ -134,17 +117,13 @@ public class UserMasterController
 
 		setScrollZoom();
 
-		// TODO: See if there's a way to include this in the OnMouseDragged listener
-
-		setMouseMapListeners();
-
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater( () -> {
 			initWindowResizeListener();
-			resizeDrawerListener(parentDrawerPane.getHeight());
+			resizeDrawerListener(drawerParentPane.getHeight());
 
 		});
 //		Platform.runLater( () -> this.fitMapSize());
@@ -152,23 +131,19 @@ public class UserMasterController
 		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
-		back = new HamburgerBackArrowBasicTransition();
-		back.setRate(-1);
-
 		logAsAdmin.setImage(new Image("/lock.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-		parentDrawerPane.heightProperty().addListener(new ChangeListener<Number>() {
+		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 				resizeDrawerListener((double)newSceneHeight);
 			}
 		});
 		resizeDrawerListener(677.0);
 
-		navDrawer.open();
-		isDrawerOpen = true;
+		mainDrawer.open();
 
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
@@ -188,29 +163,9 @@ public class UserMasterController
 		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
-		parentDrawerPane.getStyleClass().add("drawer");
-
+		drawerParentPane.getStyleClass().add("drawer");
 	}
 
-	@FXML
-	public void onNavHamburgerBtnClicked() throws IOException {
-		back.setRate(back.getRate() * -1);
-		back.play();
-		if(navDrawer.isShown()) {
-			navDrawer.close();
-			isDrawerOpen = false;
-		} else {
-			navDrawer.open();
-			isDrawerOpen = true;
-		}
-		initWindowResizeListener();
-	}
-
-	private void initializeDrawer() {
-		this.navDrawer.setContent(mapSplitPane);
-		this.navDrawer.setSidePane(parentDrawerPane);
-		this.navDrawer.setOverLayVisible(false);
-	}
 
 	private void initializeIcons() {
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
@@ -218,24 +173,6 @@ public class UserMasterController
 			event.consume();
 		});
 		iconManager.getIcons(directory.getRooms());
-	}
-
-	private void setMouseMapListeners() {
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
-
-		contentAnchor.setOnMouseDragged(event -> {
-			// Limits the dragging for x and y coordinates. (panning I mean)
-			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			}
-			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			}
-			event.consume();
-		});
 	}
 
 	/**
@@ -363,20 +300,13 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
-		if (this.destinationField.isFocused()) {
-			this.selectEndRoom(room);
-			destinationField.setText(room.getName());
-
-//			this.changeStartBtn.setDisable(false);
-		} else {
+		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
 			startField.setText(room.getName());
+		} else {
+			this.selectEndRoom(room);
+			destinationField.setText(room.getName());
 		}
-	}
-
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-//		this.changeStartBtn.setDisable(true);
 	}
 
 	protected void selectStartRoom(Room r) {

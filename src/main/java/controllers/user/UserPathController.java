@@ -1,10 +1,8 @@
 package controllers.user;
 
 import com.jfoenix.controls.*;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.extras.SMSController;
 import controllers.icons.IconManager;
-import controllers.shared.MapDisplayController;
 import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
@@ -15,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,10 +23,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import entities.Room;
 import javafx.scene.text.TextFlow;
@@ -52,7 +47,7 @@ If possible, get turn direction upon exiting a building (requires changes elsewh
 // TODO: UserPathController should not inherit from UserMasterController
 
 public class UserPathController
-		extends MapDisplayController
+		extends DrawerController
 		implements Initializable
 {
 	@FXML private JFXButton logAsAdmin;
@@ -65,26 +60,21 @@ public class UserPathController
 	@FXML private ImageView logoImageView;
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
-	@FXML private JFXHamburger directionsHamburgerButton;
-	@FXML private VBox drawerVBox;
-	@FXML private ImageView backImageView;
 	@FXML private Label startLbl;
 	@FXML private HBox directionsLblHBox;
 	@FXML private ImageView startImageView;
-	@FXML private JFXDrawer directionsDrawer;
 	@FXML private JFXListView<?> directionsListView;
 	@FXML private HBox destLblHBox;
 	@FXML private Label destLbl;
 	@FXML private Label directionsLbl;
 	@FXML private VBox pathVBox;
-	@FXML private Pane parentPathDrawerPane;
 	@FXML private HBox backHBox;
 	@FXML private HBox startLblHBox;
 	@FXML private ImageView destImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXDrawer mapIconDrawer;
-	private HamburgerBackArrowBasicTransition back;
+	@FXML protected ImageView backImageView;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -116,10 +106,9 @@ public class UserPathController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize();
 		this.initializeDrawer();
 
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -144,16 +133,9 @@ public class UserPathController
 		Platform.runLater( () -> initWindowResizeListener());
 
 
-		back = new HamburgerBackArrowBasicTransition();
-		back.setRate(-1);
-
 		backImageView.setImage(new Image("/back.png"));
-
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
-		//parentPathDrawerPane.setPickOnBounds(false);
-		//floatingBorderPane.setPickOnBounds(false);
-		//mapIconDrawer.setPickOnBounds(true);
 
 		//Set IDs for CSS
 		setStyleIDs();
@@ -162,13 +144,21 @@ public class UserPathController
 
 	}
 
+	private void initializeDrawer() {
+		this.mapIconDrawer.setContent(mapScroll);
+		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+		this.mapIconDrawer.setOverLayVisible(false);
+		this.mapIconDrawer.open();
+	}
+
+
 	public void setStyleIDs() {
 		backHBox.getStyleClass().add("hbox");
 		startLblHBox.getStyleClass().add("hbox");
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		parentPathDrawerPane.getStyleClass().add("drawer");
+		drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
@@ -178,22 +168,6 @@ public class UserPathController
 	}
 
 	private void setContentAnchorListeners() {
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
-
-		contentAnchor.setOnMouseDragged(event -> {
-			// Limits the dragging for x and y coordinates. (panning I mean)
-			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			}
-			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			}
-			event.consume();
-		});
-
 		// Redraw rooms when the background is released
 		// TODO: Fix bug where clicking rooms un-draws them
 		contentAnchor.setOnMouseReleased(event -> {
@@ -202,30 +176,6 @@ public class UserPathController
 		});
 	}
 
-	@FXML
-	private void onHamburgerBtnClicked() throws IOException {
-		back.setRate(back.getRate() * -1);
-		back.play();
-		if(directionsDrawer.isShown()) {
-			directionsDrawer.close();
-			isDirectionsOpen = false;
-		} else {
-			directionsDrawer.open();
-			isDirectionsOpen = true;
-		}
-	}
-
-	private void initializeDrawer() {
-		this.directionsDrawer.setContent(mapSplitPane);
-		this.directionsDrawer.setSidePane(parentPathDrawerPane);
-		this.directionsDrawer.setOverLayVisible(false);
-		this.directionsDrawer.open();
-		isDirectionsOpen = true;
-		this.mapIconDrawer.setContent(mapScroll);
-		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
-		this.mapIconDrawer.setOverLayVisible(false);
-		this.mapIconDrawer.open();
-	}
 
 	/**
 	 * Attempt to set up this scene in preparation to display a path between the given rooms
