@@ -69,8 +69,7 @@ public class UserMasterController
 	private Room startRoom;
 	private Room endRoom;
 
-	private boolean startSelected = true;
-	private boolean endSelected = false;
+	private boolean selectingStart = false;
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
@@ -273,7 +272,7 @@ public class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked()
-			throws IOException, InvocationTargetException {
+			throws IOException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -296,7 +295,7 @@ public class UserMasterController
 	 */
 	private void selectRoomAction(Room room) {
 		if (room == null) return;
-		if (this.startSelected) {
+		if (this.selectingStart) {
 			this.selectStartRoom(room);
 		} else {
 			this.selectEndRoom(room);
@@ -326,16 +325,12 @@ public class UserMasterController
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				populateListView();
-				this.startSelected = true;
-				this.endSelected = false;
 			}
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				populateListView();
-				this.startSelected = false;
-				this.endSelected = true;
 			}
 		});
 	}
@@ -411,9 +406,7 @@ public class UserMasterController
 					this.getDirectionsClicked();
 				}
 			} catch (IOException e1) {
-//				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-//				e1.printStackTrace();
+				e1.printStackTrace();
 			}
 		}
 	}
