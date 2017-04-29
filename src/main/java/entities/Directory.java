@@ -97,8 +97,10 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void addAccount(String user, String password, String permission){
-		this.Accounts.put(user, new Account(user, password, permission));
+	public Account addAccount(String user, String password, String permission){
+		Account newAccount = new Account(user, password, permission);
+		this.Accounts.put(user, newAccount);
+		return newAccount;
 	}
 
 	/* Account/login functions */

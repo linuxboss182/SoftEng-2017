@@ -93,6 +93,15 @@ public class AccountPopupController
 		});
 	}
 
+	public void onAddAccountBtnClicked(){
+		Account newAccount = getDirectory().addAccount("","","");
+		accountTableView.getItems().add(newAccount);
+	}
+
+	public void onRemvoeAccountBtnClicked(){
+
+	}
+
 	@FXML
 	public void ondoneBtnClick(){
 		doneBtn.getScene().getWindow().hide();
