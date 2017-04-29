@@ -1,5 +1,7 @@
 package entities;
 
+import main.ApplicationController;
+
 public class Account
 {
 	public String username;
@@ -18,8 +20,9 @@ public class Account
 		return permission;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUsername(String newName) {
+		ApplicationController.getDirectory().updateKey(newName, username);
+		this.username = newName;
 	}
 
 	public void setPassword(String password) {

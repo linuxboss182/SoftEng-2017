@@ -107,6 +107,12 @@ public class Directory
 		this.Accounts.remove(user);
 	}
 
+	public void updateKey(String newName, String oldName){
+		Account tempAccount = Accounts.get(oldName);
+		Accounts.remove(oldName);
+		Accounts.put(newName, tempAccount);
+	}
+
 	/* Account/login functions */
 	public void logIn() {
 		this.loggedIn = true;
