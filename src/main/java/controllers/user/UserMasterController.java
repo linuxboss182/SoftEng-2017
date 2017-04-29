@@ -34,7 +34,9 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
-	@FXML private JFXListView<Room> resultsListView;
+	@FXML private JFXListView<Room> roomSearchResults;
+	@FXML private JFXListView<Room> profSearchResults;
+	@FXML private JFXListView<Room> commonServicesView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -138,7 +140,7 @@ public class UserMasterController
 	private void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	private void setStyleIDs() {
@@ -173,9 +175,8 @@ public class UserMasterController
 			String search = searchString.toLowerCase();
 			Set<Room> rooms = directory.getUserRooms();
 			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
-			this.resultsListView.setItems(FXCollections.observableArrayList(rooms));
+			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		}
-		// professionalSearchToggleBtn
 	}
 
 
@@ -221,12 +222,12 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	private void populateListView() {
-		this.resultsListView.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		resultsListView.getSelectionModel().clearSelection();
+		roomSearchResults.getSelectionModel().clearSelection();
 
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
 	}
 
 
