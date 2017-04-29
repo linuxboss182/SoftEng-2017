@@ -53,6 +53,7 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXButton helpBtn;
 
 	private Room startRoom;
 	private Room endRoom;
@@ -165,6 +166,7 @@ public class UserMasterController
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
+		helpBtn.getStyleClass().add("blue-button");
 	}
 
 
@@ -243,9 +245,7 @@ public class UserMasterController
 			Platform.runLater(() -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
 
 		});
-
 		resultsListView.getSelectionModel().clearSelection();
-
 
 	}
 
