@@ -130,8 +130,6 @@ public class IconManager
 		image.setLayoutY(y - imageHeight/2);
 
 		//Label settings
-		label.setScaleX(0.25);
-		label.setScaleY(0.25);
 		label.setLayoutX(x + room.getLabelOffsetX());
 		label.setLayoutY(y + room.getLabelOffsetY());
 		label.setFont(new Font(FONT_SIZE));
