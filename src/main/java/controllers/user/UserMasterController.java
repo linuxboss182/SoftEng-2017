@@ -28,15 +28,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
+import main.algorithms.Pathfinder;
 
 
 public class UserMasterController
@@ -424,35 +422,30 @@ public class UserMasterController
 		userHelpStage.showAndWait();
 	}
 
-	public void findBathroom(Room start, LinkedList<Node> visited)
-			throws IOException, InvocationTargetException {
+	@FXML
+	public void findBathroom()
+			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
 		bathrooms.removeIf(room -> room.getType() == RoomType.BATHROOM);
 
-		Room closest = start;
-		if (start.getName().equalsIgnoreCase("bathroom")) {
-			selectEndRoom(closest);
-			this.getDirectionsClicked();
-		}
-		for (Node neighbors : start.getLocation().getNeighbors()) {
-			visited.add(neighbors);
-			if (visited.contains(neighbors)) {
-			} else {
-				findBathroom(neighbors.getRoom(), visited);
-
+		int prevCost = 0;
+		Room bathroom = null;
+		for(Room r: bathrooms){
+			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
+			if(prevCost == 0) {
+				prevCost = nodes.size();
+				bathroom = r;
+			}
+			if(nodes.size() < prevCost){
+				prevCost = nodes.size();
+				bathroom = r;
 			}
 		}
+
+		selectEndRoom(bathroom);
+		this.getDirectionsClicked();
 	}
 
-	@FXML
-	public void findBathroomClicked()
-			throws IOException, InvocationTargetException {
-		System.out.println("starting");
-		LinkedList<Node> visited = new LinkedList<>();
-		findBathroom(startRoom, visited);
-		System.out.println("WE HAVE A ENDROOM");
-
-	}
 }
 	
 
