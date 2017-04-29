@@ -61,6 +61,7 @@ class DatabaseLoader
 			//retrieve all user data
 			this.retrieveUserData(directory);
 			kioskID = this.retrieveKiosk();
+			this.retrieveTimeoutDuration(directory);// TODO: REVIEW -TED
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.err.println("A SQL Exception occured");
@@ -85,6 +86,20 @@ class DatabaseLoader
 			// no null check needed because column is "NOT NULL"
 		} else {
 			return null; // empty kiosk table
+		}
+	}
+	// TODO: REVIEW -TED
+	private void retrieveTimeoutDuration(Directory directory) throws SQLException{
+		try {
+			Statement queryDuration = this.db_connection.createStatement();
+			ResultSet resultDuration = queryDuration.executeQuery(StoredProcedures.procRetrieveTimeoutDuration());
+			if(resultDuration.next())
+				directory.setTimeout(resultDuration.getLong("duration"));
+			else {
+				directory.setTimeout(30 * 1000); // Default to 30 seconds
+			}
+		} catch (SQLException e) {
+			throw e;
 		}
 	}
 
@@ -319,6 +334,10 @@ class DatabaseLoader
 													dir.getPermissions(user.getKey()));
 			db.executeUpdate(query);
 		}
+
+		// Save timeout duration
+		query = StoredProcedures.procInsertTimeoutDuration(dir.getTimeout());
+		db.executeUpdate(query);
 
 		db.close();
 	}

@@ -186,6 +186,13 @@
                                         </Label>
                                         <ToggleButton fx:id="restrictedView" layoutX="147.0" layoutY="88.0" onMouseClicked="#restrictedViewBtnClicked" prefHeight="27.0" prefWidth="136.0" text="View Restricted">
                                         </ToggleButton>
+                                        <Label layoutX="147.0" layoutY="148.0" text="Idle Time (seconds):">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <JFXTextField fx:id="timeoutField" layoutX="147" layoutY="185" prefHeight="27" prefWidth="136"/>
+
                                     </children>
                                 </AnchorPane>
                             </content>
