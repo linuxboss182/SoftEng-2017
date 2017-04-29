@@ -14,11 +14,9 @@ public enum RoomType
 	PORTAL("Portal", "/Portal.png", "/PortalOrigin.png", "/PortalDest.png"),
 	PARKING("Parking", "/Parking.png", "/ParkingOrigin.png", "/ParkingDest.png"),
 	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
-	BATHROOM_M("Male Bathroom", "/Bathroom_M.png", "/Bathroom_MOrigin.png", "/Bathroom_MDest.png"),
-	BATHROOM_W("Women's Bathroom", "/Bathroom_W.png", "/Bathroom_WOrigin.png", "/Bathroom_WDest.png"),
-	BATHROOM_U("Unisex Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
-	SHOP("Gift Shop", "/Shop.png", "/ShopOrigin.png", "/ShopDest.png"),
-	CAFE("Cafe", "/Cafe.png", "/CafeOrigin.png", "/CafeDest.png"),
+	BATHROOM("Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
+	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	CAFE("Cafe", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"),
 	;
 

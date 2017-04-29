@@ -49,7 +49,7 @@ import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 
 
-import static entities.RoomType.BATHROOM_U;
+import static entities.RoomType.BATHROOM;
 
 public class EditorController
 		extends MapDisplayController
@@ -927,7 +927,7 @@ public class EditorController
 					iconController.resetSingleNode(n);
 					room = n.getRoom();
 				}
-				room.setType(BATHROOM_U);
+				room.setType(BATHROOM);
 				this.selectNode(n);
 				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
 				break;
@@ -1127,7 +1127,7 @@ public class EditorController
 //			 */
 //		}
 //		this.nodePane.getChildren().setAll(roomShapes);
-	} 
+	}
 
 	/**
 	 * Make the room of the currently-selected node into the kiosk

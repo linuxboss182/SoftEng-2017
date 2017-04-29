@@ -3,6 +3,8 @@ package controllers.user;
 import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
+import entities.Node;
+import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -14,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
@@ -22,11 +26,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.text.Collator;
+import java.text.Normalizer;
+import java.util.*;
 
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
+import main.algorithms.PathNotFoundException;
+import main.algorithms.Pathfinder;
 
 
 public class UserMasterController
@@ -81,8 +90,9 @@ public class UserMasterController
 
 	/**
 	 * Method used to initialize superclasses
-	 *
-	 * Not technically related to Initializable::initialize, but used for the same purpose
+	 * <p>
+	 * Not technically related to Initializable::initialize, but used for the same
+	 * purpose
 	 */
 	public void initialize() {
 		super.initialize();
@@ -117,7 +127,7 @@ public class UserMasterController
 		addSearchFieldListeners();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater( () -> {
+		Platform.runLater(() -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
 		});
@@ -141,7 +151,6 @@ public class UserMasterController
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
-		System.out.println("Height: " + newSceneHeight);
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
 		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
@@ -234,12 +243,11 @@ public class UserMasterController
 	}
 
 
-
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 *
+	 * <p>
 	 * If both start and end locations are set, enable the "get directions" button
-	 *
+	 * <p>
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	private void enableOrDisableNavigationButtons() {
@@ -253,10 +261,9 @@ public class UserMasterController
 	}
 
 
-
-
 	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+	public void getDirectionsClicked()
+			throws IOException, InvocationTargetException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -322,7 +329,8 @@ public class UserMasterController
 
 
 	@FXML
-	public void aboutBtnClicked () throws IOException {
+	public void aboutBtnClicked()
+			throws IOException {
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
@@ -334,8 +342,10 @@ public class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
+
 	@FXML
-	private void helpBtnClicked() throws IOException{
+	private void helpBtnClicked()
+			throws IOException {
 		UserHelpController helpController = new UserHelpController();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
@@ -345,5 +355,59 @@ public class UserMasterController
 		userHelpStage.setScene(userHelpScene);
 		userHelpStage.showAndWait();
 	}
+
+	@FXML
+	public void findBathroom()
+			throws IOException, InvocationTargetException, PathNotFoundException {
+		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
+		bathrooms.removeIf(room -> room.getType() != RoomType.BATHROOM);
+		System.out.println("FINDIN STUFF");
+		int prevCost = 0;
+		Room bathroom = null;
+		for(Room r: bathrooms){
+			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
+			if(prevCost == 0) {
+				prevCost = nodes.size();
+				bathroom = r;
+			}
+			if(nodes.size() < prevCost){
+				prevCost = nodes.size();
+				bathroom = r;
+			}
+			System.out.println(r.getName());
+		}
+		if(bathroom == null){
+			System.out.println("PROBLEM CITY");
+		}
+		selectEndRoom(bathroom);
+		this.getDirectionsClicked();
+	}
+
+
+	@FXML
+	public void startFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			this.destinationField.requestFocus();
+		}
+	}
+
+	@FXML
+	public void destinationFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			try {
+				if(this.getDirectionsBtn.isDisabled()) {
+					this.startField.requestFocus();
+				} else {
+					this.getDirectionsClicked();
+				}
+			} catch (IOException e1) {
+//				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+//				e1.printStackTrace();
+			}
+		}
+	}
 }
+
+
 
