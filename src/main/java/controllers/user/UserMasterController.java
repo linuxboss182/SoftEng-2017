@@ -17,10 +17,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.awt.*;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -34,6 +37,8 @@ import java.util.TimerTask;
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
+
+import javax.xml.stream.*;
 
 
 public class UserMasterController
@@ -124,6 +129,7 @@ public class UserMasterController
 		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
 
 		this.resetTimer();
+		initGlobalFilter();
 	}
 
 	private void initializeIcons() {
@@ -149,7 +155,6 @@ public class UserMasterController
 				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
 			}
 			event.consume();
-			this.resetTimer();
 		});
 	}
 
@@ -198,7 +203,6 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		this.resetTimer();
 		if(!this.directory.isLoggedIn()) {
 			this.directory.getCaretaker().addState(this.getState());
 		}
@@ -259,7 +263,6 @@ public class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-		this.resetTimer();
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -292,7 +295,6 @@ public class UserMasterController
 
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.resetTimer();
 		this.changeStartBtn.setDisable(true);
 	}
 
@@ -317,7 +319,6 @@ public class UserMasterController
 
 	@FXML
 	public void aboutBtnClicked () throws IOException {
-		this.resetTimer();
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
@@ -361,5 +362,23 @@ public class UserMasterController
 		this.getScene().setRoot(state.getRoot());
 		this.directory.logOut();
 		this.resetTimer();
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	private void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				this.resetTimer();
+			}
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				this.resetTimer();
+			}
+		});
 	}
 }
