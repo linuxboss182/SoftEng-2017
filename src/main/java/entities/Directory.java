@@ -118,8 +118,8 @@ public class Directory
 		return Accounts.get(username).getPermissions();
 	}
 
-	public Account getAccount(String userName){
-		return Accounts.get(userName);
+	public Account getAccount(String username){
+		return Accounts.get(username);
 	}
 
 	/* Element removal methods */

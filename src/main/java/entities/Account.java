@@ -2,12 +2,12 @@ package entities;
 
 public class Account
 {
-	private String name;
+	private String username;
 	private String password;
 	private String permission;
 
 	public String getName() {
-		return name;
+		return username;
 	}
 
 	public String getPassword() {
@@ -19,7 +19,7 @@ public class Account
 	}
 
 	Account(String name, String password, String permission){
-		this.name = name;
+		this.username = name;
 		this.password = password;
 		this.permission = permission;
 	}
