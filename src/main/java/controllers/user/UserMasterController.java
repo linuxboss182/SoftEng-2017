@@ -379,19 +379,6 @@ public class UserMasterController
 	}
 
 	@FXML
-	private void helpBtnClicked()
-			throws IOException {
-		UserHelpController helpController = new UserHelpController();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
-		Scene userHelpScene = new Scene(loader.load());
-		Stage userHelpStage = new Stage();
-		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
-		userHelpStage.setScene(userHelpScene);
-		userHelpStage.showAndWait();
-	}
-
-	@FXML
 	public void findBathroom()
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
