@@ -1,7 +1,5 @@
 package entities;
 
-import java.util.HashMap;
-
 public class Account
 {
 	private String name;

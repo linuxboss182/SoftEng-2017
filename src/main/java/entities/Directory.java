@@ -21,7 +21,7 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 	private boolean loggedIn;
-	private Map<String, Account> users;
+	private Map<String, Account> Accounts;
 
 	// default to floor 1
 	private FloorImage floor;
@@ -40,7 +40,7 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
-		this.users = new HashMap<>();
+		this.Accounts = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -95,8 +95,8 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void addUser(String user, String password, String permission){
-		this.users.put(user, new Account(user, password, permission));
+	public void addAccount(String user, String password, String permission){
+		this.Accounts.put(user, new Account(user, password, permission));
 	}
 
 	/* Account/login functions */
@@ -108,18 +108,19 @@ public class Directory
 		this.loggedIn = false;
 	}
 
-	public boolean isLoggedIn() {
-		return this.loggedIn;
-	}
+	public boolean isLoggedIn() { return this.loggedIn; }
 
-	public Map<String, Account> getUsers(){
-		return users;
+	public Map<String, Account> getAccounts(){
+		return Accounts;
 	}
 
 	public String getPermissions(String username){
-		return users.get(username).getPermissions();
+		return Accounts.get(username).getPermissions();
 	}
 
+	public Account getAccount(String userName){
+		return Accounts.get(userName);
+	}
 
 	/* Element removal methods */
 

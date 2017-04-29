@@ -40,8 +40,8 @@ public class LoginController implements Initializable{
 //		logins = new LoginHandler();
 //		logins.addAccount("admin", "password", true);
 
-		directory.addUser("admin", "password", "admin");
-		directory.addUser("test", "password", "professional");
+		directory.addAccount("admin", "password", "admin");
+		directory.addAccount("test", "password", "professional");
 
 //		Set<String> passwordSet = directory.getPassHashes();
 //		Set<String> permissionSet = directory.getPermissions();
@@ -133,7 +133,7 @@ public class LoginController implements Initializable{
 	 * @return 2 for admins, 1 for professionals, or 0 for failed logins
 	 */
 	public LoginStatus checkLogin(String username, String password) {
-		Map<String, Account> logins = directory.getUsers();
+		Map<String, Account> logins = directory.getAccounts();
 
 
 		// Branches:
