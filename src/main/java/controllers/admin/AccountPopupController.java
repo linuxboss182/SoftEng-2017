@@ -49,8 +49,8 @@ public class AccountPopupController
 //		accountTableView.getSortOrder().add(usernameCol);
 //		accountTableView.getSortOrder().add(passwordCol);
 //		accountTableView.getSortOrder().add(permissionsCol);
-		accountTableView.setItems(accounts);
-//		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
+//		accountTableView.setItems(accounts);
+		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
 
 
 
@@ -65,6 +65,8 @@ public class AccountPopupController
 		passwordCol.setCellValueFactory(new PropertyValueFactory<Account, String>("password"));
 		permissionsCol.setCellValueFactory(new PropertyValueFactory<Account, String>("permission"));
 		usernameCol.setCellFactory(cellFactory);
+		passwordCol.setCellFactory(cellFactory);
+		permissionsCol.setCellFactory(cellFactory);
 
 		//Modifying the firstName property
 		usernameCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Account, String>>() {
@@ -90,8 +92,6 @@ public class AccountPopupController
 			}
 		});
 	}
-
-
 
 	@FXML
 	public void ondoneBtnClick(){
