@@ -71,7 +71,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <JFXTextField fx:id="startField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose starting point, or click place on map" unFocusColor="white">
+                                        <JFXTextField fx:id="startField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Start from this kiosk, or select a location" unFocusColor="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>
@@ -85,7 +85,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <JFXTextField fx:id="destinationField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination..." unFocusColor="white">
+                                        <JFXTextField fx:id="destinationField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination" unFocusColor="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>

@@ -24,7 +24,6 @@ public class Directory
 	private Room kiosk;
 	private boolean loggedIn;
 
-	// default to floor 1
 	private FloorImage floor;
 
 	/** Comparator to allow comparing rooms by name */
@@ -268,13 +267,24 @@ public class Directory
 	 *
 	 * A room's floor is determined by its associated node
 	 *
-	 * @note This is the only Directory function that natively filters by permissions.
+	 * @note Only this function and  is one of two Directory functions that natively filter by permissions.
 	 */
 	public Set<Room> getRoomsOnFloor() {
 		return this.filterRooms(room -> (room.getLocation() != null)
 				&& (room.getLocation().getFloor() == this.floor.getNumber())
 				&& room.getLocation().getBuildingName().equalsIgnoreCase(this.floor.getName())
 				&& (! room.getLocation().isRestricted() || this.loggedIn));
+	}
+
+	/**
+	 * Get all rooms accessible by the current user
+	 *
+	 * @note Only this and getRoomsOnFloor natively filter by permissions
+	 */
+	public Set<Room> getUserRooms() {
+		return this.filterRooms(room -> (room.getLocation() != null)
+				&& (!room.getLocation().isRestricted()
+				    || this.isLoggedIn()));
 	}
 
 	/**
