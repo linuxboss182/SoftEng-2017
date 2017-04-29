@@ -105,7 +105,7 @@
                                 <HBox fx:id="bottomHBox">
                                     <children>
                                         <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
-                                        <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#findBathroom" pickOnBounds="true" preserveRatio="true" />
+                                        <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true" />
                                     </children>
                                 </HBox>
                             </children>

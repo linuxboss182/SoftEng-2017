@@ -426,8 +426,8 @@ public class UserMasterController
 	public void findBathroom()
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
-		bathrooms.removeIf(room -> room.getType() == RoomType.BATHROOM);
-
+		bathrooms.removeIf(room -> room.getType() != RoomType.BATHROOM);
+		System.out.println("FINDIN STUFF");
 		int prevCost = 0;
 		Room bathroom = null;
 		for(Room r: bathrooms){
@@ -440,8 +440,11 @@ public class UserMasterController
 				prevCost = nodes.size();
 				bathroom = r;
 			}
+			System.out.println(r.getName());
 		}
-
+		if(bathroom == null){
+			System.out.println("PROBLEM CITY");
+		}
 		selectEndRoom(bathroom);
 		this.getDirectionsClicked();
 	}

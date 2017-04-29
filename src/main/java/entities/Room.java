@@ -119,6 +119,8 @@ public class Room
 				return RoomType.HALLWAY;
 			case "parking lot":
 				return RoomType.PARKING;
+			case "bathroom":
+				return RoomType.BATHROOM;
 			default:
 				return RoomType.DEFAULT;
 		}
