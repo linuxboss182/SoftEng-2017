@@ -7,6 +7,8 @@ import entities.Node;
 import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -123,6 +125,8 @@ public class UserMasterController
 		this.displayRooms();
 
 		setScrollZoom();
+
+		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 		addSearchFieldListeners();
 
@@ -130,6 +134,7 @@ public class UserMasterController
 		Platform.runLater(() -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
+
 		});
 
 		// Enable search; if this becomes more than one line, make it a function
@@ -245,6 +250,7 @@ public class UserMasterController
 	}
 
 
+
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
 	 * <p>
@@ -261,6 +267,8 @@ public class UserMasterController
 			}
 		}
 	}
+
+
 
 
 	@FXML
@@ -298,6 +306,7 @@ public class UserMasterController
 	private void selectStartRoom(Room r) {
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
+
 		iconController.selectStartRoom(r);
 		startField.setText(r.getName());
 		this.displayRooms();
@@ -306,6 +315,8 @@ public class UserMasterController
 	private void selectEndRoom(Room r) {
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
+//		this.enableDirectionsBtn();
+//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
 		destinationField.setText(r.getName());
 		this.displayRooms();

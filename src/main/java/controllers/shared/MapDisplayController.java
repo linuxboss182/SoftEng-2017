@@ -229,7 +229,7 @@ public abstract class MapDisplayController
 
 	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	public void fitMapSize() {
-		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
+		double potentialScaleX;
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 
 		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
