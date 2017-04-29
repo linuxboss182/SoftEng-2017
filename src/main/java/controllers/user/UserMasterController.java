@@ -89,6 +89,9 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
+		//Kiosk listener
+		startFocusedListener();
+
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -307,6 +310,19 @@ public class UserMasterController
 			this.selectEndRoom(room);
 			destinationField.setText(room.getName());
 		}
+	}
+
+	protected void startFocusedListener() {
+		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					if (startField.getText().equals("Your Location")) {
+						startField.clear();
+					}
+				}
+			}
+		});
 	}
 
 	protected void selectStartRoom(Room r) {
