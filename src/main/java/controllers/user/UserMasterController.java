@@ -148,6 +148,8 @@ public class UserMasterController
 
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
+
+		this.initFocusTraversables();
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -406,6 +408,14 @@ public class UserMasterController
 //				e1.printStackTrace();
 			}
 		}
+	}
+
+	private void initFocusTraversables() {
+		this.floorComboBox.setFocusTraversable(false);
+		this.getDirectionsBtn.setFocusTraversable(false);
+		this.aboutBtn.setFocusTraversable(false);
+		this.helpBtn.setFocusTraversable(false);
+		this.zoomSlider.setFocusTraversable(false);
 	}
 }
 
