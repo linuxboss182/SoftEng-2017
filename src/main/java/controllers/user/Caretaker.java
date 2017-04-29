@@ -21,4 +21,8 @@ public class Caretaker
 	public List<UserState> getStateList() {
 		return stateList;
 	}
+
+	public UserState getState(int state) {
+		return stateList.get(state);
+	}
 }

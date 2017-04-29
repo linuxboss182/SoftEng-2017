@@ -199,6 +199,9 @@ public class UserMasterController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		this.resetTimer();
+		if(!this.directory.isLoggedIn()) {
+			this.directory.getCaretaker().addState(this.getState());
+		}
 		// Unset navigation targets for after logout
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
@@ -329,16 +332,12 @@ public class UserMasterController
 		if(!this.directory.isLoggedIn()) return;
 		try{
 			timer.cancel();
-		} catch(Exception e) {
-			// just please end it. this thing is so annoying
-		}
+		} catch(Exception e) {}
 
 		try{
 			timer = new Timer();
 			timer.schedule(getTimerTask(), directory.getTimeout());
-		} catch(Exception e) {
-			// just please end it. this thing is so annoying
-		}
+		} catch(Exception e) {}
 	}
 
 	private TimerTask getTimerTask() {
@@ -351,23 +350,16 @@ public class UserMasterController
 	}
 
 	private void timeout() {
-		//TODO: MEMENTO CALL GOES HERE
-
+		this.setState(this.directory.getCaretaker().getState(this.directory.getCaretaker().getStateList().size()-1));
 	}
 
-	public UserState getState() {// TODO: adjust this to work with the text field
-		return new UserState(this.getScene().getRoot(), this.directory.isLoggedIn(), this.startRoom, this.endRoom, "" );
+	public UserState getState() {
+		return new UserState(this.getScene().getRoot());
 	}
 
 	public void setState(UserState state) {
 		this.getScene().setRoot(state.getRoot());
-		this.startRoom = state.getStartRoom();
-		this.endRoom = state.getEndRoom();
-		// TODO: text field?
-		if(state.getLoggedIn()) {
-			this.directory.logIn();
-		} else {
-			this.directory.logOut();
-		}
+		this.directory.logOut();
+		this.resetTimer();
 	}
 }

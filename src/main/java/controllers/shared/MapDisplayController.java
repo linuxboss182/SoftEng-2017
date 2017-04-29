@@ -1,6 +1,7 @@
 package controllers.shared;
 
 import controllers.icons.IconController;
+import controllers.user.UserState;
 import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
