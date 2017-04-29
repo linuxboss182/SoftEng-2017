@@ -145,7 +145,7 @@ public class UserMasterController
 	private void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	private void setStyleIDs() {
