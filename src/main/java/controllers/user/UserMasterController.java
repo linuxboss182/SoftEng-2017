@@ -53,11 +53,10 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXToggleButton professionalSearchToggleBtn;
 
 	private Room startRoom;
 	private Room endRoom;
-
-
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
@@ -121,12 +120,13 @@ public class UserMasterController
 		Platform.runLater( () -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
-
 		});
+
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
-		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.setOnKeyTyped(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyTyped(e -> this.filterRoomsByName(this.startField.getText()));
+
 
 		logAsAdmin.setImage(new Image("/lock.png"));
 		startImageView.setImage(new Image("/aPin.png"));
@@ -144,8 +144,6 @@ public class UserMasterController
 
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
-
-
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -231,7 +229,6 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	private void populateListView() {
-
 		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
@@ -241,8 +238,6 @@ public class UserMasterController
 		});
 
 		resultsListView.getSelectionModel().clearSelection();
-
-
 	}
 
 
