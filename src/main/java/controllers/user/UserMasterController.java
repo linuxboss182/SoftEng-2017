@@ -9,6 +9,7 @@ import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,6 +69,7 @@ public class UserMasterController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXToggleButton professionalSearchToggleBtn;
 	@FXML private JFXButton helpBtn;
+	@FXML private JFXButton findBathroomBtn;
 
 	private Room startRoom;
 	private Room endRoom;
@@ -122,7 +124,7 @@ public class UserMasterController
 		setZoomSliding();
 
 		initfloorComboBox();
-		resetRoomSearchResults();
+		initDestinationTypeTabs();
 
 		this.displayRooms();
 
@@ -204,7 +206,18 @@ public class UserMasterController
 		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER); // <- for choiceBox, not comboBox
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
+	}
 
+	private void initDestinationTypeTabs() {
+		resetRoomSearchResults();
+
+		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
+			try {
+				this.findBathroom();
+			} catch (IOException | PathNotFoundException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@FXML

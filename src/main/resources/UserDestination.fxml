@@ -121,7 +121,8 @@
                                             <JFXListView fx:id="profSearchResults" />
                                         </Tab>
                                         <Tab text="Services">
-                                            <JFXListView fx:id="commonServicesView" />
+                                            <JFXButton fx:id="findBathroomBtn" />
+                                            <!--<JFXListView fx:id="commonServicesView" />-->
                                         </Tab>
                                     </tabs>
                                 </TabPane>
