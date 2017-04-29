@@ -23,8 +23,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -32,6 +35,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.awt.*;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -49,6 +53,8 @@ import entities.FloorProxy;
 import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
+
+import javax.xml.stream.*;
 
 
 public class UserMasterController
@@ -176,6 +182,7 @@ public class UserMasterController
 		this.initFocusTraversables();
 
 		this.resetTimer();
+		initGlobalFilter();
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -213,7 +220,6 @@ public class UserMasterController
 			filterRoomsByName(searchString);
 		} else if (tabContent == profTab) {
 			filterProfessionalsByName(searchString);
-			this.resetTimer();
 		}
 	}
 
@@ -301,7 +307,6 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		this.resetTimer();
 		if(directory.isProfessional()){
 			directory.logOut();
 			changeFloor(directory.getFloor());
@@ -370,7 +375,6 @@ public class UserMasterController
 	@FXML
 	public void getDirectionsClicked()
 			throws IOException {
-		this.resetTimer();
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -405,7 +409,6 @@ public class UserMasterController
 		this.startRoom = r;
 	@FXML
 	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.resetTimer();
 		this.changeStartBtn.setDisable(true);
 	}
 
@@ -474,7 +477,6 @@ public class UserMasterController
 	@FXML
 	public void aboutBtnClicked()
 			throws IOException {
-		this.resetTimer();
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
@@ -520,6 +522,24 @@ public class UserMasterController
 		this.getScene().setRoot(state.getRoot());
 		this.directory.logOut();
 		this.resetTimer();
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	private void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				this.resetTimer();
+			}
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				this.resetTimer();
+			}
+		});
 	}
 }
 
