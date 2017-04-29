@@ -232,7 +232,7 @@
             </Label>
          </children>
       </GridPane>
-      <JFXButton fx:id="closeBtn" buttonType="RAISED" layoutX="552.0" layoutY="631.0" onMouseClicked="#closeBtnClicked" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #5087b4;" text="Close" textFill="WHITE" />
+      <JFXButton fx:id="closeBtn" buttonType="RAISED" layoutX="552.0" layoutY="631.0" onMouseClicked="#closeBtnClicked" prefHeight="25.0" prefWidth="85.0"  text="Close" textFill="WHITE" />
    </children>
    <stylesheets>
       <URL value="@/DrawerStyle.css" />

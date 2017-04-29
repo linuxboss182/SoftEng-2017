@@ -364,6 +364,8 @@ public class UserMasterController
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
 		Scene addAboutScene = new Scene(loader.load());
 		Stage addAboutStage = new Stage();
+		addAboutStage.setTitle("Faulkner Hospital Navigator About Page");
+		addAboutStage.getIcons().add(new Image("bwhIcon.png"));
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
