@@ -6,7 +6,7 @@ public class Account
 	private String password;
 	private String permission;
 
-	public String getName() {
+	public String getUsername() {
 		return username;
 	}
 
@@ -18,8 +18,8 @@ public class Account
 		return permission;
 	}
 
-	Account(String name, String password, String permission){
-		this.username = name;
+	Account(String username, String password, String permission){
+		this.username = username;
 		this.password = password;
 		this.permission = permission;
 	}
