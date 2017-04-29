@@ -4,6 +4,7 @@ import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
 import entities.Node;
+import entities.RoomType;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -425,6 +426,9 @@ public class UserMasterController
 
 	public void findBathroom(Room start, LinkedList<Node> visited)
 			throws IOException, InvocationTargetException {
+		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
+		bathrooms.removeIf(room -> room.getType() == RoomType.BATHROOM);
+
 		Room closest = start;
 		if (start.getName().equalsIgnoreCase("bathroom")) {
 			selectEndRoom(closest);
