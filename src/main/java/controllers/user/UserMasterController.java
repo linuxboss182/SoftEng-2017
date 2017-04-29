@@ -136,11 +136,6 @@ public class UserMasterController
 			resizeDrawerListener(drawerParentPane.getHeight());
 		});
 
-		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
-		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
-
-
 		logAsAdmin.setImage(new Image("/lock.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
@@ -322,6 +317,29 @@ public class UserMasterController
 	private void setupSearchFields() {
 		destinationField.setPromptText("Choose destination");
 
+		this.destinationField.setOnKeyReleased(e -> {
+			this.filterRoomsByName(this.destinationField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+				//
+					if (startRoom == null) {
+						this.startField.requestFocus();
+					} else if (endRoom != null) {
+						try {
+							this.getDirectionsClicked();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+			}
+		});
+
+		this.startField.setOnKeyReleased(e -> {
+			this.filterRoomsByName(this.startField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+				this.destinationField.requestFocus();
+			}
+		});
+
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) resetRoomSearchResults();
 		});
@@ -384,28 +402,6 @@ public class UserMasterController
 		this.getDirectionsClicked();
 	}
 
-
-	@FXML
-	public void startFieldKeyPressed(KeyEvent e) {
-		if(e.getCode() == KeyCode.ENTER) {
-			this.destinationField.requestFocus();
-		}
-	}
-
-	@FXML
-	public void destinationFieldKeyPressed(KeyEvent e) {
-		if(e.getCode() == KeyCode.ENTER) {
-			try {
-				if(this.getDirectionsBtn.isDisabled()) {
-					this.startField.requestFocus();
-				} else {
-					this.getDirectionsClicked();
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
 
 	private void initFocusTraversables() {
 		this.floorComboBox.setFocusTraversable(false);
