@@ -267,15 +267,23 @@ public class UserPathController
 
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
+		Label newFloorLabel = new Label();
 
 		int buttonWidth = 110;
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 430;
+		int buttonCenterX = 430;
+
+		int labelCenterX = 460;
+		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15; //change the +x value so the label is at the bottom
 
 
-		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + labelCenterX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutY(labelY);
+		newFloorLabel.setText(floor.building);
+
+		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount);
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
@@ -287,7 +295,7 @@ public class UserPathController
 		Rectangle backgroundRectangle = new Rectangle();
 		backgroundRectangle.setWidth(buttonWidth*1.25);
 		backgroundRectangle.setHeight(buttonHeight*1.25);
-		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount-10);
+		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount-10);
 		backgroundRectangle.setY(buttonY - 10);
 		backgroundRectangle.setFill(Color.WHITE);
 		backgroundRectangle.setStroke(Color.BLACK);
@@ -311,6 +319,7 @@ public class UserPathController
 		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
+		floorsTraveledAnchorPane.getChildren().add(newFloorLabel);
 	}
 
 	// TODO: Draw by segments, not by floors
