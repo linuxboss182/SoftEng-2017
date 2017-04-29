@@ -89,6 +89,11 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
+		//Kiosk listener
+		startFocusedListener();
+		destFocusedListener();
+
+
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -112,8 +117,6 @@ public class UserMasterController
 		initfloorComboBox();
 
 		this.displayRooms();
-
-		this.populateListView();
 
 		setScrollZoom();
 
@@ -307,6 +310,31 @@ public class UserMasterController
 			this.selectEndRoom(room);
 			destinationField.setText(room.getName());
 		}
+	}
+
+	protected void startFocusedListener() {
+		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					if (startField.getText().equals("Your Location")) {
+						startField.clear();
+						populateListView();
+					}
+				}
+			}
+		});
+	}
+
+	protected void destFocusedListener() {
+		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					populateListView();
+				}
+			}
+		});
 	}
 
 	protected void selectStartRoom(Room r) {
