@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
@@ -343,6 +345,30 @@ public class UserMasterController
 		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
 		userHelpStage.setScene(userHelpScene);
 		userHelpStage.showAndWait();
+	}
+
+	@FXML
+	public void startFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			this.destinationField.requestFocus();
+		}
+	}
+
+	@FXML
+	public void destinationFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			try {
+				if(this.getDirectionsBtn.isDisabled()) {
+					this.startField.requestFocus();
+				} else {
+					this.getDirectionsClicked();
+				}
+			} catch (IOException e1) {
+//				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+//				e1.printStackTrace();
+			}
+		}
 	}
 }
 
