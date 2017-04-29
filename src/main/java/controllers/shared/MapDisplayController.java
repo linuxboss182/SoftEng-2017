@@ -51,7 +51,6 @@ public abstract class MapDisplayController
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 
 	protected Professional selectedProf;
-	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);

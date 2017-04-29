@@ -4,10 +4,7 @@ import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -120,8 +117,8 @@ public class UserMasterController
 		});
 
 		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.setOnKeyTyped(e -> this.filterRoomsByName(this.destinationField.getText()));
-		this.startField.setOnKeyTyped(e -> this.filterRoomsByName(this.startField.getText()));
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
 
 		logAsAdmin.setImage(new Image("/lock.png"));
@@ -176,6 +173,7 @@ public class UserMasterController
 			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
 			this.resultsListView.setItems(FXCollections.observableArrayList(rooms));
 		}
+		// professionalSearchToggleBtn
 	}
 
 
@@ -221,15 +219,12 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	private void populateListView() {
-		this.resultsListView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			Platform.runLater(() -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
-
-		});
+		this.resultsListView.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		resultsListView.getSelectionModel().clearSelection();
+
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
 	}
 
 
@@ -249,9 +244,6 @@ public class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-//		if (this.changeStartBtn != null) {
-//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-//		}
 	}
 
 
@@ -280,6 +272,7 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	private void selectRoomAction(Room room) {
+		if (room == null) return;
 		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
 		} else {
@@ -288,7 +281,6 @@ public class UserMasterController
 	}
 
 	private void selectStartRoom(Room r) {
-		if(r == null) return;
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectStartRoom(r);
@@ -297,7 +289,6 @@ public class UserMasterController
 	}
 
 	private void selectEndRoom(Room r) {
-		if(r == null) return;
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectEndRoom(r);
