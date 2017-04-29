@@ -106,8 +106,21 @@ public class Room
 	public RoomType getType() {
 		if ("ELEVATOR".equalsIgnoreCase(this.description)) {
 			return RoomType.ELEVATOR;
-		} else {
-			return type;
+		}
+
+		switch (this.getDescription()) {
+			case "elevator":
+				return RoomType.ELEVATOR;
+			case "stairs":
+				return RoomType.STAIRS;
+			case "portal":
+				return RoomType.PORTAL;
+			case "hallway":
+				return RoomType.HALLWAY;
+			case "parking lot":
+				return RoomType.PARKING;
+			default:
+				return RoomType.DEFAULT;
 		}
 	}
 
