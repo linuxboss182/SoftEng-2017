@@ -368,6 +368,8 @@ public class UserPathController
 			Scene smsScene = new Scene(loader.load());
 			((SMSController)loader.getController()).setText(textDirections.getText());
 			Stage smsStage = new Stage();
+			smsStage.setTitle("Faulkner Hospital Navigator SMS Page");
+			smsStage.getIcons().add(new Image("bwhIcon.png"));
 			smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
 			smsStage.setScene(smsScene);
 			smsStage.showAndWait();

@@ -1127,7 +1127,7 @@ public class EditorController
 //			 */
 //		}
 //		this.nodePane.getChildren().setAll(roomShapes);
-	} 
+	}
 
 	/**
 	 * Make the room of the currently-selected node into the kiosk

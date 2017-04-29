@@ -16,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
@@ -146,10 +148,11 @@ public class UserMasterController
 
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
+
+		this.initFocusTraversables();
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
-		System.out.println("Height: " + newSceneHeight);
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
 		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
@@ -379,6 +382,38 @@ public class UserMasterController
 		this.getDirectionsClicked();
 	}
 
+
+	@FXML
+	public void startFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			this.destinationField.requestFocus();
+		}
+	}
+
+	@FXML
+	public void destinationFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			try {
+				if(this.getDirectionsBtn.isDisabled()) {
+					this.startField.requestFocus();
+				} else {
+					this.getDirectionsClicked();
+				}
+			} catch (IOException e1) {
+//				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+//				e1.printStackTrace();
+			}
+		}
+	}
+
+	private void initFocusTraversables() {
+		this.floorComboBox.setFocusTraversable(false);
+		this.getDirectionsBtn.setFocusTraversable(false);
+		this.aboutBtn.setFocusTraversable(false);
+		this.helpBtn.setFocusTraversable(false);
+		this.zoomSlider.setFocusTraversable(false);
+	}
 }
 
 
