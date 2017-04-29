@@ -14,34 +14,16 @@ public class UserState
 
 	private Room startRoom;
 	private Room endRoom;
-	private String textFieldContents;
 
-	public UserState(Parent root, boolean loggedIn, Room startRoom, Room endRoom, String textFieldContents) {
+	public UserState(Parent root) {
 		this.root = root;
 		this.loggedIn = loggedIn;
 		this.startRoom = startRoom;
 		this.endRoom = endRoom;
-		this.textFieldContents = textFieldContents;
 	}
 
 	public Parent getRoot() {
 		return this.root;
-	}
-
-	public boolean getLoggedIn() {
-		return this.loggedIn;
-	}
-
-	public Room getStartRoom() {
-		return this.startRoom;
-	}
-
-	public Room getEndRoom() {
-		return this.endRoom;
-	}
-
-	public String getTextFieldContents() {
-		return this.textFieldContents;
 	}
 
 }

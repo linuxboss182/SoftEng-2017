@@ -23,7 +23,7 @@ public class Directory
 	private Room kiosk;
 	private boolean loggedIn;
 
-	private long timeout;
+	private long timeout = 50;
 	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
 
