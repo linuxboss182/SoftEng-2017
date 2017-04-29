@@ -103,6 +103,10 @@ public class Directory
 		return newAccount;
 	}
 
+	public void deleteAccount(String user){
+		this.Accounts.remove(user);
+	}
+
 	/* Account/login functions */
 	public void logIn() {
 		this.loggedIn = true;

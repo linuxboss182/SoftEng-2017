@@ -30,6 +30,7 @@ public class AccountPopupController
 	@FXML private TableColumn passwordCol;
 	@FXML private TableColumn permissionsCol;
 
+	Account selectedAccount;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -45,11 +46,6 @@ public class AccountPopupController
 		ObservableList<Account> accounts = FXCollections.observableArrayList();
 		accounts.addAll(getDirectory().getAccounts().values());
 		accounts.forEach(a-> System.out.println("a.getUsername() = " + a.getUsername()));
-//		accountTableView.getColumns().addAll(usernameCol, passwordCol, permissionsCol);
-//		accountTableView.getSortOrder().add(usernameCol);
-//		accountTableView.getSortOrder().add(passwordCol);
-//		accountTableView.getSortOrder().add(permissionsCol);
-//		accountTableView.setItems(accounts);
 		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
 
 
@@ -91,15 +87,25 @@ public class AccountPopupController
 				((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setPermission(t.getNewValue());
 			}
 		});
+
+		this.accountTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Account>() {
+			@Override
+			public void changed(ObservableValue<? extends Account> observable, Account oldValue, Account newValue) {
+				selectedAccount = newValue;
+			}
+		});
 	}
 
+	@FXML
 	public void onAddAccountBtnClicked(){
-		Account newAccount = getDirectory().addAccount("","","");
+		Account newAccount = getDirectory().addAccount("newuer","newpassword","newpermissions");
 		accountTableView.getItems().add(newAccount);
 	}
 
-	public void onRemvoeAccountBtnClicked(){
-
+	@FXML
+	public void onRemoveAccountBtnClicked(){
+		getDirectory().deleteAccount(selectedAccount.getUsername());
+		accountTableView.getItems().remove(selectedAccount);
 	}
 
 	@FXML
