@@ -34,7 +34,7 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
     <top>
-        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
+        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="navHamburgerBtn" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -45,6 +45,17 @@
             <center>
                 <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" BorderPane.alignment="CENTER" />
             </center>
+         <right>
+            <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" text="Help"  styleClass="blue-button" >
+                     <HBox.margin>
+                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </right>
         </JFXToolbar>
     </top>
     <center>
@@ -101,7 +112,7 @@
                                         </JFXButton>
                                     </children>
                                 </HBox>
-                                <JFXListView fx:id="resultsListView" />
+                                <JFXListView fx:id="roomSearchResults" />
                                 <HBox fx:id="bottomHBox">
                                     <children>
                                         <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />

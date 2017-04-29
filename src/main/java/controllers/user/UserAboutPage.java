@@ -10,19 +10,15 @@ import javafx.scene.control.Button;
 public class UserAboutPage
 {
 	@FXML
-	private Button ParrotTest;
-	@FXML
 	private Button closeBtn;
-
 
 	@FXML
 	private void closeBtnClicked() {
 		closeBtn.getScene().getWindow().hide();
-
 	}
 
 	@FXML
-	private void parrotTestBtnPressed () {
+	public void parrotTestBtnPressed() {
 
 	}
 

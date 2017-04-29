@@ -1,6 +1,4 @@
-.root {
-    -fx-text-fill: green;
-}
+
 .hbox {
     -fx-background-color: #4285f4;
     -fx-animated: inherit;
@@ -13,19 +11,22 @@
     -fx-background-color: #FFFFFF;
 }
 
+
 .path-label {
-    -fx-background-color: rgba(66, 133, 244, 0.16);
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-alignment: center;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #4285f4;
+    -fx-font-size: 18px;
+    -fx-alignment: baseline-left;
 }
+
 
 .label {
     -fx-text-fill: black;
     -fx-font-size: 14px;
-    -fx-alignment: center;
+    -fx-alignment: baseline-left;
     -fx-font-family: "Trebuchet MS";
 }
+
 
 
 .vbox {
@@ -77,5 +78,4 @@
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #0288D1;
     -fx-font-size: 14px;
-    -fx-font-weight: 200px;
 }

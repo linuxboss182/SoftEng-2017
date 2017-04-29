@@ -7,6 +7,7 @@ import entities.Directory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import main.database.DatabaseWrapper;
@@ -59,6 +60,7 @@ public class ApplicationController extends Application
 		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
+		primaryStage.getIcons().add(new Image("bwhIcon.png"));
 		Scene user = new Scene(root, 1300, 800);
 		primaryStage.setMinWidth(1180);
 		primaryStage.setMinHeight(722);

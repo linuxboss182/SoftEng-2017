@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.input.KeyEvent;
 import main.ApplicationController;
 
+import javafx.scene.input.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 
