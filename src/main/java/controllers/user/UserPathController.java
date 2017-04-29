@@ -420,6 +420,6 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 }
