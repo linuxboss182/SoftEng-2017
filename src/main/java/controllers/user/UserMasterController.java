@@ -87,8 +87,6 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
-		addSearchFieldListeners();
-
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) {
@@ -112,9 +110,8 @@ public class UserMasterController
 		this.displayRooms();
 
 		setScrollZoom();
-
-		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+		addSearchFieldListeners();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater( () -> {
@@ -122,7 +119,6 @@ public class UserMasterController
 			resizeDrawerListener(drawerParentPane.getHeight());
 		});
 
-//		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.setOnKeyTyped(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyTyped(e -> this.filterRoomsByName(this.startField.getText()));
@@ -133,11 +129,6 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				resizeDrawerListener((double)newSceneHeight);
-			}
-		});
 		resizeDrawerListener(677.0);
 
 		mainDrawer.open();
@@ -148,6 +139,7 @@ public class UserMasterController
 
 	private void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
 		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
@@ -290,61 +282,39 @@ public class UserMasterController
 	private void selectRoomAction(Room room) {
 		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
-			if (room != null) {
-				startField.setText(room.getName());
-			}
 		} else {
 			this.selectEndRoom(room);
-			if (room != null) {
-				destinationField.setText(room.getName());
-			}
-
 		}
-	}
-
-	private void addSearchFieldListeners() {
-		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean nowFocused) {
-				if (nowFocused) {
-					populateListView();
-					if (startField.getText().equals("Your Location")) {
-						startField.clear();
-						populateListView();
-					}
-				}
-			}
-		});
-
-		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean nowFocused) {
-				if (nowFocused) {
-					populateListView();
-				}
-			}
-		});
 	}
 
 	private void selectStartRoom(Room r) {
 		if(r == null) return;
-		startRoom = r;
+		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-
 		iconController.selectStartRoom(r);
+		startField.setText(r.getName());
 		this.displayRooms();
 	}
 
 	private void selectEndRoom(Room r) {
 		if(r == null) return;
-		endRoom = r;
+		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
+		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
+
+	private void addSearchFieldListeners() {
+		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) populateListView();
+		});
+
+		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) populateListView();
+		});
+	}
+
 
 	@FXML
 	public void aboutBtnClicked () throws IOException {
