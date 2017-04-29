@@ -2,9 +2,9 @@ package entities;
 
 public class Account
 {
-	private String username;
-	private String password;
-	private String permission;
+	public String username;
+	public String password;
+	public String permission;
 
 	public String getUsername() {
 		return username;
