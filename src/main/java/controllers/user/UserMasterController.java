@@ -88,11 +88,7 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
-		//Kiosk listener
-		startFocusedListener();
-		destFocusedListener();
-
-
+		addSearchFieldListeners();
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -152,12 +148,12 @@ public class UserMasterController
 
 	}
 
-	public void resizeDrawerListener(Double newSceneHeight) {
+	private void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
 		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
-	public void setStyleIDs() {
+	private void setStyleIDs() {
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
 		goHBox.getStyleClass().add("hbox-go");
@@ -181,7 +177,7 @@ public class UserMasterController
 	 *
 	 * @param searchString The new string in the search bar
 	 */
-	public void filterRoomsByName(String searchString) {
+	private void filterRoomsByName(String searchString) {
 		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
@@ -197,7 +193,7 @@ public class UserMasterController
 	 * Initialize the floor's choice box with 1-7 (the floors)
 	 * Ideally this shouldn't be hard coded
 	 */
-	public void initfloorComboBox() {
+	private void initfloorComboBox() {
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
@@ -227,14 +223,14 @@ public class UserMasterController
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-	public void displayRooms() {
+	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
 	 * Populates the list of rooms
 	 */
-	public void populateListView() {
+	private void populateListView() {
 
 		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
@@ -258,7 +254,7 @@ public class UserMasterController
 	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
-	protected void enableOrDisableNavigationButtons() {
+	private void enableOrDisableNavigationButtons() {
 		if (this.getDirectionsBtn != null) {
 			if (endRoom == null || startRoom == null) {
 				this.getDirectionsBtn.setDisable(true);
@@ -296,7 +292,7 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
+	private void selectRoomAction(Room room) {
 		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
 			if (room != null) {
@@ -311,11 +307,11 @@ public class UserMasterController
 		}
 	}
 
-	protected void startFocusedListener() {
+	private void addSearchFieldListeners() {
 		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-				if (newPropertyValue) {
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean nowFocused) {
+				if (nowFocused) {
 					populateListView();
 					if (startField.getText().equals("Your Location")) {
 						startField.clear();
@@ -324,20 +320,18 @@ public class UserMasterController
 				}
 			}
 		});
-	}
 
-	protected void destFocusedListener() {
 		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-				if (newPropertyValue) {
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean nowFocused) {
+				if (nowFocused) {
 					populateListView();
 				}
 			}
 		});
 	}
 
-	protected void selectStartRoom(Room r) {
+	private void selectStartRoom(Room r) {
 		if(r == null) return;
 		startRoom = r;
 		this.enableOrDisableNavigationButtons();
@@ -347,7 +341,7 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
-	protected void selectEndRoom(Room r) {
+	private void selectEndRoom(Room r) {
 		if(r == null) return;
 		endRoom = r;
 		this.enableOrDisableNavigationButtons();
