@@ -19,10 +19,9 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
-	private HashMap<String, String> users;
-	private HashMap<String, String> permissions;
 	private Room kiosk;
 	private boolean loggedIn;
+	private Map<String, Account> Accounts;
 
 	private FloorImage floor;
 
@@ -40,8 +39,7 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
-		this.users = new HashMap<>();
-		this.permissions = new HashMap<>();
+		this.Accounts = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -99,13 +97,11 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void addUser(String user, String password, String permission){
-		this.users.put(user, password);
-		this.permissions.put(user, permission);
+	public void addAccount(String user, String password, String permission){
+		this.Accounts.put(user, new Account(user, password, permission));
 	}
 
-
-	/* User/login functions */
+	/* Account/login functions */
 	public void logIn() {
 		this.loggedIn = true;
 	}
@@ -114,20 +110,19 @@ public class Directory
 		this.loggedIn = false;
 	}
 
-	public boolean isLoggedIn() {
-		return this.loggedIn;
-	}
+	public boolean isLoggedIn() { return this.loggedIn; }
 
-	public HashMap<String, String> getUsers(){
-		return new HashMap<>(this.users);
+	public Map<String, Account> getAccounts(){
+		return Accounts;
 	}
 
 	public String getPermissions(String username){
-		return permissions.get(username);
+		return Accounts.get(username).getPermissions();
 	}
 
-
-
+	public Account getAccount(String username){
+		return Accounts.get(username);
+	}
 
 	/* Element removal methods */
 
@@ -370,6 +365,63 @@ public class Directory
 	public void removeRoomFromProfessional(Room room, Professional professional) {
 		professional.removeLocation(room);
 		room.removeProfessional(professional);
+	}
+
+	public void addNewElevatorUp(Node node) {
+		if (node == null) return;
+
+		this.addNewElevatorUp(node, this.floor.getNumber()+1);
+	}
+
+	private void addNewElevatorUp(Node node, int floorNum) {
+		if (node == null) return;
+
+		Set<Node> neighbors = node.getNeighbors();
+		neighbors.removeIf(n -> n.getFloor() != floorNum);
+		if (! neighbors.isEmpty()) {
+			neighbors.forEach(n -> this.addNewElevatorUp(n, floorNum+1));
+		} else {
+			if (node.getRoom() == null) {
+				this.addNewRoomToNode(node, "", "", "Elevator to floor above");
+			}
+			node.getRoom().setType(RoomType.ELEVATOR);
+
+			FloorImage targetFloor = FloorProxy.getFloor(this.getFloorName(), floorNum);
+			if (targetFloor != null) {
+				Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
+						"", "Elevator to floor below");
+				this.connectNodes(node, n);
+			}
+		}
+	}
+
+	public void addNewElevatorDown(Node node) {
+		if (node == null) return;
+
+		this.addNewElevatorDown(node, this.floor.getNumber()-1);
+	}
+
+	private void addNewElevatorDown(Node node, int floorNum) {
+		if (node == null) return;
+
+		Set<Node> neighbors = node.getNeighbors();
+		neighbors.removeIf(n -> n.getFloor() != floorNum);
+		if (! neighbors.isEmpty()) {
+			neighbors.forEach(n -> this.addNewElevatorUp(n, floorNum-1));
+		} else {
+			if (node.getRoom() == null) {
+				this.addNewRoomToNode(node, "", "", "Elevator to floor below");
+			}
+			node.getRoom().setType(RoomType.ELEVATOR);
+
+			FloorImage targetFloor = FloorProxy.getFloor(this.getFloorName(), floorNum);
+			if (targetFloor != null) {
+				Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
+						"", "Elevator to floor above");
+				this.connectNodes(node, n);
+				System.out.println("elevator down");
+			}
+		}
 	}
 
 	/* Program logic functions */

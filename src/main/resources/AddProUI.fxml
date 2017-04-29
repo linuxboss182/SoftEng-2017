@@ -40,6 +40,6 @@
       <JFXTextField fx:id="givenNameField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <JFXTextField fx:id="surnameField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       <JFXTextField fx:id="titleField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-      <JFXButton fx:id="cancelBtn" buttonType="RAISED" style="-fx-background-color: #5087b4;" text="Cancel" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+      <JFXButton fx:id="cancelBtn" buttonType="RAISED" onMouseClicked="#onCancelBtnClick" style="-fx-background-color: #5087b4;" text="Cancel" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
    </children>
 </GridPane>
