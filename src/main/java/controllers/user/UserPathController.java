@@ -75,6 +75,7 @@ public class UserPathController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXDrawer mapIconDrawer;
 	@FXML protected ImageView backImageView;
+	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -158,12 +159,14 @@ public class UserPathController
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		drawerParentPane.getStyleClass().add("drawer");
+		//drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
 		directionsLbl.getStyleClass().add("path-label");
 		doneBtn.getStyleClass().add("blue-button");
+		helpBtn.getStyleClass().add("blue-button");
+		directionsTextField.getStyleClass().add("black-text");
 
 	}
 
@@ -430,5 +433,17 @@ public class UserPathController
 
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
+	}
+
+	@FXML
+	private void helpBtnClicked() throws IOException{
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
 	}
 }

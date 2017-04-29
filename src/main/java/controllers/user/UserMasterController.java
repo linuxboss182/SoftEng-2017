@@ -13,9 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -24,10 +23,9 @@ import javafx.scene.layout.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
-import java.text.Normalizer;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -55,6 +53,7 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXButton helpBtn;
 
 	private Room startRoom;
 	private Room endRoom;
@@ -100,7 +99,6 @@ public class UserMasterController
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) {
 			startRoom = directory.getKiosk();
-			startField.setText("Your Location");
 		}
 
 		initializeIcons();
@@ -168,6 +166,7 @@ public class UserMasterController
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
+		helpBtn.getStyleClass().add("blue-button");
 	}
 
 
@@ -188,21 +187,10 @@ public class UserMasterController
 		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
-
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
-
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
-
-			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
+			String search = searchString.toLowerCase();
+			Set<Room> rooms = directory.getUserRooms();
+			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
+			this.resultsListView.setItems(FXCollections.observableArrayList(rooms));
 		}
 	}
 
@@ -257,9 +245,7 @@ public class UserMasterController
 			Platform.runLater(() -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
 
 		});
-
 		resultsListView.getSelectionModel().clearSelection();
-
 
 	}
 

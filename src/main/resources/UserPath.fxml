@@ -37,113 +37,124 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserPathController">
 
-<!--
-TOP: Menu bar
--->
+    <!--
+    TOP: Menu bar
+    -->
     <top>
         <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="directionsHamburgerButton" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
-                        <Insets left="30.0" right="30.0" />
+                        <Insets left="15.0" right="30.0" />
                     </padding>
                 </JFXHamburger>
             </left>
+         <right>
+            <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" text="Help" styleClass="blue-button">
+                     <HBox.margin>
+                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </right>
             <!--<right>-->
-                <!--<ImageView fx:id="logoImageView" fitHeight="46.0" fitWidth="277.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />-->
+            <!--<ImageView fx:id="logoImageView" fitHeight="46.0" fitWidth="277.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />-->
             <!--</right>-->
         </JFXToolbar>
     </top>
 
-<!--
-CENTER: Drawer
--->
+    <!--
+    CENTER: Drawer
+    -->
     <center>
         <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="420.0" BorderPane.alignment="CENTER">
             <children>
-            <BorderPane fx:id="floatingBorderPane">
-               <right>
-                  <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="100.0" right="30.0" top="100.0" />
-                     </BorderPane.margin>
-                  </Slider>
-               </right>
-            </BorderPane>
-            <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
-               <children>
-                      <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
-                          <children>
+                <BorderPane fx:id="floatingBorderPane">
+                    <right>
+                        <Slider fx:id="zoomSlider" orientation="VERTICAL" BorderPane.alignment="CENTER">
+                            <BorderPane.margin>
+                                <Insets bottom="100.0" right="30.0" top="100.0" />
+                            </BorderPane.margin>
+                        </Slider>
+                    </right>
+                </BorderPane>
+                <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
+                    <children>
+                        <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
+                            <children>
 
-                              <HBox fx:id="backHBox">
-                                  <children>
-                                      <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" onMouseClicked="#backBtnClicked" pickOnBounds="true" preserveRatio="true">
-                                          <HBox.margin>
-                                              <Insets left="15.0" right="15.0" />
-                                          </HBox.margin>
-                                      </ImageView>
-                                  </children>
-                              </HBox>
-                        <HBox fx:id="startLblHBox">
-                           <children>
-                              <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                              <Label fx:id="startLbl" alignment="CENTER" prefHeight="17.0" prefWidth="250.0" text="Label">
-                                 <HBox.margin>
-                                    <Insets bottom="30.0" right="50.0" top="30.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox fx:id="destLblHBox">
-                           <children>
-                              <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                              <Label fx:id="destLbl" prefHeight="17.0" prefWidth="295.0" text="Label">
-                                 <HBox.margin>
-                                    <Insets bottom="30.0" right="50.0" top="30.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox fx:id="directionsLblHBox" alignment="TOP_CENTER">
-                           <children>
-                                    <Label fx:id="directionsLbl" alignment="TOP_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:">
-                                        <font>
-                                            <Font size="15.0" />
-                                        </font>
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" right="50.0" top="15.0" />
-                                 </HBox.margin>
-                                    </Label>
-                                    <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" text="Send Directions to Phone" textFill="WHITE">
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" left="50.0" top="15.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                        <TextFlow fx:id="directionsTextField" prefHeight="200.0" prefWidth="200.0" />
-                        <JFXListView fx:id="directionsListView" />
-                        <HBox prefHeight="100.0" prefWidth="200.0">
-                           <children>
-                                  <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0"  text="DONE">
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" left="25.0" top="15.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                          </children>
-                      </VBox>
-               </children>
-            </Pane>
+                                <HBox fx:id="backHBox">
+                                    <children>
+                                        <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" onMouseClicked="#backBtnClicked" pickOnBounds="true" preserveRatio="true">
+                                            <HBox.margin>
+                                                <Insets left="15.0" right="15.0" />
+                                            </HBox.margin>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="startLblHBox">
+                                    <children>
+                                        <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                            <HBox.margin>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                            </HBox.margin>
+                                        </ImageView>
+                                        <Label fx:id="startLbl" alignment="CENTER" prefHeight="17.0" prefWidth="250.0" text="Label">
+                                            <HBox.margin>
+                                                <Insets bottom="30.0" right="50.0" top="30.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="destLblHBox">
+                                    <children>
+                                        <ImageView fx:id="destImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                            <HBox.margin>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                            </HBox.margin>
+                                        </ImageView>
+                                        <Label fx:id="destLbl" prefHeight="17.0" prefWidth="295.0" text="Label">
+                                            <HBox.margin>
+                                                <Insets bottom="30.0" right="50.0" top="30.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="directionsLblHBox" alignment="TOP_CENTER">
+                                    <children>
+                                        <Label fx:id="directionsLbl" alignment="TOP_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets bottom="15.0" right="50.0" top="15.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <JFXButton fx:id="sendToPhoneBtn" buttonType="RAISED" onMouseClicked="#sendSMSBtnClicked" prefHeight="25.0" text="Send Directions to Phone" textFill="WHITE">
+                                            <HBox.margin>
+                                                <Insets bottom="15.0" left="50.0" top="15.0" />
+                                            </HBox.margin>
+                                        </JFXButton>
+                                    </children>
+                                </HBox>
+                                <TextFlow fx:id="directionsTextField" prefHeight="200.0" prefWidth="200.0" />
+                                <JFXListView fx:id="directionsListView" />
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" text="DONE">
+                                            <HBox.margin>
+                                                <Insets bottom="15.0" left="25.0" top="15.0" />
+                                            </HBox.margin>
+                                        </JFXButton>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </Pane>
 
                 <JFXDrawer fx:id="mapIconDrawer" defaultDrawerSize="100.0" direction="BOTTOM">
                     <children>
@@ -172,5 +183,5 @@ CENTER: Drawer
                 <URL value="@/DrawerStyle.css" />
             </stylesheets>
         </JFXDrawer>
-   </center>
+    </center>
 </BorderPane>
