@@ -80,6 +80,7 @@ public class EditorController
 	@FXML private SplitPane mapSplitPane;
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 	@FXML private ToggleButton restrictedView;
+	@FXML private TextField timeoutField;
 	@FXML private JFXButton modifyAccountBtn;
 
 	/**
@@ -175,6 +176,7 @@ public class EditorController
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
+		this.initTimeoutField();
 	}
 
 
@@ -426,6 +428,10 @@ public class EditorController
 
 	@FXML
 	public void confirmBtnPressed() {
+		try{
+			if(this.timeoutField.getText().length() > 0)
+				this.directory.setTimeout(1000 * Integer.parseInt(this.timeoutField.getText())); // In seconds
+		} catch(NumberFormatException e) {}
 		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
@@ -725,6 +731,9 @@ public class EditorController
 		this.redisplayAll();
 	}
 
+	private void initTimeoutField() {
+		this.timeoutField.setText(this.directory.getTimeout()/1000 + "");
+	}
 
 	///////////////////////
 	/////EVENT HANDLERS////

@@ -43,7 +43,10 @@ public class StoredProcedures
 			"CREATE TABLE Users ("
 					+"userID    varchar(100) PRIMARY KEY"
 					+" , passHash  varchar(100)"
-					+" , permission    varchar(100))"
+					+" , permission    varchar(100))",
+			"CREATE TABLE TimeoutDuration (" + // TODO: REVIEW -TED
+					"duration integer"
+					+ ")"
 	);
 
 	private static final List<String> drops = Arrays.asList(
@@ -53,7 +56,8 @@ public class StoredProcedures
 			"DROP TABLE Rooms",
 			"DROP TABLE Edges",
 			"DROP TABLE Nodes",
-			"DROP TABLE Users"
+			"DROP TABLE Users",
+			"DROP TABLE TimeoutDuration"
 	);
 
 	//initial data that will be in the database upon construction
@@ -207,6 +211,12 @@ public class StoredProcedures
 	public static String procInsertKiosk(int roomID){
 		return "INSERT INTO Kiosk (roomID) VALUES (" + roomID + ")";
 	}
+
+	// TODO: REVIEW -TED
+	public static String procInsertTimeoutDuration(long timeoutDuration) {
+		return "INSERT INTO TimeoutDuration (duration) VALUES (" + timeoutDuration + ")";
+	}
+
 	/* **** Retrieval procedures **** */
 
 	public static String procRetrieveNodes(){
@@ -262,6 +272,11 @@ public class StoredProcedures
 
 	public static String procRetrieveNodesAndRooms(){
 		return "SELECT * FROM Nodes LEFT OUTER JOIN Rooms on rooms.NODEID = nodes.NODEID";
+	}
+
+	// TODO: REVIEW -TED
+	public static String procRetrieveTimeoutDuration() {
+		return "SELECT duration FROM TimeoutDuration";
 	}
 
 	private static String sanitize(String str){
