@@ -1,34 +1,31 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
 import entities.FloorProxy;
-import controllers.shared.MapDisplayController;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
-import java.text.Normalizer;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -36,28 +33,36 @@ import main.ApplicationController;
 
 
 public class UserMasterController
-		extends MapDisplayController
+		extends DrawerController
 		implements Initializable
 {
-	@FXML private JFXButton logAsAdmin;
-	@FXML private ListView<Room> directoryView;
+	@FXML private ImageView logAsAdmin;
+	@FXML private JFXListView<Room> resultsListView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextField searchBar;
+	@FXML protected JFXTextField destinationField;
+	@FXML public ImageView destImageView;
+	@FXML protected JFXTextField startField;
+	@FXML public ImageView startImageView;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
-	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
-	@FXML private Button aboutBtn;
+	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
 
-	private double clickedX;
-	private double clickedY;
-	protected Room startRoom;
-	protected Room endRoom;
+	private Room startRoom;
+	private Room endRoom;
 
+
+
+	@FXML private HBox startHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox goHBox;
+	@FXML private HBox bottomHBox;
 
 	/**
 	 * Get the scene this is working on
@@ -78,12 +83,24 @@ public class UserMasterController
 	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		super.initialize();
+
+		//Set IDs for CSS
+		setStyleIDs();
+
+		//Kiosk listener
+		startFocusedListener();
+		destFocusedListener();
+
+
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
-		if (startRoom == null) startRoom = directory.getKiosk();
+		if (startRoom == null) {
+			startRoom = directory.getKiosk();
+		}
+
+		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -98,43 +115,65 @@ public class UserMasterController
 		initfloorComboBox();
 
 		this.displayRooms();
-		iconController.resetAllRooms();
-
-		this.populateListView();
 
 		setScrollZoom();
-
-		// TODO: See if there's a way to include this in the OnMouseDragged listener
-
-		setMouseMapListeners();
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater( () -> initWindowResizeListener());
+		Platform.runLater( () -> {
+			initWindowResizeListener();
+			resizeDrawerListener(drawerParentPane.getHeight());
+
+		});
 //		Platform.runLater( () -> this.fitMapSize());
 		// Enable search; if this becomes more than one line, make it a function
-		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+		logAsAdmin.setImage(new Image("/lock.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
+
+		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				resizeDrawerListener((double)newSceneHeight);
+			}
+		});
+		resizeDrawerListener(677.0);
+
+		mainDrawer.open();
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
 
 	}
 
-	private void setMouseMapListeners() {
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
+	public void resizeDrawerListener(Double newSceneHeight) {
+		System.out.println("Height: " + newSceneHeight);
+		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	}
 
-		contentAnchor.setOnMouseDragged(event -> {
-			// Limits the dragging for x and y coordinates. (panning I mean)
-			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			}
-			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			}
+	public void setStyleIDs() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox-go");
+		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
+		getDirectionsBtn.getStyleClass().add("jfx-button");
+		topToolBar.getStyleClass().add("tool-bar");
+		drawerParentPane.getStyleClass().add("drawer");
+	}
+
+
+	private void initializeIcons() {
+		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
 		});
+		iconManager.getIcons(directory.getRooms());
 	}
 
 	/**
@@ -143,24 +182,13 @@ public class UserMasterController
 	 * @param searchString The new string in the search bar
 	 */
 	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
-
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
-
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
-
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
+			String search = searchString.toLowerCase();
+			Set<Room> rooms = directory.getUserRooms();
+			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
+			this.resultsListView.setItems(FXCollections.observableArrayList(rooms));
 		}
 	}
 
@@ -195,45 +223,33 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
+
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-
-			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
-			});
-
-			// Add listener for context menus (right click)
-			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-
-				ContextMenu optionsMenu = new ContextMenu();
-
-				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-			});
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
+
+		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
+			Platform.runLater(() -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
+
+		});
+
+		resultsListView.getSelectionModel().clearSelection();
+
+
 	}
+
+
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
@@ -281,19 +297,44 @@ public class UserMasterController
 	 * Function called to select a room
 	 */
 	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
+		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
+			if (room != null) {
+				startField.setText(room.getName());
+			}
 		} else {
 			this.selectEndRoom(room);
+			if (room != null) {
+				destinationField.setText(room.getName());
+			}
+
 		}
 	}
 
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
-		this.changeStartBtn.setDisable(true);
-		System.out.println(this.changeStartBtn.isDisable() +", "+this.changeStartBtn.isDisabled());
+	protected void startFocusedListener() {
+		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					populateListView();
+					if (startField.getText().equals("Your Location")) {
+						startField.clear();
+						populateListView();
+					}
+				}
+			}
+		});
+	}
+
+	protected void destFocusedListener() {
+		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					populateListView();
+				}
+			}
+		});
 	}
 
 	protected void selectStartRoom(Room r) {
@@ -301,6 +342,7 @@ public class UserMasterController
 		startRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
+
 		iconController.selectStartRoom(r);
 		this.displayRooms();
 	}
@@ -326,4 +368,16 @@ public class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
+	@FXML
+	private void helpBtnClicked() throws IOException{
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
+	}
 }
+

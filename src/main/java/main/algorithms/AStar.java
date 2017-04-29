@@ -3,6 +3,7 @@ package main.algorithms;
 import entities.Node;
 
 import java.util.*;
+import java.util.function.Function;
 
 enum AStar
 		implements Algorithm
@@ -28,7 +29,9 @@ enum AStar
 	 * @return A list of the nodes traversed in the path, in order, or an empty list if
 	 *         no path is found
 	 */
-	public List<Node> findPath(Node start, Node dest) throws PathNotFoundException {
+	public List<Node> findPath(Node start, Node dest,
+	                           Function<Node, Set<Node>> nodeNeighborGetter)
+	                           throws PathNotFoundException {
 		Double inf = Double.POSITIVE_INFINITY;
 		// list of Nodes that have already been visited
 		Set<Node> visitedNodes = new HashSet<>();
@@ -70,7 +73,7 @@ enum AStar
 			visitedNodes.add(current); // don't try to make paths to this node later
 
 			// look at each neighbor of the current node
-			for(Node neighbor : current.getNeighbors()){
+			for (Node neighbor : nodeNeighborGetter.apply(current)) {
 				if (visitedNodes.contains(neighbor)) {
 					continue; // skip already-visited neighbors
 				}

@@ -1,32 +1,30 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
 import controllers.extras.SMSController;
-import controllers.shared.MapDisplayController;
+import controllers.icons.IconManager;
+import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import entities.Room;
 import javafx.scene.text.TextFlow;
@@ -49,19 +47,34 @@ If possible, get turn direction upon exiting a building (requires changes elsewh
 // TODO: UserPathController should not inherit from UserMasterController
 
 public class UserPathController
-		extends MapDisplayController
+		extends DrawerController
 		implements Initializable
 {
 	@FXML private JFXButton logAsAdmin;
+	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
 	@FXML protected TextFlow directionsTextField;
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
-
 	@FXML private Button doneBtn;
 	@FXML private AnchorPane floorsTraveledAnchorPane;
+	@FXML private Label startLbl;
+	@FXML private HBox directionsLblHBox;
+	@FXML private ImageView startImageView;
+	@FXML private JFXListView<?> directionsListView;
+	@FXML private HBox destLblHBox;
+	@FXML private Label destLbl;
+	@FXML private Label directionsLbl;
+	@FXML private VBox pathVBox;
+	@FXML private HBox backHBox;
+	@FXML private HBox startLblHBox;
+	@FXML private ImageView destImageView;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXDrawer mapIconDrawer;
+	@FXML protected ImageView backImageView;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -69,6 +82,7 @@ public class UserPathController
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
 	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
+
 
 
 	/**
@@ -92,12 +106,15 @@ public class UserPathController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize();
+		this.initializeDrawer();
 
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
+
+		this.iconManager = new IconManager();
+		iconManager.getIcons(directory.getRooms());
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -112,33 +129,53 @@ public class UserPathController
 
 		setScrollZoom();
 
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
-
-		contentAnchor.setOnMouseDragged(event -> {
-			// Limits the dragging for x and y coordinates. (panning I mean)
-			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			}
-			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			}
-			event.consume();
-		});
+		setHotkeys();
+		Platform.runLater( () -> initWindowResizeListener());
 
 
+		backImageView.setImage(new Image("/back.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+
+		//Set IDs for CSS
+		setStyleIDs();
+
+
+
+	}
+
+	private void initializeDrawer() {
+		this.mapIconDrawer.setContent(mapScroll);
+		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+		this.mapIconDrawer.setOverLayVisible(false);
+		this.mapIconDrawer.open();
+	}
+
+
+	public void setStyleIDs() {
+		backHBox.getStyleClass().add("hbox");
+		startLblHBox.getStyleClass().add("hbox");
+		destLblHBox.getStyleClass().add("hbox");
+		directionsLblHBox.getStyleClass().add("hbox-go");
+		topToolBar.getStyleClass().add("tool-bar");
+		drawerParentPane.getStyleClass().add("drawer");
+		startLbl.getStyleClass().add("path-label");
+		destLbl.getStyleClass().add("path-label");
+		sendToPhoneBtn.getStyleClass().add("jfx-button");
+		directionsLbl.getStyleClass().add("path-label");
+		doneBtn.getStyleClass().add("blue-button");
+
+	}
+
+	private void setContentAnchorListeners() {
 		// Redraw rooms when the background is released
 		// TODO: Fix bug where clicking rooms un-draws them
 		contentAnchor.setOnMouseReleased(event -> {
 			iconController.resetAllRooms();
 			this.displayRooms();
 		});
-
-		setHotkeys();
-		Platform.runLater( () -> initWindowResizeListener());
 	}
+
 
 	/**
 	 * Attempt to set up this scene in preparation to display a path between the given rooms
@@ -155,6 +192,8 @@ public class UserPathController
 		if ((startRoom == null) || (endRoom == null)) {
 			return false;
 		}
+		startLbl.setText(startRoom.getName());
+		destLbl.setText(endRoom.getName());
 
 		Node startNode = startRoom.getLocation();
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
@@ -165,7 +204,13 @@ public class UserPathController
 			return false;
 		}
 		this.directionsTextField.getChildren().clear();
-		textDirections.setText(DirectionsGenerator.fromPath(path));
+		List<Direction> directions = DirectionsGenerator.fromPath(path);
+		String textDirs = "";
+		for(Direction d: directions){
+			textDirs  = textDirs+d.getTextDirection()+"\n";
+		}
+
+		textDirections.setText(textDirs);
 		//Call text directions
 		this.directionsTextField.getChildren().add(textDirections);
 
@@ -177,7 +222,6 @@ public class UserPathController
 			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
 					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
 				pathSegments.add(seg);
-				// TODO: Look over this
 				seg = new LinkedList<>();
 			}
 		}
@@ -201,45 +245,45 @@ public class UserPathController
 		// add starting floor
 		floors.add(here);
 		for (int i = 0; i < pathSegments.size(); i++) {
-			Node n = pathSegments.get(i).get(1);
+			if((pathSegments.get(i).size() > 1)) {
+				Node n = pathSegments.get(i).get(0);
+				here = new MiniFloor(n.getFloor(), n.getBuildingName());
+				floors.add(here);
+				LinkedList<Node> seg = pathSegments.get(i);
+				this.createNewFloorButton(here, seg, floors.size());
+			}
+		}
+		// take into account the fact that an elevator or staircase could be chosen as
+		// the destination and would (possibly) have only one node shown in the
+		// path list
+		if(pathSegments.getLast().size() == 1){
+			Node n = pathSegments.getLast().get(0);
 			here = new MiniFloor(n.getFloor(), n.getBuildingName());
 			floors.add(here);
-			LinkedList<Node> seg = pathSegments.get(i);
+			LinkedList<Node> seg = pathSegments.getLast();
 			this.createNewFloorButton(here, seg, floors.size());
 		}
-
-//		this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-//
-//		for (int i = 1; i < path.size()-1; ++i) {
-//			last = here;
-//			here = new MiniFloor(path.get(i).getFloor(), path.get(i).getBuildingName());
-//			next = new MiniFloor(path.get(i+1).getFloor(), path.get(i+1).getBuildingName());
-//
-//			// Check when there is a floor A -> floor B -> floor B transition and save floor B
-//			if ((last.number != here.number && next.number == here.number) || ! last.building.equalsIgnoreCase(here.building)) {
-//				floors.add(here);
-//				this.createNewFloorButton(here, this.getPathOnFloor(here, path), floors.size());
-//			}
-//		}
-//		// Check that the last node's floor (which will always be 'next') is in the list
-//		last = floors.get(floors.size()-1);
-//		if (! last.isSameFloor(next)) {
-//			floors.add(next);
-//			this.createNewFloorButton(next, this.getPathOnFloor(next, path), floors.size());
-//		}
 	}
 
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
+		Label newFloorLabel = new Label();
 
 		int buttonWidth = 110;
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 0;
+		int buttonCenterX = 430;
+
+		int labelCenterX = 460;
+		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15; //change the +x value so the label is at the bottom
 
 
-		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + labelCenterX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutY(labelY);
+		newFloorLabel.setText(floor.building);
+
+		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount);
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
@@ -251,7 +295,7 @@ public class UserPathController
 		Rectangle backgroundRectangle = new Rectangle();
 		backgroundRectangle.setWidth(buttonWidth*1.25);
 		backgroundRectangle.setHeight(buttonHeight*1.25);
-		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount-10);
+		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount-10);
 		backgroundRectangle.setY(buttonY - 10);
 		backgroundRectangle.setFill(Color.WHITE);
 		backgroundRectangle.setStroke(Color.BLACK);
@@ -267,9 +311,15 @@ public class UserPathController
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
 		});
-		backgroundRectangle.setVisible(false);
+		if(buttonCount-1 > 1) {
+			backgroundRectangle.setVisible(false);
+		} else {
+			this.bgRectangle = backgroundRectangle;
+			backgroundRectangle.setVisible(true);
+		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
+		floorsTraveledAnchorPane.getChildren().add(newFloorLabel);
 	}
 
 	// TODO: Draw by segments, not by floors
@@ -292,7 +342,14 @@ public class UserPathController
 
 		iconController.resetAllRooms();
 		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.floorsTraveledAnchorPane.getScene().setRoot(userPath);
+		this.mapScroll.getScene().setRoot(userPath);
+	}
+
+	@FXML
+	public void backBtnClicked() throws IOException {
+		iconController.resetAllRooms();
+		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		this.mapScroll.getScene().setRoot(userPath);
 	}
 
 	@FXML
@@ -327,7 +384,7 @@ public class UserPathController
 	public void paintPath(List<Node> directionNodes) {
 		this.directionsTextField.getChildren().clear();
 		// This can be any collection type;
-		Collection<Arrow> path = new HashSet<>();
+		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {
 			Node here = directionNodes.get(i);
 			Node there = directionNodes.get(i+1);
@@ -335,7 +392,11 @@ public class UserPathController
 				Line line = new Line(here.getX(), here.getY(), there.getX(), there.getY());
 				line.setStrokeWidth(PATH_WIDTH);
 				line.setStroke(Color.MEDIUMVIOLETRED);
-				path.add(new Arrow(line));
+				if((i % 3) == 0) {
+					path.add(new Arrow(line));
+				} else {
+					path.add(new Group(line));
+				}
 			}
 		}
 		this.linePane.getChildren().setAll(path);
@@ -368,18 +429,6 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
-	}
-
-	@FXML
-	public void logAsAdminClicked()
-			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		floorsTraveledAnchorPane.getScene().setRoot(loginPrompt);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 }

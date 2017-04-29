@@ -14,6 +14,26 @@ import java.util.function.Function;
  */
 public class Node
 {
+	public RoomType getType() {
+		if(this.room == null) {
+			return RoomType.NONE;
+		} else {
+			switch (room.getDescription()) {
+				case "elevator":
+					return RoomType.ELEVATOR;
+				case "stairs":
+					return RoomType.STAIRS;
+				case "portal":
+					return RoomType.PORTAL;
+				case "hallway":
+					return RoomType.HALLWAY;
+				case "parking lot":
+					return RoomType.PARKING;
+				default:
+					return RoomType.DEFAULT;
+			}
+		}
+	}
 	private double x;
 	private double y;
 	private int floor;
@@ -21,18 +41,20 @@ public class Node
 	private String buildingName;
 	private Room room;
 	private Circle circ;
+	private boolean isRestricted;
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
 	private static final double CIRCLE_RADIUS = 5;
 
-	Node(double x, double y, int floor, String buildingName) {
+	Node(double x, double y, int floor, String buildingName, boolean isRestricted) {
 		this.x = x;
 		this.y = y;
 		this.floor = floor;
 		this.neighbors = new HashSet<>();
 		this.buildingName = buildingName;
 		this.room = null;
+		this.isRestricted = isRestricted;
 	}
 
 	public double getX() {
@@ -51,9 +73,9 @@ public class Node
 		return this.room;
 	}
 
-	public String getBuildingName(){
-		return this.buildingName;
-	}
+	public String getBuildingName(){ return this.buildingName;	}
+
+	public boolean isRestricted() { return this.isRestricted; }
 
 	/**
 	 * Apply the given consumer function to this node's associated room, if present
@@ -88,6 +110,10 @@ public class Node
 		}
 	}
 
+	public void makeProfessional() { this.isRestricted = true; }
+
+	public void removeProfessional() {this.isRestricted = false; }
+
 	void setRoom(Room room) {
 		this.room = room;
 	}
@@ -106,6 +132,10 @@ public class Node
 	public void moveTo(double x, double y) {
 		this.x = x;
 		this.y = y;
+		if (this.circ != null) {
+			this.circ.setCenterX(x);
+			this.circ.setCenterY(y);
+		}
 	}
 
 	/**

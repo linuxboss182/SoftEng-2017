@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
 import java.net.URL;
@@ -23,16 +24,21 @@ public class AdminHelpController  implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Text commands = new Text();
-		commands.setText("Press Back Space for Deleting selected nodes\n" +
-				"Press Ctrl + A for selecting all nodes\n" +
-				"Press Ctrl + Open Bracket for zoom in\n" +
-				"Press Ctrl + Close Bracket for zoom out\n" +
+		commands.setTextAlignment(TextAlignment.CENTER);
+		commands.setStyle("-fx-font-size: 16.0;");
+		commands.setText("Press Back Space to Delete selected nodes\n" +
+				"Press Ctrl + A to select all nodes\n" +
+				"Press Ctrl + Open Bracket to zoom in\n" +
+				"Press Ctrl + Close Bracket to zoom out\n" +
 				"Press Shift + Right to move the view to the right\n" +
 				"Press Shift + Left to move the view to the left\n" +
-				"Press Shift + Up to move the view to the up\n" +
-				"Press Shift + down to move the view to the down");
+				"Press Shift + Up to raise the view\n" +
+				"Press Shift + down to lower the view");
 
 		commandTextFlow.getChildren().add(commands);
+
+		
+
 	}
 
 	@FXML

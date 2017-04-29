@@ -1,6 +1,8 @@
 package controllers.shared;
 
-import entities.icons.IconController;
+import com.jfoenix.controls.JFXDrawer;
+import controllers.icons.IconController;
+import controllers.icons.IconManager;
 import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -34,7 +36,6 @@ public abstract class MapDisplayController
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
 	@FXML protected ScrollPane mapScroll;
-
 	protected Directory directory;
 	protected IconController iconController;
 
@@ -57,6 +58,7 @@ public abstract class MapDisplayController
 
 	@FXML protected Slider zoomSlider;
 	@FXML protected BorderPane parentBorderPane;
+	protected IconManager iconManager = new IconManager();
 
 	// TODO: move shared initializaton to MDC
 //	@Override
@@ -98,7 +100,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
-		Platform.runLater(()->this.fitMapSize());
+		Platform.runLater(this::fitMapSize);
 	}
 
 
@@ -231,6 +233,12 @@ public abstract class MapDisplayController
 		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
 
+		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+
+		potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
+
 		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
 			contentAnchor.setScaleX(potentialScaleX);
 			contentAnchor.setScaleY(potentialScaleX);
@@ -241,9 +249,6 @@ public abstract class MapDisplayController
 			currentScale = potentialScaleY;
 		}
 
-		//Fixes the offset to center
-		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
 

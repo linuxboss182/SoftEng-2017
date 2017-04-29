@@ -1,7 +1,7 @@
 package main;
 
 //import controllers.SMSController;
-import entities.icons.IconController;
+import controllers.icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +27,11 @@ public class ApplicationController extends Application
 		return ApplicationController.directory; // returns the single copy
 	}
 
-	public static IconController getIconController() {
+	public static void setDirectory(Directory newDirectory) {
+		ApplicationController.directory = newDirectory;
+	}
+
+		public static IconController getIconController() {
 		return ApplicationController.iconController;
 	}
 
@@ -55,7 +59,9 @@ public class ApplicationController extends Application
 		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
-		Scene user = new Scene(root, 1174, 722);
+		Scene user = new Scene(root, 1300, 800);
+		primaryStage.setMinWidth(1180);
+		primaryStage.setMinHeight(722);
 		primaryStage.setScene(user);
 		primaryStage.show();
 

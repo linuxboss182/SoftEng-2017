@@ -1,6 +1,7 @@
 import entities.Directory;
 import entities.Node;
 import entities.Room;
+import main.ApplicationController;
 import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
 import org.junit.Test;
@@ -19,15 +20,16 @@ public class DatabaseTester
 	@Test
 	public void tester(){
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		//Create 3 Rooms
 		Room roomA = dir.addNewRoom("A", "", "A");
 		Room roomB = dir.addNewRoom("B", "", "B");
 		Room roomC = dir.addNewRoom("C", "", "C");
 
 		//Create Nodes attached to Rooms
-		Node roomNodeA = dir.addNewNode(1, 1, 4);
-		Node roomNodeB = dir.addNewNode(2, 2, 4);
-		Node roomNodeC = dir.addNewNode(3, 3,4);
+		Node roomNodeA = dir.addNewNode(1, 1, 4, "heyyeyaaeyaaaeyaeyaa", false);
+		Node roomNodeB = dir.addNewNode(2, 2, 4, "heyyeyaaeyaaaeyaeyaa", false);
+		Node roomNodeC = dir.addNewNode(3, 3,4, "heyyeyaaeyaaaeyaeyaa", false);
 
 		//Attach the node to the room
 		dir.setRoomLocation(roomA, roomNodeA);
@@ -35,8 +37,8 @@ public class DatabaseTester
 		dir.setRoomLocation(roomC, roomNodeC);
 
 		//Create 2 navigation Nodes
-		Node nodeA = dir.addNewNode(1,2, 4);
-		Node nodeB = dir.addNewNode(2,3, 4);
+		Node nodeA = dir.addNewNode(1,2, 4, "heyyeyaaeyaaaeyaeyaa", false);
+		Node nodeB = dir.addNewNode(2,3, 4, "heyyeyaaeyaaaeyaeyaa", false);
 
 		DatabaseWrapper controller = new DatabaseWrapper();
 		Directory oldDirectory = new Directory();

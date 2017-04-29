@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
+import main.ApplicationController;
 import main.algorithms.Algorithm;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
@@ -48,13 +49,16 @@ public class BreadthFirstTester
 	*/
 	@Test
 	public void simpleBreadthFirstTest() {
+
+		//ApplicationController appCont = new ApplicationController();
 		Directory dir = new Directory();
-		Node origin = dir.addNewNode(0, 0, 0); //Create a dir.addNewNode
-		Node dest = dir.addNewNode(10, 10, 0); //Create a dir.addNewNode
+		ApplicationController.setDirectory(dir);
+		Node origin = dir.addNewNode(0, 0, 0, "heyyeyaaeyaaaeyaeyaa", false); //Create a dir.addNewNode
+		Node dest = dir.addNewNode(10, 10, 0, "heyyeyaaeyaaaeyaeyaa", false); //Create a dir.addNewNode
 		//Create the nodes
-		Node n1 = dir.addNewNode (5, 5, 0);
-		Node n2 = dir.addNewNode (10, 0, 0);
-		Node n3 = dir.addNewNode (0, 10, 0);
+		Node n1 = dir.addNewNode (5, 5, 0, "heyyeyaaeyaaaeyaeyaa", false);
+		Node n2 = dir.addNewNode (10, 0, 0, "heyyeyaaeyaaaeyaeyaa", false);
+		Node n3 = dir.addNewNode (0, 10, 0, "heyyeyaaeyaaaeyaeyaa", false);
 
 		//Link Adjacencies
 		dir.connectNodes(origin, n1);
@@ -78,12 +82,13 @@ public class BreadthFirstTester
 	@Test
 	public void DeadEndBreadthFirstTest() {
 		Directory dir = new Directory();
-		Node origin = dir.addNewNode(0, 0, 0); //Create a dir.addNewNode
-		Node dest = dir.addNewNode(10, 10, 0); //Create a dir.addNewNode
+		ApplicationController.setDirectory(dir);
+		Node origin = dir.addNewNode(0, 0, 0, "heyyeyaaeyaaaeyaeyaa", false); //Create a dir.addNewNode
+		Node dest = dir.addNewNode(10, 10, 0, "heyyeyaaeyaaaeyaeyaa", false); //Create a dir.addNewNode
 		//Create the nodes
-		Node n1 = dir.addNewNode(5, 5, 0);
-		Node n2 = dir.addNewNode(10, 0, 0);
-		Node n3 = dir.addNewNode(20, 0, 0);
+		Node n1 = dir.addNewNode(5, 5, 0, "heyyeyaaeyaaaeyaeyaa", false);
+		Node n2 = dir.addNewNode(10, 0, 0, "heyyeyaaeyaaaeyaeyaa", false);
+		Node n3 = dir.addNewNode(20, 0, 0, "heyyeyaaeyaaaeyaeyaa", false);
 
 		//Link Adjacencies
 		dir.connectNodes(origin, n1);

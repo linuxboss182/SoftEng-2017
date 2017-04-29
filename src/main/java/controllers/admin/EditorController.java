@@ -1,6 +1,9 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXToggleButton;
+import controllers.icons.IconManager;
+import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -9,16 +12,22 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -30,24 +39,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 import main.ApplicationController;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-import entities.FloorProxy;
+
+
+import static entities.RoomType.BATHROOM_U;
 
 public class EditorController
 		extends MapDisplayController
 		implements Initializable
 {
-
-
 	// TODO: Add the other buttons, and pull listeners out of the FXMLs
 	@FXML private JFXButton addBtn;
 	@FXML private Button logoutBtn;
@@ -71,6 +78,9 @@ public class EditorController
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
 	@FXML private SplitPane mapSplitPane;
+	@FXML private JFXToggleButton showRoomsToggleBtn;
+	@FXML private ToggleButton restrictedView;
+	@FXML private JFXButton modifyAccountBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -97,18 +107,27 @@ public class EditorController
 		}
 	}
 
-
-	protected SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
-
-	protected double selectionStartX;
-	protected double selectionStartY;
-	protected double selectionEndX;
-	protected double selectionEndY;
-
-	protected boolean toggleShowRooms = false; // this is to enable/disable label editing
+	private SingularHashSet<Node> selectedNodes = new SingularHashSet<>();
+	private IconManager iconManager;
+	private double selectionStartX;
+	private double selectionStartY;
+	private double selectionEndX;
+	private double selectionEndY;
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
+	private boolean beingDragged; //Protects the imageView for being dragged
+	double contextRad = 120;
+	double contextWidth = 60;
+	Arc selectionWedge = new Arc();
+	Group contextMenu = new Group();
+	private MenuButton contextSelection = MenuButton.NONE;
+
+	private enum MenuButton
+	{
+		UP, DOWN, RIGHT, LEFT, NONE;
+	}
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -131,6 +150,13 @@ public class EditorController
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
 
+		this.iconManager = new IconManager();
+		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
+					event.consume();
+					room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
+							event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
+				});
+
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
 		this.contentAnchor.setPickOnBounds(false);
@@ -147,7 +173,137 @@ public class EditorController
 		// TODO: Use control+plus/minus for zooming
 		setHotkeys();
 
-		Platform.runLater( () -> initWindowResizeListener()); // Adds the window resize listener
+		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
+
+		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
+	}
+
+
+	//check if secondary button is down before populating round panel
+	void displayContextMenu(MouseEvent e){
+		if(e.isSecondaryButtonDown()) {
+			populateRoundPane(e, e.getX(), e.getY());
+		}
+	}
+
+	/**
+	 * Setup a radial context menu
+	 */
+	public void populateRoundPane(MouseEvent e, double x, double y){
+
+		contextMenu.setLayoutX(x);
+		contextMenu.setLayoutY(y);
+		List<Image> imageArray = new ArrayList<Image>();
+		for (RoomType type : RoomType.values()){
+			imageArray.add(type.getImage());
+		}
+
+		ImageView image = new ImageView("Elevator.png"/*imageArray.get(9)*/);
+		image.setX(0);
+		image.setY(0);
+
+		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
+		roundPanel.setType(ArcType.OPEN);
+		roundPanel.setStrokeWidth(contextWidth);
+		roundPanel.setStroke(Color.GRAY);
+		roundPanel.setStrokeType(StrokeType.INSIDE);
+		roundPanel.setFill(null);
+		roundPanel.setOpacity(0.9);
+
+		Line split1 = new Line();
+		split1.setStartX(0);
+		split1.setStartY(0);
+		split1.setEndX( - contextRad / Math.sqrt(2));
+		split1.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split2 = new Line();
+		split2.setStartX(0);
+		split2.setStartY(0);
+		split2.setEndX( + contextRad / Math.sqrt(2));
+		split2.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split3 = new Line();
+		split3.setStartX(0);
+		split3.setStartY(0);
+		split3.setEndX( - contextRad / Math.sqrt(2));
+		split3.setEndY( + contextRad / Math.sqrt(2));
+
+		Line split4 = new Line();
+		split4.setStartX(0);
+		split4.setStartY(0);
+		split4.setEndX( + contextRad / Math.sqrt(2));
+		split4.setEndY( + contextRad / Math.sqrt(2));
+
+		selectionWedge = new Arc(0, 0, contextRad, contextRad, 0,0);
+		selectionWedge.setType(ArcType.ROUND);
+		selectionWedge.setStrokeWidth(contextWidth);
+		selectionWedge.setStroke(Color.BLUEVIOLET);
+		selectionWedge.setStrokeType(StrokeType.INSIDE);
+		selectionWedge.setFill(null);
+		selectionWedge.setOpacity(0.2);
+
+		selectionWedge.lengthProperty().addListener((ignored, oldValue, newValue) -> {
+			System.out.println("Showing context menu");
+		});
+
+//		selectionWedge.setOnMouseDragReleased(__ -> System.out.println("released wedge"));
+//		roundPanel.setOnMouseDragReleased(__ -> System.out.println("released panel"));
+		contextMenu.getChildren().add(roundPanel);
+		contextMenu.getChildren().add(selectionWedge);
+		contextMenu.getChildren().add(split1);
+		contextMenu.getChildren().add(split2);
+		contextMenu.getChildren().add(split3);
+		contextMenu.getChildren().add(split4);
+		contextMenu.getChildren().add(image);
+		contextMenu.setVisible(true);
+		this.nodePane.getChildren().add(contextMenu);
+	}
+
+	// update the XY value of the cursor everytime it moves
+	private void updateCurrentXY(MouseEvent e){
+		double xdif = e.getX() - contextMenu.getLayoutX();
+		double ydif = e.getY() - contextMenu.getLayoutY();
+
+		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 1.8)){
+			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
+	}
+
+	// check the angle between the cursor and the center of panel
+	private void modifyRadialSelection(double angle){
+//		double xdif = e.getX() - contextMenu.getLayoutX();
+//		double ydif = e.getY() - contextMenu.getLayoutY();
+//
+//		if (! (Math.hypot(xdif, ydif) > Math.pow(contextRad - contextWidth, 1.8))) {
+//			selectionWedge.setLength(0);
+//			contextSelection = MenuButton.NONE;
+//			return;
+//		}
+//		double angle = Math.toDegrees(Math.atan2(ydif, xdif));
+
+		if (angle < -45 && angle > -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(45);
+			contextSelection = MenuButton.UP;
+		}else if (angle > -45 && angle < 45){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(315);
+			contextSelection = MenuButton.RIGHT;
+		}else if (angle > 45 && angle < 135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(225);
+			contextSelection = MenuButton.DOWN;
+		}else if (angle > 135 || angle < -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(135);
+			contextSelection = MenuButton.LEFT;
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
 	}
 
 
@@ -194,6 +350,7 @@ public class EditorController
 
 	@FXML
 	private void logoutBtnClicked() {
+		directory.logOut();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
 			// true if and only if the button pressed in the alert did not say "OK"
@@ -318,6 +475,28 @@ public class EditorController
 		this.deleteSelectedNodes();
 	}
 
+	@FXML
+	public void restrictedViewBtnClicked(){
+		if(restrictedView.selectedProperty().getValue()){
+			directory.logIn();
+		}else{
+			directory.logOut();
+		}
+		this.changeFloor(directory.getFloor());
+	}
+
+	@FXML
+	public void modifyAccountBtnPressed() throws IOException{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/AccountPopup.fxml"));
+		Scene addProScene = new Scene(loader.load());
+		Stage addProStage = new Stage();
+		addProStage.initOwner(contentAnchor.getScene().getWindow());
+		addProStage.setScene(addProScene);
+		addProStage.showAndWait();
+	}
+
+
 
 	/* **** Non-FXML functions **** */
 
@@ -334,38 +513,21 @@ public class EditorController
 		this.populateTableView();
 	}
 
+
+
 	/**
 	 * Redisplay the nodes on this floor and the lines
 	 *
 	 * If debugging, display all nodes
 	 */
 	private void redisplayGraph() {
-//		if (EditorController.DEBUGGING) {
-//			this.displayNodes(directory.getNodes());
-//			this.redrawLines(directory.getNodes());
-//		} else {
-		this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
-		this.redrawLines();
-//		}
-	}
-
-	/**
-	 * This function is currently for testing purposes only
-	 * Using it will modifier listeners that the user can access; be careful
-	 */
-	public void displayRoomsOnFloor() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room r : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(r.getUserSideShape());
-			r.getUserSideShape().setOnMouseClicked(event -> {});
-			r.getUserSideShape().setOnContextMenuRequested(event -> {});
-			Label label = r.getUserSideShape().getLabel();
-			label.setOnMouseDragged(event -> {
-				event.consume();
-				label.relocate(event.getX(), event.getY());
-			});
+		if (this.showRoomsToggleBtn.isSelected()) {
+			this.displayRooms();
+			this.linePane.getChildren().clear();
+		} else {
+			this.displayNodes(directory.getNodesOnFloor(this.directory.getFloor()));
+			this.redrawLines();
 		}
-		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	//Editor
@@ -387,7 +549,7 @@ public class EditorController
 	public void redrawLines() {
 		Set<Line> lines = new HashSet<>();
 		for (Node node : directory.getNodesOnFloor(directory.getFloor())) {
-			for (Node neighbor : node.getNeighbors()) {
+			for (Node neighbor : directory.getNodeNeighbors(node)) {
 				if ((node.getFloor() == neighbor.getFloor()) &&
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
@@ -423,6 +585,14 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
+		node.getShape().setOnMousePressed((MouseEvent event) -> {
+			this.primaryPressed = event.isPrimaryButtonDown();
+			this.secondaryPressed = event.isSecondaryButtonDown();
+			if (event.isSecondaryButtonDown() && event.isShiftDown()){
+				selectNode(node);
+				displayContextMenu(event);
+			}
+		});
 	}
 
 	private double readX() {
@@ -474,8 +644,6 @@ public class EditorController
 	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
 			directory.updateRoom(room, name, displayName, description);
-			// TODO: Handle this in updateRoom or a method called there (VERY BAD)
-			((Label)room.getUserSideShape().getChildren().get(1)).setText(name);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -498,11 +666,9 @@ public class EditorController
 
 	private void updateSelectedNodes(double x, double y) {
 		this.selectedNodes.forEach(n -> {
-			double newX = n.getX() - this.clickedX + x;
-			double newY = n.getY() - this.clickedY + y;
+			double newX = (n.getX() - this.clickedX) + x;
+			double newY = (n.getY() - this.clickedY) + y;
 			n.moveTo(newX, newY);
-			n.getShape().setCenterX(newX);
-			n.getShape().setCenterY(newY);
 		});
 		this.clickedX = x;
 		this.clickedY = y;
@@ -613,7 +779,7 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
-			} else if(! this.toggleShowRooms) {
+			} else if(! this.showRoomsToggleBtn.isSelected()) {
 				// Limits the dragging for x and y coordinates. (panning I mean)
 				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
 					contentAnchor.setTranslateX(contentAnchor.getTranslateX() + e.getX() - clickedX);
@@ -657,8 +823,8 @@ public class EditorController
 					}
 				});
 			}
-			if(this.toggleShowRooms) {
-				this.displayAdminSideRooms();
+			if(this.showRoomsToggleBtn.isSelected()) {
+				this.displayRooms();
 			}
 			this.redisplayGraph();
 		});
@@ -680,7 +846,7 @@ public class EditorController
 			}
 			// control click to select neighbors instead of target node
 			if (e.isControlDown()) {
-				node.getNeighbors().forEach(this::selectNode);
+				directory.getNodeNeighbors(node).forEach(this::selectNode);
 			}
 
 			this.selectOrDeselectNode(node);
@@ -696,8 +862,10 @@ public class EditorController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
-		if (this.selectedNodes.contains(n)) {
-			if (e.isPrimaryButtonDown()) {
+		if (e.isSecondaryButtonDown()){
+			updateCurrentXY(e);
+		}else if (this.selectedNodes.contains(n)) {
+			if (e.getButton() == MouseButton.PRIMARY) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
 				this.redrawLines();
@@ -717,6 +885,59 @@ public class EditorController
 
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
+
+		if (contextMenu.isVisible()) {
+			this.contextMenuAction(e, n);
+		}
+
+		this.beingDragged = false;
+	}
+
+	private void contextMenuAction(MouseEvent e, Node n) {
+		Room room;
+		switch(contextSelection) {
+			case UP: // make into bathroom
+				directory.addNewElevatorUp(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case DOWN:
+				directory.addNewElevatorDown(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case RIGHT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "Kiosk", "You are here","");
+					room = n.getRoom();
+				}
+				room.setType(RoomType.KIOSK);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				directory.setKiosk(room);
+				iconController.resetSingleNode(n);
+
+				this.redisplayGraph();
+				break;
+			case LEFT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "bathroom", "", "");
+					iconController.resetSingleNode(n);
+					room = n.getRoom();
+				}
+				room.setType(BATHROOM_U);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				break;
+			default:
+
+		}
+
+		nodePane.getChildren().remove(contextMenu);
+		contextMenu.setVisible(false);
+		contextMenu.getChildren().clear();
 	}
 
 	/**
@@ -832,6 +1053,29 @@ public class EditorController
 			}
 		}
 	}
+	@FXML
+	private void loadNodesFile() {
+		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
+				+ "contains nodes who are already in the application, they will be duplicated.");
+
+		// true if and only if the button pressed in the alert said "OK"
+		if (ask.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
+			FileChooser fc = new FileChooser();
+			File f = fc.showOpenDialog(this.contentAnchor.getScene().getWindow());
+			if (f != null) {
+				try {
+					FileParser.parseNodes(f, directory);
+				} catch (FileNotFoundException e) {
+					Alert a = new Alert(Alert.AlertType.ERROR, "Unable to read file");
+					a.showAndWait();
+					return;
+				}
+				// Add listeners to all nodes
+				this.directory.getNodes().forEach(this::addNodeListeners);
+				this.redisplayGraph();
+			}
+		}
+	}
 
 	/**
 	 * Get a choice box that sets the active algorithm
@@ -851,36 +1095,38 @@ public class EditorController
 
 	@FXML
 	public void setToggleShowRooms() {
-		this.toggleShowRooms = !toggleShowRooms;
-		if(toggleShowRooms) {
-			// for now, disable dragging
-			this.imageViewMap.setDisable(true);
-			this.linePane.setDisable(true);
-			this.linePane.getChildren().clear();
-			this.nodePane.getChildren().clear();
-			this.displayAdminSideRooms();
-
-		} else {
-			// re-enable dragging
-			this.imageViewMap.setDisable(false);
-			this.linePane.setDisable(false);
-			this.redisplayAll();
-		}
+//		this.toggleShowRooms = !toggleShowRooms;
+//		if(toggleShowRooms) {
+//			// for now, disable dragging
+//			this.imageViewMap.setDisable(true);
+//			this.linePane.setDisable(true);
+//			this.linePane.getChildren().clear();
+//			this.nodePane.getChildren().clear();
+//			this.displayRooms();
+//
+//		} else {
+//			// re-enable dragging
+//			this.imageViewMap.setDisable(false);
+//			this.linePane.setDisable(false);
+//			this.redisplayAll();
+//		}
 	}
 
 	/**
 	 * Show the rooms with editable labels to the admin
 	 */
-	public void displayAdminSideRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(floor)) {
-			roomShapes.add(room.getAdminSideShape());
-			/* This is code to make a context menu appear when you right click on the shape for a room
-			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-			 * that is reallllllllly helpful for a lot of stuff
-			 */
-		}
-		this.nodePane.getChildren().setAll(roomShapes);
+	public void displayRooms() {
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
+
+//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
+//		for (Room room : directory.getRoomsOnFloor(floor)) {
+//			roomShapes.add(room.getAdminSideShape());
+//			/* This is code to make a context menu appear when you right click on the shape for a room
+//			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
+//			 * that is reallllllllly helpful for a lot of stuff
+//			 */
+//		}
+//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**
