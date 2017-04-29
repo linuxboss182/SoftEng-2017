@@ -243,6 +243,7 @@ public class EditorController
 		contextMenu.getChildren().add(split2);
 		contextMenu.getChildren().add(split3);
 		contextMenu.getChildren().add(split4);
+		contextMenu.setVisible(true);
 		this.nodePane.getChildren().add(contextMenu);
 	}
 
@@ -849,18 +850,23 @@ public class EditorController
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
 
+		if (contextMenu.isVisible()) {
+			this.contextMenuAction(e, n);
+		}
+
+		this.beingDragged = false;
+	}
+
+	private void contextMenuAction(MouseEvent e, Node n) {
 		Room room;
 		switch(contextSelection) {
 			case UP: // make into bathroom
-				room = n.getRoom();
-				if (room == null) {
-					directory.addNewRoomToNode(n, "bathroom", "", "");
-					iconController.resetSingleNode(n);
-					room = n.getRoom();
-				}
-				room.setType(RoomType.BATHROOM_U);
-				this.selectNode(n);
-				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				directory.addNewElevatorUp(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case DOWN:
+				// function no.3
 				break;
 			case RIGHT:
 				room = n.getRoom();
@@ -875,20 +881,24 @@ public class EditorController
 				iconController.resetSingleNode(n);
 				this.redisplayGraph();
 				break;
-			case DOWN:
-				// function no.3
-				break;
 			case LEFT:
-				// function no.4
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "bathroom", "", "");
+					iconController.resetSingleNode(n);
+					room = n.getRoom();
+				}
+				room.setType(RoomType.BATHROOM_U);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
 				break;
 			default:
 
 		}
 
 		nodePane.getChildren().remove(contextMenu);
+		contextMenu.setVisible(false);
 		contextMenu.getChildren().clear();
-
-		this.beingDragged = false;
 	}
 
 	/**
