@@ -56,7 +56,7 @@ public class UserMasterController
 	private Room startRoom;
 	private Room endRoom;
 
-	private boolean startSelected = false;
+	private boolean startSelected = true;
 	private boolean endSelected = false;
 
 	@FXML private HBox startHBox;
@@ -229,7 +229,10 @@ public class UserMasterController
 		resultsListView.getSelectionModel().clearSelection();
 
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
+				(ignored, oldValue, newValue) -> {
+					System.out.println("Changed");
+					this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
+				});
 	}
 
 
@@ -280,8 +283,12 @@ public class UserMasterController
 		if (room == null) return;
 		if (this.startSelected) {
 			this.selectStartRoom(room);
-		} else if(this.endSelected) {
+			this.startSelected = false;
+			this.endSelected = true;
+		} else {
 			this.selectEndRoom(room);
+			this.startSelected = true;
+			this.endSelected = false;
 		}
 	}
 
