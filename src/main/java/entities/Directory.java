@@ -23,7 +23,6 @@ public class Directory
 	private boolean loggedIn;
 	private Map<String, Account> Accounts;
 
-	// default to floor 1
 	private FloorImage floor;
 
 	/** Comparator to allow comparing rooms by name */
@@ -55,16 +54,19 @@ public class Directory
 		return loggedIn;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
-	} //TODO Add permissions
+	}
 
 	/**
 	 * Get a copy of this directory's rooms, sorted by name
 	 */
-	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>(Directory.roomComparator); //TODO Add permissions
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
@@ -239,8 +241,6 @@ public class Directory
 		return this.addNewNode(x, y, floor, "NO BUILDING");
 	}
 
-	// TODO: Add test cases for new Directory methods, mostly those below this TODO
-
 	/* Filtered getters */
 	/**
 	 * Get a set of the nodes on the given floor
@@ -249,8 +249,7 @@ public class Directory
 	 *
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
-	//TODO: Make this take a Floor instead
-	public Set<Node> getNodesOnFloor(FloorImage floor) { //TODO Add permissions
+	public Set<Node> getNodesOnFloor(FloorImage floor) {
 		return this.filterNodes(node ->
 				(node.getFloor() == floor.getNumber())
 						&&
@@ -263,27 +262,37 @@ public class Directory
 	 *
 	 * A room's floor is determined by its associated node
 	 *
-	 * @param floor
-	 * @return
+	 * @note Only this function and  is one of two Directory functions that natively filter by permissions.
 	 */
-	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
+	public Set<Room> getRoomsOnFloor() {
 		return this.filterRooms(room -> (room.getLocation() != null)
-				&& (room.getLocation().getFloor() == floor.getNumber())
-				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
+				&& (room.getLocation().getFloor() == this.floor.getNumber())
+				&& room.getLocation().getBuildingName().equalsIgnoreCase(this.floor.getName())
 				&& (! room.getLocation().isRestricted() || this.loggedIn));
+	}
+
+	/**
+	 * Get all rooms accessible by the current user
+	 *
+	 * @note Only this and getRoomsOnFloor natively filter by permissions
+	 */
+	public Set<Room> getUserRooms() {
+		return this.filterRooms(room -> (room.getLocation() != null)
+				&& (!room.getLocation().isRestricted()
+				    || this.isLoggedIn()));
 	}
 
 	/**
 	 * Gets all nodes in this directory that match the given predicate
 	 */
-	public Set<Node> filterNodes(Predicate<Node> predicate) { //TODO Add permissions
+	public Set<Node> filterNodes(Predicate<Node> predicate) {
 		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
 	/**
 	 * Gets all rooms in this directory that match the given predicate
 	 */
-	public Set<Room> filterRooms(Predicate<Room> predicate) { //TODO Add permissions
+	public Set<Room> filterRooms(Predicate<Room> predicate) {
 		return this.rooms.stream().filter(predicate)
 				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
@@ -296,11 +305,11 @@ public class Directory
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
-	} //TODO Add permissions
+	}
 
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
-	} //TODO Add permissions
+	}
 
 	public void updateRoom(Room room, String name, String shortName, String description) {
 		room.setName(name);
@@ -318,22 +327,22 @@ public class Directory
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public Image switchFloors(FloorImage floor) { //TODO Add permissions
+	public Image switchFloors(FloorImage floor) {
 		this.floor = floor;
 		return this.floor.display();
 	}
 
 	public FloorImage getFloor() {
 		return this.floor;
-	} //TODO Add permissions
+	}
 
 	public int getFloorNum() {
 		return this.floor.getNumber();
-	} //TODO Add permissions
+	}
 
 	public String getFloorName() {
 		return this.floor.getName();
-	} //TODO Add permissions
+	}
 
 	public void unsetRoomLocation(Room room) {
 		Node n = room.getLocation();
@@ -387,7 +396,7 @@ public class Directory
 	 *
 	 * @return Whether all rooms are connected
 	 */
-	public boolean roomsAreConnected() { //TODO Add permissions
+	public boolean roomsAreConnected() {
 		// targets = all rooms with nodes
 		Set<Node> targets = this.rooms.stream()
 				.filter(room -> room.getLocation() != null)

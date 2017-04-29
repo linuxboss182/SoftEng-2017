@@ -903,7 +903,7 @@ public class EditorController
 	 * Show the rooms with editable labels to the admin
 	 */
 	public void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 
 //		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 //		for (Room room : directory.getRoomsOnFloor(floor)) {

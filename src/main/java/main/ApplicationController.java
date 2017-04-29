@@ -27,7 +27,11 @@ public class ApplicationController extends Application
 		return ApplicationController.directory; // returns the single copy
 	}
 
-	public static IconController getIconController() {
+	public static void setDirectory(Directory newDirectory) {
+		ApplicationController.directory = newDirectory;
+	}
+
+		public static IconController getIconController() {
 		return ApplicationController.iconController;
 	}
 

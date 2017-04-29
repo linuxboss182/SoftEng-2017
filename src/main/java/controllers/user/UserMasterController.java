@@ -238,7 +238,7 @@ public class UserMasterController
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
