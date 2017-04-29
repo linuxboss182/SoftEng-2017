@@ -3,6 +3,8 @@ package controllers.user;
 import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
+import entities.Professional;
+import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -34,9 +37,10 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
+	@FXML private TabPane destinationTypeTabs;
 	@FXML private JFXListView<Room> roomSearchResults;
-	@FXML private JFXListView<Room> profSearchResults;
-	@FXML private JFXListView<Room> commonServicesView;
+	@FXML private JFXListView<Professional> profSearchResults;
+	@FXML private JFXListView<RoomType> commonServicesView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -106,12 +110,13 @@ public class UserMasterController
 		setZoomSliding();
 
 		initfloorComboBox();
+		resetRoomSearchResults();
 
 		this.displayRooms();
 
 		setScrollZoom();
 		setHotkeys();
-		addSearchFieldListeners();
+		setupSearchFields();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater( () -> {
@@ -170,7 +175,7 @@ public class UserMasterController
 	 */
 	private void filterRoomsByName(String searchString) {
 		if((searchString == null) || (searchString.length() == 0)) {
-			this.populateListView();
+			this.resetRoomSearchResults();
 		} else {
 			String search = searchString.toLowerCase();
 			Set<Room> rooms = directory.getUserRooms();
@@ -219,9 +224,9 @@ public class UserMasterController
 	}
 
 	/**
-	 * Populates the list of rooms
+	 * Resets the list of rooms
 	 */
-	private void populateListView() {
+	private void resetRoomSearchResults() {
 		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		roomSearchResults.getSelectionModel().clearSelection();
@@ -299,13 +304,15 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
-	private void addSearchFieldListeners() {
+	private void setupSearchFields() {
+		destinationField.setPromptText("Choose destination");
+
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) populateListView();
+			if (nowFocused) resetRoomSearchResults();
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) populateListView();
+			if (nowFocused) resetRoomSearchResults();
 		});
 	}
 
