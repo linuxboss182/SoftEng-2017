@@ -29,9 +29,13 @@ public enum RoomType
 	//Constructor
 	RoomType(String name, String imagePath, String originImage, String destImage) {
 		this.name = name;
-		this.image = new Image(imagePath);
-		this.originImage = new Image(originImage);
-		this.destImage = new Image(destImage);
+		try{
+			this.image = new Image(imagePath);
+			this.originImage = new Image(originImage);
+			this.destImage = new Image(destImage);
+		} catch (Exception e) {
+			System.out.println("Failed to load images");
+		}
 	}
 
 	public String getName() {
