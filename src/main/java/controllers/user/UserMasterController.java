@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -248,14 +249,21 @@ public class UserMasterController
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
+
 		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
+			Platform.runLater(() -> this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem()));
 
 		});
+
+		resultsListView.getSelectionModel().clearSelection();
+
+
 	}
+
+
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
@@ -305,10 +313,15 @@ public class UserMasterController
 	protected void selectRoomAction(Room room) {
 		if (this.startField.isFocused()) {
 			this.selectStartRoom(room);
-			startField.setText(room.getName());
+			if (room != null) {
+				startField.setText(room.getName());
+			}
 		} else {
 			this.selectEndRoom(room);
-			destinationField.setText(room.getName());
+			if (room != null) {
+				destinationField.setText(room.getName());
+			}
+
 		}
 	}
 
@@ -317,6 +330,7 @@ public class UserMasterController
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
 				if (newPropertyValue) {
+					populateListView();
 					if (startField.getText().equals("Your Location")) {
 						startField.clear();
 						populateListView();
