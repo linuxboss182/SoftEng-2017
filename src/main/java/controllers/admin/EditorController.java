@@ -1143,6 +1143,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AdminHelp.fxml"));
 		Scene helpScene = new Scene(loader.load());
 		Stage helpStage = new Stage();
+		helpStage.setTitle("Faulkner Hospital Navigator Help Page");
+		helpStage.getIcons().add(new Image("bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
 		helpStage.showAndWait();

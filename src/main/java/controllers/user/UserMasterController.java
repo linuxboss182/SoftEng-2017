@@ -281,12 +281,8 @@ public class UserMasterController
 		if (room == null) return;
 		if (this.startSelected) {
 			this.selectStartRoom(room);
-			this.startSelected = false;
-			this.endSelected = true;
 		} else {
 			this.selectEndRoom(room);
-			this.startSelected = true;
-			this.endSelected = false;
 		}
 	}
 
