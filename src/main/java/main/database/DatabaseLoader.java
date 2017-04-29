@@ -72,6 +72,15 @@ class DatabaseLoader
 			directory.setKiosk(rooms.get(kioskID));
 		}
 
+		System.out.println("directory.getAccounts().values().stream().anyMatch(a->\"admin\".equals(a.getPermissions())) = " + !directory.getAccounts().values().stream().anyMatch(a->"admin".equals(a.getPermissions())));
+		if(!directory.getAccounts().values().stream().anyMatch(a->"admin".equals(a.getPermissions()))) {
+			directory.addAccount("admin", "password", "admin");
+		}
+
+		if(!directory.getAccounts().values().stream().anyMatch(a->"professional".equals(a.getPermissions()))) {
+			directory.addAccount("professional", "password", "professional");
+		}
+
 		return true;
 	}
 
