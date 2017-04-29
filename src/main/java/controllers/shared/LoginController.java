@@ -38,30 +38,6 @@ public class LoginController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-//		logins = new LoginHandler();
-//		logins.addAccount("admin", "password", true);
-
-		directory.addAccount("admin", "password", "admin");
-		directory.addAccount("test", "password", "professional");
-
-//		Set<String> passwordSet = directory.getPassHashes();
-//		Set<String> permissionSet = directory.getPermissions();
-
-//		String[] users = userSet.toArray(new String[userSet.size()]);
-//		String[] passwords = userSet.toArray(new String[passwordSet.size()]);
-//		String[] permissions = userSet.toArray(new String[permissionSet.size()]);
-
-//		for (int n = 0; n < users.length; n++){
-//			System.out.println("YOOOOOO");
-//			logins.addAccount(users[n], passwords[n], permissions[n].equals("admin"));
-//		}
-
-
-
-//		logins.addAccount("admin", "password", true);
-//		logins.addAccount("admin2", "admin, too?", true);
-
-
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
 				try {
@@ -134,19 +110,14 @@ public class LoginController implements Initializable{
 	 * @return 2 for admins, 1 for professionals, or 0 for failed logins
 	 */
 	public LoginStatus checkLogin(String username, String password) {
-		Map<String, Account> logins = directory.getAccounts();
-
-
-		// Branches:
-		// contains key and password is value and is admin
-		// contains key and password is value and not admin
-		// does not contain key or does not contain value
-
+		Account thisAccount = directory.getAccount(username);
+		if(thisAccount == null){
+			return LoginStatus.FAILURE;
+		}
 
 		// Safe because the empty string is not a valid password
-		if(logins.get(username) == null) return LoginStatus.FAILURE;
-		if (logins.get(username).getPassword().equals(password)) {
-			switch (logins.get(username).getPermissions().toUpperCase()) {
+		if (thisAccount.getPassword().equals(password)) {
+			switch (thisAccount.getPermissions().toUpperCase()) {
 				case "ADMIN":
 					return LoginStatus.ADMIN;
 				case "PROFESSIONAL":
