@@ -12,16 +12,22 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -33,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 import main.ApplicationController;
 import controllers.filereader.FileParser;
@@ -40,6 +47,9 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
+
+
+import static entities.RoomType.BATHROOM_U;
 
 public class EditorController
 		extends MapDisplayController
@@ -106,6 +116,18 @@ public class EditorController
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
+	private boolean beingDragged; //Protects the imageView for being dragged
+	double contextRad = 120;
+	double contextWidth = 60;
+	Arc selectionWedge = new Arc();
+	Group contextMenu = new Group();
+	private MenuButton contextSelection = MenuButton.NONE;
+
+	private enum MenuButton
+	{
+		UP, DOWN, RIGHT, LEFT, NONE;
+	}
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -154,6 +176,134 @@ public class EditorController
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
+	}
+
+
+	//check if secondary button is down before populating round panel
+	void displayContextMenu(MouseEvent e){
+		if(e.isSecondaryButtonDown()) {
+			populateRoundPane(e, e.getX(), e.getY());
+		}
+	}
+
+	/**
+	 * Setup a radial context menu
+	 */
+	public void populateRoundPane(MouseEvent e, double x, double y){
+
+		contextMenu.setLayoutX(x);
+		contextMenu.setLayoutY(y);
+		List<Image> imageArray = new ArrayList<Image>();
+		for (RoomType type : RoomType.values()){
+			imageArray.add(type.getImage());
+		}
+
+		ImageView image = new ImageView("Elevator.png"/*imageArray.get(9)*/);
+		image.setX(0);
+		image.setY(0);
+
+		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
+		roundPanel.setType(ArcType.OPEN);
+		roundPanel.setStrokeWidth(contextWidth);
+		roundPanel.setStroke(Color.GRAY);
+		roundPanel.setStrokeType(StrokeType.INSIDE);
+		roundPanel.setFill(null);
+		roundPanel.setOpacity(0.9);
+
+		Line split1 = new Line();
+		split1.setStartX(0);
+		split1.setStartY(0);
+		split1.setEndX( - contextRad / Math.sqrt(2));
+		split1.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split2 = new Line();
+		split2.setStartX(0);
+		split2.setStartY(0);
+		split2.setEndX( + contextRad / Math.sqrt(2));
+		split2.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split3 = new Line();
+		split3.setStartX(0);
+		split3.setStartY(0);
+		split3.setEndX( - contextRad / Math.sqrt(2));
+		split3.setEndY( + contextRad / Math.sqrt(2));
+
+		Line split4 = new Line();
+		split4.setStartX(0);
+		split4.setStartY(0);
+		split4.setEndX( + contextRad / Math.sqrt(2));
+		split4.setEndY( + contextRad / Math.sqrt(2));
+
+		selectionWedge = new Arc(0, 0, contextRad, contextRad, 0,0);
+		selectionWedge.setType(ArcType.ROUND);
+		selectionWedge.setStrokeWidth(contextWidth);
+		selectionWedge.setStroke(Color.BLUEVIOLET);
+		selectionWedge.setStrokeType(StrokeType.INSIDE);
+		selectionWedge.setFill(null);
+		selectionWedge.setOpacity(0.2);
+
+		selectionWedge.lengthProperty().addListener((ignored, oldValue, newValue) -> {
+			System.out.println("Showing context menu");
+		});
+
+//		selectionWedge.setOnMouseDragReleased(__ -> System.out.println("released wedge"));
+//		roundPanel.setOnMouseDragReleased(__ -> System.out.println("released panel"));
+		contextMenu.getChildren().add(roundPanel);
+		contextMenu.getChildren().add(selectionWedge);
+		contextMenu.getChildren().add(split1);
+		contextMenu.getChildren().add(split2);
+		contextMenu.getChildren().add(split3);
+		contextMenu.getChildren().add(split4);
+		contextMenu.getChildren().add(image);
+		contextMenu.setVisible(true);
+		this.nodePane.getChildren().add(contextMenu);
+	}
+
+	// update the XY value of the cursor everytime it moves
+	private void updateCurrentXY(MouseEvent e){
+		double xdif = e.getX() - contextMenu.getLayoutX();
+		double ydif = e.getY() - contextMenu.getLayoutY();
+
+		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 1.8)){
+			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
+	}
+
+	// check the angle between the cursor and the center of panel
+	private void modifyRadialSelection(double angle){
+//		double xdif = e.getX() - contextMenu.getLayoutX();
+//		double ydif = e.getY() - contextMenu.getLayoutY();
+//
+//		if (! (Math.hypot(xdif, ydif) > Math.pow(contextRad - contextWidth, 1.8))) {
+//			selectionWedge.setLength(0);
+//			contextSelection = MenuButton.NONE;
+//			return;
+//		}
+//		double angle = Math.toDegrees(Math.atan2(ydif, xdif));
+
+		if (angle < -45 && angle > -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(45);
+			contextSelection = MenuButton.UP;
+		}else if (angle > -45 && angle < 45){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(315);
+			contextSelection = MenuButton.RIGHT;
+		}else if (angle > 45 && angle < 135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(225);
+			contextSelection = MenuButton.DOWN;
+		}else if (angle > 135 || angle < -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(135);
+			contextSelection = MenuButton.LEFT;
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
 	}
 
 
@@ -435,6 +585,14 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
+		node.getShape().setOnMousePressed((MouseEvent event) -> {
+			this.primaryPressed = event.isPrimaryButtonDown();
+			this.secondaryPressed = event.isSecondaryButtonDown();
+			if (event.isSecondaryButtonDown() && event.isShiftDown()){
+				selectNode(node);
+				displayContextMenu(event);
+			}
+		});
 	}
 
 	private double readX() {
@@ -704,7 +862,9 @@ public class EditorController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
-		if (this.selectedNodes.contains(n)) {
+		if (e.isSecondaryButtonDown()){
+			updateCurrentXY(e);
+		}else if (this.selectedNodes.contains(n)) {
 			if (e.getButton() == MouseButton.PRIMARY) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
@@ -725,6 +885,59 @@ public class EditorController
 
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
+
+		if (contextMenu.isVisible()) {
+			this.contextMenuAction(e, n);
+		}
+
+		this.beingDragged = false;
+	}
+
+	private void contextMenuAction(MouseEvent e, Node n) {
+		Room room;
+		switch(contextSelection) {
+			case UP: // make into bathroom
+				directory.addNewElevatorUp(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case DOWN:
+				directory.addNewElevatorDown(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case RIGHT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "Kiosk", "You are here","");
+					room = n.getRoom();
+				}
+				room.setType(RoomType.KIOSK);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				directory.setKiosk(room);
+				iconController.resetSingleNode(n);
+
+				this.redisplayGraph();
+				break;
+			case LEFT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "bathroom", "", "");
+					iconController.resetSingleNode(n);
+					room = n.getRoom();
+				}
+				room.setType(BATHROOM_U);
+				this.selectNode(n);
+				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				break;
+			default:
+
+		}
+
+		nodePane.getChildren().remove(contextMenu);
+		contextMenu.setVisible(false);
+		contextMenu.getChildren().clear();
 	}
 
 	/**
@@ -903,7 +1116,7 @@ public class EditorController
 	 * Show the rooms with editable labels to the admin
 	 */
 	public void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 
 //		Set<javafx.scene.Node> roomShapes = new HashSet<>();
 //		for (Room room : directory.getRoomsOnFloor(floor)) {

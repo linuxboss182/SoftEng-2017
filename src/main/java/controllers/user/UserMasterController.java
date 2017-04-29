@@ -4,17 +4,14 @@ import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -23,10 +20,9 @@ import javafx.scene.layout.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
-import java.text.Normalizer;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -38,7 +34,9 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
-	@FXML private JFXListView<Room> resultsListView;
+	@FXML private JFXListView<Room> roomSearchResults;
+	@FXML private JFXListView<Room> profSearchResults;
+	@FXML private JFXListView<Room> commonServicesView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -54,11 +52,14 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXToggleButton professionalSearchToggleBtn;
+	@FXML private JFXButton helpBtn;
 
 	private Room startRoom;
 	private Room endRoom;
 
-
+	private boolean startSelected = true;
+	private boolean endSelected = false;
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
@@ -89,12 +90,10 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
-
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
 		if (startRoom == null) {
 			startRoom = directory.getKiosk();
-			startField.setText("Your Location");
 		}
 
 		initializeIcons();
@@ -113,50 +112,41 @@ public class UserMasterController
 
 		this.displayRooms();
 
-		this.populateListView();
-
 		setScrollZoom();
-
-		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+		addSearchFieldListeners();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater( () -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
-
 		});
-//		Platform.runLater( () -> this.fitMapSize());
+
 		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
-		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
+
 
 		logAsAdmin.setImage(new Image("/lock.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				resizeDrawerListener((double)newSceneHeight);
-			}
-		});
 		resizeDrawerListener(677.0);
 
 		mainDrawer.open();
 
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
-
-
 	}
 
-	public void resizeDrawerListener(Double newSceneHeight) {
+	private void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
-		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
+		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
-	public void setStyleIDs() {
+	private void setStyleIDs() {
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
 		goHBox.getStyleClass().add("hbox-go");
@@ -164,6 +154,7 @@ public class UserMasterController
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
+		helpBtn.getStyleClass().add("blue-button");
 	}
 
 
@@ -180,25 +171,14 @@ public class UserMasterController
 	 *
 	 * @param searchString The new string in the search bar
 	 */
-	public void filterRoomsByName(String searchString) {
+	private void filterRoomsByName(String searchString) {
 		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
-
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
-
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
-
-			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
+			String search = searchString.toLowerCase();
+			Set<Room> rooms = directory.getUserRooms();
+			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
+			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		}
 	}
 
@@ -207,7 +187,7 @@ public class UserMasterController
 	 * Initialize the floor's choice box with 1-7 (the floors)
 	 * Ideally this shouldn't be hard coded
 	 */
-	public void initfloorComboBox() {
+	private void initfloorComboBox() {
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
@@ -237,22 +217,23 @@ public class UserMasterController
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-	public void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+	private void displayRooms() {
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
 	 * Populates the list of rooms
 	 */
-	public void populateListView() {
-		this.resultsListView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
+	private void populateListView() {
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
+		roomSearchResults.getSelectionModel().clearSelection();
 
-		});
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
 	}
+
+
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
@@ -261,7 +242,7 @@ public class UserMasterController
 	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
-	protected void enableOrDisableNavigationButtons() {
+	private void enableOrDisableNavigationButtons() {
 		if (this.getDirectionsBtn != null) {
 			if (endRoom == null || startRoom == null) {
 				this.getDirectionsBtn.setDisable(true);
@@ -269,9 +250,6 @@ public class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-//		if (this.changeStartBtn != null) {
-//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-//		}
 	}
 
 
@@ -299,35 +277,53 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
-		if (this.startField.isFocused()) {
+	private void selectRoomAction(Room room) {
+		if (room == null) return;
+		if (this.startSelected) {
 			this.selectStartRoom(room);
-			startField.setText(room.getName());
+			this.startSelected = false;
+			this.endSelected = true;
 		} else {
 			this.selectEndRoom(room);
-			destinationField.setText(room.getName());
+			this.startSelected = true;
+			this.endSelected = false;
 		}
 	}
 
-	protected void selectStartRoom(Room r) {
-		if(r == null) return;
-		startRoom = r;
+	private void selectStartRoom(Room r) {
+		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-
 		iconController.selectStartRoom(r);
+		startField.setText(r.getName());
 		this.displayRooms();
 	}
 
-	protected void selectEndRoom(Room r) {
-		if(r == null) return;
-		endRoom = r;
+	private void selectEndRoom(Room r) {
+		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
+		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
+
+	private void addSearchFieldListeners() {
+		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = true;
+				this.endSelected = false;
+			}
+		});
+
+		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = false;
+				this.endSelected = true;
+			}
+		});
+	}
+
 
 	@FXML
 	public void aboutBtnClicked () throws IOException {
@@ -336,6 +332,8 @@ public class UserMasterController
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
 		Scene addAboutScene = new Scene(loader.load());
 		Stage addAboutStage = new Stage();
+		addAboutStage.setTitle("Faulkner Hospital Navigator About Page");
+		addAboutStage.getIcons().add(new Image("bwhIcon.png"));
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();

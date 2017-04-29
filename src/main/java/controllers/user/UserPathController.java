@@ -75,6 +75,7 @@ public class UserPathController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXDrawer mapIconDrawer;
 	@FXML protected ImageView backImageView;
+	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -158,12 +159,14 @@ public class UserPathController
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		drawerParentPane.getStyleClass().add("drawer");
+		//drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
-		directionsLbl.getStyleClass().add("path-label");
+		directionsLbl.getStyleClass().add("directions-label");
 		doneBtn.getStyleClass().add("blue-button");
+		helpBtn.getStyleClass().add("blue-button");
+		directionsTextField.getStyleClass().add("black-text");
 
 	}
 
@@ -267,15 +270,23 @@ public class UserPathController
 
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
+		Label newFloorLabel = new Label();
 
 		int buttonWidth = 110;
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 430;
+		int buttonCenterX = 430;
+
+		int labelCenterX = 460;
+		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15; //change the +x value so the label is at the bottom
 
 
-		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + labelCenterX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutY(labelY);
+		newFloorLabel.setText(floor.building);
+
+		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount);
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
@@ -287,7 +298,7 @@ public class UserPathController
 		Rectangle backgroundRectangle = new Rectangle();
 		backgroundRectangle.setWidth(buttonWidth*1.25);
 		backgroundRectangle.setHeight(buttonHeight*1.25);
-		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount-10);
+		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount-10);
 		backgroundRectangle.setY(buttonY - 10);
 		backgroundRectangle.setFill(Color.WHITE);
 		backgroundRectangle.setStroke(Color.BLACK);
@@ -311,6 +322,7 @@ public class UserPathController
 		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
+		floorsTraveledAnchorPane.getChildren().add(newFloorLabel);
 	}
 
 	// TODO: Draw by segments, not by floors
@@ -420,6 +432,18 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
+	}
+
+	@FXML
+	private void helpBtnClicked() throws IOException{
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
 	}
 }
