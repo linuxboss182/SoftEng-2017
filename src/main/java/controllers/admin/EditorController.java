@@ -551,7 +551,7 @@ public class EditorController
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
 			this.secondaryPressed = event.isSecondaryButtonDown();
-			if (event.isSecondaryButtonDown()){
+			if (event.isSecondaryButtonDown() && event.isShiftDown()){
 				selectNode(node);
 				displayContextMenu(event);
 			}
@@ -876,8 +876,10 @@ public class EditorController
 				this.redisplayGraph();
 				break;
 			case DOWN:
+				// function no.3
 				break;
 			case LEFT:
+				// function no.4
 				break;
 			default:
 
