@@ -335,16 +335,28 @@ public class Directory
 	public void addNewElevatorUp(Node node) {
 		if (node == null) return;
 
-		if (node.getRoom() == null) {
-			this.addNewRoomToNode(node, "", "", "Elevator to floor above");
-		}
-		node.getRoom().setType(RoomType.ELEVATOR);
+		this.addNewElevatorUp(node, this.floor.getNumber()+1);
+	}
 
-		FloorImage nextFloor = FloorProxy.getFloor(this.getFloorName(), this.getFloorNum() + 1);
-		if (nextFloor != null) {
-			Node n = this.addNewRoomNode(node.getX(), node.getY(), nextFloor, "",
-					"", "Elevator to floor below");
-			this.connectNodes(node, n);
+	private void addNewElevatorUp(Node node, int floorNum) {
+		if (node == null) return;
+
+		Set<Node> neighbors = node.getNeighbors();
+		neighbors.removeIf(n -> n.getFloor() != floorNum);
+		if (! neighbors.isEmpty()) {
+			neighbors.forEach(n -> this.addNewElevatorUp(n, floorNum+1));
+		} else {
+			if (node.getRoom() == null) {
+				this.addNewRoomToNode(node, "", "", "Elevator to floor above");
+			}
+			node.getRoom().setType(RoomType.ELEVATOR);
+
+			FloorImage targetFloor = FloorProxy.getFloor(this.getFloorName(), floorNum);
+			if (targetFloor != null) {
+				Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
+						"", "Elevator to floor below");
+				this.connectNodes(node, n);
+			}
 		}
 	}
 
