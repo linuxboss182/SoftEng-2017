@@ -122,8 +122,8 @@ public class IconManager
 		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
-		image.setScaleX(0.25);
-		image.setScaleY(0.25);
+		image.setScaleX(0.05);
+		image.setScaleY(0.05);
 
 		//Center image on the coordinates.
 		image.setLayoutX(x - imageWidth/2);
@@ -135,6 +135,8 @@ public class IconManager
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
+		label.setScaleX(0.1);
+		label.setScaleY(0.1);
 
 		//Create Icon and link to room
 		Icon icon = new Icon(room, image, label);
@@ -153,11 +155,25 @@ public class IconManager
 		if (showFullNamesOnHover) {
 			ImageView image = icon.getImage();
 			Label label = icon.getLabel();
+			label.setOnMouseEntered(event -> {
+				icon.updateLabel(room.getName());
+				label.setScaleX(0.5);
+				label.setScaleY(0.5);
+			});
+			label.setOnMouseExited(event -> {
+				icon.updateLabel(room.getDisplayName());
+				label.setScaleX(0.1);
+				label.setScaleY(0.1);
+			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
+				label.setScaleX(0.5);
+				label.setScaleY(0.5);
 			});
 			image.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
+				label.setScaleX(0.1);
+				label.setScaleY(0.1);
 			});
 		}
 
