@@ -1,114 +1,69 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
 import entities.FloorProxy;
-import controllers.shared.MapDisplayController;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
-import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
 
-import entities.FloorImage;
 
-
-public abstract class UserMasterController
-		extends MapDisplayController
+public class UserMasterController
+		extends DrawerController
+		implements Initializable
 {
-	@FXML
-	private JFXButton logAsAdmin;
-	@FXML
-	private ImageView imageViewMap;
-	@FXML
-	private AnchorPane contentAnchor = new AnchorPane();
-	@FXML
-	private ListView<Room> directoryView;
-	@FXML
-	private Button getDirectionsBtn;
-	@FXML
-	private Button changeStartBtn;
-	@FXML
-	private Pane linePane;
-	@FXML
-	protected TextField searchBar;
-	@FXML
-	private Pane nodePane;
-	@FXML
-	protected TextFlow directionsTextField;
-	@FXML
-	private GridPane sideGridPane;
-	@FXML
-	private ComboBox<FloorProxy> floorComboBox;
-	@FXML
-	private ComboBox buildingChoiceBox;
-	@FXML
-	private ToolBar bottomToolbar;
-	@FXML
-	private BorderPane parentBorderPane;
-	@FXML
-	private SplitPane mapSplitPane;
-	@FXML
-	private GridPane destGridPane;
-	@FXML
-	private GridPane bottomGridPane;
-	@FXML
-	private Button aboutBtn;
-	@FXML
-	private ImageView logoImageView;
-	@FXML
-	private ScrollPane mapScroll = new ScrollPane();
+	@FXML private ImageView logAsAdmin;
+	@FXML private JFXListView<Room> resultsListView;
+	@FXML private Button getDirectionsBtn;
+	@FXML private Button changeStartBtn;
+	@FXML protected Pane linePane;
+	@FXML private Pane nodePane;
+	@FXML protected JFXTextField destinationField;
+	@FXML public ImageView destImageView;
+	@FXML protected JFXTextField startField;
+	@FXML public ImageView startImageView;
+	@FXML private ComboBox<FloorProxy> floorComboBox;
+	@FXML private BorderPane parentBorderPane;
+	@FXML private GridPane destGridPane;
+	@FXML private ImageView aboutBtn;
+	@FXML private ImageView logoImageView;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
 
-	final double SCALE_DELTA = 1.1;
-	final protected double zoomMin = 1;
-	final protected double zoomMax = 6;
-
-	private double clickedX, clickedY;
-	protected double SCALE_TOTAL = 1;
-	protected static Room startRoom;
-	protected static Room endRoom;
-	// TODO: Are these still needed? They shouldn't be, because of UserStartController being a separate class.
-	protected static boolean choosingStart = false;
-	protected static boolean choosingEnd = true; // Default this to true because that's the screen we start on
+	private Room startRoom;
+	private Room endRoom;
 
 
-	/* ABSTRACT METHODS */
-	/**
-	 * Function called when a room is left clicked on the map
-	 * @param room
-	 */
-	protected abstract void clickRoomAction(Room room);
 
-
-	/* NON-ABSTRACT METHODS */
+	@FXML private HBox startHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox goHBox;
+	@FXML private HBox bottomHBox;
 
 	/**
 	 * Get the scene this is working on
@@ -118,14 +73,31 @@ public abstract class UserMasterController
 		return this.parentBorderPane.getScene();
 	}
 
-	public void initialize() {
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		this.initialize();
+	}
 
-		this.setPanes(linePane, nodePane);
+	/**
+	 * Method used to initialize superclasses
+	 *
+	 * Not technically related to Initializable::initialize, but used for the same purpose
+	 */
+	public void initialize() {
+		super.initialize();
+
+		//Set IDs for CSS
+		setStyleIDs();
+
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
+		if (startRoom == null) {
+			startRoom = directory.getKiosk();
+			startField.setText("Your Location");
+		}
+
+		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
 		this.imageViewMap.setPickOnBounds(true);
@@ -133,145 +105,74 @@ public abstract class UserMasterController
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
-		// I tested this value, and we want it to be defaulted here because the map does not start zoomed out all the way
-		// TODO: Move zoom stuff to MapDisplayController
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
-		addZoomSliderListener();
-		/*
-		(x, y) -> {
-			x += 1;
-			return x+y;
-		}
-		 */
+		setZoomSliding();
 
-		if(floorComboBox != null) {
-			initfloorComboBox();
-		}
+		initfloorComboBox();
 
 		this.displayRooms();
-		iconController.resetAllRooms();
-		if(this.directoryView != null) {
-			this.populateListView();
-		}
 
-		// TODO: Move to MapDisplayController
+		this.populateListView();
+
 		setScrollZoom();
-
-		// TODO: See if there's a way to include this in the OnMouseDragged listener
-		getCoordsFromMouseClick();
-
-		setMouseDragPanning();
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
-	}
 
-	private void getCoordsFromMouseClick() {
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater( () -> {
+			initWindowResizeListener();
+			resizeDrawerListener(drawerParentPane.getHeight());
+
 		});
+//		Platform.runLater( () -> this.fitMapSize());
+		// Enable search; if this becomes more than one line, make it a function
+		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+
+		logAsAdmin.setImage(new Image("/lock.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
+
+		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				resizeDrawerListener((double)newSceneHeight);
+			}
+		});
+		resizeDrawerListener(677.0);
+
+		mainDrawer.open();
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
+
 	}
 
-	private void setMouseDragPanning() {
-		contentAnchor.setOnMouseDragged(event -> {
-			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
+	public void resizeDrawerListener(Double newSceneHeight) {
+		System.out.println("Height: " + newSceneHeight);
+		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	}
+
+	public void setStyleIDs() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox-go");
+		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
+		getDirectionsBtn.getStyleClass().add("jfx-button");
+		topToolBar.getStyleClass().add("tool-bar");
+		drawerParentPane.getStyleClass().add("drawer");
+	}
+
+
+	private void initializeIcons() {
+		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
+			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
 		});
-	}
-
-	private void setScrollZoom() {
-		contentAnchor.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override public void handle(ScrollEvent event) {
-				event.consume();
-				if (event.getDeltaY() == 0) {
-					return;
-				}
-				double scaleFactor =
-						(event.getDeltaY() > 0)
-								? SCALE_DELTA
-								: 1/SCALE_DELTA;
-
-				if (scaleFactor * SCALE_TOTAL >= 1 && scaleFactor * SCALE_TOTAL <= 6) {
-					Bounds viewPort = mapScroll.getViewportBounds();
-					Bounds contentSize = contentAnchor.getBoundsInParent();
-
-					double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
-					double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
-
-					mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
-					mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
-					SCALE_TOTAL *= scaleFactor;
-
-					double newCenterX = centerPosX * scaleFactor;
-					double newCenterY = centerPosY * scaleFactor;
-
-					mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
-					mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
-				}
-
-				if (scaleFactor * SCALE_TOTAL <= 1) {
-//					SCALE_TOTAL = 1/scaleFactor;
-					zoomSlider.setValue(0);
-
-				}else if(scaleFactor * SCALE_TOTAL >= 5.5599173134922495) {
-//					SCALE_TOTAL = 6 / scaleFactor;
-					zoomSlider.setValue(100);
-
-				}else {
-					zoomSlider.setValue(((SCALE_TOTAL - 1)/4.5599173134922495) * 100);
-				}
-
-			}
-		});
-	}
-
-	/** This is the section for key listeners.
-	 *  Press Ctrl + Open Bracket for zoom in
-	 *  Press Ctrl + Close Bracket for zoom out
-	 *  Press Shift + Right to move the view to the right
-	 *  Press Shift + Left to move the view to the left
-	 *  Press Shift + Up to move the view to the up
-	 *  Press Shift + down to move the view to the down
-	 *
-	 */
-	private void setHotkeys() {
-		parentBorderPane.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.OPEN_BRACKET && e.isControlDown()) {
-				increaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.CLOSE_BRACKET && e.isControlDown()) {
-				decreaseZoomButtonPressed();
-			}else if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
-			}else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
-			}else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
-			}else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
-			}
-			e.consume();
-		});
-	}
-
-	private void addZoomSliderListener() {
-		zoomSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			/**
-			 * This one was a fun one.
-			 * This math pretty much makes it so when the slider is at the far left, the map will be zoomed out all the way
-			 * and when it's at the far right, it will be zoomed in all the way
-			 * when it's at the left, zoomPercent is 0, so we want the full value of zoomMin to be the zoom coefficient
-			 * when it's at the right, zoomPercent is 1, and we want the full value of zoomMax to be the zoom coefficient
-			 * the equation is just that
-			 */
-			double zoomPercent = (zoomSlider.getValue()/100);
-			double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-			mapScroll.setScaleX(zoomCoefficient);
-			mapScroll.setScaleY(zoomCoefficient);
-		});
+		iconManager.getIcons(directory.getRooms());
 	}
 
 	/**
@@ -280,7 +181,7 @@ public abstract class UserMasterController
 	 * @param searchString The new string in the search bar
 	 */
 	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
 			// The Collator allows case-insensitie comparison
@@ -297,7 +198,7 @@ public abstract class UserMasterController
 					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
 					          .contains(normed)); // check with unicode normalization
 
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
+			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}
 	}
 
@@ -307,13 +208,10 @@ public abstract class UserMasterController
 	 * Ideally this shouldn't be hard coded
 	 */
 	public void initfloorComboBox() {
-//		// We are able to change what this list is of.
-//		this.floorComboBox.setItems(FXCollections.observableArrayList("Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"));
-//		this.floorComboBox.setValue(this.floorComboBox.getItems().get(floor-1)); // default the selection to be whichever floor we start on
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
-		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER);
+		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER); // <- for choiceBox, not comboBox
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
 
@@ -323,61 +221,36 @@ public abstract class UserMasterController
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
 		// Unset navigation targets for after logout
-		startRoom = null;
-		endRoom = null;
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
-
-
 	}
+
+	/**
+	 * Called by MapDisplayController when changing floor
+	 */
+	@Override
+	protected void redisplayMapItems() {
+		this.displayRooms();
+	}
+
 
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
 	public void displayRooms() {
-		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-		for (Room room : directory.getRoomsOnFloor(directory.getFloor())) {
-			roomShapes.add(room.getUserSideShape());
-
-			// Add listener to select rooms on click
-			room.getUserSideShape().getSymbol().setOnMouseClicked((MouseEvent e) -> {
-				if (e.getButton() == MouseButton.PRIMARY) this.clickRoomAction(room);
-			});
-
-			// Add listener for context menus (right click)
-			room.getUserSideShape().getSymbol().setOnContextMenuRequested(e -> {
-
-				ContextMenu optionsMenu = new ContextMenu();
-
-				MenuItem startRoomItem = new MenuItem("Set as starting location");
-				startRoomItem.setOnAction(e1 -> selectStartRoom(room));
-				MenuItem endRoomItem = new MenuItem("Set as destination");
-				endRoomItem.setOnAction(e2-> selectEndRoom(room));
-				optionsMenu.getItems().addAll(startRoomItem, endRoomItem);
-				optionsMenu.show(room.getUserSideShape(), e.getScreenX(), e.getScreenY());
-			});
-		}
-		this.topPane.getChildren().setAll(roomShapes);
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
 	 * Populates the list of rooms
 	 */
 	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
+		this.resultsListView.setItems(this.listProperty);
 		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Room>() {
-			@Override
-			public void changed(ObservableValue<? extends Room> observable, Room oldValue, Room newValue) {
-				// These variables are set in the controllers when the scene is switched...
-				if(choosingEnd) {
-					selectEndRoom(directoryView.getSelectionModel().getSelectedItem());
-				} else if(choosingStart) {
-					selectStartRoom(directoryView.getSelectionModel().getSelectedItem());
+		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
+			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
 
-				}
-			}
 		});
 	}
 
@@ -396,9 +269,9 @@ public abstract class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-		if (this.changeStartBtn != null) {
-			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-		}
+//		if (this.changeStartBtn != null) {
+//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
+//		}
 	}
 
 
@@ -406,27 +279,42 @@ public abstract class UserMasterController
 
 	@FXML
 	public void getDirectionsClicked() throws IOException, InvocationTargetException {
-		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserPath.fxml"));
-		this.getScene().setRoot(userPath);
+		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
+		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
+		BorderPane pane = loader.load();
+		UserPathController controller = loader.getController();
+
+		/* change to a scene with the path if possible */
+		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
+			this.getScene().setRoot(pane);
+		} else {
+			this.redisplayMapItems();
+		}
 	}
 
-
-	protected void changeFloor(FloorImage floor) {
-		Image map = this.directory.switchFloors(floor);
-		this.imageViewMap.setImage(map);
-		this.displayRooms();
-	}
-
-
-	/**
+	/*
 	 * Below are helper methods to select and deselect the starting rooms for a path
 	 */
+
+	/**
+	 * Function called to select a room
+	 */
+	protected void selectRoomAction(Room room) {
+		if (this.startField.isFocused()) {
+			this.selectStartRoom(room);
+			startField.setText(room.getName());
+		} else {
+			this.selectEndRoom(room);
+			destinationField.setText(room.getName());
+		}
+	}
 
 	protected void selectStartRoom(Room r) {
 		if(r == null) return;
 		startRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
+
 		iconController.selectStartRoom(r);
 		this.displayRooms();
 	}
@@ -442,28 +330,6 @@ public abstract class UserMasterController
 	}
 
 	@FXML
-	protected void increaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent+=.2;
-		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
-	protected void decreaseZoomButtonPressed() {
-		double zoomPercent = (zoomSlider.getValue()/100);
-		zoomPercent-=.2;
-		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-		zoomSlider.setValue(zoomPercent*100);
-		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-		contentAnchor.setScaleX(zoomCoefficient);
-		contentAnchor.setScaleY(zoomCoefficient);
-	}
-
-	@FXML
 	public void aboutBtnClicked () throws IOException {
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
@@ -474,4 +340,16 @@ public abstract class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
+	@FXML
+	private void helpBtnClicked() throws IOException{
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
+	}
 }
+

@@ -4,10 +4,7 @@ import java.sql.*;
 import java.util.Map;
 import java.util.HashMap;
 
-import entities.Directory;
-import entities.Node;
-import entities.Professional;
-import entities.Room;
+import entities.*;
 
 // Feel free to remove all the commented-out PRINTs and PRINTLNs once everything works
 
@@ -55,24 +52,21 @@ class DatabaseLoader
 	 */
 	private boolean populateDirectory(Directory directory) {
 		Map<Integer, Room> rooms = new HashMap<>();
-		Map<Integer, Professional> professionals = new HashMap<>();
 		Integer kioskID = null; // (should be Optional<Integer>) not in use
 		try {
 			//retrieve nodes and rooms
 			this.retrieveNodesAndRooms(directory, rooms);
 			//find all them professionals
 			this.retrieveProfessionals(directory, rooms);
+			//retrieve all user data
+			this.retrieveUserData(directory);
 			kioskID = this.retrieveKiosk();
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.err.println("A SQL Exception occured");
 			return false;
 		}
-		//add all to directory
-		for(Professional p: professionals.values()){
-			directory.addProfessional(p);
-		}
-		// commented out because we don't have a defined kiosk location at the moment
+
 		System.out.println("Kiosk is " + kioskID);
 		if (kioskID != null) {
 			directory.setKiosk(rooms.get(kioskID));
@@ -150,9 +144,10 @@ class DatabaseLoader
 			while (resultNodes.next()) {
 //				PRINTLN("Loading node " + resultNodes.getInt("nodeID"));
 				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
-				                                 resultNodes.getDouble("nodeY"),
-				                                 resultNodes.getInt("floor"),
-												 resultNodes.getString("buildingName"));
+						resultNodes.getDouble("nodeY"),
+						resultNodes.getInt("floor"),
+						resultNodes.getString("buildingName"),
+						resultNodes.getBoolean("isRestricted"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 				directory.addNode(node);
 			}
@@ -164,9 +159,11 @@ class DatabaseLoader
 			while (resultRooms.next()) {
 //				PRINTLN("Loading room " + resultRooms.getInt("roomID"));
 				Room room = directory.addNewRoom(resultRooms.getString("roomName"),
-				                                 resultRooms.getString("roomDescription"),
-												 resultRooms.getDouble("labelX"),
-												 resultRooms.getDouble("labelY"));
+						resultRooms.getString("roomDisplayName"),
+						resultRooms.getString("roomDescription"),
+						resultRooms.getDouble("labelX"),
+						resultRooms.getDouble("labelY"));
+				room.setType(RoomType.valueOf(resultRooms.getString("roomType")));
 				directory.addRoom(room);
 				int nodeID = resultRooms.getInt("nodeID");
 				if (! resultRooms.wasNull()) {
@@ -192,6 +189,28 @@ class DatabaseLoader
 			queryEdges.close();
 			queryNodes.close();
 			queryRooms.close();
+		} catch (SQLException e){
+			throw e;
+		}
+	}
+
+	/**Retrieves users and password hashes from the database and populates the given hash maps
+	 *
+	 * @param directory The directory to populate
+	 */
+
+	private void retrieveUserData(Directory directory) throws SQLException{
+		try {
+			//populate Users
+			Statement queryUsers = this.db_connection.createStatement();
+			ResultSet resultUsers = queryUsers.executeQuery(StoredProcedures.procRetrieveUsers());
+			while (resultUsers.next()) {
+				directory.addAccount(resultUsers.getString("userID"),
+						resultUsers.getString("passHash"),
+						resultUsers.getString("permission"));
+			}
+			resultUsers.close();
+			queryUsers.close();
 		} catch (SQLException e){
 			throw e;
 		}
@@ -234,26 +253,31 @@ class DatabaseLoader
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
-			                                        n.getFloor(), n.mapToRoom(Object::hashCode),
-													n.getBuildingName());
+					n.getFloor(), n.mapToRoom(Object::hashCode),
+					n.getBuildingName(),
+					n.isRestricted());
 			db.executeUpdate(query);
 		}
 
 		for (Room r : dir.getRooms()) {
-//			PRINTLN("Saving node "+r.hashCode());
+//			PRINTLN("Saving node "+r.hashCode())
 			if(r.getLocation() != null) {
 				query = StoredProcedures.procInsertRoomWithLocation(r.hashCode(),
-																	r.getLocation().hashCode(),
-																	r.getName(),
-																	r.getDescription(),
-																	r.getLabelOffsetX(),
-																	r.getLabelOffsetY());
+						r.getLocation().hashCode(),
+						r.getName(),
+						r.getDisplayName(),
+						r.getDescription(),
+						r.getLabelOffsetX(),
+						r.getLabelOffsetY(),
+						r.getType().name());
 			} else {
 				query = StoredProcedures.procInsertRoom(r.hashCode(),
-														r.getName(),
-														r.getDescription(),
-														r.getLabelOffsetX(),
-														r.getLabelOffsetY());
+						r.getName(),
+						r.getDisplayName(),
+						r.getDescription(),
+						r.getLabelOffsetX(),
+						r.getLabelOffsetY(),
+						r.getType().name());
 			}
 			db.executeUpdate(query);
 		}
@@ -266,21 +290,14 @@ class DatabaseLoader
 
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving edges for node "+n.hashCode());
-			for (Node m : n.getNeighbors()) {
+			for (Node m : dir.getNodeNeighbors(n)) {
 //				PRINTLN("Saving edge to "+m.hashCode());
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
 			}
 		}
-//
-//		for (Room n : dir.getRooms()) {
-//			for (Node m : n.getLocation().getNeighbors()) {
-//				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
-//				db.executeUpdate(query);
-//			}
-//		}
-//		System.out.println("room edges saved");
 
+		//save professionals
 		for (Professional p : dir.getProfessionals()) {
 			query = StoredProcedures.procInsertEmployee(
 					p.hashCode(), p.getGivenName(), p.getSurname(), p.getTitle());
@@ -291,6 +308,21 @@ class DatabaseLoader
 				db.executeUpdate(query);
 			}
 		}
+
+//		//save user data
+//		for (int i=0;i<dir.getAccounts().toArray().length;i++){
+//			query = StoredProcedures.procInsertUser(dir.getAccounts().toArray()[i].toString(),
+//					dir.getPassHashes().toArray()[i].toString(),
+//					dir.getPermissions().toArray()[i].toString());
+
+		for (Map.Entry<String, Account> user : dir.getAccounts().entrySet()) {
+			Account thisAccount = user.getValue();
+			query = StoredProcedures.procInsertUser(thisAccount.getUsername(),
+													thisAccount.getPassword(),
+													thisAccount.getPermissions());
+			db.executeUpdate(query);
+		}
+
 		db.close();
 	}
 

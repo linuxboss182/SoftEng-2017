@@ -15,6 +15,7 @@ public class StoredProcedures
 					+ ", nodeY  double precision NOT NULL "
 					+ ", buildingName varchar(200) NOT NULL "
 					+ ", floor integer NOT NULL "
+					+ ", isRestricted boolean NOT NULL "
 					+  ", roomID integer)",/*references Rooms(roomID))",*/ // foreign key would cause drop problems
 			"CREATE TABLE Edges ("
 					+" node1 integer references Nodes(nodeID) ON DELETE CASCADE"
@@ -22,11 +23,13 @@ public class StoredProcedures
 					+" , constraint Edges_pk PRIMARY KEY (node1, node2))",
 			"CREATE TABLE Rooms ("
 					+" roomID             integer PRIMARY KEY"
-					+" , roomName           varchar(200) NOT NULL"
+					+" , roomName         varchar(200) NOT NULL"
+					+" , roomDisplayName    varchar(50) NOT NULL"
 					+" , roomDescription varchar(1000)"
 					+" , labelX double precision NOT NULL"
 					+" , labelY double precision NOT NULL"
-					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL)",
+					+" , nodeID          integer references Nodes(nodeID) ON DELETE SET NULL"
+					+" , roomType   varchar(100) NOT NULL)",
 			"CREATE TABLE Employees ("
 					+" employeeID        integer PRIMARY KEY"
 					+" , employeeGivenName varchar(100)"
@@ -36,7 +39,11 @@ public class StoredProcedures
 					+"roomID   integer references Rooms(roomID) ON DELETE CASCADE"
 					+" , employeeID integer references Employees(employeeID) ON DELETE CASCADE"
 					+" , constraint EmployeeRooms_pk PRIMARY KEY (roomID, employeeID))",
-			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)"
+			"CREATE TABLE Kiosk (roomID integer references Rooms(roomID) NOT NULL)",
+			"CREATE TABLE Users ("
+					+"userID    varchar(100) PRIMARY KEY"
+					+" , passHash  varchar(100)"
+					+" , permission    varchar(100))"
 	);
 
 	private static final List<String> drops = Arrays.asList(
@@ -45,7 +52,8 @@ public class StoredProcedures
 			"DROP TABLE Employees",
 			"DROP TABLE Rooms",
 			"DROP TABLE Edges",
-			"DROP TABLE Nodes"
+			"DROP TABLE Nodes",
+			"DROP TABLE Users"
 	);
 
 	//initial data that will be in the database upon construction
@@ -155,24 +163,26 @@ public class StoredProcedures
 
 	/* **** Insertion procedures **** */
 
-	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName){
+	public static String procInsertNode(int nodeID, double nodeX, double nodeY, int floor, Integer roomID, String buildingName, boolean isRestricted){
 		//query needs work
 		buildingName = sanitize(buildingName);
-		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+roomID+", '"+buildingName+"')";
+		return "INSERT INTO Nodes (nodeID, nodeX, nodeY, floor, isRestricted, roomID, buildingName) VALUES("+nodeID+", "+nodeX+", "+nodeY+", "+floor+", "+isRestricted+", "+roomID+", '"+buildingName+"')";
 	}
 
-	public static String procInsertRoom(int roomID, String roomName, String roomDescription, double labelX, double labelY){
+	public static String procInsertRoom(int roomID, String roomName, String roomDisplayName, String roomDescription, double labelX, double labelY, String roomType){
 		roomName = sanitize(roomName);
+		roomDisplayName = sanitize(roomDisplayName);
 		roomDescription = sanitize(roomDescription);
-		return "INSERT INTO Rooms (roomName, roomDescription, roomID, labelX, labelY) VALUES('"+roomName
-				+"', '"+roomDescription+"', "+roomID+","+ labelX +","+labelY+ ")";
+		roomType = sanitize(roomType);
+		return "INSERT INTO Rooms (roomName, roomDisplayName, roomDescription, roomID, labelX, labelY, roomType) VALUES('"+roomName
+				+"','"+roomDisplayName+"','"+roomDescription+"',"+roomID+","+ labelX +","+labelY+ ",'"+roomType+"')";
 	}
 
-	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDescription, double labelX, double labelY){
+	public static String procInsertRoomWithLocation(int roomID, int nodeID, String roomName, String roomDisplayName, String roomDescription, double labelX, double labelY, String roomType){
 		roomName = sanitize(roomName);
 		roomDescription = sanitize(roomDescription);
-		return "INSERT INTO Rooms (roomName, roomDescription, nodeID, roomID, labelX, labelY) VALUES('"+roomName
-				+"', '"+roomDescription+"', "+nodeID+", "+roomID+","+ labelX +","+labelY+ ")";
+		return "INSERT INTO Rooms (roomName, roomDisplayName, roomDescription, nodeID, roomID, labelX, labelY, roomType) VALUES('"+roomName
+				+"','"+roomDisplayName+"','"+roomDescription+"',"+nodeID+","+roomID+","+ labelX +","+labelY+",'"+roomType+ "')";
 	}
 
 	public static String procInsertEdge(int node1, int node2){
@@ -260,5 +270,16 @@ public class StoredProcedures
 
 	public static String procRetrieveKiosk() {
 		return "SELECT roomID FROM Kiosk";
+	}
+
+	public static String procRetrieveUsers(){
+		return "SELECT * FROM Users";
+	}
+
+	public static String procInsertUser(String userID, String passHash, String permission){
+		userID = sanitize(userID);
+		passHash = sanitize(passHash);
+		permission = sanitize(permission);
+		return "INSERT INTO Users(userID, passHash, permission) VALUES('"+userID+"', '"+passHash+"', '"+permission+"')";
 	}
 }

@@ -1,4 +1,4 @@
- package controllers;
+ package controllers.extras;
 
  import com.twilio.Twilio;
  import com.twilio.rest.api.v2010.account.Message;
@@ -46,7 +46,7 @@
  					this.text                    // SMS body
  			).create();
 
- 			System.out.println(message.getSid());
+ 			//System.out.println(message.getSid());
  			SendBtn.getScene().getWindow().hide();
  		} catch(Exception e){
  			errorLabel.setVisible(true);
@@ -60,7 +60,6 @@
  	}
 
  	public void setText(String text) {
- 		System.out.println("text = " + text);
  		this.text = text;
  	}
  }

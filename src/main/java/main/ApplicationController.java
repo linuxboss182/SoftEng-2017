@@ -17,12 +17,21 @@ public class ApplicationController extends Application
 
 	private static Directory directory;
 	private static IconController iconController;
+	private static Stage stage;
+
+	public static Stage getStage() {
+		return ApplicationController.stage;
+	}
 
 	public static Directory getDirectory() {
 		return ApplicationController.directory; // returns the single copy
 	}
 
-	public static IconController getIconController() {
+	public static void setDirectory(Directory newDirectory) {
+		ApplicationController.directory = newDirectory;
+	}
+
+		public static IconController getIconController() {
 		return ApplicationController.iconController;
 	}
 
@@ -47,9 +56,12 @@ public class ApplicationController extends Application
 	/** This is called by JavaFX and starts up the application UI user panel*/
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		ApplicationController.stage = primaryStage;
 		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
-		Scene user = new Scene(root, 1174, 722);
+		Scene user = new Scene(root, 1300, 800);
+		primaryStage.setMinWidth(1180);
+		primaryStage.setMinHeight(722);
 		primaryStage.setScene(user);
 		primaryStage.show();
 

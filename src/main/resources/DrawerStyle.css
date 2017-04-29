@@ -1,0 +1,81 @@
+.root {
+    -fx-text-fill: green;
+}
+.hbox {
+    -fx-background-color: #4285f4;
+    -fx-animated: inherit;
+    -fx-fill-height: true;
+    -fx-fit-to-height: true;
+    -fx-max-width: inherit;
+}
+
+.hbox-bottom {
+    -fx-background-color: #FFFFFF;
+}
+
+.path-label {
+    -fx-background-color: rgba(66, 133, 244, 0.16);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-font-family: "Trebuchet MS";
+}
+
+
+.vbox {
+    -fx-max-width: 418px;
+    -fx-pref-width: 418px;
+    -fx-min-width: 418px;
+    -fx-fit-to-height: inherit;
+
+}
+.jfx-tool-bar {
+    -fx-background-color: #FFFFFF;
+}
+.hbox-go {
+    -fx-background-color: #3367d6;
+}
+
+.jfx-text-field{
+    -fx-background-color: rgba(66, 133, 244, 0.16);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #d5d5d5;
+
+}
+.blue-button {
+    -fx-background-color: #5087b4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+}
+
+.drawer {
+    -fx-effect: dropshadow(one-pass-box, darkgrey, 2, 1.0, 2, 2);
+}
+
+.jfx-list-view {
+    -fx-fit-to-height: true;
+    -fx-max-width: 418px;
+    -fx-pref-width: 418px;
+    -fx-min-width: 418px;
+    -fx-cell-size: 50px;
+    -fx-highlight-fill: #BDBDBD;
+    -fx-font-size: 14px;
+    -fx-focus-traversable: false;
+
+}
+.jfx-hamburger {
+    -fx-effect: dropshadow(gaussian, gray, 10, 1.0, 100, 100);
+}
+.jfx-button {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #0288D1;
+    -fx-font-size: 14px;
+    -fx-font-weight: 200px;
+}

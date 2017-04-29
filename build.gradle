@@ -49,6 +49,10 @@ dependencies {
 
     // theming library for javafx
     compile 'com.jfoenix:jfoenix:1.2.0'
+
+    // Apache Commons gets us a few useful utilities
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 }
 
 jfx {
