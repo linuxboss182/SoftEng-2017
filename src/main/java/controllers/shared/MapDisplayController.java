@@ -36,10 +36,6 @@ public abstract class MapDisplayController
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
 	@FXML protected ScrollPane mapScroll;
-	@FXML protected JFXDrawer navDrawer;
-	@FXML protected JFXDrawer directionsDrawer;
-	protected boolean isDrawerOpen = false;
-	protected boolean isDirectionsOpen = false;
 	protected Directory directory;
 	protected IconController iconController;
 
@@ -240,15 +236,8 @@ public abstract class MapDisplayController
 		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
 		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
 
-		//Fixes the offset to center
-		if (isDrawerOpen || isDirectionsOpen) {
-			System.out.println("drawer open");
-			potentialX += 420;
-			potentialScaleX = (mapScroll.getViewportBounds().getWidth() - 420) / contentAnchor.getWidth();
-		} else {
-			potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-			potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-		}
+		potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
 
 		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
 			contentAnchor.setScaleX(potentialScaleX);
@@ -259,10 +248,6 @@ public abstract class MapDisplayController
 			contentAnchor.setScaleY(potentialScaleY);
 			currentScale = potentialScaleY;
 		}
-
-
-
-
 
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
