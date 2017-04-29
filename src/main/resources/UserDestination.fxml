@@ -112,7 +112,7 @@
                                         </JFXButton>
                                     </children>
                                 </HBox>
-                                <JFXListView fx:id="resultsListView" />
+                                <JFXListView fx:id="roomSearchResults" />
                                 <HBox fx:id="bottomHBox">
                                     <children>
                                         <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
