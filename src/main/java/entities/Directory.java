@@ -97,8 +97,20 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void addAccount(String user, String password, String permission){
-		this.Accounts.put(user, new Account(user, password, permission));
+	public Account addAccount(String user, String password, String permission){
+		Account newAccount = new Account(user, password, permission);
+		this.Accounts.put(user, newAccount);
+		return newAccount;
+	}
+
+	public void deleteAccount(String user){
+		this.Accounts.remove(user);
+	}
+
+	public void updateKey(String newName, String oldName){
+		Account tempAccount = Accounts.get(oldName);
+		Accounts.remove(oldName);
+		Accounts.put(newName, tempAccount);
 	}
 
 	/* Account/login functions */
