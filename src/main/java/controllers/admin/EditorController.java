@@ -2,6 +2,7 @@ package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
+import com.sun.org.apache.xerces.internal.xs.StringList;
 import controllers.icons.IconManager;
 import entities.FloorProxy;
 import entities.Node;
@@ -21,6 +22,12 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
@@ -29,16 +36,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 import main.ApplicationController;
 import controllers.filereader.FileParser;
@@ -47,6 +58,9 @@ import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
 
+
+
+import static entities.RoomType.BATHROOM_U;
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.BLUE;
 import static javafx.scene.paint.Color.GRAY;
@@ -190,6 +204,14 @@ public class EditorController
 
 		contextMenu.setLayoutX(x);
 		contextMenu.setLayoutY(y);
+		List<Image> imageArray = new ArrayList<Image>();
+		for (RoomType type : RoomType.values()){
+			imageArray.add(type.getImage());
+		}
+
+		ImageView image = new ImageView("Elevator.png"/*imageArray.get(9)*/);
+		image.setX(0);
+		image.setY(0);
 
 		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);
@@ -243,6 +265,7 @@ public class EditorController
 		contextMenu.getChildren().add(split2);
 		contextMenu.getChildren().add(split3);
 		contextMenu.getChildren().add(split4);
+		contextMenu.getChildren().add(image);
 		contextMenu.setVisible(true);
 		this.nodePane.getChildren().add(contextMenu);
 	}
@@ -866,7 +889,9 @@ public class EditorController
 				iconController.resetAllNodes();
 				break;
 			case DOWN:
-				// function no.3
+				directory.addNewElevatorDown(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
 				break;
 			case RIGHT:
 				room = n.getRoom();
@@ -879,6 +904,7 @@ public class EditorController
 				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
 				directory.setKiosk(room);
 				iconController.resetSingleNode(n);
+
 				this.redisplayGraph();
 				break;
 			case LEFT:
@@ -888,7 +914,7 @@ public class EditorController
 					iconController.resetSingleNode(n);
 					room = n.getRoom();
 				}
-				room.setType(RoomType.BATHROOM_U);
+				room.setType(BATHROOM_U);
 				this.selectNode(n);
 				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
 				break;
