@@ -315,10 +315,11 @@ class DatabaseLoader
 //					dir.getPassHashes().toArray()[i].toString(),
 //					dir.getPermissions().toArray()[i].toString());
 
-		for (Map.Entry<String, String> user : dir.getUsers().entrySet()) {
-			query = StoredProcedures.procInsertUser(user.getKey(),
-													user.getValue(),
-													dir.getPermissions(user.getKey()));
+		for (Map.Entry<String, Account> user : dir.getUsers().entrySet()) {
+			Account thisAccount = user.getValue();
+			query = StoredProcedures.procInsertUser(thisAccount.getName(),
+													thisAccount.getPassword(),
+													thisAccount.getPermissions());
 			db.executeUpdate(query);
 		}
 

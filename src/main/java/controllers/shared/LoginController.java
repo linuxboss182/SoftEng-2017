@@ -1,6 +1,7 @@
 package controllers.shared;
 
 
+import entities.Account;
 import entities.Directory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,10 +19,9 @@ import javafx.scene.input.KeyEvent;
 import main.ApplicationController;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable{
@@ -133,7 +133,7 @@ public class LoginController implements Initializable{
 	 * @return 2 for admins, 1 for professionals, or 0 for failed logins
 	 */
 	public LoginStatus checkLogin(String username, String password) {
-		HashMap<String, String> logins = directory.getUsers();
+		Map<String, Account> logins = directory.getUsers();
 
 
 		// Branches:
@@ -142,11 +142,9 @@ public class LoginController implements Initializable{
 		// does not contain key or does not contain value
 
 
-		;
-
 		// Safe because the empty string is not a valid password
-		if (logins.getOrDefault(username, "").equals(password)) {
-			switch (directory.getPermissions(username).toUpperCase()) {
+		if (logins.get(username).getPassword().equals(password)) {
+			switch (logins.get(username).getPermissions()) {
 				case "ADMIN":
 					return LoginStatus.ADMIN;
 				case "PROFESSIONAL":
