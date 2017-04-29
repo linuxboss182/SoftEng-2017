@@ -3,6 +3,7 @@ package controllers.user;
 import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
+import entities.Node;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,45 +27,68 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.text.Normalizer;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
+import main.algorithms.PathNotFoundException;
 
 
 public class UserMasterController
 		extends DrawerController
 		implements Initializable
 {
-	@FXML private ImageView logAsAdmin;
-	@FXML private JFXListView<Room> resultsListView;
-	@FXML private Button getDirectionsBtn;
-	@FXML private Button changeStartBtn;
-	@FXML protected Pane linePane;
-	@FXML private Pane nodePane;
-	@FXML protected JFXTextField destinationField;
-	@FXML public ImageView destImageView;
-	@FXML protected JFXTextField startField;
-	@FXML public ImageView startImageView;
-	@FXML private ComboBox<FloorProxy> floorComboBox;
-	@FXML private BorderPane parentBorderPane;
-	@FXML private GridPane destGridPane;
-	@FXML private ImageView aboutBtn;
-	@FXML private ImageView logoImageView;
-	@FXML private JFXToolbar topToolBar;
-	@FXML private BorderPane floatingBorderPane;
+	@FXML
+	private ImageView logAsAdmin;
+	@FXML
+	private JFXListView<Room> resultsListView;
+	@FXML
+	private Button getDirectionsBtn;
+	@FXML
+	private Button changeStartBtn;
+	@FXML
+	protected Pane linePane;
+	@FXML
+	private Pane nodePane;
+	@FXML
+	protected JFXTextField destinationField;
+	@FXML
+	public ImageView destImageView;
+	@FXML
+	protected JFXTextField startField;
+	@FXML
+	public ImageView startImageView;
+	@FXML
+	private ComboBox<FloorProxy> floorComboBox;
+	@FXML
+	private BorderPane parentBorderPane;
+	@FXML
+	private GridPane destGridPane;
+	@FXML
+	private ImageView aboutBtn;
+	@FXML
+	private ImageView logoImageView;
+	@FXML
+	private JFXToolbar topToolBar;
+	@FXML
+	private BorderPane floatingBorderPane;
 
 	private Room startRoom;
 	private Room endRoom;
 
 
-
-	@FXML private HBox startHBox;
-	@FXML private HBox destHBox;
-	@FXML private HBox goHBox;
-	@FXML private HBox bottomHBox;
+	@FXML
+	private HBox startHBox;
+	@FXML
+	private HBox destHBox;
+	@FXML
+	private HBox goHBox;
+	@FXML
+	private HBox bottomHBox;
 
 	/**
 	 * Get the scene this is working on
@@ -81,8 +105,9 @@ public class UserMasterController
 
 	/**
 	 * Method used to initialize superclasses
-	 *
-	 * Not technically related to Initializable::initialize, but used for the same purpose
+	 * <p>
+	 * Not technically related to Initializable::initialize, but used for the same 
+	 * purpose
 	 */
 	public void initialize() {
 		super.initialize();
@@ -93,7 +118,6 @@ public class UserMasterController
 		//Kiosk listener
 		startFocusedListener();
 		destFocusedListener();
-
 
 
 		this.directory = ApplicationController.getDirectory();
@@ -125,7 +149,7 @@ public class UserMasterController
 		setHotkeys();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater( () -> {
+		Platform.runLater(() -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
 
@@ -140,9 +164,11 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				resizeDrawerListener((double)newSceneHeight);
+		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+				resizeDrawerListener((double) newSceneHeight);
 			}
 		});
 		resizeDrawerListener(677.0);
@@ -157,7 +183,7 @@ public class UserMasterController
 
 	public void resizeDrawerListener(Double newSceneHeight) {
 		System.out.println("Height: " + newSceneHeight);
-		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		resultsListView.setPrefHeight((double) newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	public void setStyleIDs() {
@@ -185,7 +211,7 @@ public class UserMasterController
 	 * @param searchString The new string in the search bar
 	 */
 	public void filterRoomsByName(String searchString) {
-		if((searchString == null) || (searchString.length() == 0)) {
+		if ((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
 			// The Collator allows case-insensitie comparison
@@ -199,8 +225,8 @@ public class UserMasterController
 
 			Set<Room> roomSet = directory.filterRooms(room ->
 					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
+							Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
+									.contains(normed)); // check with unicode normalization
 
 			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
 		}
@@ -264,12 +290,11 @@ public class UserMasterController
 	}
 
 
-
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 *
+	 * <p>
 	 * If both start and end locations are set, enable the "get directions" button
-	 *
+	 * <p>
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	protected void enableOrDisableNavigationButtons() {
@@ -286,10 +311,9 @@ public class UserMasterController
 	}
 
 
-
-
 	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+	public void getDirectionsClicked()
+			throws IOException, InvocationTargetException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -326,7 +350,8 @@ public class UserMasterController
 	}
 
 	protected void startFocusedListener() {
-		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		startField.focusedProperty().addListener(new ChangeListener<Boolean>()
+		{
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
 				if (newPropertyValue) {
@@ -341,7 +366,8 @@ public class UserMasterController
 	}
 
 	protected void destFocusedListener() {
-		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>()
+		{
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
 				if (newPropertyValue) {
@@ -352,7 +378,7 @@ public class UserMasterController
 	}
 
 	protected void selectStartRoom(Room r) {
-		if(r == null) return;
+		if (r == null) return;
 		startRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
@@ -362,7 +388,7 @@ public class UserMasterController
 	}
 
 	protected void selectEndRoom(Room r) {
-		if(r == null) return;
+		if (r == null) return;
 		endRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
@@ -372,7 +398,8 @@ public class UserMasterController
 	}
 
 	@FXML
-	public void aboutBtnClicked () throws IOException {
+	public void aboutBtnClicked()
+			throws IOException {
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
@@ -382,8 +409,10 @@ public class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
+
 	@FXML
-	private void helpBtnClicked() throws IOException{
+	private void helpBtnClicked()
+			throws IOException {
 		UserHelpController helpController = new UserHelpController();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
@@ -393,5 +422,34 @@ public class UserMasterController
 		userHelpStage.setScene(userHelpScene);
 		userHelpStage.showAndWait();
 	}
+
+	public void findBathroom(Room start, LinkedList<Node> visited)
+			throws IOException, InvocationTargetException {
+		Room closest = start;
+		if (start.getName().equalsIgnoreCase("bathroom")) {
+			selectEndRoom(closest);
+			this.getDirectionsClicked();
+		}
+		for (Node neighbors : start.getLocation().getNeighbors()) {
+			visited.add(neighbors);
+			if (visited.contains(neighbors)) {
+			} else {
+				findBathroom(neighbors.getRoom(), visited);
+
+			}
+		}
+	}
+
+	@FXML
+	public void findBathroomClicked()
+			throws IOException, InvocationTargetException {
+		System.out.println("starting");
+		LinkedList<Node> visited = new LinkedList<>();
+		findBathroom(startRoom, visited);
+		System.out.println("WE HAVE A ENDROOM");
+
+	}
 }
+	
+
 
