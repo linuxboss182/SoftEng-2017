@@ -45,7 +45,7 @@ public class AccountPopupController
 
 		ObservableList<Account> accounts = FXCollections.observableArrayList();
 		accounts.addAll(getDirectory().getAccounts().values());
-		accounts.forEach(a-> System.out.println("a.getUsername() = " + a.getUsername()));
+		accounts.forEach(a-> System.out.println("Permisison = " + a.getPermissions()));
 		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
 
 
@@ -57,9 +57,16 @@ public class AccountPopupController
 			}
 		};
 
+		permissionsCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getPermissions());
+			}
+		});
+
 		usernameCol.setCellValueFactory(new PropertyValueFactory<Account, String>("username"));
 		passwordCol.setCellValueFactory(new PropertyValueFactory<Account, String>("password"));
-		permissionsCol.setCellValueFactory(new PropertyValueFactory<Account, String>("permission"));
+//		permissionsCol.setCellValueFactory(new PropertyValueFactory<Account, String>("permission"));
 		usernameCol.setCellFactory(cellFactory);
 		passwordCol.setCellFactory(cellFactory);
 		permissionsCol.setCellFactory(cellFactory);
@@ -98,7 +105,7 @@ public class AccountPopupController
 
 	@FXML
 	public void onAddAccountBtnClicked(){
-		Account newAccount = getDirectory().addAccount("newuer","newpassword","newpermissions");
+		Account newAccount = getDirectory().addAccount("newuser","newpassword","newpermissions");
 		accountTableView.getItems().add(newAccount);
 	}
 
