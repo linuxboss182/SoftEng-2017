@@ -58,6 +58,9 @@ public class UserMasterController
 	private Room startRoom;
 	private Room endRoom;
 
+	private boolean startSelected = false;
+	private boolean endSelected = false;
+
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
 	@FXML private HBox goHBox;
@@ -276,9 +279,9 @@ public class UserMasterController
 	 */
 	private void selectRoomAction(Room room) {
 		if (room == null) return;
-		if (this.startField.isFocused()) {
+		if (this.startSelected) {
 			this.selectStartRoom(room);
-		} else {
+		} else if(this.endSelected) {
 			this.selectEndRoom(room);
 		}
 	}
@@ -301,11 +304,19 @@ public class UserMasterController
 
 	private void addSearchFieldListeners() {
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) populateListView();
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = true;
+				this.endSelected = false;
+			}
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) populateListView();
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = false;
+				this.endSelected = true;
+			}
 		});
 	}
 
