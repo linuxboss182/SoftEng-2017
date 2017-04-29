@@ -332,6 +332,22 @@ public class Directory
 		room.removeProfessional(professional);
 	}
 
+	public void addNewElevatorUp(Node node) {
+		if (node == null) return;
+
+		if (node.getRoom() == null) {
+			this.addNewRoomToNode(node, "", "", "Elevator to floor above");
+		}
+		node.getRoom().setType(RoomType.ELEVATOR);
+
+		FloorImage nextFloor = FloorProxy.getFloor(this.getFloorName(), this.getFloorNum() + 1);
+		if (nextFloor != null) {
+			Node n = this.addNewRoomNode(node.getX(), node.getY(), nextFloor, "",
+					"", "Elevator to floor below");
+			this.connectNodes(node, n);
+		}
+	}
+
 	/* Program logic functions */
 
 	/** return whether this directory has a kiosk */
