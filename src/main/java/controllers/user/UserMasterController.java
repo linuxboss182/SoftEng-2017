@@ -91,6 +91,8 @@ public class UserMasterController
 
 		//Kiosk listener
 		startFocusedListener();
+		destFocusedListener();
+
 
 
 		this.directory = ApplicationController.getDirectory();
@@ -115,8 +117,6 @@ public class UserMasterController
 		initfloorComboBox();
 
 		this.displayRooms();
-
-		this.populateListView();
 
 		setScrollZoom();
 
@@ -319,7 +319,19 @@ public class UserMasterController
 				if (newPropertyValue) {
 					if (startField.getText().equals("Your Location")) {
 						startField.clear();
+						populateListView();
 					}
+				}
+			}
+		});
+	}
+
+	protected void destFocusedListener() {
+		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					populateListView();
 				}
 			}
 		});
