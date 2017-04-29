@@ -114,11 +114,6 @@ public class LoginController implements Initializable{
 			return LoginStatus.FAILURE;
 		}
 
-		// Branches:
-		// contains key and password is value and is admin
-		// contains key and password is value and not admin
-		// does not contain key or does not contain value
-
 		// Safe because the empty string is not a valid password
 		if (thisAccount.getPassword().equals(password)) {
 			switch (thisAccount.getPermissions().toUpperCase()) {

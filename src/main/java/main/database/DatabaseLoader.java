@@ -72,12 +72,13 @@ class DatabaseLoader
 			directory.setKiosk(rooms.get(kioskID));
 		}
 
-		System.out.println("directory.getAccounts().values().stream().anyMatch(a->\"admin\".equals(a.getPermissions())) = " + !directory.getAccounts().values().stream().anyMatch(a->"admin".equals(a.getPermissions())));
 		if(!directory.getAccounts().values().stream().anyMatch(a->"admin".equals(a.getPermissions()))) {
+			System.out.println("No admin exists, setting default admin to 'admin' 'password'");
 			directory.addAccount("admin", "password", "admin");
 		}
 
 		if(!directory.getAccounts().values().stream().anyMatch(a->"professional".equals(a.getPermissions()))) {
+			System.out.println("No professional exists, setting default professional to 'professional' 'password'");
 			directory.addAccount("professional", "password", "professional");
 		}
 

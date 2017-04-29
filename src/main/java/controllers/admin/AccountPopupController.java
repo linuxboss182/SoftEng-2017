@@ -41,21 +41,9 @@ public class AccountPopupController
 			}
 		});
 
-//		populateTableView();
-
-		ObservableList<Account> accounts = FXCollections.observableArrayList();
-		accounts.addAll(getDirectory().getAccounts().values());
-		accounts.forEach(a-> System.out.println("Permisison = " + a.getPermissions()));
 		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
 
-
-
-		Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
-			@Override
-			public TableCell call(TableColumn p) {
-				return new EditingCell();
-			}
-		};
+		Callback<TableColumn, TableCell> cellFactory = p -> new EditingCell();
 
 		permissionsCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
 			@Override
@@ -64,9 +52,21 @@ public class AccountPopupController
 			}
 		});
 
-		usernameCol.setCellValueFactory(new PropertyValueFactory<Account, String>("username"));
-		passwordCol.setCellValueFactory(new PropertyValueFactory<Account, String>("password"));
-//		permissionsCol.setCellValueFactory(new PropertyValueFactory<Account, String>("permission"));
+		passwordCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
+				return new SimpleStringProperty("*****");
+			}
+		});
+
+		usernameCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
+				return new SimpleStringProperty(cdf.getValue().getUsername());
+			}
+		});
+
+//		usernameCol.setCellValueFactory(new PropertyValueFactory<Account, String>("username"));
 		usernameCol.setCellFactory(cellFactory);
 		passwordCol.setCellFactory(cellFactory);
 		permissionsCol.setCellFactory(cellFactory);
