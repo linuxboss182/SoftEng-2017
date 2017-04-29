@@ -4,6 +4,7 @@ import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
 import entities.Node;
+import entities.Professional;
 import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -45,9 +47,10 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
+	@FXML private TabPane destinationTypeTabs;
 	@FXML private JFXListView<Room> roomSearchResults;
-	@FXML private JFXListView<Room> profSearchResults;
-	@FXML private JFXListView<Room> commonServicesView;
+	@FXML private JFXListView<Professional> profSearchResults;
+	@FXML private JFXListView<RoomType> commonServicesView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -91,9 +94,8 @@ public class UserMasterController
 
 	/**
 	 * Method used to initialize superclasses
-	 * <p>
-	 * Not technically related to Initializable::initialize, but used for the same
-	 * purpose
+	 *
+	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
 		super.initialize();
@@ -120,20 +122,18 @@ public class UserMasterController
 		setZoomSliding();
 
 		initfloorComboBox();
+		resetRoomSearchResults();
 
 		this.displayRooms();
 
 		setScrollZoom();
-
-		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
-		addSearchFieldListeners();
+		setupSearchFields();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater(() -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
-
 		});
 
 		// Enable search; if this becomes more than one line, make it a function
@@ -158,7 +158,7 @@ public class UserMasterController
 
 	private void resizeDrawerListener(Double newSceneHeight) {
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	private void setStyleIDs() {
@@ -188,7 +188,7 @@ public class UserMasterController
 	 */
 	private void filterRoomsByName(String searchString) {
 		if((searchString == null) || (searchString.length() == 0)) {
-			this.populateListView();
+			this.resetRoomSearchResults();
 		} else {
 			String search = searchString.toLowerCase();
 			Set<Room> rooms = directory.getUserRooms();
@@ -237,9 +237,9 @@ public class UserMasterController
 	}
 
 	/**
-	 * Populates the list of rooms
+	 * Resets the list of rooms
 	 */
-	private void populateListView() {
+	private void resetRoomSearchResults() {
 		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
 		roomSearchResults.getSelectionModel().clearSelection();
@@ -252,9 +252,9 @@ public class UserMasterController
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 * <p>
+	 *
 	 * If both start and end locations are set, enable the "get directions" button
-	 * <p>
+	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	private void enableOrDisableNavigationButtons() {
@@ -314,24 +314,20 @@ public class UserMasterController
 	private void selectEndRoom(Room r) {
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
 		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
 
-	private void addSearchFieldListeners() {
+	private void setupSearchFields() {
+		destinationField.setPromptText("Choose destination");
+
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) {
-				populateListView();
-			}
+			if (nowFocused) resetRoomSearchResults();
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) {
-				populateListView();
-			}
+			if (nowFocused) resetRoomSearchResults();
 		});
 	}
 

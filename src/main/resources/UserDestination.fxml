@@ -82,7 +82,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <JFXTextField fx:id="startField" onKeyPressed="#startFieldKeyPressed" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Start from this kiosk, or select a location" unFocusColor="white">
+                                        <JFXTextField fx:id="startField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Start from this kiosk, or select a location" unFocusColor="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>
@@ -96,7 +96,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <JFXTextField fx:id="destinationField" onKeyPressed="#destinationFieldKeyPressed" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" promptText="Choose destination" unFocusColor="white">
+                                        <JFXTextField fx:id="destinationField" focusColor="#BDBDBD" prefHeight="25.0" prefWidth="280.0" unFocusColor="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>
@@ -112,7 +112,19 @@
                                         </JFXButton>
                                     </children>
                                 </HBox>
-                                <JFXListView fx:id="roomSearchResults" />
+                                <TabPane fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
+                                    <tabs>
+                                        <Tab text="Rooms">
+                                            <JFXListView fx:id="roomSearchResults" />
+                                        </Tab>
+                                        <Tab text="Professionals">
+                                            <JFXListView fx:id="profSearchResults" />
+                                        </Tab>
+                                        <Tab text="Services">
+                                            <JFXListView fx:id="commonServicesView" />
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
                                 <HBox fx:id="bottomHBox">
                                     <children>
                                         <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
