@@ -1,16 +1,18 @@
 package controllers.admin;
 
 import entities.Account;
+import entities.EditingCell;
 import entities.Professional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -38,37 +40,58 @@ public class AccountPopupController
 			}
 		});
 
-		populateTableView();
+//		populateTableView();
+
+		ObservableList<Account> accounts = FXCollections.observableArrayList();
+		accounts.addAll(getDirectory().getAccounts().values());
+		accounts.forEach(a-> System.out.println("a.getUsername() = " + a.getUsername()));
+//		accountTableView.getColumns().addAll(usernameCol, passwordCol, permissionsCol);
+//		accountTableView.getSortOrder().add(usernameCol);
+//		accountTableView.getSortOrder().add(passwordCol);
+//		accountTableView.getSortOrder().add(permissionsCol);
+		accountTableView.setItems(accounts);
+//		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
+
+
+
+		Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
+			@Override
+			public TableCell call(TableColumn p) {
+				return new EditingCell();
+			}
+		};
+
+		usernameCol.setCellValueFactory(new PropertyValueFactory<Account, String>("username"));
+		passwordCol.setCellValueFactory(new PropertyValueFactory<Account, String>("password"));
+		permissionsCol.setCellValueFactory(new PropertyValueFactory<Account, String>("permission"));
+		usernameCol.setCellFactory(cellFactory);
+
+		//Modifying the firstName property
+		usernameCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Account, String>>() {
+			@Override
+			public void handle(TableColumn.CellEditEvent<Account, String> t) {
+				((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setUsername(t.getNewValue());
+			}
+		});
+
+		//Modifying the firstName property
+		passwordCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Account, String>>() {
+			@Override
+			public void handle(TableColumn.CellEditEvent<Account, String> t) {
+				((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setPassword(t.getNewValue());
+			}
+		});
+
+		//Modifying the firstName property
+		permissionsCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Account, String>>() {
+			@Override
+			public void handle(TableColumn.CellEditEvent<Account, String> t) {
+				((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setPermission(t.getNewValue());
+			}
+		});
 	}
 
-	public void populateTableView(){
-		usernameCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getUsername());
-			}
-		});
 
-		passwordCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getPassword());
-			}
-		});
-
-		permissionsCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Account, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<Account, String> cdf) {
-				return new SimpleStringProperty(cdf.getValue().getPermissions());
-			}
-		});
-
-		accountTableView.getSortOrder().add(usernameCol);
-		accountTableView.getSortOrder().add(passwordCol);
-		accountTableView.getSortOrder().add(permissionsCol);
-
-		accountTableView.getItems().setAll(getDirectory().getAccounts().values());
-	}
 
 	@FXML
 	public void ondoneBtnClick(){
