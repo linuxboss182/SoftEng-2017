@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
+import main.ApplicationController;
 import main.algorithms.Algorithm;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
@@ -47,6 +48,7 @@ public class PathfinderTester
 	 *   Correct path is to go through the center
 	 */
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		Node origin = dir.addNewNode(0, 0, 0); //Create a dir.addNewNode
 		Node dest = dir.addNewNode(10, 10, 0); //Create a dir.addNewNode
 		//Create the nodes
@@ -76,6 +78,7 @@ public class PathfinderTester
 	@Test(expected = PathNotFoundException.class)
 	public void unreachableNodeTest() throws PathNotFoundException {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		Node origin = dir.addNewNode(0, 0, 0); //Create a new node
 		Node dest = dir.addNewNode(10, 10, 0); //Create a new node
 		//Create the nodes
@@ -96,6 +99,7 @@ public class PathfinderTester
 	@Test
 	public void complexPath9to13() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 
@@ -123,6 +127,7 @@ public class PathfinderTester
 	@Test
 	public void complexPath9to22() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 		List<Node> result = findPathSafely(n[9], n[22]);
@@ -135,6 +140,7 @@ public class PathfinderTester
 	@Test
 	public void complexPath19to22() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 		List<Node> result = findPathSafely(n[19], n[22]);
@@ -147,6 +153,7 @@ public class PathfinderTester
 	@Test
 	public void complexPath1to13() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 		List<Node> result = findPathSafely(n[1], n[13]);
@@ -159,6 +166,7 @@ public class PathfinderTester
 	@Test
 	public void complexPath7to23() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		SampleGraph G = new SampleGraph();
 		Node[] n = G.nodes;
 		List<Node> result = findPathSafely(n[7], n[23]);
@@ -171,6 +179,7 @@ public class PathfinderTester
 	@Test
 	public void simpleMultiFloorPath() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 /*
   X = floor 1
   O = floor 2
@@ -223,6 +232,7 @@ public class PathfinderTester
 	@Test
 	public void testElevatorPenalty() {
 		Directory dir = new Directory();
+		ApplicationController.setDirectory(dir);
 		//If destination is on the same floor, Pathfinder should use the path on the same
 		//floor rather than try to find a shorter route via an elevator
 	/*
