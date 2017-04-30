@@ -31,6 +31,6 @@ public class WelcomeController
 			System.out.println("Fuck");
 			Parent UserMaster = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.welcome.getScene().setRoot(UserMaster);
-		} catch (Exception e){}
+		} catch (Exception e){e.printStackTrace();}
 	}
 }

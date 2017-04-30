@@ -78,7 +78,7 @@ public class UserMasterController
 	@FXML private HBox goHBox;
 	@FXML private HBox bottomHBox;
 
-	private TimeoutTimer timer;
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	/**
 	 * Get the scene this is working on
@@ -225,6 +225,7 @@ public class UserMasterController
 		if(!this.directory.isLoggedIn()) {
 			this.directory.getCaretaker().addState(this.getState());
 		}
+		this.timer.cancelTimer();
 		// Unset navigation targets for after logout
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 		this.getScene().setRoot(loginPrompt);
@@ -457,6 +458,8 @@ public class UserMasterController
 		this.helpBtn.setFocusTraversable(false);
 		this.zoomSlider.setFocusTraversable(false);
 	}
+
+
 }
 
 

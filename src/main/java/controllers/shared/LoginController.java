@@ -1,6 +1,7 @@
 package controllers.shared;
 
 
+import controllers.user.UserState;
 import entities.Account;
 import entities.Directory;
 import javafx.application.Platform;
@@ -13,17 +14,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.input.KeyEvent;
 import main.ApplicationController;
 
 import javafx.scene.input.KeyEvent;
+import main.TimeoutTimer;
+
 import java.io.IOException;
 import java.net.URL;
 
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimerTask;
 
 public class LoginController implements Initializable{
 
@@ -35,6 +40,7 @@ public class LoginController implements Initializable{
 	@FXML private BorderPane parentBorderPane;
 
 	private Directory directory = ApplicationController.getDirectory();
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -52,6 +58,9 @@ public class LoginController implements Initializable{
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
+
+		timer.resetTimer(this.getTimerTask());
+		initGlobalFilter();
 	}
 
 
@@ -132,5 +141,38 @@ public class LoginController implements Initializable{
 
 	public enum LoginStatus {
 		ADMIN, PROFESSIONAL, FAILURE;
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	protected void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("LoginController.initGlobalFilter");
+				timer.resetTimer(getTimerTask());
+			}
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("LoginController.initGlobalFilter");
+				timer.resetTimer(getTimerTask());
+			}
+		});
+	}
+
+	protected TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				setState(directory.getCaretaker().getState());
+			}
+		};
+	}
+
+	// place inside controller
+	public void setState(UserState state) {
+		parentBorderPane.getScene().setRoot(state.getRoot());
+		this.directory.logOut();
 	}
 }
