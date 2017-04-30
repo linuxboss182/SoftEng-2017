@@ -149,6 +149,9 @@ public class DirectionsGenerator
 								}
 							}
 							i++;
+							if(path.size() == i+1){
+								break;
+							}
 							turnAngle = path.get(i).angle(path.get(i + 1), path.get(i - 1));
 						}
 						i--;

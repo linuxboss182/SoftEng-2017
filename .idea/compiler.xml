@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="GitRepo_main" target="1.8" />
       <module name="GitRepo_test" target="1.8" />
+      <module name="Soft Eng-GitRepo_main" target="1.8" />
+      <module name="Soft Eng-GitRepo_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

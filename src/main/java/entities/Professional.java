@@ -17,6 +17,8 @@ public class Professional
 	private String givenName;
 	private String surname;
 	private String title;
+	private String fullName;
+	private String formalName;
 	private Set<Room> locations;
 
 
@@ -96,13 +98,28 @@ public class Professional
 		this.locations.remove(r);
 	}
 
-	@Override
-	public String toString() {
-		StringJoiner sj = new StringJoiner(", ");
-		if (! "".equals(this.surname)) sj.add(this.surname);
-		if (! "".equals(this.givenName)) sj.add(this.givenName);
-		if (! "".equals(this.title)) sj.add(this.title);
-		return sj.toString();
+	public String getFullName() {
+		if (this.fullName == null) {
+			String givenName = (this.givenName == null) ? "" : this.givenName;
+			String surname = (this.surname == null) ? "" : this.surname;
+			this.fullName = givenName + " " + surname;
+		}
+		return this.fullName;
 	}
 
+	public String getFormalName() {
+		if (this.formalName == null) {
+			StringJoiner sj = new StringJoiner(", ");
+			if (!"".equals(this.surname)) sj.add(this.surname);
+			if (!"".equals(this.givenName)) sj.add(this.givenName);
+			if (!"".equals(this.title)) sj.add(this.title);
+			this.formalName = sj.toString();
+		}
+		return this.formalName;
+	}
+
+	@Override
+	public String toString() {
+		return this.getFormalName();
+	}
 }

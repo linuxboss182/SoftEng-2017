@@ -61,13 +61,17 @@ public class IconController
 
 			if (isElevator) NODE.RESTRICTED_ELEVATOR.applyTo(node.getShape());
 			else if (isPortal) NODE.RESTRICTED_PORTAL.applyTo(node.getShape());
-			else if (node.getRoom() != null) NODE.ROOM.applyTo(node.getShape());
+			else if (node.getRoom() != null) NODE.RESTRICTED_ROOM.applyTo(node.getShape());
 		} else {
 			NODE.DEFAULT.applyTo(node.getShape());
 
 			if (isElevator) NODE.ELEVATOR.applyTo(node.getShape());
 			else if (isPortal) NODE.PORTAL.applyTo(node.getShape());
 			else if (node.getRoom() != null) NODE.ROOM.applyTo(node.getShape());
+		}
+
+		if ((directory.getKiosk() != null) && (directory.getKiosk() == node.getRoom())) {
+			NODE.KIOSK.applyTo(node.getShape());
 		}
 	}
 

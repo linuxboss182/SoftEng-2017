@@ -2,6 +2,7 @@ package controllers.shared;
 
 import com.jfoenix.controls.JFXDrawer;
 import controllers.icons.IconController;
+import controllers.user.UserState;
 import controllers.icons.IconManager;
 import entities.*;
 import javafx.application.Platform;
@@ -16,12 +17,16 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import main.TimeoutTimer;
 
 import java.util.Collection;
+import java.util.TimerTask;
 
 // TODO: Use this class more effectively
 // Move stuff here when possible, remove unneeded stuff later
@@ -32,6 +37,8 @@ public abstract class MapDisplayController
 	final protected double zoomMin = 1;
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
+
+	protected TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
@@ -51,7 +58,6 @@ public abstract class MapDisplayController
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 
 	protected Professional selectedProf;
-	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -100,7 +106,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
-		Platform.runLater(this::fitMapSize);
+//		Platform.runLater(this::fitMapSize);
 	}
 
 
@@ -224,34 +230,53 @@ public abstract class MapDisplayController
 	 * Divides the content anchor's width and height to be based on the
 	 */
 	protected void initWindowResizeListener() {
-		this.parentBorderPane.boundsInLocalProperty().addListener((observable, oldValue,
-		                                                           newValue) -> fitMapSize());
+		this.mapScroll.boundsInLocalProperty().addListener((observable, oldValue, newValue) -> {
+			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (newValue.getMaxX() - oldValue.getMaxX())/2);
+			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (newValue.getMaxY() - oldValue.getMaxY())/2);
+
+			mapScroll.setScaleX(mapScroll.getScaleX() * newValue.getMaxX()/oldValue.getMaxX());
+			mapScroll.setScaleY(mapScroll.getScaleY() * newValue.getMaxY()/oldValue.getMaxY());
+		});
 	}
 
 	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	public void fitMapSize() {
-		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+		double potentialY =
+				+ mapScroll.getHeight()/2
+				- contentAnchor.getHeight()/2;
 
-		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
-
-		potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-
-		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
-			contentAnchor.setScaleX(potentialScaleX);
-			contentAnchor.setScaleY(potentialScaleX);
-			currentScale = potentialScaleX;
-		} else {
-			contentAnchor.setScaleX(potentialScaleY);
-			contentAnchor.setScaleY(potentialScaleY);
-			currentScale = potentialScaleY;
-		}
+		double potentialX =
+				+ mapScroll.getWidth()/2
+				- contentAnchor.getWidth()/2;
 
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
+	}
 
-		zoomSlider.setValue(0);
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	protected void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+	}
+
+	protected TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				setState(directory.getCaretaker().getState());
+			}
+		};
+	}
+
+	// place inside controller
+	public void setState(UserState state) {
+		parentBorderPane.getScene().setRoot(state.getRoot());
+		this.directory.logOut();
 	}
 }

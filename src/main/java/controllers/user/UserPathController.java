@@ -7,6 +7,7 @@ import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -75,6 +77,7 @@ public class UserPathController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXDrawer mapIconDrawer;
 	@FXML protected ImageView backImageView;
+	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -108,7 +111,7 @@ public class UserPathController
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
 		this.initializeDrawer();
-
+		floatingBorderPane.setPickOnBounds(false);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -140,15 +143,25 @@ public class UserPathController
 		//Set IDs for CSS
 		setStyleIDs();
 
+//		parentBorderPane.addEventFilter(EventType.ROOT, e-> {
+//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
+//		});
+//		mapIconDrawer.addEventFilter(EventType.ROOT, e-> {
+//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
+//			contentAnchor.fireEvent((MouseEvent)e.clone());
+//		});
+//		mapIconDrawer.setResizableOnDrag(false);
+//		mapIconDrawer.setPickOnBounds(false);
 
-
+		this.timer.resetTimer(this.getTimerTask());
+		this.initGlobalFilter();
 	}
 
 	private void initializeDrawer() {
-		this.mapIconDrawer.setContent(mapScroll);
-		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
-		this.mapIconDrawer.setOverLayVisible(false);
-		this.mapIconDrawer.open();
+//		this.mapIconDrawer.setContent(mapScroll);
+//		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+//		this.mapIconDrawer.setOverLayVisible(false);
+//		this.mapIconDrawer.open();
 	}
 
 
@@ -158,12 +171,14 @@ public class UserPathController
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		drawerParentPane.getStyleClass().add("drawer");
+		//drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
-		directionsLbl.getStyleClass().add("path-label");
+		directionsLbl.getStyleClass().add("directions-label");
 		doneBtn.getStyleClass().add("blue-button");
+		helpBtn.getStyleClass().add("blue-button");
+		directionsTextField.getStyleClass().add("black-text");
 
 	}
 
@@ -365,6 +380,8 @@ public class UserPathController
 			Scene smsScene = new Scene(loader.load());
 			((SMSController)loader.getController()).setText(textDirections.getText());
 			Stage smsStage = new Stage();
+			smsStage.setTitle("Faulkner Hospital Navigator SMS Page");
+			smsStage.getIcons().add(new Image("bwhIcon.png"));
 			smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
 			smsStage.setScene(smsScene);
 			smsStage.showAndWait();
