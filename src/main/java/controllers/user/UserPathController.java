@@ -56,7 +56,7 @@ public class UserPathController
 	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextFlow directionsTextField;
+	@FXML protected TextFlow directionsTextField; // CHANGE THIS TO A SCROLL PANE OR SOMETHING
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
