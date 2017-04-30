@@ -193,6 +193,8 @@ public class IconManager
 			ImageView image = icon.getImage();
 			image.setOnMouseClicked(event -> {
 				onMouseClickedOnRoomHandler.accept(room, event);
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
 			});
 		}
 
