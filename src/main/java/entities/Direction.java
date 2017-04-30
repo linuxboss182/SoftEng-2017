@@ -2,17 +2,16 @@ package entities;
 
 import entities.icons.IconType;
 
-/**
- * Created by Kenneth on 4/25/17.
- */
 public class Direction
 {
 	private String textDirection;
 	private IconType icon;
+	private Node node;
 
 	public Direction(String textDirection, IconType icon){
 		this.textDirection = textDirection;
 		this.icon = icon;
+		this.node = node;
 	}
 
 	public String getTextDirection(){
@@ -23,5 +22,8 @@ public class Direction
 		return this.icon;
 	}
 
+	public Node getNode() {
+		return this.node;
+	}
 
 }
