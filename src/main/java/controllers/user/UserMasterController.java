@@ -156,6 +156,7 @@ public class UserMasterController
 		Platform.runLater(() -> {
 			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
+			destinationField.requestFocus();
 		});
 
 		Platform.runLater(this::fitMapSize);
@@ -181,8 +182,10 @@ public class UserMasterController
 		floatingBorderPane.setPickOnBounds(false);
 
 		this.initFocusTraversables();
+		//Put focus on destination field
 
 		initGlobalFilter();
+
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
