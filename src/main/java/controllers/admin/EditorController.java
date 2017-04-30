@@ -175,6 +175,8 @@ public class EditorController
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
+
+		Platform.runLater(this::fitMapSize);
 	}
 
 
