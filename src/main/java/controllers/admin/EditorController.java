@@ -583,11 +583,6 @@ public class EditorController
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
-//				else if (EditorController.DEBUGGING) {
-//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
-//					ln.setStroke(Color.FUCHSIA);
-//					lines.add(ln);
-//				}
 			}
 		}
 		this.linePane.getChildren().setAll(lines);
@@ -945,9 +940,9 @@ public class EditorController
 				room.setType(RoomType.KIOSK);
 				this.selectNode(n);
 				this.setRoomFields(room);
-				Node kiosk = directory.getKiosk().getLocation();
+				Room kiosk = directory.getKiosk();
 				directory.setKiosk(room);
-				iconController.resetSingleNode(kiosk);
+				if (kiosk != null) iconController.resetSingleNode(kiosk.getLocation());
 				iconController.resetSingleNode(n);
 
 				this.redisplayGraph();
@@ -1140,11 +1135,11 @@ public class EditorController
 	@FXML
 	public void selectKioskClicked() {
 		if (selectedNodes.isSingular()) {
-			Node kiosk = directory.getKiosk().getLocation();
 			selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
 			iconController.resetAllNodes();
 		}
 	}
+
 	@FXML
 	private void helpBtnClicked() throws IOException {
 		AdminHelpController helpController = new AdminHelpController();
