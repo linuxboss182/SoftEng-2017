@@ -73,7 +73,7 @@ public class EditorController
 	@FXML private TableColumn<Professional, String> roomCol;
 	@FXML private TableColumn<Professional, String> profCol;
 	@FXML private Text roomName;
-	@FXML private Text yPos;
+	@FXML private Label yPos;
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
@@ -433,7 +433,7 @@ public class EditorController
 	public void addRoomBtnClicked() {
 		if(this.yCoordField.getText().isEmpty() || this.xCoordField.getText().isEmpty()){
 			if(this.yCoordField.getText().isEmpty()){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			}
 			if(this.xCoordField.getText().isEmpty()){
 				xPos.setTextFill(Color.RED);
@@ -454,9 +454,9 @@ public class EditorController
 			} else {
 				xPos.setTextFill(Color.BLACK);
 			} if(y < 0){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			} else {
-				yPos.setFill(Color.BLACK);
+				yPos.setTextFill(Color.BLACK);
 			} if(name.isEmpty()) {
 				roomName.setFill(Color.RED);
 			} else {
@@ -465,7 +465,7 @@ public class EditorController
 			return;
 		}
 		xPos.setTextFill(Color.BLACK);
-		yPos.setFill(Color.BLACK);
+		yPos.setTextFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
@@ -934,7 +934,9 @@ public class EditorController
 				room.setType(RoomType.KIOSK);
 				this.selectNode(n);
 				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				Node kiosk = directory.getKiosk().getLocation();
 				directory.setKiosk(room);
+				iconController.resetSingleNode(kiosk);
 				iconController.resetSingleNode(n);
 
 				this.redisplayGraph();
@@ -1153,7 +1155,11 @@ public class EditorController
 	 */
 	@FXML
 	public void selectKioskClicked() {
-		if (selectedNodes.isSingular()) selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+		if (selectedNodes.isSingular()) {
+			Node kiosk = directory.getKiosk().getLocation();
+			selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+			iconController.resetAllNodes();
+		}
 	}
 	@FXML
 	private void helpBtnClicked() throws IOException {
