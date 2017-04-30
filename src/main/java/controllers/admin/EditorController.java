@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -196,6 +197,28 @@ public class EditorController
 		}
 	}
 
+	@Override
+	protected void setHotkeys(){
+		parentBorderPane.setOnKeyPressed(e -> {
+			//TODO add functionality for zooming with hotkeys
+
+			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			} else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			} else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			} else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			} else if (e.getCode() == KeyCode.A && e.isControlDown()) {
+				this.selectAllNodesOnFloor();
+			} else if (e.getCode() == KeyCode.BACK_SPACE) {
+				this.deleteSelectedNodes();
+			}
+			e.consume();
+		});
+	}
+
 	/**
 	 * Setup a radial context menu
 	 */
@@ -220,7 +243,7 @@ public class EditorController
 		ImageView ElevatorUp = new ImageView("Elevator.png");
 		ElevatorUp.setScaleX(0.3);
 		ElevatorUp.setScaleY(0.3);
-		ElevatorUp.setX(-45);
+		ElevatorUp.setX(-50);
 		ElevatorUp.setY(-140);
 
 		ImageView ElevatorDown = new ImageView("Elevator.png");
@@ -969,8 +992,10 @@ public class EditorController
 		}
 	}
 
+
+	
 	private void selectAllNodesOnFloor() {
-		this.directory.getNodesOnFloor(floor).forEach(node -> {
+		this.directory.getNodesOnFloor(directory.getFloor()).forEach(node -> {
 			if (!this.selectedNodes.contains(node)) {
 				this.selectedNodes.add(node);
 				this.iconController.selectAnotherNode(node);
