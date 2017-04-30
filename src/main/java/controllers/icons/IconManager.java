@@ -73,6 +73,12 @@ public class IconManager
 		this.onMouseClickedOnRoomHandler = handler;
 	}
 
+	public void updateListeners(Set<Room> rooms){
+		for(Room r: rooms){
+			applyListeners(r, r.getIcon());
+		}
+	}
+
 	/**
 	 * Prepare a mouse drag handler for the icons' labels
 	 *
@@ -193,8 +199,6 @@ public class IconManager
 			ImageView image = icon.getImage();
 			image.setOnMouseClicked(event -> {
 				onMouseClickedOnRoomHandler.accept(room, event);
-				image.setScaleX(ICON_SIZE_LARGE);
-				image.setScaleY(ICON_SIZE_LARGE);
 			});
 		}
 

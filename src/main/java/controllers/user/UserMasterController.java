@@ -120,7 +120,7 @@ public class UserMasterController
 			startRoom = directory.getKiosk();
 		}
 
-		initializeIcons();
+		this.initializeIcons();
 
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
@@ -189,6 +189,7 @@ public class UserMasterController
 			event.consume();
 			System.out.println("event consumed");
 		});
+		iconManager.updateListeners(this.directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
 	}
 
