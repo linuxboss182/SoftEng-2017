@@ -41,6 +41,7 @@ abstract public class DrawerController
 
 
 	protected void initialize() {
+		super.initialize();
 		this.mainDrawer.setContent(mapSplitPane);
 		this.mainDrawer.setSidePane(drawerParentPane);
 		this.mainDrawer.setOverLayVisible(false);
@@ -53,8 +54,6 @@ abstract public class DrawerController
 
 		backTransition = new HamburgerBackArrowBasicTransition();
 		backTransition.setRate(-1);
-
-		Platform.runLater(this::fitMapSize);
 	}
 
 

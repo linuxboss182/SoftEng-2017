@@ -145,18 +145,11 @@ public class EditorController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		iconController = ApplicationController.getIconController();
+		super.initialize();
+
 		directory.logOut(); // default to user view
 
-		this.changeFloor(this.directory.getFloor());
-
-		this.imageViewMap.setPickOnBounds(true);
 		initfloorComboBox();
-
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
@@ -182,17 +175,11 @@ public class EditorController
 
 		this.populateTableView();
 
-		// TODO: Use control+plus/minus for zooming
-		setHotkeys();
-
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
-		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
-
-		Platform.runLater(this::fitMapSize);
 		timer.resetTimer(getTimerTask());
 		this.initGlobalFilter();
-		this.timeoutField.setText(this.directory.getTimeout()/1000+"");
+		this.timeoutField.setText(Double.toString(this.directory.getTimeout()/1000));
 
 		this.timeoutField.textProperty().addListener((observable, oldValue, newValue) -> {
 			try{
@@ -776,9 +763,6 @@ public class EditorController
 			}
 			this.redisplayGraph();
 		});
-
-		// TODO: Move to MapDisplayController
-		setScrollZoom();
 
 		contentAnchor.setOnMousePressed(e -> {
 			e.consume();
