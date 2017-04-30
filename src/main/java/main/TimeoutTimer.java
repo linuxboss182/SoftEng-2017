@@ -11,26 +11,52 @@ import java.util.TimerTask;
 public final class TimeoutTimer
 {
 	private Directory directory  = ApplicationController.getDirectory();
-	private TimeoutTimer timeoutTimer;
+	private static TimeoutTimer timeoutTimer;
 	private Timer timer;
 
 	private TimeoutTimer(){
 		this.timer = new Timer();
+		System.out.println("TimeoutTimer.TimeoutTimer");
 	}
 
 	public void resetTimer(TimerTask timerTask) {
-		if(this.timeoutTimer == null) {
-			timeoutTimer = new TimeoutTimer();
+		try {
+			this.timer.cancel();
+		} catch(Exception e) {
+			e.printStackTrace();}
+
+		try {
+			this.timer = new Timer();
+			this.timer.schedule(timerTask, directory.getTimeout());
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
-		timer.cancel();
-		timer = new Timer();
-		timer.schedule(timerTask, directory.getTimeout());
+
+	}
+
+	public void cancelTimer() {
+		try{
+			this.timer.cancel();
+			this.timer.purge();
+			this.resetTimer(new TimerTask()
+			{
+				public void run() {
+
+				}
+			});
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Timer getTimer(){
-		if(timeoutTimer == null){
-			this.timeoutTimer = new TimeoutTimer();
-		}
 		return this.timer;
+	}
+
+	public static TimeoutTimer getTimeoutTimer() {
+		if(timeoutTimer == null) {
+			timeoutTimer = new TimeoutTimer();
+		}
+		return timeoutTimer;
 	}
 }

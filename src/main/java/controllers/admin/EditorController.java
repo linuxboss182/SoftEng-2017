@@ -44,6 +44,7 @@ import java.util.List;
 import main.ApplicationController;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
+import main.TimeoutTimer;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
@@ -125,6 +126,7 @@ public class EditorController
 	Arc selectionWedge = new Arc();
 	Group contextMenu = new Group();
 	private MenuButton contextSelection = MenuButton.NONE;
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	private enum MenuButton
 	{
@@ -178,7 +180,7 @@ public class EditorController
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
-		this.initTimeoutField();
+		timer.resetTimer(getTimerTask());
 	}
 
 

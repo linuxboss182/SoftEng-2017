@@ -38,7 +38,7 @@ public abstract class MapDisplayController
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
 
-	protected TimeoutTimer timer;
+	protected TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
@@ -257,17 +257,13 @@ public abstract class MapDisplayController
 	 * Initializes the global filter that will reset the timer whenever an action is performed.
 	 */
 	protected void initGlobalFilter() {
+		System.out.println("UserMasterController.initGlobalFilter");
 		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				timer.resetTimer(getTimerTask());
-			}
+			System.out.println("timer = " + timer);
+			timer.resetTimer(getTimerTask());
 		});
 		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				timer.resetTimer(getTimerTask());
-			}
+			timer.resetTimer(getTimerTask());
 		});
 	}
 

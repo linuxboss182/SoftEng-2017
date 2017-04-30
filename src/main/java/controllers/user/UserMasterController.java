@@ -98,7 +98,7 @@ public class UserMasterController
 	@FXML private HBox goHBox;
 	@FXML private HBox bottomHBox;
 
-	private Timer timer = new Timer();
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	/**
 	 * Get the scene this is working on
@@ -312,7 +312,7 @@ public class UserMasterController
 			changeFloor(directory.getFloor());
 			logAsAdmin.setImage(new Image("/lock.png"));
 		}else{
-			this.directory.getCaretaker().addState(this.getState());
+			this.timer.cancelTimer();
 			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 			this.getScene().setRoot(loginPrompt);
 		}
