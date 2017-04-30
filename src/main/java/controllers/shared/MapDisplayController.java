@@ -80,6 +80,7 @@ public abstract class MapDisplayController
 		this.setZoomSliding();
 		this.zoomSlider.setValue(0);
 
+		this.initWindowResizeListener();
 		this.initGlobalFilter();
 		Platform.runLater(this::fitMapSize);
 	}
@@ -203,6 +204,7 @@ public abstract class MapDisplayController
 	 */
 	protected void initWindowResizeListener() {
 		this.mapScroll.boundsInLocalProperty().addListener((observable, oldValue, newValue) -> {
+			System.out.println("ASDFASDF");
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (newValue.getMaxX() - oldValue.getMaxX())/2);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (newValue.getMaxY() - oldValue.getMaxY())/2);
 

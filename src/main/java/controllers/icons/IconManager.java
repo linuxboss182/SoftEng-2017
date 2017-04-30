@@ -35,7 +35,7 @@ import java.util.function.Function;
  */
 public class IconManager
 {
-	private static final double ICON_SIZE = 0.01; //Scale factor on the icon image
+	private static final double ICON_SIZE = 0.1; //Scale factor on the icon image
 	private static final double ICON_SIZE_LARGE = 0.2; //Scale factor of icon when hovered over
 	private static final double ICON_SIZE_HUGE = 0.4;
 	private static final int FONT_SIZE = 15;
@@ -72,8 +72,8 @@ public class IconManager
 	}
 
 	public void updateListeners(Set<Room> rooms){
-		for(Room r: rooms){
-			applyListeners(r, r.getIcon());
+		for(Room r : rooms){
+			this.applyListeners(r, r.getIcon());
 		}
 	}
 
