@@ -29,6 +29,7 @@ public class AccountPopupController
 	@FXML private TableColumn usernameCol;
 	@FXML private TableColumn passwordCol;
 	@FXML private TableColumn permissionsCol;
+	@FXML private Label existsError;
 
 	Account selectedAccount;
 
@@ -75,7 +76,12 @@ public class AccountPopupController
 		usernameCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Account, String>>() {
 			@Override
 			public void handle(TableColumn.CellEditEvent<Account, String> t) {
-				((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setUsername(t.getNewValue());
+				if(!getDirectory().getAccounts().values().stream().anyMatch(a->a.getUsername().equals(t.getNewValue()))) {
+					existsError.setVisible(false);
+					((Account) t.getTableView().getItems().get(t.getTablePosition().getRow())).setUsername(t.getNewValue());
+				}else{
+					existsError.setVisible(true);
+				}
 			}
 		});
 
@@ -117,6 +123,7 @@ public class AccountPopupController
 
 	@FXML
 	public void ondoneBtnClick(){
+		getDirectory().deleteAccount("newuser");
 		doneBtn.getScene().getWindow().hide();
 	}
 
