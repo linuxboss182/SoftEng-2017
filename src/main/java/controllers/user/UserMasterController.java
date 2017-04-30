@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import main.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
@@ -181,7 +182,6 @@ public class UserMasterController
 
 		this.initFocusTraversables();
 
-		this.resetTimer();
 		initGlobalFilter();
 	}
 
@@ -407,14 +407,6 @@ public class UserMasterController
 
 	private void selectStartRoom(Room r) {
 		this.startRoom = r;
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.changeStartBtn.setDisable(true);
-	}
-
-	protected void selectStartRoom(Room r) {
-		if(r == null) return;
-		startRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectStartRoom(r);
 		startField.setText(r.getName());
@@ -488,60 +480,6 @@ public class UserMasterController
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
-
-	private void resetTimer() {
-		if(!this.directory.isLoggedIn()) return;
-		try{
-			timer.cancel();
-		} catch(Exception e) {}
-
-		try{
-			timer = new Timer();
-			timer.schedule(getTimerTask(), directory.getTimeout());
-		} catch(Exception e) {}
-	}
-
-	private TimerTask getTimerTask() {
-		return new TimerTask()
-		{
-			public void run() {
-				timeout();
-			}
-		};
-	}
-
-	private void timeout() {
-		this.setState(this.directory.getCaretaker().getState(this.directory.getCaretaker().getStateList().size()-1));
-	}
-
-	public UserState getState() {
-		return new UserState(this.getScene().getRoot());
-	}
-
-	public void setState(UserState state) {
-		this.getScene().setRoot(state.getRoot());
-		this.directory.logOut();
-		this.resetTimer();
-	}
-
-	/**
-	 * Initializes the global filter that will reset the timer whenever an action is performed.
-	 */
-	private void initGlobalFilter() {
-		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				this.resetTimer();
-			}
-		});
-		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				this.resetTimer();
-			}
-		});
-	}
-}
 
 
 	public void setupServiceButtons() {

@@ -195,13 +195,13 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
                                         <JFXButton fx:id="modifyAccountBtn" buttonType="RAISED" layoutX="131.0" layoutY="100" onMouseClicked="#modifyAccountBtnPressed" style="-fx-background-color: #5087b4;" text="Modify Accounts" textFill="WHITE" />
+                                        <Label layoutX="120.0" layoutY="148.0" text="Idle Time (seconds):">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <JFXTextField fx:id="timeoutField" layoutX="131" layoutY="185" prefHeight="27" prefWidth="136"/>
                                     </children>
-                                    <Label layoutX="120.0" layoutY="148.0" text="Idle Time (seconds):">
-                                        <font>
-                                            <Font size="18.0" />
-                                        </font>
-                                    </Label>
-                                    <JFXTextField fx:id="timeoutField" layoutX="131" layoutY="185" prefHeight="27" prefWidth="136"/>
                                 </AnchorPane>
 
                             </content>
