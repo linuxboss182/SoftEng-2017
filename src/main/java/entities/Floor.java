@@ -28,19 +28,19 @@ public class Floor implements FloorImage
 
 	// Linked list containing the string names of the different floor images.
 	private LinkedList<FloorImages> faulkner = new LinkedList<>(Arrays.asList(
-			new FloorImages("/1_thefirstfloor.png", "/Admin1.png"),
-			new FloorImages("/2_thesecondfloor.png", "/Admin2.png"),
-			new FloorImages("/3_thethirdfloor.png", "/Admin3.png"),
-			new FloorImages("/4_thefourthfloor.png","/Admin4.png" ),
-			new FloorImages("/5_thefifthfloor.png", "/Admin5.png"),
-			new FloorImages("/6_thesixthfloor.png", "/Admin6.png"),
-			new FloorImages("/7_theseventhfloor.png", "/Admin7.png")));
+			new FloorImages("/f1u.png", "/f1a.png"),
+			new FloorImages("/f2u.png", "/f2a.png"),
+			new FloorImages("/f3u.png", "/f3a.png"),
+			new FloorImages("/f4u.png","/f4a.png" ),
+			new FloorImages("/f5u.png", "/f5a.png"),
+			new FloorImages("/f6u.png", "/f6a.png"),
+			new FloorImages("/f7u.png", "/f7u.png")));
 
 	private LinkedList<FloorImages> belkin = new LinkedList<>(Arrays.asList(
-			new FloorImages("/belkin1.png", "/belkin1.png"),
-			new FloorImages("/belkin2.png", "/belkin1.png"),
-			new FloorImages("/belkin3.png", "/belkin1.png"),
-			new FloorImages("/belkin4.png", "/belkin1.png")));
+			new FloorImages("/b1.png", "/b1.png"),
+			new FloorImages("/b2.png", "/b2.png"),
+			new FloorImages("/b3.png", "/b3.png"),
+			new FloorImages("/b4.png", "/b4.png")));
 
 	private LinkedList<FloorImages> outline = new LinkedList<>(Arrays.asList(
 			new FloorImages("/outsidearea.png", "/outsidearea.png")));
