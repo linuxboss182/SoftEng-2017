@@ -303,16 +303,6 @@ public class EditorController
 
 	// check the angle between the cursor and the center of panel
 	private void modifyRadialSelection(double angle){
-//		double xdif = e.getX() - contextMenu.getLayoutX();
-//		double ydif = e.getY() - contextMenu.getLayoutY();
-//
-//		if (! (Math.hypot(xdif, ydif) > Math.pow(contextRad - contextWidth, 1.8))) {
-//			selectionWedge.setLength(0);
-//			contextSelection = MenuButton.NONE;
-//			return;
-//		}
-//		double angle = Math.toDegrees(Math.atan2(ydif, xdif));
-
 		if (angle < -45 && angle > -135){
 			selectionWedge.setLength(90);
 			selectionWedge.setStartAngle(45);
@@ -1012,14 +1002,6 @@ public class EditorController
 		this.selectedNodes.clear();
 	}
 
-	// This method is commented out because it is outdated and was only used when there was singular node selection
-	// In the current implementation it is not needed
-//	private void deselectNode(){
-//		this.selectedNode = null;
-//		this.iconController.deselectAllNodes();
-//		this.redisplayGraph();
-//	}
-
 	private void setXCoordField(double x) {
 		this.xCoordField.setText(x+"");
 	}
@@ -1133,45 +1115,11 @@ public class EditorController
 		this.roomTypeComboBox.getSelectionModel().select(RoomType.DEFAULT);
 	}
 
-	/*
-	To set the kiosk, bind this line to a "set kiosk" button:
-	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
-	 */
-
-	@FXML
-	public void setToggleShowRooms() {
-//		this.toggleShowRooms = !toggleShowRooms;
-//		if(toggleShowRooms) {
-//			// for now, disable dragging
-//			this.imageViewMap.setDisable(true);
-//			this.linePane.setDisable(true);
-//			this.linePane.getChildren().clear();
-//			this.nodePane.getChildren().clear();
-//			this.displayRooms();
-//
-//		} else {
-//			// re-enable dragging
-//			this.imageViewMap.setDisable(false);
-//			this.linePane.setDisable(false);
-//			this.redisplayAll();
-//		}
-	}
-
 	/**
 	 * Show the rooms with editable labels to the admin
 	 */
 	public void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
-
-//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-//		for (Room room : directory.getRoomsOnFloor(floor)) {
-//			roomShapes.add(room.getAdminSideShape());
-//			/* This is code to make a context menu appear when you right click on the shape for a room
-//			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-//			 * that is reallllllllly helpful for a lot of stuff
-//			 */
-//		}
-//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**
