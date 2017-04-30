@@ -61,6 +61,10 @@ public class Room
 		this.labelOffsetY=y;
 	}
 
+	Room(String name, String description, String displayName, RoomType type) {
+		this(name, displayName, description);
+		this.type = type;
+	}
 
 	/* Methods */
 

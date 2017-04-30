@@ -18,40 +18,36 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import java.awt.*;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 
 import main.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
 import entities.FloorProxy;
-import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
-
-import javax.xml.stream.*;
 
 
 public class UserMasterController
@@ -81,7 +77,6 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
-	@FXML private JFXToggleButton professionalSearchToggleBtn;
 	@FXML private JFXButton helpBtn;
 
 
@@ -121,45 +116,45 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
-		this.directory = ApplicationController.getDirectory();
-		iconController = ApplicationController.getIconController();
 		if (startRoom == null) {
 			startRoom = directory.getKiosk();
 		}
 
 		initializeIcons();
 
-		this.changeFloor(this.directory.getFloor());
-		this.imageViewMap.setPickOnBounds(true);
-
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
-
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
 
 		initfloorComboBox();
 		initDestinationTypeTabs();
 
-		this.displayRooms();
-
-		setScrollZoom();
-		setHotkeys();
 		setupSearchFields();
+		initImages();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater(() -> {
-			initWindowResizeListener();
 			resizeDrawerListener(drawerParentPane.getHeight());
+			destinationField.requestFocus();
 		});
-
-		Platform.runLater(this::fitMapSize);
 
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
+		resizeDrawerListener(677.0);
+
+		mainDrawer.open();
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
+		initFocusTraversables();
+
+
+		this.displayRooms();
+	}
+
+	private void initImages() {
 		if(directory.isProfessional()){
 			logAsAdmin.setImage(new Image("/logout.png"));
 		}else{
@@ -169,18 +164,6 @@ public class UserMasterController
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
 
-		resizeDrawerListener(677.0);
-
-		mainDrawer.open();
-
-		//Enable panning again
-		floatingBorderPane.setPickOnBounds(false);
-
-		this.initFocusTraversables();
-
-		initGlobalFilter();
-
-		setServicesList();
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -204,6 +187,7 @@ public class UserMasterController
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
+			System.out.println("event consumed");
 		});
 		iconManager.getIcons(directory.getRooms());
 	}
@@ -288,8 +272,18 @@ public class UserMasterController
 				(ignored, oldValue, selection) -> {
 					Set<Room> rooms = selection.getLocations();
 					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
-					this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
-					this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					if(rooms.size() == 0){
+						//no rooms for this professional
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("No Rooms Found");
+						alert.setHeaderText(null);
+						alert.setContentText("There are no rooms available for this professional. \n" +
+								"Please change your selection and try again");
+						alert.showAndWait();
+					} else {
+						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+						this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					}
 				}
 		);
 			this.servicesList.getSelectionModel().selectedItemProperty().addListener(
@@ -301,6 +295,7 @@ public class UserMasterController
 						}
 					}
 			);
+
 
 	}
 

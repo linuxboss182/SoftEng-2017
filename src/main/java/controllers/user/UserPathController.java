@@ -46,8 +46,6 @@ If possible, use things like "follow the sidewalk" (probably not possible)
 If possible, get turn direction upon exiting a building (requires changes elsewhere)
  */
 
-// TODO: UserPathController should not inherit from UserMasterController
-
 public class UserPathController
 		extends DrawerController
 		implements Initializable
@@ -113,48 +111,22 @@ public class UserPathController
 		this.initializeDrawer();
 		floatingBorderPane.setPickOnBounds(false);
 
-		this.directory = ApplicationController.getDirectory();
-		iconController = ApplicationController.getIconController();
-
 		this.iconManager = new IconManager();
 		iconManager.getIcons(directory.getRooms());
-
-		this.changeFloor(this.directory.getFloor());
-		this.imageViewMap.setPickOnBounds(true);
-
-		// TODO: Move zoom stuff to MapDisplayController
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
 
 		this.displayRooms();
 		iconController.resetAllRooms();
 
 		setScrollZoom();
-
-		setHotkeys();
-		Platform.runLater( () -> initWindowResizeListener());
+		setStyleIDs();
 
 
 		backImageView.setImage(new Image("/back.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 
-		//Set IDs for CSS
-		setStyleIDs();
-
-//		parentBorderPane.addEventFilter(EventType.ROOT, e-> {
-//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
-//		});
-//		mapIconDrawer.addEventFilter(EventType.ROOT, e-> {
-//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
-//			contentAnchor.fireEvent((MouseEvent)e.clone());
-//		});
-//		mapIconDrawer.setResizableOnDrag(false);
-//		mapIconDrawer.setPickOnBounds(false);
 
 		this.timer.resetTimer(this.getTimerTask());
-		this.initGlobalFilter();
 	}
 
 	private void initializeDrawer() {
