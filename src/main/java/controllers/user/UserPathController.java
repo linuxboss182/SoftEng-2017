@@ -206,12 +206,14 @@ public class UserPathController
 		LinkedList<Node> seg = new LinkedList<>();
 		for(int i = 0; i < path.size()-1; i++){
 			seg.add(path.get(i));
+
 			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
 					!(path.get(i).getBuildingName().equals(path.get(i+1).getBuildingName()))){
 				pathSegments.add(seg);
 				seg = new LinkedList<>();
 			}
 		}
+
 		seg.add(path.get(path.size()-1));
 		pathSegments.addLast(seg);
 		paintPath(pathSegments.get(0));
