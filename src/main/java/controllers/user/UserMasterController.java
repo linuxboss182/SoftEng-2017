@@ -82,7 +82,7 @@ public class UserMasterController
 	private Room startRoom;
 	private Room endRoom;
 
-	private boolean selectingStart = false;
+	private boolean selectingStart = false; // TODO: Find a way to remove this state
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
@@ -392,7 +392,6 @@ public class UserMasterController
 	private void selectStartRoom(Room r) {
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-
 		iconController.selectStartRoom(r);
 		startField.setText(r.getName());
 		this.displayRooms();
@@ -410,9 +409,9 @@ public class UserMasterController
 		destinationField.setPromptText("Choose destination");
 
 		this.destinationField.setOnKeyReleased(e -> {
+			this.selectingStart = false;
 			this.filterRoomsOrProfessionals(this.destinationField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
-				//
 					if (startRoom == null) {
 						this.startField.requestFocus();
 					} else if (endRoom != null) {
@@ -426,6 +425,7 @@ public class UserMasterController
 		});
 
 		this.startField.setOnKeyReleased(e -> {
+			this.selectingStart = true;
 			this.filterRoomsByName(this.startField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
 				this.destinationField.requestFocus();
