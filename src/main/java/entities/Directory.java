@@ -333,10 +333,11 @@ public class Directory
 		}
 	}
 
-	public void updateRoom(Room room, String name, String shortName, String description) {
+	public void updateRoom(Room room, String name, String shortName, String description, RoomType type) {
 		room.setName(name);
 		room.setDisplayName(shortName);
 		room.setDescription(description);
+		room.setType(type);
 	}
 
 	public void setRoomLocation(Room room, Node node) {

@@ -1,9 +1,9 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
-import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -20,15 +20,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -38,8 +42,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import main.ApplicationController;
 import controllers.filereader.FileParser;
@@ -47,9 +56,11 @@ import controllers.shared.MapDisplayController;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
-
-
-import static entities.RoomType.BATHROOM;
+import entities.FloorProxy;
+import entities.Node;
+import entities.Professional;
+import entities.Room;
+import entities.RoomType;
 
 public class EditorController
 		extends MapDisplayController
@@ -81,6 +92,7 @@ public class EditorController
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 	@FXML private ToggleButton restrictedView;
 	@FXML private JFXButton modifyAccountBtn;
+	@FXML public JFXComboBox<RoomType> roomTypeComboBox;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -116,11 +128,10 @@ public class EditorController
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
-	private boolean beingDragged; //Protects the imageView for being dragged
-	double contextRad = 120;
-	double contextWidth = 60;
-	Arc selectionWedge = new Arc();
-	Group contextMenu = new Group();
+	private double contextRad = 120;
+	private double contextWidth = 60;
+	private Arc selectionWedge = new Arc();
+	private Group contextMenu = new Group();
 	private MenuButton contextSelection = MenuButton.NONE;
 
 	private enum MenuButton
@@ -138,9 +149,7 @@ public class EditorController
 		this.changeFloor(this.directory.getFloor());
 
 		this.imageViewMap.setPickOnBounds(true);
-		if(floorComboBox != null) {
-			initfloorComboBox();
-		}
+		initfloorComboBox();
 
 		// TODO: Set zoom based on window size
 		zoomSlider.setValue(0);
@@ -162,7 +171,8 @@ public class EditorController
 		this.nodePane.setPickOnBounds(false);
 
 		this.installPaneListeners();
-		this.setUpAlgorithmChoiceBox();
+		this.setupAlgorithmComboBox();
+		this.setupRoomTypeComboBox();
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
@@ -486,7 +496,8 @@ public class EditorController
 		if(! this.selectedNodes.isSingular()) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
-				this.displayNameField.getText(), this.descriptField.getText());
+				this.displayNameField.getText(), this.descriptField.getText(),
+				this.roomTypeComboBox.getSelectionModel().getSelectedItem());
 	}
 
 	@FXML
@@ -660,9 +671,9 @@ public class EditorController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
+	private void updateSelectedRoom(double x, double y, String name, String displayName, String description, RoomType type) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
-			directory.updateRoom(room, name, displayName, description);
+			directory.updateRoom(room, name, displayName, description, type);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -859,7 +870,7 @@ public class EditorController
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
 			this.clearFields();
 			this.setFields(node.getX(), node.getY());
-			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
+			node.applyToRoom(this::setRoomFields);
 			if (! e.isShiftDown()) {
 				this.deselectNodes(); // no-shift click will deselect all others
 			}
@@ -908,8 +919,6 @@ public class EditorController
 		if (contextMenu.isVisible()) {
 			this.contextMenuAction(e, n);
 		}
-
-		this.beingDragged = false;
 	}
 
 	private void contextMenuAction(MouseEvent e, Node n) {
@@ -933,7 +942,7 @@ public class EditorController
 				}
 				room.setType(RoomType.KIOSK);
 				this.selectNode(n);
-				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				this.setRoomFields(room);
 				Node kiosk = directory.getKiosk().getLocation();
 				directory.setKiosk(room);
 				iconController.resetSingleNode(kiosk);
@@ -948,9 +957,9 @@ public class EditorController
 					iconController.resetSingleNode(n);
 					room = n.getRoom();
 				}
-				room.setType(BATHROOM);
+				room.setType(RoomType.BATHROOM);
 				this.selectNode(n);
-				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				this.setRoomFields(room);
 				break;
 			default:
 
@@ -1036,10 +1045,16 @@ public class EditorController
 		this.descriptField.setText(desc);
 	}
 
-	private void setRoomFields(String name, String displayName, String desc) {
+	private void setRoomFields(Room room) {
+		this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription(), room.getType());
+	}
+
+	private void setRoomFields(String name, String displayName, String desc, RoomType type) {
 		this.setNameField(name);
 		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
+		System.out.println("Showing type "+type.getName());
+		this.roomTypeComboBox.getSelectionModel().select(type);
 	}
 
 	private void clearFields() {
@@ -1099,14 +1114,23 @@ public class EditorController
 	}
 
 	/**
-	 * Get a choice box that sets the active algorithm
+	 * Set up the choice box that sets the active algorithm
 	 */
-	private void setUpAlgorithmChoiceBox() {
+	private void setupAlgorithmComboBox() {
 		this.algorithmComboBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
 		this.algorithmComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
 		// this.algorithmComboBox.setConverter(Algorithm.ALGORITHM_STRING_CONVERTER);
 		this.algorithmComboBox.getSelectionModel().select(Pathfinder.getStrategy());
+	}
+
+	private void setupRoomTypeComboBox() {
+		this.roomTypeComboBox.setItems(FXCollections.observableArrayList(
+				RoomType.DEFAULT, RoomType.BATHROOM, RoomType.ELEVATOR,
+				RoomType.PORTAL, RoomType.SHOP, RoomType.CAFE, RoomType.PARKING
+		));
+
+		this.roomTypeComboBox.getSelectionModel().select(RoomType.DEFAULT);
 	}
 
 	/*
