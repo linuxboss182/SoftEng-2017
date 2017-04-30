@@ -192,6 +192,7 @@ public class EditorController
 		Platform.runLater(this::fitMapSize);
 		timer.resetTimer(getTimerTask());
 		this.initGlobalFilter();
+		this.timeoutField.setText(this.directory.getTimeout()/1000+"");
 	}
 
 
