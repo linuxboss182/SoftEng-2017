@@ -458,9 +458,11 @@ public class UserMasterController
 	}
 
 
-	@FXML
-	public void findService(RoomType service)
+	public void setupServiceButtons() {
+//		findBathroomBtn.setOnAction(action -> this.findService(RoomType.BATHROOM));
+	}
 
+	private void findService(RoomType service)
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> services = this.directory.getRoomsOnFloor();
 		services.removeIf(room -> room.getType() != service);
