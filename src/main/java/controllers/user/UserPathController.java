@@ -148,6 +148,8 @@ public class UserPathController
 				} else {
 					setText(direction.getTextDirection());
 					this.icon.setImage(direction.getIcon().getImage());
+					this.icon.setFitHeight(20);
+					this.icon.setFitWidth(20);
 					setGraphic(this.icon);
 				}
 			}
