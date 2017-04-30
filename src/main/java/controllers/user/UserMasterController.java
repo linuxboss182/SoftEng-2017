@@ -18,6 +18,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -298,8 +299,13 @@ public class UserMasterController
 		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
 			try {
 				this.findService(RoomType.BATHROOM);
-			} catch (IOException | PathNotFoundException | InvocationTargetException e) {
-				e.printStackTrace();
+			} catch (IOException | PathNotFoundException | InvocationTargetException | NullPointerException e) {
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setTitle("No Services Found");
+				alert.setHeaderText(null);
+				alert.setContentText("None of the services you requested are present on this floor. \n" +
+						"Please change your selection and try again.");
+				alert.showAndWait();
 			}
 		});
 	}
