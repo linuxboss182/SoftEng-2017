@@ -114,13 +114,13 @@
                                 </HBox>
                                 <TabPane fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
-                                        <Tab text="Rooms">
+                                        <Tab fx:id="roomTab" text="Rooms">
                                             <JFXListView fx:id="roomSearchResults" />
                                         </Tab>
-                                        <Tab text="Professionals">
+                                        <Tab fx:id="profTab" text="Professionals">
                                             <JFXListView fx:id="profSearchResults" />
                                         </Tab>
-                                        <Tab text="Services">
+                                        <Tab fx:id="servicesTab" text="Services">
                                             <JFXButton fx:id="findBathroomBtn" />
                                             <!--<JFXListView fx:id="commonServicesView" />-->
                                         </Tab>

@@ -18,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -54,6 +55,9 @@ public class UserMasterController
 	@FXML private JFXListView<Room> roomSearchResults;
 	@FXML private JFXListView<Professional> profSearchResults;
 	@FXML private JFXListView<RoomType> commonServicesView;
+	@FXML private Tab roomTab;
+	@FXML private Tab profTab;
+	@FXML private Tab servicesTab;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -253,9 +257,14 @@ public class UserMasterController
 
 		// Set the selection actions for the search results
 		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
+				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
 		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> {}
+				(ignored, oldValue, selection) -> {
+					Set<Room> rooms = selection.getLocations();
+					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
+					this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+					this.destinationTypeTabs.getSelectionModel().select(roomTab);
+				}
 		);
 
 		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
