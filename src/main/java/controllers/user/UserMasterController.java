@@ -23,14 +23,19 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+import java.awt.*;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -38,7 +43,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import main.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
@@ -46,6 +54,8 @@ import entities.FloorProxy;
 import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
+
+import javax.xml.stream.*;
 
 
 public class UserMasterController
@@ -82,12 +92,14 @@ public class UserMasterController
 	private Room startRoom;
 	private Room endRoom;
 
-	private boolean selectingStart = false;
+	private boolean selectingStart = false; // TODO: Find a way to remove this state
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
 	@FXML private HBox goHBox;
 	@FXML private HBox bottomHBox;
+
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	/**
 	 * Get the scene this is working on
@@ -169,6 +181,8 @@ public class UserMasterController
 		floatingBorderPane.setPickOnBounds(false);
 
 		this.initFocusTraversables();
+
+		initGlobalFilter();
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -298,6 +312,7 @@ public class UserMasterController
 			changeFloor(directory.getFloor());
 			logAsAdmin.setImage(new Image("/lock.png"));
 		}else{
+			this.timer.cancelTimer();
 			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 			this.getScene().setRoot(loginPrompt);
 		}
@@ -364,13 +379,14 @@ public class UserMasterController
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
-
+		this.timer.cancelTimer();
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 			this.getScene().setRoot(pane);
 		} else {
 			this.redisplayMapItems();
 		}
+
 	}
 
 	/*
@@ -392,7 +408,6 @@ public class UserMasterController
 	private void selectStartRoom(Room r) {
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-
 		iconController.selectStartRoom(r);
 		startField.setText(r.getName());
 		this.displayRooms();
@@ -412,7 +427,6 @@ public class UserMasterController
 		this.destinationField.setOnKeyReleased(e -> {
 			this.filterRoomsOrProfessionals(this.destinationField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
-				//
 					if (startRoom == null) {
 						this.startField.requestFocus();
 					} else if (endRoom != null) {
@@ -434,6 +448,7 @@ public class UserMasterController
 
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
+				this.selectingStart = true;
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);
 			}
@@ -441,6 +456,7 @@ public class UserMasterController
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
+				this.selectingStart = false;
 				resetRoomSearchResults();
 				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
 					destinationTypeTabs.getSelectionModel().select(roomTab);
@@ -466,9 +482,11 @@ public class UserMasterController
 	}
 
 
-	@FXML
-	public void findService(RoomType service)
+	public void setupServiceButtons() {
+//		findBathroomBtn.setOnAction(action -> this.findService(RoomType.BATHROOM));
+	}
 
+	private void findService(RoomType service)
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> services = this.directory.getRoomsOnFloor();
 		services.removeIf(room -> room.getType() != service);

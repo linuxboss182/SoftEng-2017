@@ -2,6 +2,7 @@ package controllers.shared;
 
 import com.jfoenix.controls.JFXDrawer;
 import controllers.icons.IconController;
+import controllers.user.UserState;
 import controllers.icons.IconManager;
 import entities.*;
 import javafx.application.Platform;
@@ -16,12 +17,16 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import main.TimeoutTimer;
 
 import java.util.Collection;
+import java.util.TimerTask;
 
 // TODO: Use this class more effectively
 // Move stuff here when possible, remove unneeded stuff later
@@ -32,6 +37,8 @@ public abstract class MapDisplayController
 	final protected double zoomMin = 1;
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
+
+	protected TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
@@ -244,5 +251,32 @@ public abstract class MapDisplayController
 
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	protected void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+	}
+
+	protected TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				setState(directory.getCaretaker().getState());
+			}
+		};
+	}
+
+	// place inside controller
+	public void setState(UserState state) {
+		parentBorderPane.getScene().setRoot(state.getRoot());
+		this.directory.logOut();
 	}
 }

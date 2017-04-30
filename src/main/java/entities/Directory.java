@@ -1,5 +1,6 @@
 package entities;
 
+import controllers.user.Caretaker;
 import javafx.scene.image.Image;
 
 import java.util.*;
@@ -21,6 +22,9 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 	private boolean loggedIn;
+
+	private long timeout = 50;
+	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
 
 	private FloorImage floor;
@@ -314,19 +318,30 @@ public class Directory
 
 	/**
 	 * Toggle the edge between the given nodes
+	 *
+	 * Roomless nodes on different floors or in different buildings may not be connected
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
-		n1.connectOrDisconnect(n2);
+		if (!( ((n1.getRoom() == null) || (n2.getRoom() == null))
+				&& ((n1.getFloor() != n2.getFloor())
+				|| ! (n1.getBuildingName().equals(n2.getBuildingName()))))) {
+			n1.connectOrDisconnect(n2);
+		}
 	}
 
 	public void connectNodes(Node n1, Node n2) {
-		n1.connect(n2);
+		if (!( ((n1.getRoom() == null) || (n2.getRoom() == null))
+				&& ((n1.getFloor() != n2.getFloor())
+				    || ! (n1.getBuildingName().equals(n2.getBuildingName()))))) {
+			n1.connect(n2);
+		}
 	}
 
-	public void updateRoom(Room room, String name, String shortName, String description) {
+	public void updateRoom(Room room, String name, String shortName, String description, RoomType type) {
 		room.setName(name);
 		room.setDisplayName(shortName);
 		room.setDescription(description);
+		room.setType(type);
 	}
 
 	public void setRoomLocation(Room room, Node node) {
@@ -492,5 +507,19 @@ public class Directory
 		targets.removeAll(visited);
 		return targets.isEmpty();
 	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
+	public long getTimeout() {
+		return this.timeout;
+	}
+
+	public Caretaker getCaretaker() {
+		if(this.caretaker == null) this.caretaker = new Caretaker();
+		return this.caretaker;
+	}
+
 }
 

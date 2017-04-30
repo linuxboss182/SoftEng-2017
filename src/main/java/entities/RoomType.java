@@ -11,12 +11,12 @@ public enum RoomType
 	KIOSK("Kiosk", "/Kiosk.png", "/KioskOrigin.png", "/KioskDest.png"),
 	ELEVATOR("Elevator", "/Elevator.png", "/ElevatorOrigin.png", "/ElevatorDest.png"),
 	STAIRS("Stairs", "/Stairs.png", "/StairsOrigin.png", "/StairsDest.png"),
-	PORTAL("Portal", "/Portal.png", "/PortalOrigin.png", "/PortalDest.png"),
+	PORTAL("Exit/Entrance", "/Portal.png", "/PortalOrigin.png", "/PortalDest.png"),
 	PARKING("Parking", "/Parking.png", "/ParkingOrigin.png", "/ParkingDest.png"),
 	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	BATHROOM("Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
 	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
-	CAFE("Cafe", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	CAFE("Cafe/Food", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"),
 	;
 
@@ -51,5 +51,10 @@ public enum RoomType
 
 	public Image getDestImage() {
 		return destImage;
+	}
+
+	@Override
+	public String toString() {
+		return this.getName();
 	}
 }

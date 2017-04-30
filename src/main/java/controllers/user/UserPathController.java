@@ -153,7 +153,8 @@ public class UserPathController
 //		mapIconDrawer.setResizableOnDrag(false);
 //		mapIconDrawer.setPickOnBounds(false);
 
-
+		this.timer.resetTimer(this.getTimerTask());
+		this.initGlobalFilter();
 	}
 
 	private void initializeDrawer() {

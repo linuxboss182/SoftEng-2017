@@ -25,21 +25,6 @@ import java.util.Set;
  */
 public class Room
 {
-	// TODO: Clean up room icon operations
-	private static final double DEFAULT_STROKE_WIDTH = 1.5;
-	private static final double RECTANGLE_WIDTH = 7;
-	private static final double RECTANGLE_HEIGHT = 7;
-	private static final double CIRCLE_RADIUS = 5;
-	private static final String KIOSK_NAME = "You Are Here";
-	private static final String DEFAULT_IMAGE_PATH = "/MysteryRoom.png";
-	private static final int FONT_SIZE = 9;
-	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
-	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(BACKGROUND_COLOR,
-	                                                      new CornerRadii(0),
-	                                                      new Insets(0, -2, 0, -2));
-	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
-
-
 	/* Attributes */
 	private Node location;
 	private String name;
@@ -49,8 +34,6 @@ public class Room
 	private RoomType type;
 	private Icon icon;
 
-	@Deprecated
-	private Group adminShape;
 	private double labelOffsetX;
 	private double labelOffsetY;
 
@@ -104,26 +87,7 @@ public class Room
 	}
 
 	public RoomType getType() {
-		if ("ELEVATOR".equalsIgnoreCase(this.description)) {
-			return RoomType.ELEVATOR;
-		}
-
-		switch (this.getDescription()) {
-			case "elevator":
-				return RoomType.ELEVATOR;
-			case "stairs":
-				return RoomType.STAIRS;
-			case "portal":
-				return RoomType.PORTAL;
-			case "hallway":
-				return RoomType.HALLWAY;
-			case "parking lot":
-				return RoomType.PARKING;
-			case "bathroom":
-				return RoomType.BATHROOM;
-			default:
-				return RoomType.DEFAULT;
-		}
+		return this.type;
 	}
 
 	public Icon getIcon() {
@@ -181,73 +145,4 @@ public class Room
 	public String toString() {
 		return this.name;
 	}
-
-
-	public Group getAdminSideShape() {
-		this.makeAdminSideShape(); // maybe move this to the constructor
-		return this.adminShape;
-	}
-
-	private void makeAdminSideShape() {
-		this.makeAdminSideShape(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-	}
-
-
-	private void makeAdminSideShape(Color stroke, Color fill) {
-		if (this.location != null) {
-			Rectangle shape = new Rectangle(this.location.getX(), this.location.getY(), RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
-//			this.shape = shape;
-			shape.setStroke(stroke);
-			shape.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-			shape.setFill(fill);
-
-			Text text = new Text(this.location.getX(), this.location.getY(), this.name);
-			text.setFont(new Font(FONT_SIZE));
-			text.setX(shape.getX() + labelOffsetX);
-			text.setY(shape.getY() + labelOffsetY);
-			/**
-			 * This is so you can move the labels, changing the labelOffsetX and Y
-			 */
-			text.setOnMousePressed(e->{
-				System.out.println("pressed a label");
-			});
-
-			text.setOnMouseDragged(e->{
-				this.labelOffsetX = e.getX() - shape.getX();
-				this.labelOffsetY = e.getY() - shape.getY();
-				this.icon = null;
-				this.makeAdminSideShape();
-			});
-
-			text.setOnMouseReleased(e->{
-				System.out.println("released a label");
-			});
-			// A pane with the text on top of the shape; this is what actually represents the room
-			Group icon = new Group(shape, text);
-			this.adminShape = icon;
-//			icon.setLayoutX(this.location.getX());
-//			icon.setLayoutY(this.location.getY());
-			//icon.setAlignment(Pos.TOP_LEFT);
-			//	icon.setMargin(text, new Insets(0, 0, 0, RECTANGLE_WIDTH*2));
-		}
-	}
-
-//	private void makeIcon() {
-//		this.makeIcon(ColorScheme.DEFAULT_ROOM_STROKE_COLOR, ColorScheme.DEFAULT_ROOM_FILL_COLOR);
-//	}
-//
-//	private void makeIcon(Color stroke, Color fill) {
-//		if (this.location != null) {
-//			Circle shape = new Circle(this.location.getX(), this.location.getY(), CIRCLE_RADIUS);
-//
-//			Label label = new Label(this.name);
-//			label.setLayoutX(this.location.getX());
-//			label.setLayoutY(this.location.getY());
-//			label.setFont(new Font(FONT_SIZE));
-//
-//			// A pane with the text on top of the icon; this is what actually represents the room
-//			this.icon = new Icon(shape, label);
-//		}
-//	}
-
 }
