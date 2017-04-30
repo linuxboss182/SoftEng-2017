@@ -80,6 +80,9 @@
                             </BorderPane.margin>
                         </Slider>
                     </right>
+               <bottom>
+                        <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
+               </bottom>
                 </BorderPane>
                 <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
                     <children>
@@ -158,28 +161,22 @@
                         </VBox>
                     </children>
                 </Pane>
-
-                <JFXDrawer fx:id="mapIconDrawer" defaultDrawerSize="100.0" direction="BOTTOM">
-                    <children>
-                        <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0" BorderPane.alignment="CENTER">
-                            <items>
-                                <ScrollPane fx:id="mapScroll">
-                                    <content>
-                                        <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
-                                            <children>
-                                                <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
-                                                <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
-                                                <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
+                  <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="907.0">
+                      <items>
+                          <ScrollPane fx:id="mapScroll">
+                              <content>
+                                  <AnchorPane fx:id="contentAnchor" minHeight="-Infinity" minWidth="-Infinity">
+                                      <children>
+                                          <ImageView fx:id="imageViewMap" fitHeight="492.0" fitWidth="720.0" pickOnBounds="true" preserveRatio="true" />
+                                          <Pane fx:id="linePane" prefHeight="489.0" prefWidth="716.0" />
+                                          <Pane fx:id="nodePane" prefHeight="490.0" prefWidth="717.0" />
+                                      </children>
+                                  </AnchorPane>
+                              </content>
+                          </ScrollPane>
 
                             </items>
-                        </SplitPane>
-                        <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" />
-                    </children>
-                </JFXDrawer>
+                  </SplitPane>
 
             </children>
             <stylesheets>

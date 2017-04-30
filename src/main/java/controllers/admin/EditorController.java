@@ -131,10 +131,9 @@ public class EditorController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		//Load
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
+		directory.logOut(); // default to user view
 
 		this.changeFloor(this.directory.getFloor());
 
@@ -193,14 +192,31 @@ public class EditorController
 
 		contextMenu.setLayoutX(x);
 		contextMenu.setLayoutY(y);
-		List<Image> imageArray = new ArrayList<Image>();
-		for (RoomType type : RoomType.values()){
-			imageArray.add(type.getImage());
-		}
 
-		ImageView image = new ImageView("Elevator.png"/*imageArray.get(9)*/);
-		image.setX(0);
-		image.setY(0);
+
+		ImageView Bathroom = new ImageView("Bathroom_U.png");
+		Bathroom.setScaleX(1);
+		Bathroom.setScaleY(1);
+		Bathroom.setX(-105);
+		Bathroom.setY(-12);
+
+		ImageView Kiosk = new ImageView("Kiosk.png");
+		Kiosk.setScaleX(1);
+		Kiosk.setScaleY(1);
+		Kiosk.setX(80);
+		Kiosk.setY(-12);
+
+		ImageView ElevatorUp = new ImageView("Elevator.png"/*imageArray.get(9)*/);
+		ElevatorUp.setScaleX(1);
+		ElevatorUp.setScaleY(1);
+		ElevatorUp.setX(-12);
+		ElevatorUp.setY(-105);
+
+		ImageView ElevatorDown = new ImageView("Elevator.png"/*imageArray.get(9)*/);
+		ElevatorDown.setScaleX(1);
+		ElevatorDown.setScaleY(1);
+		ElevatorDown.setX(-12);
+		ElevatorDown.setY(80);
 
 		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);
@@ -254,7 +270,10 @@ public class EditorController
 		contextMenu.getChildren().add(split2);
 		contextMenu.getChildren().add(split3);
 		contextMenu.getChildren().add(split4);
-		contextMenu.getChildren().add(image);
+		contextMenu.getChildren().add(Bathroom);
+		contextMenu.getChildren().add(Kiosk);
+		contextMenu.getChildren().add(ElevatorUp);
+		contextMenu.getChildren().add(ElevatorDown);
 		contextMenu.setVisible(true);
 		this.nodePane.getChildren().add(contextMenu);
 	}
@@ -477,9 +496,9 @@ public class EditorController
 
 	@FXML
 	public void restrictedViewBtnClicked(){
-		if(restrictedView.selectedProperty().getValue()){
+		if (restrictedView.selectedProperty().getValue()) {
 			directory.logIn();
-		}else{
+		} else {
 			directory.logOut();
 		}
 		this.changeFloor(directory.getFloor());

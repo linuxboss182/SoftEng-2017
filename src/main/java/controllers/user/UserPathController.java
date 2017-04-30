@@ -7,6 +7,7 @@ import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -109,7 +111,7 @@ public class UserPathController
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
 		this.initializeDrawer();
-
+		floatingBorderPane.setPickOnBounds(false);
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
@@ -141,15 +143,24 @@ public class UserPathController
 		//Set IDs for CSS
 		setStyleIDs();
 
+//		parentBorderPane.addEventFilter(EventType.ROOT, e-> {
+//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
+//		});
+//		mapIconDrawer.addEventFilter(EventType.ROOT, e-> {
+//			System.out.println(e.getEventType() + "\t\t" + e.getTarget());
+//			contentAnchor.fireEvent((MouseEvent)e.clone());
+//		});
+//		mapIconDrawer.setResizableOnDrag(false);
+//		mapIconDrawer.setPickOnBounds(false);
 
 
 	}
 
 	private void initializeDrawer() {
-		this.mapIconDrawer.setContent(mapScroll);
-		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
-		this.mapIconDrawer.setOverLayVisible(false);
-		this.mapIconDrawer.open();
+//		this.mapIconDrawer.setContent(mapScroll);
+//		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+//		this.mapIconDrawer.setOverLayVisible(false);
+//		this.mapIconDrawer.open();
 	}
 
 
@@ -435,17 +446,5 @@ public class UserPathController
 
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
-	}
-
-	@FXML
-	private void helpBtnClicked() throws IOException{
-		UserHelpController helpController = new UserHelpController();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
-		Scene userHelpScene = new Scene(loader.load());
-		Stage userHelpStage = new Stage();
-		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
-		userHelpStage.setScene(userHelpScene);
-		userHelpStage.showAndWait();
 	}
 }

@@ -4,9 +4,13 @@ import com.jfoenix.controls.*;
 import entities.FloorProxy;
 
 import entities.Node;
+import entities.Professional;
 import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,6 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -29,7 +35,9 @@ import java.util.Set;
 import java.text.Collator;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -43,9 +51,13 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
+	@FXML private TabPane destinationTypeTabs;
 	@FXML private JFXListView<Room> roomSearchResults;
-	@FXML private JFXListView<Room> profSearchResults;
-	@FXML private JFXListView<Room> commonServicesView;
+	@FXML private JFXListView<Professional> profSearchResults;
+	@FXML private JFXListView<RoomType> commonServicesView;
+	@FXML private Tab roomTab;
+	@FXML private Tab profTab;
+	@FXML private Tab servicesTab;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -63,12 +75,12 @@ public class UserMasterController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXToggleButton professionalSearchToggleBtn;
 	@FXML private JFXButton helpBtn;
+	@FXML private JFXButton findBathroomBtn;
 
 	private Room startRoom;
 	private Room endRoom;
 
-	private boolean startSelected = true;
-	private boolean endSelected = false;
+	private boolean selectingStart = false;
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
@@ -90,9 +102,8 @@ public class UserMasterController
 
 	/**
 	 * Method used to initialize superclasses
-	 * <p>
-	 * Not technically related to Initializable::initialize, but used for the same
-	 * purpose
+	 *
+	 * Not technically related to Initializable::initialize, but used for the same purpose
 	 */
 	public void initialize() {
 		super.initialize();
@@ -119,12 +130,13 @@ public class UserMasterController
 		setZoomSliding();
 
 		initfloorComboBox();
+		initDestinationTypeTabs();
 
 		this.displayRooms();
 
 		setScrollZoom();
 		setHotkeys();
-		addSearchFieldListeners();
+		setupSearchFields();
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater(() -> {
@@ -156,7 +168,7 @@ public class UserMasterController
 
 	private void resizeDrawerListener(Double newSceneHeight) {
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	private void setStyleIDs() {
@@ -179,19 +191,56 @@ public class UserMasterController
 		iconManager.getIcons(directory.getRooms());
 	}
 
+
 	/**
-	 * Filter the room list for the search bar
-	 *
-	 * @param searchString The new string in the search bar
+	 * Filter the active search list, if any
+	 */
+	private void filterRoomsOrProfessionals(String searchString) {
+		Tab tabContent = destinationTypeTabs.getSelectionModel().getSelectedItem();
+		if (tabContent == roomTab) {
+			filterRoomsByName(searchString);
+		} else if (tabContent == profTab) {
+			filterProfessionalsByName(searchString);
+		}
+	}
+
+	/**
+	 * Filter the room list to show only rooms matching the given string
 	 */
 	private void filterRoomsByName(String searchString) {
-		if((searchString == null) || (searchString.length() == 0)) {
-			this.populateListView();
+		if ((searchString == null) || (searchString.length() == 0)) {
+			this.resetRoomSearchResults();
 		} else {
 			String search = searchString.toLowerCase();
 			Set<Room> rooms = directory.getUserRooms();
 			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
 			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+		}
+	}
+
+	/**
+	 * Filter the professional list to show only rooms matching the given string
+	 */
+	private void filterProfessionalsByName(String searchString) {
+		if ((searchString == null) || (searchString.length() == 0)) {
+			this.resetProfessionalSearchResults();
+		} else {
+			String search = searchString.toLowerCase();
+			search = StringUtils.removeStart(search, "dr. ");
+			search = StringUtils.removeStart(search, "doctor ");
+			String finalSearch = search;
+
+			Set<Professional> surnameMatches = directory.getProfessionals();
+			surnameMatches.removeIf(p -> ! p.getSurname().toLowerCase().contains(finalSearch));
+
+			Set<Professional> fullNameMatches = directory.getProfessionals();
+			fullNameMatches.removeIf(p -> ! p.getFullName().toLowerCase().contains(finalSearch));
+			fullNameMatches.removeAll(surnameMatches);
+
+			List<Professional> results = new LinkedList<>(surnameMatches);
+			results.addAll(fullNameMatches);
+
+			this.profSearchResults.setItems(FXCollections.observableList(results));
 		}
 	}
 
@@ -207,7 +256,33 @@ public class UserMasterController
 		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER); // <- for choiceBox, not comboBox
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
+	}
 
+	private void initDestinationTypeTabs() {
+		resetRoomSearchResults();
+		resetProfessionalSearchResults();
+
+		destinationTypeTabs.getSelectionModel().select(servicesTab);
+
+		// Set the selection actions for the search results
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
+		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> {
+					Set<Room> rooms = selection.getLocations();
+					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
+					this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+					this.destinationTypeTabs.getSelectionModel().select(roomTab);
+				}
+		);
+
+		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
+			try {
+				this.findBathroom();
+			} catch (IOException | PathNotFoundException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@FXML
@@ -235,23 +310,28 @@ public class UserMasterController
 	}
 
 	/**
-	 * Populates the list of rooms
+	 * Reset the list of rooms
 	 */
-	private void populateListView() {
+	private void resetRoomSearchResults() {
 		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-
-		roomSearchResults.getSelectionModel().clearSelection();
-
-		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
+		this.roomSearchResults.getSelectionModel().clearSelection();
 	}
+
+	/**
+	 * Reset the list of professionals
+	 */
+	private void resetProfessionalSearchResults() {
+		this.profSearchResults.setItems(FXCollections.observableArrayList(directory.getProfessionals()));
+		this.profSearchResults.getSelectionModel().clearSelection();
+	}
+
 
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 * <p>
+	 *
 	 * If both start and end locations are set, enable the "get directions" button
-	 * <p>
+	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
 	private void enableOrDisableNavigationButtons() {
@@ -265,9 +345,11 @@ public class UserMasterController
 	}
 
 
+
+
 	@FXML
 	public void getDirectionsClicked()
-			throws IOException, InvocationTargetException {
+			throws IOException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -290,7 +372,7 @@ public class UserMasterController
 	 */
 	private void selectRoomAction(Room room) {
 		if (room == null) return;
-		if (this.startSelected) {
+		if (this.selectingStart) {
 			this.selectStartRoom(room);
 		} else {
 			this.selectEndRoom(room);
@@ -300,6 +382,7 @@ public class UserMasterController
 	private void selectStartRoom(Room r) {
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
+
 		iconController.selectStartRoom(r);
 		startField.setText(r.getName());
 		this.displayRooms();
@@ -313,20 +396,45 @@ public class UserMasterController
 		this.displayRooms();
 	}
 
-	private void addSearchFieldListeners() {
+	private void setupSearchFields() {
+		destinationField.setPromptText("Choose destination");
+
+		this.destinationField.setOnKeyReleased(e -> {
+			this.filterRoomsOrProfessionals(this.destinationField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+				//
+					if (startRoom == null) {
+						this.startField.requestFocus();
+					} else if (endRoom != null) {
+						try {
+							this.getDirectionsClicked();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+			}
+		});
+
+		this.startField.setOnKeyReleased(e -> {
+			this.filterRoomsByName(this.startField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+				this.destinationField.requestFocus();
+			}
+		});
+
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
-				populateListView();
-				this.startSelected = true;
-				this.endSelected = false;
+				resetRoomSearchResults();
+				destinationTypeTabs.getSelectionModel().select(roomTab);
 			}
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
-				populateListView();
-				this.startSelected = false;
-				this.endSelected = true;
+				resetRoomSearchResults();
+				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
+					destinationTypeTabs.getSelectionModel().select(roomTab);
+				}
 			}
 		});
 	}
@@ -347,20 +455,6 @@ public class UserMasterController
 		addAboutStage.showAndWait();
 	}
 
-	@FXML
-	private void helpBtnClicked()
-			throws IOException {
-		UserHelpController helpController = new UserHelpController();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
-		Scene userHelpScene = new Scene(loader.load());
-		Stage userHelpStage = new Stage();
-		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
-		userHelpStage.setScene(userHelpScene);
-		userHelpStage.showAndWait();
-	}
-
-	@FXML
 	public void findBathroom()
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
@@ -384,30 +478,6 @@ public class UserMasterController
 		this.getDirectionsClicked();
 	}
 
-
-	@FXML
-	public void startFieldKeyPressed(KeyEvent e) {
-		if(e.getCode() == KeyCode.ENTER) {
-			this.destinationField.requestFocus();
-		}
-	}
-
-	@FXML
-	public void destinationFieldKeyPressed(KeyEvent e) {
-		if(e.getCode() == KeyCode.ENTER) {
-			try {
-				if(this.getDirectionsBtn.isDisabled()) {
-					this.startField.requestFocus();
-				} else {
-					this.getDirectionsClicked();
-				}
-			} catch (IOException e1) {
-//				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-//				e1.printStackTrace();
-			}
-		}
-	}
 
 	private void initFocusTraversables() {
 		this.floorComboBox.setFocusTraversable(false);
