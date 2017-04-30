@@ -226,6 +226,9 @@ public abstract class MapDisplayController
 		this.mapScroll.boundsInLocalProperty().addListener((observable, oldValue, newValue) -> {
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (newValue.getMaxX() - oldValue.getMaxX())/2);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (newValue.getMaxY() - oldValue.getMaxY())/2);
+
+			mapScroll.setScaleX(mapScroll.getScaleX() * newValue.getMaxX()/oldValue.getMaxX());
+			mapScroll.setScaleY(mapScroll.getScaleY() * newValue.getMaxY()/oldValue.getMaxY());
 		});
 	}
 
