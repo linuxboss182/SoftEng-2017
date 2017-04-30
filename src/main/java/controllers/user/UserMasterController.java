@@ -272,8 +272,18 @@ public class UserMasterController
 				(ignored, oldValue, selection) -> {
 					Set<Room> rooms = selection.getLocations();
 					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
-					this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
-					this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					if(rooms.size() == 0){
+						//no rooms for this professional
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("No Rooms Found");
+						alert.setHeaderText(null);
+						alert.setContentText("There are no rooms available for this professional. \n" +
+								"Please change your selection and try again");
+						alert.showAndWait();
+					} else {
+						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+						this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					}
 				}
 		);
 
