@@ -10,7 +10,7 @@ enum NODE
 		implements ShapeScheme
 {
 	/* fill, strokeWidth, stroke, scale */
-	SELECTED(null, 2.0, Color.BEIGE, 1.5),
+	SELECTED(null, 2.0, Color.LIGHTGREEN, 1.5),
 
 	DEFAULT(Color.BLUE, 1.5, Color.BLACK, 1.0),
 	ROOM(Color.YELLOW, null, null, null),

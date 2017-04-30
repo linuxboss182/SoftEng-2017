@@ -192,14 +192,31 @@ public class EditorController
 
 		contextMenu.setLayoutX(x);
 		contextMenu.setLayoutY(y);
-		List<Image> imageArray = new ArrayList<Image>();
-		for (RoomType type : RoomType.values()){
-			imageArray.add(type.getImage());
-		}
 
-		ImageView image = new ImageView("Elevator.png"/*imageArray.get(9)*/);
-		image.setX(0);
-		image.setY(0);
+
+		ImageView Bathroom = new ImageView("Bathroom_U.png");
+		Bathroom.setScaleX(0.3);
+		Bathroom.setScaleY(0.3);
+		Bathroom.setX(-140);
+		Bathroom.setY(-50);
+
+		ImageView Kiosk = new ImageView("Kiosk.png");
+		Kiosk.setScaleX(0.3);
+		Kiosk.setScaleY(0.3);
+		Kiosk.setX(45);
+		Kiosk.setY(-50);
+
+		ImageView ElevatorUp = new ImageView("Elevator.png");
+		ElevatorUp.setScaleX(0.3);
+		ElevatorUp.setScaleY(0.3);
+		ElevatorUp.setX(-45);
+		ElevatorUp.setY(-140);
+
+		ImageView ElevatorDown = new ImageView("Elevator.png");
+		ElevatorDown.setScaleX(0.3);
+		ElevatorDown.setScaleY(0.3);
+		ElevatorDown.setX(-50);
+		ElevatorDown.setY(45);
 
 		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);
@@ -253,7 +270,10 @@ public class EditorController
 		contextMenu.getChildren().add(split2);
 		contextMenu.getChildren().add(split3);
 		contextMenu.getChildren().add(split4);
-		contextMenu.getChildren().add(image);
+		contextMenu.getChildren().add(Bathroom);
+		contextMenu.getChildren().add(Kiosk);
+		contextMenu.getChildren().add(ElevatorUp);
+		contextMenu.getChildren().add(ElevatorDown);
 		contextMenu.setVisible(true);
 		this.nodePane.getChildren().add(contextMenu);
 	}

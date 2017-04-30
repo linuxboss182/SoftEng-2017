@@ -189,10 +189,10 @@ public class UserMasterController
 	 * Filter the active search list, if any
 	 */
 	private void filterRoomsOrProfessionals(String searchString) {
-		javafx.scene.Node tabContent = destinationTypeTabs.getSelectionModel().getSelectedItem().getContent();
-		if (tabContent == roomSearchResults) {
+		Tab tabContent = destinationTypeTabs.getSelectionModel().getSelectedItem();
+		if (tabContent == roomTab) {
 			filterRoomsByName(searchString);
-		} else if (tabContent == profSearchResults) {
+		} else if (tabContent == profTab) {
 			filterProfessionalsByName(searchString);
 		}
 	}
@@ -254,6 +254,8 @@ public class UserMasterController
 	private void initDestinationTypeTabs() {
 		resetRoomSearchResults();
 		resetProfessionalSearchResults();
+
+		destinationTypeTabs.getSelectionModel().select(servicesTab);
 
 		// Set the selection actions for the search results
 		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
@@ -414,11 +416,19 @@ public class UserMasterController
 		});
 
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) resetRoomSearchResults();
+			if (nowFocused) {
+				resetRoomSearchResults();
+				destinationTypeTabs.getSelectionModel().select(roomTab);
+			}
 		});
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
-			if (nowFocused) resetRoomSearchResults();
+			if (nowFocused) {
+				resetRoomSearchResults();
+				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
+					destinationTypeTabs.getSelectionModel().select(roomTab);
+				}
+			}
 		});
 	}
 
@@ -438,8 +448,10 @@ public class UserMasterController
 		addAboutStage.showAndWait();
 	}
 
+
 	@FXML
 	public void findService(RoomType service)
+
 			throws IOException, InvocationTargetException, PathNotFoundException {
 		Set<Room> services = this.directory.getRoomsOnFloor();
 		services.removeIf(room -> room.getType() != service);
