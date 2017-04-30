@@ -39,6 +39,8 @@ public class IconManager
 
 	private static final double DEFAULT_LABEL_X_OFFSET = 0;
 	private static final double DEFAULT_LABEL_Y_OFFSET = 0;
+	private static final double ICON_SIZE = 0.05; //Scale factor on the icon image
+	private static final double ICON_SIZE_LARGE = 0.1; //Scale factor of icon when hovered over
 	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
@@ -69,6 +71,12 @@ public class IconManager
 	 */
 	public void setOnMouseClickedOnSymbol(BiConsumer<Room, MouseEvent> handler) {
 		this.onMouseClickedOnRoomHandler = handler;
+	}
+
+	public void updateListeners(Set<Room> rooms){
+		for(Room r: rooms){
+			applyListeners(r, r.getIcon());
+		}
 	}
 
 	/**
@@ -122,8 +130,8 @@ public class IconManager
 		ImageView image = new ImageView(originalImage);
 		Label label = new Label(name); // TODO: Hide the label if given empty string/null
 
-		image.setScaleX(0.25);
-		image.setScaleY(0.25);
+		image.setScaleX(ICON_SIZE);
+		image.setScaleY(ICON_SIZE);
 
 		//Center image on the coordinates.
 		image.setLayoutX(x - imageWidth/2);
@@ -135,6 +143,8 @@ public class IconManager
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
+		label.setScaleX(0.1);
+		label.setScaleY(0.1);
 
 		//Create Icon and link to room
 		Icon icon = new Icon(room, image, label);
@@ -153,11 +163,33 @@ public class IconManager
 		if (showFullNamesOnHover) {
 			ImageView image = icon.getImage();
 			Label label = icon.getLabel();
+			label.setOnMouseEntered(event -> {
+				icon.updateLabel(room.getName());
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
+				label.setScaleX(0.5);
+				label.setScaleY(0.5);
+			});
+			label.setOnMouseExited(event -> {
+				icon.updateLabel(room.getDisplayName());
+				image.setScaleX(ICON_SIZE);
+				image.setScaleY(ICON_SIZE);
+				label.setScaleX(0.1);
+				label.setScaleY(0.1);
+			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
+				label.setScaleX(0.5);
+				label.setScaleY(0.5);
 			});
 			image.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
+				image.setScaleX(ICON_SIZE);
+				image.setScaleY(ICON_SIZE);
+				label.setScaleX(0.1);
+				label.setScaleY(0.1);
 			});
 		}
 

@@ -1,9 +1,9 @@
 package controllers.admin;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
-import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -12,17 +12,28 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,14 +43,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import main.ApplicationController;
 import controllers.filereader.FileParser;
 import controllers.shared.MapDisplayController;
+import main.TimeoutTimer;
 import main.algorithms.Pathfinder;
 import main.algorithms.Algorithm;
 import main.database.DatabaseWrapper;
+import entities.FloorProxy;
+import entities.Node;
+import entities.Professional;
+import entities.Room;
+import entities.RoomType;
 
 public class EditorController
 		extends MapDisplayController
@@ -63,7 +86,7 @@ public class EditorController
 	@FXML private TableColumn<Professional, String> roomCol;
 	@FXML private TableColumn<Professional, String> profCol;
 	@FXML private Text roomName;
-	@FXML private Text yPos;
+	@FXML private Label yPos;
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
@@ -71,6 +94,8 @@ public class EditorController
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 	@FXML private ToggleButton restrictedView;
 	@FXML private JFXButton modifyAccountBtn;
+	@FXML private TextField timeoutField;
+	@FXML public JFXComboBox<RoomType> roomTypeComboBox;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -106,24 +131,26 @@ public class EditorController
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
+	private double contextRad = 120;
+	private double contextWidth = 60;
+	private Arc selectionWedge = new Arc();
+	private Group contextMenu = new Group();
+	private MenuButton contextSelection = MenuButton.NONE;
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
+
+	private enum MenuButton
+	{
+		UP, DOWN, RIGHT, LEFT, NONE;
+	}
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize();
 
-		//Load
-		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-		iconController = ApplicationController.getIconController();
+		directory.logOut(); // default to user view
 
-		this.changeFloor(this.directory.getFloor());
-
-		this.imageViewMap.setPickOnBounds(true);
-		if(floorComboBox != null) {
-			initfloorComboBox();
-		}
-
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
+		initfloorComboBox();
 
 		this.redisplayGraph(); // redraw nodes and edges
 		this.iconController.resetAllNodes();
@@ -141,19 +168,185 @@ public class EditorController
 		this.nodePane.setPickOnBounds(false);
 
 		this.installPaneListeners();
-		this.setUpAlgorithmChoiceBox();
+		this.setupAlgorithmComboBox();
+		this.setupRoomTypeComboBox();
 
 		// Add listeners to all nodes
 		this.directory.getNodes().forEach(this::addNodeListeners);
 
 		this.populateTableView();
 
-		// TODO: Use control+plus/minus for zooming
-		setHotkeys();
-
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
-		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
+		timer.resetTimer(getTimerTask());
+		this.timeoutField.setText(Double.toString(this.directory.getTimeout()/1000));
+
+		this.timeoutField.textProperty().addListener((observable, oldValue, newValue) -> {
+			try{
+				if(this.timeoutField.getText().length() > 0)
+					this.directory.setTimeout(1000 * Integer.parseInt(this.timeoutField.getText())); // In seconds
+			} catch(NumberFormatException e) {}
+		});
+	}
+
+
+	//check if secondary button is down before populating round panel
+	void displayContextMenu(MouseEvent e){
+		if(e.isSecondaryButtonDown()) {
+			populateRoundPane(e, e.getX(), e.getY());
+		}
+	}
+
+	@Override
+	protected void setHotkeys(){
+		parentBorderPane.setOnKeyPressed(e -> {
+			//TODO add functionality for zooming with hotkeys
+
+			if (e.getCode() == KeyCode.RIGHT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() - 10);
+			} else if (e.getCode() == KeyCode.LEFT && e.isShiftDown()) {
+				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + 10);
+			} else if (e.getCode() == KeyCode.UP && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + 10);
+			} else if (e.getCode() == KeyCode.DOWN && e.isShiftDown()) {
+				contentAnchor.setTranslateY(contentAnchor.getTranslateY() - 10);
+			} else if (e.getCode() == KeyCode.A && e.isControlDown()) {
+				this.selectAllNodesOnFloor();
+			} else if (e.getCode() == KeyCode.BACK_SPACE) {
+				this.deleteSelectedNodes();
+			}
+			e.consume();
+		});
+	}
+
+	/**
+	 * Setup a radial context menu
+	 */
+	public void populateRoundPane(MouseEvent e, double x, double y){
+
+		contextMenu.setLayoutX(x);
+		contextMenu.setLayoutY(y);
+
+
+		ImageView Bathroom = new ImageView("Bathroom_U.png");
+		Bathroom.setScaleX(0.3);
+		Bathroom.setScaleY(0.3);
+		Bathroom.setX(-140);
+		Bathroom.setY(-50);
+
+		ImageView Kiosk = new ImageView("Kiosk.png");
+		Kiosk.setScaleX(0.3);
+		Kiosk.setScaleY(0.3);
+		Kiosk.setX(45);
+		Kiosk.setY(-50);
+
+		ImageView ElevatorUp = new ImageView("Elevator.png");
+		ElevatorUp.setScaleX(0.3);
+		ElevatorUp.setScaleY(0.3);
+		ElevatorUp.setX(-50);
+		ElevatorUp.setY(-140);
+
+		ImageView ElevatorDown = new ImageView("Elevator.png");
+		ElevatorDown.setScaleX(0.3);
+		ElevatorDown.setScaleY(0.3);
+		ElevatorDown.setX(-50);
+		ElevatorDown.setY(45);
+
+		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
+		roundPanel.setType(ArcType.OPEN);
+		roundPanel.setStrokeWidth(contextWidth);
+		roundPanel.setStroke(Color.GRAY);
+		roundPanel.setStrokeType(StrokeType.INSIDE);
+		roundPanel.setFill(null);
+		roundPanel.setOpacity(0.9);
+
+		Line split1 = new Line();
+		split1.setStartX(0);
+		split1.setStartY(0);
+		split1.setEndX( - contextRad / Math.sqrt(2));
+		split1.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split2 = new Line();
+		split2.setStartX(0);
+		split2.setStartY(0);
+		split2.setEndX( + contextRad / Math.sqrt(2));
+		split2.setEndY( - contextRad / Math.sqrt(2));
+
+		Line split3 = new Line();
+		split3.setStartX(0);
+		split3.setStartY(0);
+		split3.setEndX( - contextRad / Math.sqrt(2));
+		split3.setEndY( + contextRad / Math.sqrt(2));
+
+		Line split4 = new Line();
+		split4.setStartX(0);
+		split4.setStartY(0);
+		split4.setEndX( + contextRad / Math.sqrt(2));
+		split4.setEndY( + contextRad / Math.sqrt(2));
+
+		selectionWedge = new Arc(0, 0, contextRad, contextRad, 0,0);
+		selectionWedge.setType(ArcType.ROUND);
+		selectionWedge.setStrokeWidth(contextWidth);
+		selectionWedge.setStroke(Color.BLUEVIOLET);
+		selectionWedge.setStrokeType(StrokeType.INSIDE);
+		selectionWedge.setFill(null);
+		selectionWedge.setOpacity(0.2);
+
+		selectionWedge.lengthProperty().addListener((ignored, oldValue, newValue) -> {
+			System.out.println("Showing context menu");
+		});
+
+//		selectionWedge.setOnMouseDragReleased(__ -> System.out.println("released wedge"));
+//		roundPanel.setOnMouseDragReleased(__ -> System.out.println("released panel"));
+		contextMenu.getChildren().add(roundPanel);
+		contextMenu.getChildren().add(selectionWedge);
+		contextMenu.getChildren().add(split1);
+		contextMenu.getChildren().add(split2);
+		contextMenu.getChildren().add(split3);
+		contextMenu.getChildren().add(split4);
+		contextMenu.getChildren().add(Bathroom);
+		contextMenu.getChildren().add(Kiosk);
+		contextMenu.getChildren().add(ElevatorUp);
+		contextMenu.getChildren().add(ElevatorDown);
+		contextMenu.setVisible(true);
+		this.nodePane.getChildren().add(contextMenu);
+	}
+
+	// update the XY value of the cursor everytime it moves
+	private void updateCurrentXY(MouseEvent e){
+		double xdif = e.getX() - contextMenu.getLayoutX();
+		double ydif = e.getY() - contextMenu.getLayoutY();
+
+		if (Math.pow(xdif, 2) + Math.pow(ydif, 2) > Math.pow(contextRad - contextWidth, 1.8)){
+			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
+	}
+
+	// check the angle between the cursor and the center of panel
+	private void modifyRadialSelection(double angle){
+		if (angle < -45 && angle > -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(45);
+			contextSelection = MenuButton.UP;
+		}else if (angle > -45 && angle < 45){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(315);
+			contextSelection = MenuButton.RIGHT;
+		}else if (angle > 45 && angle < 135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(225);
+			contextSelection = MenuButton.DOWN;
+		}else if (angle > 135 || angle < -135){
+			selectionWedge.setLength(90);
+			selectionWedge.setStartAngle(135);
+			contextSelection = MenuButton.LEFT;
+		}else{
+			selectionWedge.setLength(0);
+			contextSelection = MenuButton.NONE;
+		}
 	}
 
 
@@ -264,7 +457,7 @@ public class EditorController
 	public void addRoomBtnClicked() {
 		if(this.yCoordField.getText().isEmpty() || this.xCoordField.getText().isEmpty()){
 			if(this.yCoordField.getText().isEmpty()){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			}
 			if(this.xCoordField.getText().isEmpty()){
 				xPos.setTextFill(Color.RED);
@@ -275,6 +468,7 @@ public class EditorController
 		double y = this.readY();
 		String name = this.nameField.getText();
 		String description = this.descriptField.getText();
+		RoomType type = this.roomTypeComboBox.getSelectionModel().getSelectedItem();
 
 		// check to see if x and y are negative or name field is empty. Changes text
 		// next to each textField to red if it breaks the rules.
@@ -285,9 +479,9 @@ public class EditorController
 			} else {
 				xPos.setTextFill(Color.BLACK);
 			} if(y < 0){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			} else {
-				yPos.setFill(Color.BLACK);
+				yPos.setTextFill(Color.BLACK);
 			} if(name.isEmpty()) {
 				roomName.setFill(Color.RED);
 			} else {
@@ -296,16 +490,16 @@ public class EditorController
 			return;
 		}
 		xPos.setTextFill(Color.BLACK);
-		yPos.setFill(Color.BLACK);
+		yPos.setTextFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
 			Node node = this.selectedNodes.getSoleElement();
-			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description);
+			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description, type);
 			iconController.resetSingleNode(node);
 			selectNode(node);
 		} else {
-			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description, type);
 			iconController.resetSingleNode(newNode);
 			selectNode(newNode);
 		}
@@ -317,7 +511,8 @@ public class EditorController
 		if(! this.selectedNodes.isSingular()) return;
 
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
-				this.displayNameField.getText(), this.descriptField.getText());
+				this.displayNameField.getText(), this.descriptField.getText(),
+				this.roomTypeComboBox.getSelectionModel().getSelectedItem());
 	}
 
 	@FXML
@@ -327,9 +522,9 @@ public class EditorController
 
 	@FXML
 	public void restrictedViewBtnClicked(){
-		if(restrictedView.selectedProperty().getValue()){
+		if (restrictedView.selectedProperty().getValue()) {
 			directory.logIn();
-		}else{
+		} else {
 			directory.logOut();
 		}
 		this.changeFloor(directory.getFloor());
@@ -404,11 +599,6 @@ public class EditorController
 						node.getBuildingName().equalsIgnoreCase(neighbor.getBuildingName())) {
 					lines.add(new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY()));
 				}
-//				else if (EditorController.DEBUGGING) {
-//					Line ln = new Line(node.getX(), node.getY(), neighbor.getX(), neighbor.getY());
-//					ln.setStroke(Color.FUCHSIA);
-//					lines.add(ln);
-//				}
 			}
 		}
 		this.linePane.getChildren().setAll(lines);
@@ -435,6 +625,14 @@ public class EditorController
 		node.getShape().setOnMouseClicked(event -> this.clickNodeListener(event, node));
 		node.getShape().setOnMouseDragged(event -> this.dragNodeListener(event, node));
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
+		node.getShape().setOnMousePressed((MouseEvent event) -> {
+			this.primaryPressed = event.isPrimaryButtonDown();
+			this.secondaryPressed = event.isSecondaryButtonDown();
+			if (event.isSecondaryButtonDown() && event.isShiftDown()){
+				selectNode(node);
+				displayContextMenu(event);
+			}
+		});
 	}
 
 	private double readX() {
@@ -452,8 +650,8 @@ public class EditorController
 	 *
 	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
-		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
+	private Node addNodeRoom(double x, double y, String name, String displayName, String description, RoomType type) {
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description, type);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
@@ -483,9 +681,9 @@ public class EditorController
 	 *
 	 * DO NOT USE IT IF YOU HAVE NOT SATISFIED THIS REQUIREMENT
 	 */
-	private void updateSelectedRoom(double x, double y, String name, String displayName, String description) {
+	private void updateSelectedRoom(double x, double y, String name, String displayName, String description, RoomType type) {
 		this.selectedNodes.getSoleElement().applyToRoom(room -> {
-			directory.updateRoom(room, name, displayName, description);
+			directory.updateRoom(room, name, displayName, description, type);
 		});
 		this.updateSelectedNode(x, y);
 		this.redrawLines();
@@ -548,6 +746,9 @@ public class EditorController
 		this.redisplayAll();
 	}
 
+	private void initTimeoutField() {
+		this.timeoutField.setText(this.directory.getTimeout()/1000 + "");
+	}
 
 	///////////////////////
 	/////EVENT HANDLERS////
@@ -584,9 +785,6 @@ public class EditorController
 			}
 			this.redisplayGraph();
 		});
-
-		// TODO: Move to MapDisplayController
-		setScrollZoom();
 
 		contentAnchor.setOnMousePressed(e -> {
 			e.consume();
@@ -682,7 +880,7 @@ public class EditorController
 		if((e.getClickCount() == 1) && (e.getButton() == MouseButton.PRIMARY) && e.isStillSincePress()) {
 			this.clearFields();
 			this.setFields(node.getX(), node.getY());
-			node.applyToRoom(room -> this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription()));
+			node.applyToRoom(this::setRoomFields);
 			if (! e.isShiftDown()) {
 				this.deselectNodes(); // no-shift click will deselect all others
 			}
@@ -704,7 +902,9 @@ public class EditorController
 	// This is going to allow us to drag a node!!!
 	public void dragNodeListener(MouseEvent e, Node n) {
 		e.consume();
-		if (this.selectedNodes.contains(n)) {
+		if (e.isSecondaryButtonDown()){
+			updateCurrentXY(e);
+		}else if (this.selectedNodes.contains(n)) {
 			if (e.getButton() == MouseButton.PRIMARY) {
 				this.updateSelectedNodes(e.getX(), e.getY());
 				this.setFields(n.getX(), n.getY());
@@ -725,6 +925,59 @@ public class EditorController
 
 		// Delete any nodes that were dragged out of bounds
 		this.deleteOutOfBoundNodes();
+
+		if (contextMenu.isVisible()) {
+			this.contextMenuAction(e, n);
+		}
+	}
+
+	private void contextMenuAction(MouseEvent e, Node n) {
+		Room room;
+		switch(contextSelection) {
+			case UP: // make into bathroom
+				directory.addNewElevatorUp(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case DOWN:
+				directory.addNewElevatorDown(n);
+				directory.getNodes().forEach(this::addNodeListeners);
+				iconController.resetAllNodes();
+				break;
+			case RIGHT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "Kiosk", "You are here","");
+					room = n.getRoom();
+				}
+				room.setType(RoomType.KIOSK);
+				this.selectNode(n);
+				this.setRoomFields(room);
+				Room kiosk = directory.getKiosk();
+				directory.setKiosk(room);
+				if (kiosk != null) iconController.resetSingleNode(kiosk.getLocation());
+				iconController.resetSingleNode(n);
+
+				this.redisplayGraph();
+				break;
+			case LEFT:
+				room = n.getRoom();
+				if (room == null) {
+					directory.addNewRoomToNode(n, "bathroom", "", "");
+					iconController.resetSingleNode(n);
+					room = n.getRoom();
+				}
+				room.setType(RoomType.BATHROOM);
+				this.selectNode(n);
+				this.setRoomFields(room);
+				break;
+			default:
+
+		}
+
+		nodePane.getChildren().remove(contextMenu);
+		contextMenu.setVisible(false);
+		contextMenu.getChildren().clear();
 	}
 
 	/**
@@ -739,8 +992,10 @@ public class EditorController
 		}
 	}
 
+
+	
 	private void selectAllNodesOnFloor() {
-		this.directory.getNodesOnFloor(floor).forEach(node -> {
+		this.directory.getNodesOnFloor(directory.getFloor()).forEach(node -> {
 			if (!this.selectedNodes.contains(node)) {
 				this.selectedNodes.add(node);
 				this.iconController.selectAnotherNode(node);
@@ -769,14 +1024,6 @@ public class EditorController
 		this.selectedNodes.clear();
 	}
 
-	// This method is commented out because it is outdated and was only used when there was singular node selection
-	// In the current implementation it is not needed
-//	private void deselectNode(){
-//		this.selectedNode = null;
-//		this.iconController.deselectAllNodes();
-//		this.redisplayGraph();
-//	}
-
 	private void setXCoordField(double x) {
 		this.xCoordField.setText(x+"");
 	}
@@ -802,10 +1049,16 @@ public class EditorController
 		this.descriptField.setText(desc);
 	}
 
-	private void setRoomFields(String name, String displayName, String desc) {
+	private void setRoomFields(Room room) {
+		this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription(), room.getType());
+	}
+
+	private void setRoomFields(String name, String displayName, String desc, RoomType type) {
 		this.setNameField(name);
 		this.setDisplayNameField(displayName);
 		this.setDescriptField(desc);
+		System.out.println("Showing type "+type.getName());
+		this.roomTypeComboBox.getSelectionModel().select(type);
 	}
 
 	private void clearFields() {
@@ -865,9 +1118,9 @@ public class EditorController
 	}
 
 	/**
-	 * Get a choice box that sets the active algorithm
+	 * Set up the choice box that sets the active algorithm
 	 */
-	private void setUpAlgorithmChoiceBox() {
+	private void setupAlgorithmComboBox() {
 		this.algorithmComboBox.setItems(FXCollections.observableArrayList(Pathfinder.getAlgorithmList()));
 		this.algorithmComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> Pathfinder.setStrategy(choice));
@@ -875,28 +1128,13 @@ public class EditorController
 		this.algorithmComboBox.getSelectionModel().select(Pathfinder.getStrategy());
 	}
 
-	/*
-	To set the kiosk, bind this line to a "set kiosk" button:
-	if (selectedNode != null) selectedNode.applyToRoom(room -> directory.setKiosk(room));
-	 */
+	private void setupRoomTypeComboBox() {
+		this.roomTypeComboBox.setItems(FXCollections.observableArrayList(
+				RoomType.DEFAULT, RoomType.BATHROOM, RoomType.ELEVATOR,
+				RoomType.PORTAL, RoomType.SHOP, RoomType.CAFE, RoomType.PARKING
+		));
 
-	@FXML
-	public void setToggleShowRooms() {
-//		this.toggleShowRooms = !toggleShowRooms;
-//		if(toggleShowRooms) {
-//			// for now, disable dragging
-//			this.imageViewMap.setDisable(true);
-//			this.linePane.setDisable(true);
-//			this.linePane.getChildren().clear();
-//			this.nodePane.getChildren().clear();
-//			this.displayRooms();
-//
-//		} else {
-//			// re-enable dragging
-//			this.imageViewMap.setDisable(false);
-//			this.linePane.setDisable(false);
-//			this.redisplayAll();
-//		}
+		this.roomTypeComboBox.getSelectionModel().select(RoomType.DEFAULT);
 	}
 
 	/**
@@ -904,16 +1142,6 @@ public class EditorController
 	 */
 	public void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
-
-//		Set<javafx.scene.Node> roomShapes = new HashSet<>();
-//		for (Room room : directory.getRoomsOnFloor(floor)) {
-//			roomShapes.add(room.getAdminSideShape());
-//			/* This is code to make a context menu appear when you right click on the shape for a room
-//			 * setonContextMenuRequested pretty much checks the right click- meaning right clicking is how you request a context menu
-//			 * that is reallllllllly helpful for a lot of stuff
-//			 */
-//		}
-//		this.nodePane.getChildren().setAll(roomShapes);
 	}
 
 	/**
@@ -921,8 +1149,12 @@ public class EditorController
 	 */
 	@FXML
 	public void selectKioskClicked() {
-		if (selectedNodes.isSingular()) selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+		if (selectedNodes.isSingular()) {
+			selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+			iconController.resetAllNodes();
+		}
 	}
+
 	@FXML
 	private void helpBtnClicked() throws IOException {
 		AdminHelpController helpController = new AdminHelpController();
@@ -930,6 +1162,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AdminHelp.fxml"));
 		Scene helpScene = new Scene(loader.load());
 		Stage helpStage = new Stage();
+		helpStage.setTitle("Faulkner Hospital Navigator Help Page");
+		helpStage.getIcons().add(new Image("bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
 		helpStage.showAndWait();

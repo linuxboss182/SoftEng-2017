@@ -7,6 +7,7 @@ import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -44,8 +46,6 @@ If possible, use things like "follow the sidewalk" (probably not possible)
 If possible, get turn direction upon exiting a building (requires changes elsewhere)
  */
 
-// TODO: UserPathController should not inherit from UserMasterController
-
 public class UserPathController
 		extends DrawerController
 		implements Initializable
@@ -54,7 +54,7 @@ public class UserPathController
 	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextFlow directionsTextField;
+	@FXML protected TextFlow directionsTextField; // CHANGE THIS TO A SCROLL PANE OR SOMETHING
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
@@ -75,6 +75,7 @@ public class UserPathController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXDrawer mapIconDrawer;
 	@FXML protected ImageView backImageView;
+	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
@@ -108,47 +109,31 @@ public class UserPathController
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
 		this.initializeDrawer();
-
-
-		this.directory = ApplicationController.getDirectory();
-		iconController = ApplicationController.getIconController();
+		floatingBorderPane.setPickOnBounds(false);
 
 		this.iconManager = new IconManager();
 		iconManager.getIcons(directory.getRooms());
-
-		this.changeFloor(this.directory.getFloor());
-		this.imageViewMap.setPickOnBounds(true);
-
-		// TODO: Move zoom stuff to MapDisplayController
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
 
 		this.displayRooms();
 		iconController.resetAllRooms();
 
 		setScrollZoom();
-
-		setHotkeys();
-		Platform.runLater( () -> initWindowResizeListener());
+		setStyleIDs();
 
 
 		backImageView.setImage(new Image("/back.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 
-		//Set IDs for CSS
-		setStyleIDs();
 
-
-
+		this.timer.resetTimer(this.getTimerTask());
 	}
 
 	private void initializeDrawer() {
-		this.mapIconDrawer.setContent(mapScroll);
-		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
-		this.mapIconDrawer.setOverLayVisible(false);
-		this.mapIconDrawer.open();
+//		this.mapIconDrawer.setContent(mapScroll);
+//		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+//		this.mapIconDrawer.setOverLayVisible(false);
+//		this.mapIconDrawer.open();
 	}
 
 
@@ -158,12 +143,14 @@ public class UserPathController
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		drawerParentPane.getStyleClass().add("drawer");
+		//drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
-		directionsLbl.getStyleClass().add("path-label");
+		directionsLbl.getStyleClass().add("directions-label");
 		doneBtn.getStyleClass().add("blue-button");
+		helpBtn.getStyleClass().add("blue-button");
+		directionsTextField.getStyleClass().add("black-text");
 
 	}
 
@@ -267,15 +254,23 @@ public class UserPathController
 
 	private void createNewFloorButton(MiniFloor floor, List<Node> path, int buttonCount) {
 		ImageView newFloorButton = new ImageView();
+		Label newFloorLabel = new Label();
 
 		int buttonWidth = 110;
 		int buttonHeight = 70;
 		int buttonSpread = 140;
 		int buttonY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15;
-		int centerX = 430;
+		int buttonCenterX = 430;
+
+		int labelCenterX = 460;
+		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15; //change the +x value so the label is at the bottom
 
 
-		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + labelCenterX + (buttonSpread)*buttonCount);
+		newFloorLabel.setLayoutY(labelY);
+		newFloorLabel.setText(floor.building);
+
+		newFloorButton.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount);
 		newFloorButton.setLayoutY(buttonY);
 		newFloorButton.setFitWidth(buttonWidth);
 		newFloorButton.setFitHeight(buttonHeight);
@@ -287,7 +282,7 @@ public class UserPathController
 		Rectangle backgroundRectangle = new Rectangle();
 		backgroundRectangle.setWidth(buttonWidth*1.25);
 		backgroundRectangle.setHeight(buttonHeight*1.25);
-		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + centerX + (buttonSpread)*buttonCount-10);
+		backgroundRectangle.setX(floorsTraveledAnchorPane.getLayoutX() + buttonCenterX + (buttonSpread)*buttonCount-10);
 		backgroundRectangle.setY(buttonY - 10);
 		backgroundRectangle.setFill(Color.WHITE);
 		backgroundRectangle.setStroke(Color.BLACK);
@@ -311,6 +306,7 @@ public class UserPathController
 		}
 		floorsTraveledAnchorPane.getChildren().add(backgroundRectangle);
 		floorsTraveledAnchorPane.getChildren().add(newFloorButton);
+		floorsTraveledAnchorPane.getChildren().add(newFloorLabel);
 	}
 
 	// TODO: Draw by segments, not by floors
@@ -356,6 +352,8 @@ public class UserPathController
 			Scene smsScene = new Scene(loader.load());
 			((SMSController)loader.getController()).setText(textDirections.getText());
 			Stage smsStage = new Stage();
+			smsStage.setTitle("Faulkner Hospital Navigator SMS Page");
+			smsStage.getIcons().add(new Image("bwhIcon.png"));
 			smsStage.initOwner(floorsTraveledAnchorPane.getScene().getWindow());
 			smsStage.setScene(smsScene);
 			smsStage.showAndWait();

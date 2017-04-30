@@ -7,7 +7,8 @@ import entities.Directory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
@@ -57,8 +58,9 @@ public class ApplicationController extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		ApplicationController.stage = primaryStage;
-		Parent root = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+		Parent root = (GridPane) FXMLLoader.load(this.getClass().getResource("/Welcome.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
+		primaryStage.getIcons().add(new Image("bwhIcon.png"));
 		Scene user = new Scene(root, 1300, 800);
 		primaryStage.setMinWidth(1180);
 		primaryStage.setMinHeight(722);

@@ -22,5 +22,8 @@
             <TableColumn fx:id="permissionsCol" prefWidth="173.0" text="Permissions" />
         </columns>
       </TableView>
+      <JFXButton buttonType="RAISED" layoutX="38.0" layoutY="319.0" onMouseClicked="#onAddAccountBtnClicked" prefHeight="27.0" prefWidth="60.0" style="-fx-background-color: #5087b4;" text="Add" textFill="WHITE" />
+      <JFXButton buttonType="RAISED" layoutX="135.0" layoutY="319.0" onMouseClicked="#onRemoveAccountBtnClicked" prefHeight="27.0" prefWidth="60.0" style="-fx-background-color: #5087b4;" text="Delete" textFill="WHITE" />
+      <Label fx:id="existsError" layoutX="225.0" layoutY="365.0" prefHeight="17.0" prefWidth="150.0" text="Username already taken" textFill="RED" visible="false" />
    </children>
 </AnchorPane>

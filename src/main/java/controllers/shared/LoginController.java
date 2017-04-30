@@ -1,6 +1,7 @@
 package controllers.shared;
 
 
+import controllers.user.UserState;
 import entities.Account;
 import entities.Directory;
 import javafx.application.Platform;
@@ -13,16 +14,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.input.KeyEvent;
 import main.ApplicationController;
 
+import javafx.scene.input.KeyEvent;
+import main.TimeoutTimer;
+
+import java.awt.*;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.net.URL;
 
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimerTask;
 
 public class LoginController implements Initializable{
 
@@ -34,33 +42,10 @@ public class LoginController implements Initializable{
 	@FXML private BorderPane parentBorderPane;
 
 	private Directory directory = ApplicationController.getDirectory();
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-//		logins = new LoginHandler();
-//		logins.addAccount("admin", "password", true);
-
-		directory.addAccount("admin", "password", "admin");
-		directory.addAccount("test", "password", "professional");
-
-//		Set<String> passwordSet = directory.getPassHashes();
-//		Set<String> permissionSet = directory.getPermissions();
-
-//		String[] users = userSet.toArray(new String[userSet.size()]);
-//		String[] passwords = userSet.toArray(new String[passwordSet.size()]);
-//		String[] permissions = userSet.toArray(new String[permissionSet.size()]);
-
-//		for (int n = 0; n < users.length; n++){
-//			System.out.println("YOOOOOO");
-//			logins.addAccount(users[n], passwords[n], permissions[n].equals("admin"));
-//		}
-
-
-
-//		logins.addAccount("admin", "password", true);
-//		logins.addAccount("admin2", "admin, too?", true);
-
-
 		parentBorderPane.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.ESCAPE){
 				try {
@@ -75,6 +60,9 @@ public class LoginController implements Initializable{
 		this.cancelBtn.setFocusTraversable(false);
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
+
+		timer.resetTimer(this.getTimerTask());
+		initGlobalFilter();
 	}
 
 
@@ -133,18 +121,14 @@ public class LoginController implements Initializable{
 	 * @return 2 for admins, 1 for professionals, or 0 for failed logins
 	 */
 	public LoginStatus checkLogin(String username, String password) {
-		Map<String, Account> logins = directory.getAccounts();
-
-
-		// Branches:
-		// contains key and password is value and is admin
-		// contains key and password is value and not admin
-		// does not contain key or does not contain value
-
+		Account thisAccount = directory.getAccount(username);
+		if(thisAccount == null){
+			return LoginStatus.FAILURE;
+		}
 
 		// Safe because the empty string is not a valid password
-		if (logins.get(username).getPassword().equals(password)) {
-			switch (logins.get(username).getPermissions().toUpperCase()) {
+		if (thisAccount.getPassword().equals(password)) {
+			switch (thisAccount.getPermissions().toUpperCase()) {
 				case "ADMIN":
 					return LoginStatus.ADMIN;
 				case "PROFESSIONAL":
@@ -159,5 +143,32 @@ public class LoginController implements Initializable{
 
 	public enum LoginStatus {
 		ADMIN, PROFESSIONAL, FAILURE;
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	protected void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			timer.resetTimer(getTimerTask());
+		});
+	}
+
+	protected TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				setState(directory.getCaretaker().getState());
+			}
+		};
+	}
+
+	// place inside controller
+	public void setState(UserState state) {
+		parentBorderPane.getScene().setRoot(state.getRoot());
+		this.directory.logOut();
 	}
 }

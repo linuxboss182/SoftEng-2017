@@ -1,36 +1,53 @@
 package controllers.user;
 
-import com.jfoenix.controls.*;
-import entities.FloorProxy;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.JFXToolbar;
 
+import entities.Node;
+import entities.Professional;
+import entities.RoomType;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
-import java.text.Normalizer;
+import java.util.*;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+
+import main.TimeoutTimer;
+import org.apache.commons.lang3.StringUtils;
+
 import entities.Room;
-import javafx.stage.Stage;
-import main.ApplicationController;
+import entities.FloorProxy;
+import main.algorithms.PathNotFoundException;
+import main.algorithms.Pathfinder;
 
 
 public class UserMasterController
@@ -38,7 +55,13 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
-	@FXML private JFXListView<Room> resultsListView;
+	@FXML private JFXTabPane destinationTypeTabs;
+	@FXML private JFXListView<Room> roomSearchResults;
+	@FXML private JFXListView<Professional> profSearchResults;
+	@FXML private JFXListView<RoomType> servicesList;
+	@FXML private Tab roomTab;
+	@FXML private Tab profTab;
+	@FXML private Tab servicesTab;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
@@ -54,16 +77,20 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXButton helpBtn;
+
 
 	private Room startRoom;
 	private Room endRoom;
 
-
+	private boolean selectingStart = false; // TODO: Find a way to remove this state
 
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
 	@FXML private HBox goHBox;
 	@FXML private HBox bottomHBox;
+
+	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
 	/**
 	 * Get the scene this is working on
@@ -89,61 +116,31 @@ public class UserMasterController
 		//Set IDs for CSS
 		setStyleIDs();
 
-		//Kiosk listener
-		startFocusedListener();
-		destFocusedListener();
-
-
-
-		this.directory = ApplicationController.getDirectory();
-		iconController = ApplicationController.getIconController();
 		if (startRoom == null) {
 			startRoom = directory.getKiosk();
-			startField.setText("Your Location");
 		}
 
-		initializeIcons();
-
-		this.changeFloor(this.directory.getFloor());
-		this.imageViewMap.setPickOnBounds(true);
+		this.initializeIcons();
 
 		// Set buttons to default
 		this.enableOrDisableNavigationButtons();
 
-		// TODO: Set zoom based on window size
-		zoomSlider.setValue(0);
-		setZoomSliding();
-
 		initfloorComboBox();
+		initDestinationTypeTabs();
 
-		this.displayRooms();
-
-		setScrollZoom();
-
-		// TODO: Use ctrl+plus/minus for zooming
-		setHotkeys();
+		setupSearchFields();
+		initImages();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater( () -> {
-			initWindowResizeListener();
+		Platform.runLater(() -> {
 			resizeDrawerListener(drawerParentPane.getHeight());
-
+			destinationField.requestFocus();
 		});
-//		Platform.runLater( () -> this.fitMapSize());
+
 		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
-		this.startField.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
-		logAsAdmin.setImage(new Image("/lock.png"));
-		startImageView.setImage(new Image("/aPin.png"));
-		destImageView.setImage(new Image("/bPin.png"));
-		aboutBtn.setImage(new Image("/about.png"));
-
-		drawerParentPane.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-				resizeDrawerListener((double)newSceneHeight);
-			}
-		});
 		resizeDrawerListener(677.0);
 
 		mainDrawer.open();
@@ -151,15 +148,30 @@ public class UserMasterController
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
 
+		initFocusTraversables();
+
+
+		this.displayRooms();
+	}
+
+	private void initImages() {
+		if(directory.isProfessional()){
+			logAsAdmin.setImage(new Image("/logout.png"));
+		}else{
+			logAsAdmin.setImage(new Image("/lock.png"));
+		}
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
 
 	}
 
-	public void resizeDrawerListener(Double newSceneHeight) {
-		System.out.println("Height: " + newSceneHeight);
-		resultsListView.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	private void resizeDrawerListener(Double newSceneHeight) {
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
+		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
-	public void setStyleIDs() {
+	private void setStyleIDs() {
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
 		goHBox.getStyleClass().add("hbox-go");
@@ -167,6 +179,7 @@ public class UserMasterController
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
+		helpBtn.getStyleClass().add("blue-button");
 	}
 
 
@@ -174,34 +187,62 @@ public class UserMasterController
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
+			System.out.println("event consumed");
 		});
+		iconManager.updateListeners(this.directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
 	}
 
+
 	/**
-	 * Filter the room list for the search bar
-	 *
-	 * @param searchString The new string in the search bar
+	 * Filter the active search list, if any
 	 */
-	public void filterRoomsByName(String searchString) {
-		if((searchString == null) || (searchString.length() == 0)) {
-			this.populateListView();
+	private void filterRoomsOrProfessionals(String searchString) {
+		Tab tabContent = destinationTypeTabs.getSelectionModel().getSelectedItem();
+		if (tabContent == roomTab) {
+			filterRoomsByName(searchString);
+		} else if (tabContent == profTab) {
+			filterProfessionalsByName(searchString);
+		}
+	}
+
+	/**
+	 * Filter the room list to show only rooms matching the given string
+	 */
+	private void filterRoomsByName(String searchString) {
+		if ((searchString == null) || (searchString.length() == 0)) {
+			this.resetRoomSearchResults();
 		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
+			String search = searchString.toLowerCase();
+			Set<Room> rooms = directory.getUserRooms();
+			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
+			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+		}
+	}
 
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
+	/**
+	 * Filter the professional list to show only rooms matching the given string
+	 */
+	private void filterProfessionalsByName(String searchString) {
+		if ((searchString == null) || (searchString.length() == 0)) {
+			this.resetProfessionalSearchResults();
+		} else {
+			String search = searchString.toLowerCase();
+			search = StringUtils.removeStart(search, "dr. ");
+			search = StringUtils.removeStart(search, "doctor ");
+			String finalSearch = search;
 
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
+			Set<Professional> surnameMatches = directory.getProfessionals();
+			surnameMatches.removeIf(p -> ! p.getSurname().toLowerCase().contains(finalSearch));
 
-			this.resultsListView.setItems(FXCollections.observableArrayList(roomSet));
+			Set<Professional> fullNameMatches = directory.getProfessionals();
+			fullNameMatches.removeIf(p -> ! p.getFullName().toLowerCase().contains(finalSearch));
+			fullNameMatches.removeAll(surnameMatches);
+
+			List<Professional> results = new LinkedList<>(surnameMatches);
+			results.addAll(fullNameMatches);
+
+			this.profSearchResults.setItems(FXCollections.observableList(results));
 		}
 	}
 
@@ -210,22 +251,67 @@ public class UserMasterController
 	 * Initialize the floor's choice box with 1-7 (the floors)
 	 * Ideally this shouldn't be hard coded
 	 */
-	public void initfloorComboBox() {
+	private void initfloorComboBox() {
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
 		//this.floorComboBox.setConverter(FloorImage.FLOOR_STRING_CONVERTER); // <- for choiceBox, not comboBox
 
 		this.floorComboBox.setValue(this.floorComboBox.getItems().get(this.directory.getFloorNum() - 1)); // default the selection to be whichever floor we start on
+	}
+
+	private void initDestinationTypeTabs() {
+		resetRoomSearchResults();
+		resetProfessionalSearchResults();
+
+		destinationTypeTabs.getSelectionModel().select(servicesTab);
+
+		// Set the selection actions for the search results
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
+		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> {
+					Set<Room> rooms = selection.getLocations();
+					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
+					if(rooms.size() == 0){
+						//no rooms for this professional
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("No Rooms Found");
+						alert.setHeaderText(null);
+						alert.setContentText("There are no rooms available for this professional. \n" +
+								"Please change your selection and try again");
+						alert.showAndWait();
+					} else {
+						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+						this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					}
+				}
+		);
+			this.servicesList.getSelectionModel().selectedItemProperty().addListener(
+					(ignored, oldValue, selection) -> {
+						try {
+							findService(selection);
+						} catch (IOException | InvocationTargetException | PathNotFoundException e) {
+							e.printStackTrace();
+						}
+					}
+			);
+
 
 	}
 
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.getScene().setRoot(loginPrompt);
+		if(directory.isProfessional()){
+			directory.logOut();
+			changeFloor(directory.getFloor());
+			logAsAdmin.setImage(new Image("/lock.png"));
+		}else{
+			this.timer.cancelTimer();
+			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+			this.getScene().setRoot(loginPrompt);
+		}
 	}
 
 	/**
@@ -240,22 +326,41 @@ public class UserMasterController
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-	public void displayRooms() {
+	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
-	 * Populates the list of rooms
+	 * Reset the list of rooms
 	 */
-	public void populateListView() {
-		this.resultsListView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
-
-		this.resultsListView.getSelectionModel().selectedItemProperty().addListener((ignored, oldValue, newValue) -> {
-			this.selectRoomAction(resultsListView.getSelectionModel().getSelectedItem());
-
-		});
+	private void resetRoomSearchResults() {
+		Set<Room> rooms = directory.getUserRooms();
+		rooms.removeIf(r -> r.getLocation() == null);
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+		this.roomSearchResults.getSelectionModel().clearSelection();
 	}
+
+	/**
+	 * Reset the list of professionals
+	 */
+	private void resetProfessionalSearchResults() {
+		this.profSearchResults.setItems(FXCollections.observableArrayList(directory.getProfessionals()));
+		this.profSearchResults.getSelectionModel().clearSelection();
+	}
+
+	private void setServicesList() {
+		Set<Room> roomList = directory.getRooms();
+		HashSet<RoomType> servicesAvailable = new HashSet<>();
+		for (Room room: roomList){
+			RoomType type = room.getType();
+			if (!servicesAvailable.contains(type) && !type.equals(RoomType.DEFAULT) && !type.equals(RoomType.NONE) && !type.equals(RoomType.KIOSK) && !type.equals(RoomType.HALLWAY)){
+				servicesAvailable.add(type);
+			}
+		}
+		this.servicesList.setItems(FXCollections.observableArrayList(servicesAvailable));
+	}
+
+
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
@@ -264,7 +369,7 @@ public class UserMasterController
 	 *
 	 * If The end room is set, enable the "set starting location" button
 	 */
-	protected void enableOrDisableNavigationButtons() {
+	private void enableOrDisableNavigationButtons() {
 		if (this.getDirectionsBtn != null) {
 			if (endRoom == null || startRoom == null) {
 				this.getDirectionsBtn.setDisable(true);
@@ -272,27 +377,26 @@ public class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-//		if (this.changeStartBtn != null) {
-//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-//		}
 	}
 
 
 
 
 	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+	public void getDirectionsClicked()
+			throws IOException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
-
+		this.timer.cancelTimer();
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 			this.getScene().setRoot(pane);
 		} else {
 			this.redisplayMapItems();
 		}
+
 	}
 
 	/*
@@ -302,82 +406,128 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
-		if (this.startField.isFocused()) {
+	private void selectRoomAction(Room room) {
+		if (room == null) return;
+		if (this.selectingStart) {
 			this.selectStartRoom(room);
-			startField.setText(room.getName());
 		} else {
 			this.selectEndRoom(room);
-			destinationField.setText(room.getName());
 		}
 	}
 
-	protected void startFocusedListener() {
-		startField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-				if (newPropertyValue) {
-					if (startField.getText().equals("Your Location")) {
-						startField.clear();
-						populateListView();
-					}
-				}
-			}
-		});
-	}
-
-	protected void destFocusedListener() {
-		destinationField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-				if (newPropertyValue) {
-					populateListView();
-				}
-			}
-		});
-	}
-
-	protected void selectStartRoom(Room r) {
-		if(r == null) return;
-		startRoom = r;
+	private void selectStartRoom(Room r) {
+		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-
 		iconController.selectStartRoom(r);
+		startField.setText(r.getName());
 		this.displayRooms();
 	}
 
-	protected void selectEndRoom(Room r) {
-		if(r == null) return;
-		endRoom = r;
+	private void selectEndRoom(Room r) {
+		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
-//		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
+		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
+
+	private void setupSearchFields() {
+		destinationField.setPromptText("Choose destination");
+
+		this.destinationField.setOnKeyReleased(e -> {
+			this.filterRoomsOrProfessionals(this.destinationField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+					if (startRoom == null) {
+						this.startField.requestFocus();
+					} else if (endRoom != null) {
+						try {
+							this.getDirectionsClicked();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+			}
+		});
+
+		this.startField.setOnKeyReleased(e -> {
+			this.filterRoomsByName(this.startField.getText());
+			if(e.getCode() == KeyCode.ENTER) {
+				this.destinationField.requestFocus();
+			}
+		});
+
+		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				this.selectingStart = true;
+				resetRoomSearchResults();
+				destinationTypeTabs.getSelectionModel().select(roomTab);
+			}
+		});
+
+		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				this.selectingStart = false;
+				resetRoomSearchResults();
+				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
+					destinationTypeTabs.getSelectionModel().select(roomTab);
+				}
+			}
+		});
+	}
+
 
 	@FXML
-	public void aboutBtnClicked () throws IOException {
+	public void aboutBtnClicked()
+			throws IOException {
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
 		Scene addAboutScene = new Scene(loader.load());
 		Stage addAboutStage = new Stage();
+		addAboutStage.setTitle("Faulkner Hospital Navigator About Page");
+		addAboutStage.getIcons().add(new Image("bwhIcon.png"));
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
-	@FXML
-	private void helpBtnClicked() throws IOException{
-		UserHelpController helpController = new UserHelpController();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
-		Scene userHelpScene = new Scene(loader.load());
-		Stage userHelpStage = new Stage();
-		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
-		userHelpStage.setScene(userHelpScene);
-		userHelpStage.showAndWait();
+
+
+	public void setupServiceButtons() {
+//		findBathroomBtn.setOnAction(action -> this.findService(RoomType.BATHROOM));
+	}
+
+	private void findService(RoomType service)
+			throws IOException, InvocationTargetException, PathNotFoundException {
+		Set<Room> services = this.directory.getRoomsOnFloor();
+		services.removeIf(room -> room.getType() != service);
+
+		int prevCost = 0;
+		Room nearest = null;
+		for(Room r: services){
+			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
+			if(prevCost == 0) {
+				prevCost = nodes.size();
+				nearest = r;
+			}
+			if(nodes.size() < prevCost){
+				prevCost = nodes.size();
+				nearest = r;
+			}
+			System.out.println(r.getName());
+		}
+		selectEndRoom(nearest);
+		this.getDirectionsClicked();
+	}
+
+
+	private void initFocusTraversables() {
+		this.floorComboBox.setFocusTraversable(false);
+		this.getDirectionsBtn.setFocusTraversable(false);
+		this.aboutBtn.setFocusTraversable(false);
+		this.helpBtn.setFocusTraversable(false);
+		this.zoomSlider.setFocusTraversable(false);
 	}
 }
+
+
 
