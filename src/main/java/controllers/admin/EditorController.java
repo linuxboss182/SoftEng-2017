@@ -456,6 +456,7 @@ public class EditorController
 		double y = this.readY();
 		String name = this.nameField.getText();
 		String description = this.descriptField.getText();
+		RoomType type = this.roomTypeComboBox.getSelectionModel().getSelectedItem();
 
 		// check to see if x and y are negative or name field is empty. Changes text
 		// next to each textField to red if it breaks the rules.
@@ -482,11 +483,11 @@ public class EditorController
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
 			Node node = this.selectedNodes.getSoleElement();
-			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description);
+			directory.addNewRoomToNode(node, name, this.displayNameField.getText(), description, type);
 			iconController.resetSingleNode(node);
 			selectNode(node);
 		} else {
-			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description);
+			Node newNode = this.addNodeRoom(x, y, name, this.displayNameField.getText(), description, type);
 			iconController.resetSingleNode(newNode);
 			selectNode(newNode);
 		}
@@ -637,8 +638,8 @@ public class EditorController
 	 *
 	 * This function should _only_ add a node and room, and do nothing else
 	 */
-	private Node addNodeRoom(double x, double y, String name, String displayName, String description) {
-		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description);
+	private Node addNodeRoom(double x, double y, String name, String displayName, String description, RoomType type) {
+		Node newNode = directory.addNewRoomNode(x, y, directory.getFloor(), name, displayName, description, type);
 		this.addNodeListeners(newNode);
 		this.redisplayGraph();
 		this.selectedNodes.forEach(n -> {
