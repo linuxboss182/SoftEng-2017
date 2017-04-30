@@ -99,22 +99,23 @@ abstract public class DrawerController
 		});
 	}
 
-	@Override
-	public void fitMapSize() {
-		double potentialY =
-				+ mapScroll.getHeight()/2
-				- contentAnchor.getHeight()/2;
+//	@Override
+//	public void fitMapSize() {
+//		double potentialY =
+//				+ mapScroll.getHeight()/2
+//				- contentAnchor.getHeight()/2;
+//
+//		double potentialX;
+//		if(mainDrawer.isShown()) {
+//			potentialX = (mapScroll.getWidth()+420) / 2
+//					- contentAnchor.getWidth() / 2;
+//		}else{
+//			potentialX = (mapScroll.getWidth()) / 2
+//					- contentAnchor.getWidth() / 2;
+//		}
+//
+//		contentAnchor.setTranslateX(potentialX);
+//		contentAnchor.setTranslateY(potentialY);
+//	}
 
-		double potentialX;
-		if(mainDrawer.isShown()) {
-			potentialX = (mapScroll.getWidth()+420) / 2
-					- contentAnchor.getWidth() / 2;
-		}else{
-			potentialX = (mapScroll.getWidth()) / 2
-					- contentAnchor.getWidth() / 2;
-		}
-
-		contentAnchor.setTranslateX(potentialX);
-		contentAnchor.setTranslateY(potentialY);
-	}
 }

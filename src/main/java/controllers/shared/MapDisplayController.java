@@ -212,18 +212,27 @@ public abstract class MapDisplayController
 		});
 	}
 
-	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	public void fitMapSize() {
-		double potentialY =
-				+ mapScroll.getHeight()/2
-				- contentAnchor.getHeight()/2;
 
-		double potentialX =
-				+ mapScroll.getWidth()/2
-				- contentAnchor.getWidth()/2;
+		FloorProxy.Viewport defaultView = FloorProxy.getDefaultView(directory.getFloorName(), directory.getFloorNum());
 
-		contentAnchor.setTranslateX(potentialX);
-		contentAnchor.setTranslateY(potentialY);
+		double potentialScaleY =
+				mapScroll.getHeight() / ( defaultView.maxY - defaultView.minY );
+
+		double potentialScaleX =
+				mapScroll.getWidth() / ( defaultView.maxX - defaultView.minX );
+
+		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+		mapScroll.setScaleX(potentialScaleX);
+		mapScroll.setScaleY(potentialScaleY);
+		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
+		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
+
+
+		contentAnchor.setTranslateX(defaultView.minX-offsetX/potentialScaleX);
+		contentAnchor.setTranslateY(defaultView.minY-offsetY/potentialScaleY);
+
 	}
 
 	/**
