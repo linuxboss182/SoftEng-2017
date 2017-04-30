@@ -314,13 +314,23 @@ public class Directory
 
 	/**
 	 * Toggle the edge between the given nodes
+	 *
+	 * Roomless nodes on different floors or in different buildings may not be connected
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
-		n1.connectOrDisconnect(n2);
+		if (!( ((n1.getRoom() == null) || (n2.getRoom() == null))
+				&& ((n1.getFloor() != n2.getFloor())
+				|| ! (n1.getBuildingName().equals(n2.getBuildingName()))))) {
+			n1.connectOrDisconnect(n2);
+		}
 	}
 
 	public void connectNodes(Node n1, Node n2) {
-		n1.connect(n2);
+		if (!( ((n1.getRoom() == null) || (n2.getRoom() == null))
+				&& ((n1.getFloor() != n2.getFloor())
+				    || ! (n1.getBuildingName().equals(n2.getBuildingName()))))) {
+			n1.connect(n2);
+		}
 	}
 
 	public void updateRoom(Room room, String name, String shortName, String description) {
