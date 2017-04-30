@@ -288,9 +288,13 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.getScene().setRoot(loginPrompt);
+		if(directory.isProfessional()){
+			directory.logOut();
+			changeFloor(directory.getFloor());
+		}else{
+			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+			this.getScene().setRoot(loginPrompt);
+		}
 	}
 
 	/**
