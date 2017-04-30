@@ -131,10 +131,9 @@ public class EditorController
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		//Load
 		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
 		iconController = ApplicationController.getIconController();
+		directory.logOut(); // default to user view
 
 		this.changeFloor(this.directory.getFloor());
 
@@ -477,9 +476,9 @@ public class EditorController
 
 	@FXML
 	public void restrictedViewBtnClicked(){
-		if(restrictedView.selectedProperty().getValue()){
+		if (restrictedView.selectedProperty().getValue()) {
 			directory.logIn();
-		}else{
+		} else {
 			directory.logOut();
 		}
 		this.changeFloor(directory.getFloor());

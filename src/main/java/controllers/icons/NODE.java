@@ -21,6 +21,8 @@ enum NODE
 	RESTRICTED_ELEVATOR(Color.LIGHTPINK, null, null, null),
 	RESTRICTED_ROOM(Color.LIGHTYELLOW, null, null, null),
 	RESTRICTED_PORTAL(Color.ORANGE, null, null, null),
+
+	KIOSK(null, null, Color.RED, null),
 	; // end of schemes
 
 	private final Color fill;

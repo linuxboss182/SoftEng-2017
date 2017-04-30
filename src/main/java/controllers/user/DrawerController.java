@@ -5,12 +5,15 @@ import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.shared.MapDisplayController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -56,10 +59,20 @@ abstract public class DrawerController
 		}
 	}
 
-
+	@FXML
+	private void helpBtnClicked()
+			throws IOException {
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
+	}
 
 	private void setUpContentAnchorListeners() {
-		System.out.println("contentAnchorListener");
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();

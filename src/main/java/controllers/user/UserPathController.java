@@ -447,16 +447,4 @@ public class UserPathController
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
-
-	@FXML
-	private void helpBtnClicked() throws IOException{
-		UserHelpController helpController = new UserHelpController();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
-		Scene userHelpScene = new Scene(loader.load());
-		Stage userHelpStage = new Stage();
-		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
-		userHelpStage.setScene(userHelpScene);
-		userHelpStage.showAndWait();
-	}
 }
