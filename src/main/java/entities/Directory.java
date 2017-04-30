@@ -187,6 +187,11 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc, RoomType type) {
+		Node newNode = this.addNewRoomNode(x, y, floor, name, shortName, desc);
+		newNode.getRoom().setType(type);
+		return newNode;
+	}
 	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
 		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), loggedIn);
@@ -200,17 +205,25 @@ public class Directory
 	/**
 	 * Add a new room with the given attributes to the given node
 	 */
-	public void addNewRoomToNode(Node node, String name, String shortName, String desc) {
-		Room room = new Room(name, shortName, desc);
-		node.setRoom(room);
-		room.setLocation(node);
-		this.rooms.add(room);
+	public Room addNewRoomToNode(Node node, String name, String shortName, String desc, RoomType type) {
+		Room newRoom = this.addNewRoomToNode(node, name, shortName, desc);
+		newRoom.setType(type);
+		return newRoom;
+	}
+	public Room addNewRoomToNode(Node node, String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
+		node.setRoom(newRoom);
+		newRoom.setLocation(node);
+		this.rooms.add(newRoom);
+		return newRoom;
 	}
 
 	/**
 	 * Create a new room in this directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 *
+	 * @note Used in test cases
 	 */
 	public Room addNewRoom(String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
@@ -222,6 +235,8 @@ public class Directory
 	 * Create a new room in this directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 *
+	 * Used in loading from the database
 	 */
 	public Room addNewRoom(String name, String shortName, String desc, double labelX, double labelY) {
 		Room newRoom = new Room(name, desc, shortName, labelX, labelY);
@@ -422,7 +437,7 @@ public class Directory
 			node.getRoom().setType(RoomType.ELEVATOR);
 
 			Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
-					"", "Elevator to floor below");
+					"", "Elevator to floor below", RoomType.ELEVATOR);
 			n.getRoom().setType(RoomType.ELEVATOR);
 			this.connectNodes(node, n);
 		}
@@ -443,7 +458,7 @@ public class Directory
 			node.getRoom().setType(RoomType.ELEVATOR);
 
 			Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
-					"", "Elevator to floor above");
+					"", "Elevator to floor above", RoomType.ELEVATOR);
 			n.getRoom().setType(RoomType.ELEVATOR);
 			this.connectNodes(node, n);
 		}

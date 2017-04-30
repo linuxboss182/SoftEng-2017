@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import main.ApplicationController;
 import main.TimeoutTimer;
 
 import java.util.Collection;
@@ -66,29 +67,22 @@ public abstract class MapDisplayController
 	@FXML protected BorderPane parentBorderPane;
 	protected IconManager iconManager = new IconManager();
 
-	// TODO: move shared initializaton to MDC
-//	@Override
-//	public void initialize(URL location, ResourceBundle resources) {
-//		directory = ApplicationController.getDirectory(); //Grab the database controller from main and use it to populate our directory
-//		iconController = ApplicationController.getIconController();
-//	}
 
+	protected void initialize() {
+		this.directory = ApplicationController.getDirectory();
+		this.iconController = ApplicationController.getIconController();
 
-//	//This function takes in two nodes, displays a
-//	@Deprecated
-//	public void paintLine(Node start, Node finish) {
-//		if (start.getFloor() == finish.getFloor()) {
-//			Line line = new Line();
-//			line.setStartX(start.getX());
-//			line.setStartY(start.getY());
-//			line.setFill(this.CONNECTION_LINE_COLOR);
-//			line.setEndX(finish.getX());
-//			line.setEndY(finish.getY());
-//			this.lines.add(line);
-//			this.botPane.getChildren().add(line);
-//			line.setVisible(true);
-//		}
-//	}
+		this.changeFloor(this.directory.getFloor());
+		this.imageViewMap.setPickOnBounds(true);
+
+		this.setHotkeys();
+		this.setScrollZoom();
+		this.setZoomSliding();
+		this.zoomSlider.setValue(0);
+
+		this.initGlobalFilter();
+		Platform.runLater(this::fitMapSize);
+	}
 
 	/**
 	 * Display any edges between any of the given nodes
@@ -106,7 +100,6 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
-//		Platform.runLater(this::fitMapSize);
 	}
 
 
@@ -153,27 +146,6 @@ public abstract class MapDisplayController
 
 	}
 
-//	@FXML
-//	protected void increaseZoomButtonPressed() {
-//		double zoomPercent = (zoomSlider.getValue()/100);
-//		zoomPercent+=.2;
-//		zoomPercent = (zoomPercent > 1 ? 1 : zoomPercent);
-//		zoomSlider.setValue(zoomPercent*100);
-//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-//		contentAnchor.setScaleX(zoomCoefficient);
-//		contentAnchor.setScaleY(zoomCoefficient);
-//	}
-//
-//	@FXML
-//	protected void decreaseZoomButtonPressed() {
-//		double zoomPercent = (zoomSlider.getValue()/100);
-//		zoomPercent-=.2;
-//		zoomPercent = (zoomPercent < 0 ? 0 : zoomPercent);
-//		zoomSlider.setValue(zoomPercent*100);
-//		double zoomCoefficient = zoomMin*(1 - zoomPercent) + zoomMax*(zoomPercent);
-//		contentAnchor.setScaleX(zoomCoefficient);
-//		contentAnchor.setScaleY(zoomCoefficient);
-//	}
 
 	/** This is the section for key listeners.
 	 *  Press Back Space for Deleting selected nodes
@@ -275,7 +247,7 @@ public abstract class MapDisplayController
 	}
 
 	// place inside controller
-	public void setState(UserState state) {
+	private void setState(UserState state) {
 		try {
 			parentBorderPane.getScene().setRoot(state.getRoot());
 			this.directory.logOut();

@@ -90,8 +90,7 @@
                                 <JFXTabPane fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
                                         <Tab fx:id="servicesTab" text="Services">
-                                            <JFXButton fx:id="findBathroomBtn" />
-                                            <!--<JFXListView fx:id="commonServicesView" />-->
+                                            <JFXListView fx:id="servicesList" />
                                         </Tab>
                                         <Tab fx:id="roomTab" text="Rooms">
                                             <JFXListView fx:id="roomSearchResults" />
