@@ -433,7 +433,7 @@ public class EditorController
 	public void addRoomBtnClicked() {
 		if(this.yCoordField.getText().isEmpty() || this.xCoordField.getText().isEmpty()){
 			if(this.yCoordField.getText().isEmpty()){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			}
 			if(this.xCoordField.getText().isEmpty()){
 				xPos.setTextFill(Color.RED);
@@ -454,9 +454,9 @@ public class EditorController
 			} else {
 				xPos.setTextFill(Color.BLACK);
 			} if(y < 0){
-				yPos.setFill(Color.RED);
+				yPos.setTextFill(Color.RED);
 			} else {
-				yPos.setFill(Color.BLACK);
+				yPos.setTextFill(Color.BLACK);
 			} if(name.isEmpty()) {
 				roomName.setFill(Color.RED);
 			} else {
@@ -465,7 +465,7 @@ public class EditorController
 			return;
 		}
 		xPos.setTextFill(Color.BLACK);
-		yPos.setFill(Color.BLACK);
+		yPos.setTextFill(Color.BLACK);
 		roomName.setFill(Color.BLACK);
 
 		if (this.selectedNodes.isSingular() && (this.selectedNodes.getSoleElement().getRoom() == null)) {
