@@ -271,7 +271,7 @@ public class UserMasterController
 
 		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
 			try {
-				this.findBathroom();
+				this.findService(RoomType.BATHROOM);
 			} catch (IOException | PathNotFoundException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -448,26 +448,29 @@ public class UserMasterController
 		addAboutStage.showAndWait();
 	}
 
-	public void findBathroom()
+
+	@FXML
+	public void findService(RoomType service)
+
 			throws IOException, InvocationTargetException, PathNotFoundException {
-		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
-		bathrooms.removeIf(room -> room.getType() != RoomType.BATHROOM);
+		Set<Room> services = this.directory.getRoomsOnFloor();
+		services.removeIf(room -> room.getType() != service);
 
 		int prevCost = 0;
-		Room bathroom = null;
-		for(Room r: bathrooms){
+		Room nearest = null;
+		for(Room r: services){
 			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
 			if(prevCost == 0) {
 				prevCost = nodes.size();
-				bathroom = r;
+				nearest = r;
 			}
 			if(nodes.size() < prevCost){
 				prevCost = nodes.size();
-				bathroom = r;
+				nearest = r;
 			}
 			System.out.println(r.getName());
 		}
-		selectEndRoom(bathroom);
+		selectEndRoom(nearest);
 		this.getDirectionsClicked();
 	}
 
