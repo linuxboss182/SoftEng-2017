@@ -379,7 +379,7 @@ public class UserMasterController
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
-
+		this.timer.cancelTimer();
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 			this.getScene().setRoot(pane);

@@ -181,6 +181,7 @@ public class EditorController
 
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
 		timer.resetTimer(getTimerTask());
+		this.initGlobalFilter();
 	}
 
 
