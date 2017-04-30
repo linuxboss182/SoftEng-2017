@@ -7,18 +7,17 @@ import javafx.scene.image.Image;
  */
 public enum RoomType
 {
-	DEFAULT("Default Room", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
-	KIOSK("Kiosk", "/MysteryRoom.png", "/MysteryRoomOrigin.png", "/MysteryRoomDest.png"),
+	DEFAULT("Default Room", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	KIOSK("Kiosk", "/Kiosk.png", "/KioskOrigin.png", "/KioskDest.png"),
 	ELEVATOR("Elevator", "/Elevator.png", "/ElevatorOrigin.png", "/ElevatorDest.png"),
-	STAIRS("Stairs", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	PORTAL("Portal", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	PARKING("Parking", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	HALLWAY("Hallway", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	BATHROOM_M("Male Bathroom", "/Bathroom.png", "/Elevator.png", "/Bathroom.png"),
-	BATHROOM_F("Women's Bathroom", "/Bathroom.png", "/Elevator.png", "/MysteryRoom.png"),
-	BATHROOM_U("Unisex Bathroom", "/Bathroom.png", "/Elevator.png", "/MysteryRoom.png"),
-	SHOP("Gift Shop", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
-	CAFE("Cafe", "/MysteryRoom.png", "/Elevator.png", "/Bathroom.png"),
+	STAIRS("Stairs", "/Stairs.png", "/StairsOrigin.png", "/StairsDest.png"),
+	PORTAL("Portal", "/Portal.png", "/PortalOrigin.png", "/PortalDest.png"),
+	PARKING("Parking", "/Parking.png", "/ParkingOrigin.png", "/ParkingDest.png"),
+	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	BATHROOM("Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
+	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	CAFE("Cafe", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"),
 	;
 
 	private String name;
@@ -29,9 +28,13 @@ public enum RoomType
 	//Constructor
 	RoomType(String name, String imagePath, String originImage, String destImage) {
 		this.name = name;
-		this.image = new Image(imagePath);
-		this.originImage = new Image(originImage);
-		this.destImage = new Image(destImage);
+		try{
+			this.image = new Image(imagePath);
+			this.originImage = new Image(originImage);
+			this.destImage = new Image(destImage);
+		} catch (Exception e) {
+			System.out.println("Failed to load images");
+		}
 	}
 
 	public String getName() {

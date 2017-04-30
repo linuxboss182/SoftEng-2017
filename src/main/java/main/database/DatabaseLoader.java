@@ -73,6 +73,16 @@ class DatabaseLoader
 			directory.setKiosk(rooms.get(kioskID));
 		}
 
+		if(!directory.getAccounts().values().stream().anyMatch(a->"admin".equals(a.getPermissions()))) {
+			System.out.println("No admin exists, setting default admin to 'admin' 'password'");
+			directory.addAccount("admin", "password", "admin");
+		}
+
+		if(!directory.getAccounts().values().stream().anyMatch(a->"professional".equals(a.getPermissions()))) {
+			System.out.println("No professional exists, setting default professional to 'professional' 'password'");
+			directory.addAccount("professional", "password", "professional");
+		}
+
 		return true;
 	}
 
@@ -161,7 +171,8 @@ class DatabaseLoader
 				Node node = directory.addNewNode(resultNodes.getDouble("nodeX"),
 						resultNodes.getDouble("nodeY"),
 						resultNodes.getInt("floor"),
-						resultNodes.getString("buildingName"));
+						resultNodes.getString("buildingName"),
+						resultNodes.getBoolean("isRestricted"));
 				nodes.put(resultNodes.getInt("nodeID"), node);
 				directory.addNode(node);
 			}
@@ -219,7 +230,7 @@ class DatabaseLoader
 			Statement queryUsers = this.db_connection.createStatement();
 			ResultSet resultUsers = queryUsers.executeQuery(StoredProcedures.procRetrieveUsers());
 			while (resultUsers.next()) {
-				directory.addUser(resultUsers.getString("userID"),
+				directory.addAccount(resultUsers.getString("userID"),
 						resultUsers.getString("passHash"),
 						resultUsers.getString("permission"));
 			}
@@ -268,7 +279,8 @@ class DatabaseLoader
 //			PRINTLN("Saving node "+n.hashCode());
 			query = StoredProcedures.procInsertNode(n.hashCode(), n.getX(), n.getY(),
 					n.getFloor(), n.mapToRoom(Object::hashCode),
-					n.getBuildingName());
+					n.getBuildingName(),
+					n.isRestricted());
 			db.executeUpdate(query);
 		}
 
@@ -323,15 +335,16 @@ class DatabaseLoader
 		}
 
 //		//save user data
-//		for (int i=0;i<dir.getUsers().toArray().length;i++){
-//			query = StoredProcedures.procInsertUser(dir.getUsers().toArray()[i].toString(),
+//		for (int i=0;i<dir.getAccounts().toArray().length;i++){
+//			query = StoredProcedures.procInsertUser(dir.getAccounts().toArray()[i].toString(),
 //					dir.getPassHashes().toArray()[i].toString(),
 //					dir.getPermissions().toArray()[i].toString());
 
-		for (Map.Entry<String, String> user : dir.getUsers().entrySet()) {
-			query = StoredProcedures.procInsertUser(user.getKey(),
-													user.getValue(),
-													dir.getPermissions(user.getKey()));
+		for (Map.Entry<String, Account> user : dir.getAccounts().entrySet()) {
+			Account thisAccount = user.getValue();
+			query = StoredProcedures.procInsertUser(thisAccount.getUsername(),
+													thisAccount.getPassword(),
+													thisAccount.getPermissions());
 			db.executeUpdate(query);
 		}
 

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
+<?import java.net.*?>
+
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -17,6 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import java.net.URL?>
 <AnchorPane fx:id="backToPathClicked" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserAboutPage">
    <children>
       <Label layoutX="500.0" layoutY="49.0" text="Thank You!" textAlignment="CENTER" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="500.0">
@@ -86,7 +89,7 @@
       </Label>
       <Text layoutX="411.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Brigham and Women's Faulkner Hospital and Representative Andrew Shim" textAlignment="CENTER" wrappingWidth="366.9999928623438" AnchorPane.leftAnchor="411.0" AnchorPane.rightAnchor="409.0000071376562">
          <font>
-            <Font name="Bookman Old Style Italic" size="25.0" />
+            <Font name="Trebuchet MS Italic" size="25.0" />
          </font>
       </Text>
       <Label layoutX="345.0" layoutY="269.0" text="The Fuchsia Flying Spaghetti Monsters">
@@ -229,6 +232,9 @@
             </Label>
          </children>
       </GridPane>
-      <JFXButton fx:id="closeBtn" buttonType="RAISED" layoutX="552.0" layoutY="631.0" onMouseClicked="#closeBtnClicked" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #5087b4;" text="Close" textFill="WHITE" />
+      <JFXButton fx:id="closeBtn" buttonType="RAISED" layoutX="552.0" layoutY="631.0" onMouseClicked="#closeBtnClicked" prefHeight="25.0" prefWidth="85.0"  text="Close" textFill="WHITE" />
    </children>
+   <stylesheets>
+      <URL value="@/DrawerStyle.css" />
+   </stylesheets>
 </AnchorPane>

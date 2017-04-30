@@ -7,6 +7,7 @@ import entities.Directory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -28,7 +29,11 @@ public class ApplicationController extends Application
 		return ApplicationController.directory; // returns the single copy
 	}
 
-	public static IconController getIconController() {
+	public static void setDirectory(Directory newDirectory) {
+		ApplicationController.directory = newDirectory;
+	}
+
+		public static IconController getIconController() {
 		return ApplicationController.iconController;
 	}
 
@@ -56,7 +61,10 @@ public class ApplicationController extends Application
 		ApplicationController.stage = primaryStage;
 		Parent root = (GridPane) FXMLLoader.load(this.getClass().getResource("/Welcome.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
-		Scene user = new Scene(root, 1174, 722);
+		primaryStage.getIcons().add(new Image("bwhIcon.png"));
+		Scene user = new Scene(root, 1300, 800);
+		primaryStage.setMinWidth(1180);
+		primaryStage.setMinHeight(722);
 		primaryStage.setScene(user);
 		primaryStage.show();
 

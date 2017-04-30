@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.AccountPopupController">
+   <children>
+      <JFXButton fx:id="doneBtn" buttonType="RAISED" layoutX="485.0" layoutY="346.0" onMouseClicked="#ondoneBtnClick" style="-fx-background-color: #5087b4;" text="Done" textFill="WHITE" />
+      <Label layoutX="245.0" layoutY="14.0" text="Accounts">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <TableView fx:id="accountTableView" editable="true" layoutX="38.0" layoutY="54.0" prefHeight="254.0" prefWidth="524.0">
+        <columns>
+          <TableColumn fx:id="usernameCol" prefWidth="185.0" text="Username" />
+          <TableColumn fx:id="passwordCol" prefWidth="165.0" text="Password" />
+            <TableColumn fx:id="permissionsCol" prefWidth="173.0" text="Permissions" />
+        </columns>
+      </TableView>
+      <JFXButton buttonType="RAISED" layoutX="38.0" layoutY="319.0" onMouseClicked="#onAddAccountBtnClicked" prefHeight="27.0" prefWidth="60.0" style="-fx-background-color: #5087b4;" text="Add" textFill="WHITE" />
+      <JFXButton buttonType="RAISED" layoutX="135.0" layoutY="319.0" onMouseClicked="#onRemoveAccountBtnClicked" prefHeight="27.0" prefWidth="60.0" style="-fx-background-color: #5087b4;" text="Delete" textFill="WHITE" />
+   </children>
+</AnchorPane>

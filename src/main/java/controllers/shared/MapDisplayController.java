@@ -1,7 +1,9 @@
 package controllers.shared;
 
+import com.jfoenix.controls.JFXDrawer;
 import controllers.icons.IconController;
 import controllers.user.UserState;
+import controllers.icons.IconManager;
 import entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -15,12 +17,16 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import main.TimeoutTimer;
 
 import java.util.Collection;
+import java.util.TimerTask;
 
 // TODO: Use this class more effectively
 // Move stuff here when possible, remove unneeded stuff later
@@ -32,10 +38,11 @@ public abstract class MapDisplayController
 	final protected double zoomMax = 6;
 	protected double currentScale = 1;
 
+	protected TimeoutTimer timer;
+
 	@FXML public AnchorPane contentAnchor;
 	@FXML protected ImageView imageViewMap;
 	@FXML protected ScrollPane mapScroll;
-
 	protected Directory directory;
 	protected IconController iconController;
 
@@ -51,13 +58,13 @@ public abstract class MapDisplayController
 	protected static final Color CONNECTION_LINE_COLOR = Color.BLACK;
 
 	protected Professional selectedProf;
-	protected ListProperty<Room> listProperty = new SimpleListProperty<>();
 
 	// default to floor 1
 	protected static FloorImage floor = FloorProxy.getFloor("FAULKNER", 1);
 
 	@FXML protected Slider zoomSlider;
 	@FXML protected BorderPane parentBorderPane;
+	protected IconManager iconManager = new IconManager();
 
 	// TODO: move shared initializaton to MDC
 //	@Override
@@ -229,8 +236,14 @@ public abstract class MapDisplayController
 
 	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	public void fitMapSize() {
-		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
+		double potentialScaleX;
 		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+
+		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+
+		potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
 
 		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
 			contentAnchor.setScaleX(potentialScaleX);
@@ -242,12 +255,42 @@ public abstract class MapDisplayController
 			currentScale = potentialScaleY;
 		}
 
-		//Fixes the offset to center
-		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
 
 		zoomSlider.setValue(0);
+	}
+
+	/**
+	 * Initializes the global filter that will reset the timer whenever an action is performed.
+	 */
+	protected void initGlobalFilter() {
+		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				timer.resetTimer(getTimerTask());
+			}
+		});
+		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
+			if(this.directory.isLoggedIn()) {
+				System.out.println("Resetting timer");
+				timer.resetTimer(getTimerTask());
+			}
+		});
+	}
+
+	protected TimerTask getTimerTask() {
+		return new TimerTask()
+		{
+			public void run() {
+				setState(directory.getCaretaker().getState());
+			}
+		};
+	}
+
+	// place inside controller
+	public void setState(UserState state) {
+		parentBorderPane.getScene().setRoot(state.getRoot());
+		this.directory.logOut();
 	}
 }

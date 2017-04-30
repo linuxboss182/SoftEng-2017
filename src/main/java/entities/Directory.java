@@ -20,10 +20,9 @@ public class Directory
 	private Set<Node> nodes;
 	private Set<Room> rooms;
 	private Set<Professional> professionals;
-	private HashMap<String, String> users;
-	private HashMap<String, String> permissions;
 	private Room kiosk;
 	private boolean loggedIn;
+	private Map<String, Account> Accounts;
 
 	private long timeout = 50;
 	private Caretaker caretaker;
@@ -45,8 +44,7 @@ public class Directory
 	public Directory() {
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
-		this.users = new HashMap<>();
-		this.permissions = new HashMap<>();
+		this.Accounts = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -61,16 +59,19 @@ public class Directory
 		return loggedIn;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public Set<Node> getNodes() {
 		return new HashSet<>(this.nodes);
-	} //TODO Add permissions
+	}
 
 	/**
 	 * Get a copy of this directory's rooms, sorted by name
 	 */
-	// TODO: Maybe make Room Comparable, then make getRooms look like getProfessionals
 	public Set<Room> getRooms() {
-		Set<Room> rooms = new TreeSet<>(Directory.roomComparator); //TODO Add permissions
+		Set<Room> rooms = new TreeSet<>(Directory.roomComparator);
 		rooms.addAll(this.rooms);
 		return rooms;
 	}
@@ -101,13 +102,23 @@ public class Directory
 		this.professionals.add(professional);
 	}
 
-	public void addUser(String user, String password, String permission){
-		this.users.put(user, password);
-		this.permissions.put(user, permission);
+	public Account addAccount(String user, String password, String permission){
+		Account newAccount = new Account(user, password, permission);
+		this.Accounts.put(user, newAccount);
+		return newAccount;
 	}
 
+	public void deleteAccount(String user){
+		this.Accounts.remove(user);
+	}
 
-	/* User/login functions */
+	public void updateKey(String newName, String oldName){
+		Account tempAccount = Accounts.get(oldName);
+		Accounts.remove(oldName);
+		Accounts.put(newName, tempAccount);
+	}
+
+	/* Account/login functions */
 	public void logIn() {
 		this.loggedIn = true;
 	}
@@ -116,20 +127,19 @@ public class Directory
 		this.loggedIn = false;
 	}
 
-	public boolean isLoggedIn() {
-		return this.loggedIn;
-	}
+	public boolean isLoggedIn() { return this.loggedIn; }
 
-	public HashMap<String, String> getUsers(){
-		return new HashMap<>(this.users);
+	public Map<String, Account> getAccounts(){
+		return Accounts;
 	}
 
 	public String getPermissions(String username){
-		return permissions.get(username);
+		return Accounts.get(username).getPermissions();
 	}
 
-
-
+	public Account getAccount(String username){
+		return Accounts.get(username);
+	}
 
 	/* Element removal methods */
 
@@ -229,18 +239,24 @@ public class Directory
 		this.nodes.add(newNode);
 		return newNode;
 	}
+
 	//use this only for DB loading from CSV
 	public Node addNewNode(double x, double y, int floor, String buildingName) {
 		Node newNode = new Node(x, y, floor, buildingName, loggedIn);
 		this.nodes.add(newNode);
 		return newNode;
 	}
+
+	public Node addNewNode(double x, double y, int floor, String buildingName, boolean isRestricted) {
+		Node newNode = new Node(x, y, floor, buildingName, isRestricted);
+		this.nodes.add(newNode);
+		return newNode;
+	}
+
 	@Deprecated
 	public Node addNewNode(double x, double y, int floor) {
 		return this.addNewNode(x, y, floor, "NO BUILDING");
 	}
-
-	// TODO: Add test cases for new Directory methods, mostly those below this TODO
 
 	/* Filtered getters */
 	/**
@@ -250,8 +266,7 @@ public class Directory
 	 *
 	 * @return A set of the nodes in this directory on the given floor.
 	 */
-	//TODO: Make this take a Floor instead
-	public Set<Node> getNodesOnFloor(FloorImage floor) { //TODO Add permissions
+	public Set<Node> getNodesOnFloor(FloorImage floor) {
 		return this.filterNodes(node ->
 				(node.getFloor() == floor.getNumber())
 						&&
@@ -264,27 +279,37 @@ public class Directory
 	 *
 	 * A room's floor is determined by its associated node
 	 *
-	 * @param floor
-	 * @return
+	 * @note Only this function and  is one of two Directory functions that natively filter by permissions.
 	 */
-	public Set<Room> getRoomsOnFloor(FloorImage floor) { //TODO Add permissions
+	public Set<Room> getRoomsOnFloor() {
 		return this.filterRooms(room -> (room.getLocation() != null)
-				&& (room.getLocation().getFloor() == floor.getNumber())
-				&& room.getLocation().getBuildingName().equalsIgnoreCase(floor.getName())
-				&& (! room.getLocation().isProfessionalOnly() || this.loggedIn));
+				&& (room.getLocation().getFloor() == this.floor.getNumber())
+				&& room.getLocation().getBuildingName().equalsIgnoreCase(this.floor.getName())
+				&& (! room.getLocation().isRestricted() || this.loggedIn));
+	}
+
+	/**
+	 * Get all rooms accessible by the current user
+	 *
+	 * @note Only this and getRoomsOnFloor natively filter by permissions
+	 */
+	public Set<Room> getUserRooms() {
+		return this.filterRooms(room -> (room.getLocation() != null)
+				&& (!room.getLocation().isRestricted()
+				    || this.isLoggedIn()));
 	}
 
 	/**
 	 * Gets all nodes in this directory that match the given predicate
 	 */
-	public Set<Node> filterNodes(Predicate<Node> predicate) { //TODO Add permissions
+	public Set<Node> filterNodes(Predicate<Node> predicate) {
 		return this.nodes.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
 	/**
 	 * Gets all rooms in this directory that match the given predicate
 	 */
-	public Set<Room> filterRooms(Predicate<Room> predicate) { //TODO Add permissions
+	public Set<Room> filterRooms(Predicate<Room> predicate) {
 		return this.rooms.stream().filter(predicate)
 				.collect(Collectors.toCollection(() -> new TreeSet<>(Directory.roomComparator)));
 		// Collect the filtered rooms into a TreeSet with roomComparator as the ordering function
@@ -297,11 +322,11 @@ public class Directory
 	 */
 	public void connectOrDisconnectNodes(Node n1, Node n2) {
 		n1.connectOrDisconnect(n2);
-	} //TODO Add permissions
+	}
 
 	public void connectNodes(Node n1, Node n2) {
 		n1.connect(n2);
-	} //TODO Add permissions
+	}
 
 	public void updateRoom(Room room, String name, String shortName, String description) {
 		room.setName(name);
@@ -319,22 +344,22 @@ public class Directory
 	 *
 	 * @param floor the floor we want to switch to
 	 */
-	public Image switchFloors(FloorImage floor) { //TODO Add permissions
+	public Image switchFloors(FloorImage floor) {
 		this.floor = floor;
 		return this.floor.display();
 	}
 
 	public FloorImage getFloor() {
 		return this.floor;
-	} //TODO Add permissions
+	}
 
 	public int getFloorNum() {
 		return this.floor.getNumber();
-	} //TODO Add permissions
+	}
 
 	public String getFloorName() {
 		return this.floor.getName();
-	} //TODO Add permissions
+	}
 
 	public void unsetRoomLocation(Room room) {
 		Node n = room.getLocation();
@@ -359,6 +384,63 @@ public class Directory
 		room.removeProfessional(professional);
 	}
 
+	public void addNewElevatorUp(Node node) {
+		if (node == null) return;
+
+		this.addNewElevatorUp(node, this.floor.getNumber()+1);
+	}
+
+	private void addNewElevatorUp(Node node, int floorNum) {
+		if (node == null) return;
+
+		Set<Node> neighbors = node.getNeighbors();
+		neighbors.removeIf(n -> n.getFloor() != floorNum);
+		if (! neighbors.isEmpty()) {
+			neighbors.forEach(n -> this.addNewElevatorUp(n, floorNum+1));
+		} else {
+			if (node.getRoom() == null) {
+				this.addNewRoomToNode(node, "", "", "Elevator to floor above");
+			}
+			node.getRoom().setType(RoomType.ELEVATOR);
+
+			FloorImage targetFloor = FloorProxy.getFloor(this.getFloorName(), floorNum);
+			if (targetFloor != null) {
+				Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
+						"", "Elevator to floor below");
+				this.connectNodes(node, n);
+			}
+		}
+	}
+
+	public void addNewElevatorDown(Node node) {
+		if (node == null) return;
+
+		this.addNewElevatorDown(node, this.floor.getNumber()-1);
+	}
+
+	private void addNewElevatorDown(Node node, int floorNum) {
+		if (node == null) return;
+
+		Set<Node> neighbors = node.getNeighbors();
+		neighbors.removeIf(n -> n.getFloor() != floorNum);
+		if (! neighbors.isEmpty()) {
+			neighbors.forEach(n -> this.addNewElevatorUp(n, floorNum-1));
+		} else {
+			if (node.getRoom() == null) {
+				this.addNewRoomToNode(node, "", "", "Elevator to floor below");
+			}
+			node.getRoom().setType(RoomType.ELEVATOR);
+
+			FloorImage targetFloor = FloorProxy.getFloor(this.getFloorName(), floorNum);
+			if (targetFloor != null) {
+				Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
+						"", "Elevator to floor above");
+				this.connectNodes(node, n);
+				System.out.println("elevator down");
+			}
+		}
+	}
+
 	/* Program logic functions */
 
 	/**
@@ -370,7 +452,7 @@ public class Directory
 	public Set<Node> getNodeNeighbors(Node node) {
 		Set<Node> neighbors = node.getNeighbors();
 		if (! this.loggedIn) {
-			neighbors.removeIf(Node::isProfessionalOnly);
+			neighbors.removeIf(Node::isRestricted);
 		}
 		return neighbors;
 	}
@@ -388,7 +470,7 @@ public class Directory
 	 *
 	 * @return Whether all rooms are connected
 	 */
-	public boolean roomsAreConnected() { //TODO Add permissions
+	public boolean roomsAreConnected() {
 		// targets = all rooms with nodes
 		Set<Node> targets = this.rooms.stream()
 				.filter(room -> room.getLocation() != null)

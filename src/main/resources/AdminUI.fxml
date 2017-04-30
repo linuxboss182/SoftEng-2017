@@ -14,7 +14,6 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -56,7 +55,7 @@
             <children>
                 <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="2">
                     <tabs>
-                        <Tab text="Room Editor">
+                        <Tab text="Room">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
@@ -114,7 +113,7 @@
                                 </AnchorPane>
                             </content>
                         </Tab>
-                        <Tab text="Professional Editor">
+                        <Tab text="Professional">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
@@ -131,10 +130,11 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints />
                                             </rowConstraints>
                                             <children>
-                                                <JFXButton fx:id="addProBtn" buttonType="RAISED" onMouseClicked="#addProfToRoom" style="-fx-background-color: #5087b4;" text="Add Professional to Room" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <JFXButton fx:id="deleteProBtn" buttonType="RAISED" onMouseClicked="#delProfFromRoom" style="-fx-background-color: #5087b4;" text="Delete Professional from Room" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <JFXButton fx:id="addProBtn" buttonType="RAISED" onMouseClicked="#addProfToRoom" style="-fx-background-color: #5087b4;" text="Add to Room" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <JFXButton fx:id="deleteProBtn" buttonType="RAISED" onMouseClicked="#delProfFromRoom" style="-fx-background-color: #5087b4;" text="Delete from Room" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                 <JFXButton fx:id="deleteProfBtn" buttonType="RAISED" onMouseClicked="#deleteProfBtnClicked" style="-fx-background-color: #5087b4;" text="Delete Professional" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                                 <JFXButton fx:id="addCustomProBtn" buttonType="RAISED" onMouseClicked="#addCustomProBtnPressed" style="-fx-background-color: #5087b4;" text="Add Professional" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                                 <JFXButton fx:id="importBtn" buttonType="RAISED" onMouseClicked="#loadProfessionalsFile" style="-fx-background-color: #5087b4;" text="Add from File" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
@@ -171,30 +171,25 @@
                                         </Label>
                                         <JFXComboBox fx:id="algorithmComboBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
                                         <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" onMouseClicked="#selectKioskClicked" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
+                                        <JFXToggleButton fx:id="restrictedView" layoutX="128.0" layoutY="240.0" onMouseClicked="#restrictedViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="View Restricted" />
                                     </children>
                                 </AnchorPane>
                             </content>
                         </Tab>
-                        <Tab text="Permissions">
+                        <Tab text="Accounts">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <Label layoutX="147.0" layoutY="37.0" text="Restricted:">
-                                            <font>
-                                                <Font size="18.0" />
-                                            </font>
-                                        </Label>
-                                        <ToggleButton fx:id="restrictedView" layoutX="147.0" layoutY="88.0" onMouseClicked="#restrictedViewBtnClicked" prefHeight="27.0" prefWidth="136.0" text="View Restricted">
-                                        </ToggleButton>
-                                        <Label layoutX="147.0" layoutY="148.0" text="Idle Time (seconds):">
-                                            <font>
-                                                <Font size="18.0" />
-                                            </font>
-                                        </Label>
-                                        <JFXTextField fx:id="timeoutField" layoutX="147" layoutY="185" prefHeight="27" prefWidth="136"/>
-
+                                        <JFXButton fx:id="modifyAccountBtn" buttonType="RAISED" layoutX="131.0" layoutY="100" onMouseClicked="#modifyAccountBtnPressed" style="-fx-background-color: #5087b4;" text="Modify Accounts" textFill="WHITE" />
                                     </children>
+                                    <Label layoutX="120.0" layoutY="148.0" text="Idle Time (seconds):">
+                                        <font>
+                                            <Font size="18.0" />
+                                        </font>
+                                    </Label>
+                                    <JFXTextField fx:id="timeoutField" layoutX="131" layoutY="185" prefHeight="27" prefWidth="136"/>
                                 </AnchorPane>
+
                             </content>
                         </Tab>
                     </tabs>

@@ -1,10 +1,10 @@
 package controllers.user;
 
-import com.jfoenix.controls.JFXButton;
-import controllers.icons.IconManager;
+import com.jfoenix.controls.*;
 import entities.FloorProxy;
-import controllers.shared.MapDisplayController;
 
+import entities.Node;
+import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -12,61 +12,73 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
-import java.awt.*;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
-import java.text.Normalizer;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.*;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import entities.Room;
 import javafx.stage.Stage;
 import main.ApplicationController;
+import main.TimeoutTimer;
+import main.algorithms.PathNotFoundException;
+import main.algorithms.Pathfinder;
 
-import javax.xml.stream.*;
 
 
 public class UserMasterController
-		extends MapDisplayController
+		extends DrawerController
 		implements Initializable
 {
-	@FXML private JFXButton logAsAdmin;
-	@FXML private ListView<Room> directoryView;
+	@FXML private ImageView logAsAdmin;
+	@FXML private JFXListView<Room> roomSearchResults;
+	@FXML private JFXListView<Room> profSearchResults;
+	@FXML private JFXListView<Room> commonServicesView;
 	@FXML private Button getDirectionsBtn;
 	@FXML private Button changeStartBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextField searchBar;
+	@FXML protected JFXTextField destinationField;
+	@FXML public ImageView destImageView;
+	@FXML protected JFXTextField startField;
+	@FXML public ImageView startImageView;
 	@FXML private ComboBox<FloorProxy> floorComboBox;
 	@FXML private BorderPane parentBorderPane;
-	@FXML private SplitPane mapSplitPane;
 	@FXML private GridPane destGridPane;
-	@FXML private Button aboutBtn;
+	@FXML private ImageView aboutBtn;
 	@FXML private ImageView logoImageView;
+	@FXML private JFXToolbar topToolBar;
+	@FXML private BorderPane floatingBorderPane;
+	@FXML private JFXToggleButton professionalSearchToggleBtn;
+	@FXML private JFXButton helpBtn;
 
-	private double clickedX;
-	private double clickedY;
-	protected Room startRoom;
-	protected Room endRoom;
+	private Room startRoom;
+	private Room endRoom;
 
-	IconManager iconManager;
+	private boolean startSelected = true;
+	private boolean endSelected = false;
 
-	private Timer timer = new Timer();
+	@FXML private HBox startHBox;
+	@FXML private HBox destHBox;
+	@FXML private HBox goHBox;
+	@FXML private HBox bottomHBox;
+
+	private TimeoutTimer timer;
 
 	/**
 	 * Get the scene this is working on
@@ -83,18 +95,22 @@ public class UserMasterController
 
 	/**
 	 * Method used to initialize superclasses
-	 *
-	 * Not technically related to Initializable::initialize, but used for the same purpose
+	 * <p>
+	 * Not technically related to Initializable::initialize, but used for the same
+	 * purpose
 	 */
 	public void initialize() {
-		mapScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		mapScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		super.initialize();
+
+		//Set IDs for CSS
+		setStyleIDs();
 
 		this.directory = ApplicationController.getDirectory();
 		iconController = ApplicationController.getIconController();
-		if (startRoom == null) startRoom = directory.getKiosk();
+		if (startRoom == null) {
+			startRoom = directory.getKiosk();
+		}
 
-		this.iconManager = new IconManager();
 		initializeIcons();
 
 		this.changeFloor(this.directory.getFloor());
@@ -111,26 +127,58 @@ public class UserMasterController
 
 		this.displayRooms();
 
-		this.populateListView();
-
 		setScrollZoom();
-
-		// TODO: See if there's a way to include this in the OnMouseDragged listener
-
-		setMouseMapListeners();
 
 		// TODO: Use ctrl+plus/minus for zooming
 		setHotkeys();
+		addSearchFieldListeners();
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater(this::initWindowResizeListener);
-//		Platform.runLater( () -> this.fitMapSize());
-		// Enable search; if this becomes more than one line, make it a function
-		this.searchBar.textProperty().addListener((ignored, ignoredOld, contents) -> this.filterRoomsByName(contents));
+		Platform.runLater(() -> {
+			initWindowResizeListener();
+			resizeDrawerListener(drawerParentPane.getHeight());
 
-		this.resetTimer();
+		});
+
+		// Enable search; if this becomes more than one line, make it a function
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
+
+
+		logAsAdmin.setImage(new Image("/lock.png"));
+		startImageView.setImage(new Image("/aPin.png"));
+		destImageView.setImage(new Image("/bPin.png"));
+		aboutBtn.setImage(new Image("/about.png"));
+
+		resizeDrawerListener(677.0);
+
+		mainDrawer.open();
+
+		//Enable panning again
+		floatingBorderPane.setPickOnBounds(false);
+
+		this.initFocusTraversables();
+
+		timer.resetTimer(getTimerTask());
 		initGlobalFilter();
 	}
+
+	private void resizeDrawerListener(Double newSceneHeight) {
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
+		roomSearchResults.setPrefHeight((double)newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	}
+
+	private void setStyleIDs() {
+		startHBox.getStyleClass().add("hbox");
+		destHBox.getStyleClass().add("hbox");
+		goHBox.getStyleClass().add("hbox-go");
+		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
+		getDirectionsBtn.getStyleClass().add("jfx-button");
+		topToolBar.getStyleClass().add("tool-bar");
+		drawerParentPane.getStyleClass().add("drawer");
+		helpBtn.getStyleClass().add("blue-button");
+	}
+
 
 	private void initializeIcons() {
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
@@ -140,48 +188,19 @@ public class UserMasterController
 		iconManager.getIcons(directory.getRooms());
 	}
 
-	private void setMouseMapListeners() {
-		contentAnchor.setOnMousePressed(event -> {
-			clickedX = event.getX();
-			clickedY = event.getY();
-		});
-
-		contentAnchor.setOnMouseDragged(event -> {
-			// Limits the dragging for x and y coordinates. (panning I mean)
-			if (event.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && event.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
-				contentAnchor.setTranslateX(contentAnchor.getTranslateX() + event.getX() - clickedX);
-			}
-			if(event.getSceneY() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinY() && event.getSceneY() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxY()) {
-				contentAnchor.setTranslateY(contentAnchor.getTranslateY() + event.getY() - clickedY);
-			}
-			event.consume();
-		});
-	}
-
 	/**
 	 * Filter the room list for the search bar
 	 *
 	 * @param searchString The new string in the search bar
 	 */
-	public void filterRoomsByName(String searchString) {
-		if((this.searchBar == null) || (searchString == null) || (searchString.length() == 0)) {
+	private void filterRoomsByName(String searchString) {
+		if((searchString == null) || (searchString.length() == 0)) {
 			this.populateListView();
 		} else {
-			// The Collator allows case-insensitie comparison
-			Collator coll = Collator.getInstance();
-			coll.setStrength(Collator.PRIMARY);
-			// coll.setDecomposition(Collator.FULL_DECOMPOSITION); <- done by Normalizer
-
-			// Normalize accents, remove leading spaces, remove duplicate spaces elsewhere
-			String normed = Normalizer.normalize(searchString, Normalizer.Form.NFD).toLowerCase()
-					.replaceAll("^\\s*", "").replaceAll("\\s+", " ");
-
-			Set<Room> roomSet = directory.filterRooms(room ->
-					(room.getLocation() != null) && // false if room has no location
-					Normalizer.normalize(room.getName(), Normalizer.Form.NFD).toLowerCase()
-					          .contains(normed)); // check with unicode normalization
-
-			this.directoryView.setItems(FXCollections.observableArrayList(roomSet));
+			String search = searchString.toLowerCase();
+			Set<Room> rooms = directory.getUserRooms();
+			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
+			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		}
 	}
 
@@ -190,7 +209,7 @@ public class UserMasterController
 	 * Initialize the floor's choice box with 1-7 (the floors)
 	 * Ideally this shouldn't be hard coded
 	 */
-	public void initfloorComboBox() {
+	private void initfloorComboBox() {
 		this.floorComboBox.setItems(FXCollections.observableArrayList(FloorProxy.getFloors()));
 		this.floorComboBox.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, ignoredOld, choice) -> this.changeFloor(choice));
@@ -223,29 +242,32 @@ public class UserMasterController
 	/**
 	 * Display all rooms on the current floor of the current building
 	 */
-	public void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor(directory.getFloor())));
+	private void displayRooms() {
+		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
 	}
 
 	/**
 	 * Populates the list of rooms
 	 */
-	public void populateListView() {
-		this.directoryView.setItems(this.listProperty);
-		this.listProperty.set(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
+	private void populateListView() {
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
 
-		this.directoryView.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(directoryView.getSelectionModel().getSelectedItem()));
+		roomSearchResults.getSelectionModel().clearSelection();
+
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
 	}
+
+
 
 	/**
 	 * Enable or disable the "get directions" and "set starting location" buttons
-	 *
+	 * <p>
 	 * If both start and end locations are set, enable the "get directions" button
-	 *
+	 * <p>
 	 * If The end room is set, enable the "set starting location" button
 	 */
-	protected void enableOrDisableNavigationButtons() {
+	private void enableOrDisableNavigationButtons() {
 		if (this.getDirectionsBtn != null) {
 			if (endRoom == null || startRoom == null) {
 				this.getDirectionsBtn.setDisable(true);
@@ -253,16 +275,14 @@ public class UserMasterController
 				this.getDirectionsBtn.setDisable(false);
 			}
 		}
-//		if (this.changeStartBtn != null) {
-//			this.changeStartBtn.setDisable((endRoom != null) ? false : true);
-//		}
 	}
 
 
 
 
 	@FXML
-	public void getDirectionsClicked() throws IOException, InvocationTargetException {
+	public void getDirectionsClicked()
+			throws IOException, InvocationTargetException {
 		// TODO: Find path before switching scene, so the "no path" alert returns to destination choice
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
@@ -284,76 +304,89 @@ public class UserMasterController
 	/**
 	 * Function called to select a room
 	 */
-	protected void selectRoomAction(Room room) {
-		if (this.changeStartBtn.isDisabled()) {
+	private void selectRoomAction(Room room) {
+		if (room == null) return;
+		if (this.startSelected) {
 			this.selectStartRoom(room);
-			this.changeStartBtn.setDisable(false);
 		} else {
 			this.selectEndRoom(room);
 		}
 	}
 
-	@FXML
-	public void changeStartClicked() throws IOException, InvocationTargetException {
-		this.changeStartBtn.setDisable(true);
-	}
-
-	protected void selectStartRoom(Room r) {
-		if(r == null) return;
-		startRoom = r;
+	private void selectStartRoom(Room r) {
+		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
-//		this.enableDirectionsBtn();
+
 		iconController.selectStartRoom(r);
+		startField.setText(r.getName());
 		this.displayRooms();
 	}
 
-	protected void selectEndRoom(Room r) {
-		if(r == null) return;
-		endRoom = r;
+	private void selectEndRoom(Room r) {
+		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
 //		this.enableDirectionsBtn();
 //		this.enableChangeStartBtn();
 		iconController.selectEndRoom(r);
+		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
 
+	private void addSearchFieldListeners() {
+		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = true;
+				this.endSelected = false;
+			}
+		});
+
+		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
+			if (nowFocused) {
+				populateListView();
+				this.startSelected = false;
+				this.endSelected = true;
+			}
+		});
+	}
+
+
 	@FXML
-	public void aboutBtnClicked () throws IOException {
+	public void aboutBtnClicked()
+			throws IOException {
 		UserAboutPage aboutPageController = new UserAboutPage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/aboutPage.fxml"));
 		Scene addAboutScene = new Scene(loader.load());
 		Stage addAboutStage = new Stage();
+		addAboutStage.setTitle("Faulkner Hospital Navigator About Page");
+		addAboutStage.getIcons().add(new Image("bwhIcon.png"));
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
 	}
 
-	private void resetTimer() {
-		if(!this.directory.isLoggedIn()) return;
-		try{
-			timer.cancel();
-		} catch(Exception e) {}
-
-		try{
-			timer = new Timer();
-			timer.schedule(getTimerTask(), directory.getTimeout());
-		} catch(Exception e) {}
+	@FXML
+	private void helpBtnClicked()
+			throws IOException {
+		UserHelpController helpController = new UserHelpController();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
+		Scene userHelpScene = new Scene(loader.load());
+		Stage userHelpStage = new Stage();
+		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
+		userHelpStage.setScene(userHelpScene);
+		userHelpStage.showAndWait();
 	}
 
-	private TimerTask getTimerTask() {
-		return new TimerTask()
-		{
-			public void run() {
-				timeout();
-			}
-		};
-	}
 
-	private void timeout() {
-		this.setState(this.directory.getCaretaker().getState(this.directory.getCaretaker().getStateList().size()-1));
-	}
 
+
+
+//	private void timeout() {
+//		this.setState(this.directory.getCaretaker().getState());
+//	}
+//
 	public UserState getState() {
 		return new UserState(this.getScene().getRoot());
 	}
@@ -361,24 +394,70 @@ public class UserMasterController
 	public void setState(UserState state) {
 		this.getScene().setRoot(state.getRoot());
 		this.directory.logOut();
-		this.resetTimer();
 	}
 
 	/**
 	 * Initializes the global filter that will reset the timer whenever an action is performed.
 	 */
-	private void initGlobalFilter() {
-		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				this.resetTimer();
+
+
+	@FXML
+	public void findBathroom()
+			throws IOException, InvocationTargetException, PathNotFoundException {
+		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
+		bathrooms.removeIf(room -> room.getType() != RoomType.BATHROOM);
+
+		int prevCost = 0;
+		Room bathroom = null;
+		for(Room r: bathrooms){
+			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
+			if(prevCost == 0) {
+				prevCost = nodes.size();
+				bathroom = r;
 			}
-		});
-		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("Resetting timer");
-				this.resetTimer();
+			if(nodes.size() < prevCost){
+				prevCost = nodes.size();
+				bathroom = r;
 			}
-		});
+			System.out.println(r.getName());
+		}
+		selectEndRoom(bathroom);
+		this.getDirectionsClicked();
+	}
+
+
+	@FXML
+	public void startFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			this.destinationField.requestFocus();
+		}
+	}
+
+	@FXML
+	public void destinationFieldKeyPressed(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			try {
+				if(this.getDirectionsBtn.isDisabled()) {
+					this.startField.requestFocus();
+				} else {
+					this.getDirectionsClicked();
+				}
+			} catch (IOException e1) {
+//				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+//				e1.printStackTrace();
+			}
+		}
+	}
+
+	private void initFocusTraversables() {
+		this.floorComboBox.setFocusTraversable(false);
+		this.getDirectionsBtn.setFocusTraversable(false);
+		this.aboutBtn.setFocusTraversable(false);
+		this.helpBtn.setFocusTraversable(false);
+		this.zoomSlider.setFocusTraversable(false);
 	}
 }
+
+
+
