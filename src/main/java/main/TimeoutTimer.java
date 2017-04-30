@@ -1,6 +1,7 @@
 package main;
 
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import controllers.shared.MapDisplayController;
 import controllers.user.UserState;
 import entities.Directory;
@@ -10,8 +11,12 @@ import java.util.TimerTask;
 
 public final class TimeoutTimer
 {
+	private static class Singleton
+	{
+		static final TimeoutTimer instance = new TimeoutTimer();
+	}
+
 	private Directory directory  = ApplicationController.getDirectory();
-	private static TimeoutTimer timeoutTimer;
 	private Timer timer;
 
 	private TimeoutTimer(){
@@ -49,14 +54,11 @@ public final class TimeoutTimer
 		}
 	}
 
-	public Timer getTimer(){
+	public Timer getTimer() {
 		return this.timer;
 	}
 
 	public static TimeoutTimer getTimeoutTimer() {
-		if(timeoutTimer == null) {
-			timeoutTimer = new TimeoutTimer();
-		}
-		return timeoutTimer;
+		return Singleton.instance;
 	}
 }
