@@ -70,7 +70,7 @@ public class IconController
 			else if (node.getRoom() != null) NODE.ROOM.applyTo(node.getShape());
 		}
 
-		if (directory.getKiosk() == node.getRoom()) {
+		if ((directory.getKiosk() != null) && (directory.getKiosk() == node.getRoom())) {
 			NODE.KIOSK.applyTo(node.getShape());
 		}
 	}
