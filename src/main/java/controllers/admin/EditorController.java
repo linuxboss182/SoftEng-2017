@@ -73,7 +73,7 @@ public class EditorController
 	@FXML private TableColumn<Professional, String> roomCol;
 	@FXML private TableColumn<Professional, String> profCol;
 	@FXML private Text roomName;
-	@FXML private Text yPos;
+	@FXML private Label yPos;
 	@FXML private Label xPos;
 	@FXML private ComboBox<Algorithm> algorithmComboBox;
 	@FXML private Button helpBtn;
