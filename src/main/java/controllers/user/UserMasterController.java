@@ -312,7 +312,7 @@ public class UserMasterController
 			changeFloor(directory.getFloor());
 			logAsAdmin.setImage(new Image("/lock.png"));
 		}else{
-			this.timer.cancelTimer();
+//			this.timer.cancelTimer();
 			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
 			this.getScene().setRoot(loginPrompt);
 		}
@@ -381,7 +381,7 @@ public class UserMasterController
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
-		this.timer.cancelTimer();
+//		this.timer.cancelTimer();
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 			this.getScene().setRoot(pane);

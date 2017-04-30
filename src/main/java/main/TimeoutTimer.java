@@ -1,7 +1,5 @@
 package main;
 
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import controllers.shared.MapDisplayController;
 import controllers.user.UserState;
 import entities.Directory;
@@ -16,7 +14,7 @@ public final class TimeoutTimer
 		static final TimeoutTimer instance = new TimeoutTimer();
 	}
 
-	private Directory directory  = ApplicationController.getDirectory();
+	private Directory directory = ApplicationController.getDirectory();
 	private Timer timer;
 
 	private TimeoutTimer(){
@@ -43,8 +41,7 @@ public final class TimeoutTimer
 		try{
 			this.timer.cancel();
 			this.timer.purge();
-			this.resetTimer(new TimerTask()
-			{
+			this.resetTimer(new TimerTask() {
 				public void run() {
 
 				}
