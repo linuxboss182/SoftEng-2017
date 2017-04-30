@@ -132,6 +132,8 @@ public class UserMasterController
 			resizeDrawerListener(drawerParentPane.getHeight());
 		});
 
+		Platform.runLater(this::fitMapSize);
+
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
