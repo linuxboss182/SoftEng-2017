@@ -35,10 +35,11 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 
 import main.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +58,7 @@ public class UserMasterController
 	@FXML private JFXTabPane destinationTypeTabs;
 	@FXML private JFXListView<Room> roomSearchResults;
 	@FXML private JFXListView<Professional> profSearchResults;
-	@FXML private JFXListView<RoomType> commonServicesView;
+	@FXML private JFXListView<RoomType> servicesList;
 	@FXML private Tab roomTab;
 	@FXML private Tab profTab;
 	@FXML private Tab servicesTab;
@@ -77,7 +78,7 @@ public class UserMasterController
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private JFXButton helpBtn;
-	@FXML private JFXButton findBathroomBtn;
+
 
 	private Room startRoom;
 	private Room endRoom;
@@ -149,6 +150,7 @@ public class UserMasterController
 
 		initFocusTraversables();
 
+
 		this.displayRooms();
 	}
 
@@ -161,6 +163,7 @@ public class UserMasterController
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
+
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -283,19 +286,17 @@ public class UserMasterController
 					}
 				}
 		);
+			this.servicesList.getSelectionModel().selectedItemProperty().addListener(
+					(ignored, oldValue, selection) -> {
+						try {
+							findService(selection);
+						} catch (IOException | InvocationTargetException | PathNotFoundException e) {
+							e.printStackTrace();
+						}
+					}
+			);
 
-		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
-			try {
-				this.findService(RoomType.BATHROOM);
-			} catch (IOException | PathNotFoundException | InvocationTargetException | NullPointerException e) {
-				Alert alert = new Alert(Alert.AlertType.INFORMATION);
-				alert.setTitle("No Services Found");
-				alert.setHeaderText(null);
-				alert.setContentText("None of the services you requested are present on this floor. \n" +
-						"Please change your selection and try again.");
-				alert.showAndWait();
-			}
-		});
+
 	}
 
 	@FXML
@@ -344,6 +345,18 @@ public class UserMasterController
 	private void resetProfessionalSearchResults() {
 		this.profSearchResults.setItems(FXCollections.observableArrayList(directory.getProfessionals()));
 		this.profSearchResults.getSelectionModel().clearSelection();
+	}
+
+	private void setServicesList() {
+		Set<Room> roomList = directory.getRooms();
+		HashSet<RoomType> servicesAvailable = new HashSet<>();
+		for (Room room: roomList){
+			RoomType type = room.getType();
+			if (!servicesAvailable.contains(type) && !type.equals(RoomType.DEFAULT) && !type.equals(RoomType.NONE) && !type.equals(RoomType.KIOSK) && !type.equals(RoomType.HALLWAY)){
+				servicesAvailable.add(type);
+			}
+		}
+		this.servicesList.setItems(FXCollections.observableArrayList(servicesAvailable));
 	}
 
 
