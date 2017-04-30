@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
 
+import static main.TimeoutTimer.getTimeoutTimer;
+
 public class ApplicationController extends Application
 {
 
@@ -50,8 +52,6 @@ public class ApplicationController extends Application
 		ApplicationController.iconController = new IconController(ApplicationController.directory);
 
 		Application.launch(args);
-
-		DatabaseWrapper.getInstance().close();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
@@ -66,7 +66,13 @@ public class ApplicationController extends Application
 		primaryStage.setMinHeight(722);
 		primaryStage.setScene(user);
 		primaryStage.show();
+	}
 
+	@Override
+	public void stop()throws Exception{
+		DatabaseWrapper.getInstance().close();
+		getTimeoutTimer().getTimer().purge();
+		getTimeoutTimer().getTimer().cancel();
 	}
 }
 
