@@ -26,8 +26,8 @@ public class Directory
 	private long timeout = 50;
 	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
-
 	private FloorImage floor;
+	private Map<FloorImage, Viewport> defaultViews;
 
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
@@ -54,6 +54,17 @@ public class Directory
 	/* Methods */
 
 	/* Getters */
+
+	public Viewport getDefaultView(){
+		return defaultViews.get(this.floor);
+	}
+
+	public void setDefaultView(double minX, double maxX, double minY, double maxY){
+		defaultViews.remove(this.floor);
+		defaultViews.put(this.floor, new Viewport( minX, maxX, minY, maxY));
+	}
+
+
 	public boolean isProfessional() {
 		return loggedIn;
 	}
@@ -536,5 +547,19 @@ public class Directory
 		return this.caretaker;
 	}
 
+	public static class Viewport
+	{
+		public double minX;
+		public double maxX;
+		public double minY;
+		public double maxY;
+
+		public Viewport(double minX, double maxX, double minY, double maxY){
+			this.minX = minX;
+			this.maxX = maxX;
+			this.minY = minY;
+			this.maxY = maxY;
+		}
+	}
 }
 

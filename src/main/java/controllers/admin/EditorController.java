@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -389,6 +390,12 @@ public class EditorController
 		});
 
 
+	}
+
+	@FXML
+	private void setDefaultViewBtnClicked(){
+		Bounds viewport = contentAnchor.localToScene(contentAnchor.getBoundsInLocal());
+		directory.setDefaultView(viewport.getMinX(), viewport.getMaxX(), viewport.getMinY(), viewport.getMaxY());
 	}
 
 	@FXML
