@@ -34,7 +34,9 @@ import java.util.Set;
 import java.text.Collator;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
 import javafx.stage.Stage;
@@ -178,19 +180,56 @@ public class UserMasterController
 		iconManager.getIcons(directory.getRooms());
 	}
 
+
 	/**
-	 * Filter the room list for the search bar
-	 *
-	 * @param searchString The new string in the search bar
+	 * Filter the active search list, if any
+	 */
+	private void filterRoomsOrProfessionals(String searchString) {
+		javafx.scene.Node tabContent = destinationTypeTabs.getSelectionModel().getSelectedItem().getContent();
+		if (tabContent == roomSearchResults) {
+			filterRoomsByName(searchString);
+		} else if (tabContent == profSearchResults) {
+			filterProfessionalsByName(searchString);
+		}
+	}
+
+	/**
+	 * Filter the room list to show only rooms matching the given string
 	 */
 	private void filterRoomsByName(String searchString) {
-		if((searchString == null) || (searchString.length() == 0)) {
+		if ((searchString == null) || (searchString.length() == 0)) {
 			this.resetRoomSearchResults();
 		} else {
 			String search = searchString.toLowerCase();
 			Set<Room> rooms = directory.getUserRooms();
 			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
 			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+		}
+	}
+
+	/**
+	 * Filter the professional list to show only rooms matching the given string
+	 */
+	private void filterProfessionalsByName(String searchString) {
+		if ((searchString == null) || (searchString.length() == 0)) {
+			this.resetProfessionalSearchResults();
+		} else {
+			String search = searchString.toLowerCase();
+			search = StringUtils.removeStart(search, "dr. ");
+			search = StringUtils.removeStart(search, "doctor ");
+			String finalSearch = search;
+
+			Set<Professional> surnameMatches = directory.getProfessionals();
+			surnameMatches.removeIf(p -> ! p.getSurname().toLowerCase().contains(finalSearch));
+
+			Set<Professional> fullNameMatches = directory.getProfessionals();
+			fullNameMatches.removeIf(p -> ! p.getFullName().toLowerCase().contains(finalSearch));
+			fullNameMatches.removeAll(surnameMatches);
+
+			List<Professional> results = new LinkedList<>(surnameMatches);
+			results.addAll(fullNameMatches);
+
+			this.profSearchResults.setItems(FXCollections.observableList(results));
 		}
 	}
 
@@ -210,6 +249,14 @@ public class UserMasterController
 
 	private void initDestinationTypeTabs() {
 		resetRoomSearchResults();
+		resetProfessionalSearchResults();
+
+		// Set the selection actions for the search results
+		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
+		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, newValue) -> {}
+		);
 
 		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
 			try {
@@ -245,15 +292,19 @@ public class UserMasterController
 	}
 
 	/**
-	 * Resets the list of rooms
+	 * Reset the list of rooms
 	 */
 	private void resetRoomSearchResults() {
 		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
+		this.roomSearchResults.getSelectionModel().clearSelection();
+	}
 
-		roomSearchResults.getSelectionModel().clearSelection();
-
-		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
-				(ignored, oldValue, newValue) -> this.selectRoomAction(roomSearchResults.getSelectionModel().getSelectedItem()));
+	/**
+	 * Reset the list of professionals
+	 */
+	private void resetProfessionalSearchResults() {
+		this.profSearchResults.setItems(FXCollections.observableArrayList(directory.getProfessionals()));
+		this.profSearchResults.getSelectionModel().clearSelection();
 	}
 
 
@@ -331,7 +382,7 @@ public class UserMasterController
 		destinationField.setPromptText("Choose destination");
 
 		this.destinationField.setOnKeyReleased(e -> {
-			this.filterRoomsByName(this.destinationField.getText());
+			this.filterRoomsOrProfessionals(this.destinationField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
 				//
 					if (startRoom == null) {
