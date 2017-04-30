@@ -213,8 +213,7 @@ public abstract class MapDisplayController
 	}
 
 	public void fitMapSize() {
-
-		FloorProxy.Viewport defaultView = FloorProxy.getDefaultView(directory.getFloorName(), directory.getFloorNum());
+		Directory.Viewport defaultView = directory.getDefaultView();
 
 		double potentialScaleY =
 				mapScroll.getHeight() / ( defaultView.maxY - defaultView.minY );
@@ -229,10 +228,8 @@ public abstract class MapDisplayController
 		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
 		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
 
-
 		contentAnchor.setTranslateX(defaultView.minX-offsetX/potentialScaleX);
 		contentAnchor.setTranslateY(defaultView.minY-offsetY/potentialScaleY);
-
 	}
 
 	/**
