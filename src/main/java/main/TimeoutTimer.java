@@ -1,11 +1,9 @@
 package main;
 
-import controllers.shared.MapDisplayController;
-import controllers.user.UserState;
-import entities.Directory;
-
 import java.util.Timer;
 import java.util.TimerTask;
+
+import entities.Directory;
 
 public final class TimeoutTimer
 {

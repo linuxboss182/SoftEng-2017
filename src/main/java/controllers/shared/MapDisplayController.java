@@ -276,7 +276,9 @@ public abstract class MapDisplayController
 
 	// place inside controller
 	public void setState(UserState state) {
-		parentBorderPane.getScene().setRoot(state.getRoot());
-		this.directory.logOut();
+		try {
+			parentBorderPane.getScene().setRoot(state.getRoot());
+			this.directory.logOut();
+		} catch(NullPointerException e) {}
 	}
 }

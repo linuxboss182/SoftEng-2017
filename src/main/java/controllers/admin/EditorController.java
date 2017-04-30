@@ -193,6 +193,13 @@ public class EditorController
 		timer.resetTimer(getTimerTask());
 		this.initGlobalFilter();
 		this.timeoutField.setText(this.directory.getTimeout()/1000+"");
+
+		this.timeoutField.textProperty().addListener((observable, oldValue, newValue) -> {
+			try{
+				if(this.timeoutField.getText().length() > 0)
+					this.directory.setTimeout(1000 * Integer.parseInt(this.timeoutField.getText())); // In seconds
+			} catch(NumberFormatException e) {}
+		});
 	}
 
 
@@ -434,10 +441,6 @@ public class EditorController
 
 	@FXML
 	public void confirmBtnPressed() {
-		try{
-			if(this.timeoutField.getText().length() > 0)
-				this.directory.setTimeout(1000 * Integer.parseInt(this.timeoutField.getText())); // In seconds
-		} catch(NumberFormatException e) {}
 		DatabaseWrapper.getInstance().saveDirectory(this.directory);
 	}
 
