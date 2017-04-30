@@ -1,5 +1,7 @@
 package controllers.icons;
 
+import entities.Direction;
+import entities.Node;
 import entities.Room;
 import entities.RoomType;
 import javafx.geometry.Insets;
@@ -13,10 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -36,11 +35,9 @@ import java.util.function.Function;
  */
 public class IconManager
 {
-
-	private static final double DEFAULT_LABEL_X_OFFSET = 0;
-	private static final double DEFAULT_LABEL_Y_OFFSET = 0;
-	private static final double ICON_SIZE = 0.05; //Scale factor on the icon image
-	private static final double ICON_SIZE_LARGE = 0.1; //Scale factor of icon when hovered over
+	private static final double ICON_SIZE = 0.01; //Scale factor on the icon image
+	private static final double ICON_SIZE_LARGE = 0.2; //Scale factor of icon when hovered over
+	private static final double ICON_SIZE_HUGE = 0.4;
 	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
@@ -50,12 +47,13 @@ public class IconManager
 	);
 	private static final Background LABEL_BACKGROUND = new Background(BACKGROUND_FILL);
 
-	MassMap<Room, Icon> roomIcons;
+	private MassMap<Room, Icon> roomIcons;
 	//Map<EventType<? extends Event>, Function<Room, EventHandler<? super Event>>> handlers;
 
 	/* Listener variables */
 	private BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
 	private BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
+	private BiConsumer<Room, MouseEvent> onMouseClickedOnPathSegmentEnd;
 	private boolean showFullNamesOnHover = true;
 
 	public IconManager() {
@@ -88,6 +86,18 @@ public class IconManager
 		this.onMouseDraggedOnLabelHandler = handler;
 	}
 
+
+	/**
+	 * Prepare a handler for the icons' symbols in a path
+	 *
+	 * The passed room is from an adjacent segment to the clicked room
+	 *
+	 * @param handler A function that consumes a room and a mouse event
+	 */
+	public void setOnMouseClickedOnPathSegmentEnd(BiConsumer<Room, MouseEvent> handler) {
+		this.onMouseClickedOnPathSegmentEnd = handler;
+	}
+
 	/**
 	 * Set whether icons should show full room names when the mouse hovers over the room
 	 *
@@ -118,7 +128,7 @@ public class IconManager
 	 * @return The Icon
 	 *
 	 */
-	public Icon makeIcon(Room room) {
+	public Icon makeIconInner(Room room, BiConsumer<Room, Icon> listenerAdder) {
 		RoomType type = room.getType();
 		String name = room.getDisplayName();
 		Image originalImage = type.getImage();
@@ -148,9 +158,15 @@ public class IconManager
 
 		//Create Icon and link to room
 		Icon icon = new Icon(room, image, label);
-		this.applyListeners(room, icon);
+		listenerAdder.accept(room, icon);
 		room.setIcon(icon);
 		return icon;
+	}
+	private Icon makeIcon(Room room) {
+		return this.makeIconInner(room, this::applyListeners);
+	}
+	private Icon makePathIcon(Room room) {
+		return this.makeIconInner(room, this::applyPathListeners);
 	}
 
 	/**
@@ -195,25 +211,68 @@ public class IconManager
 
 
 		if (onMouseClickedOnRoomHandler != null) {
-//			Shape symbol = icon.getSymbol();
 			ImageView image = icon.getImage();
+			BiConsumer<Room, MouseEvent> listener = onMouseClickedOnRoomHandler;
 			image.setOnMouseClicked(event -> {
-				onMouseClickedOnRoomHandler.accept(room, event);
+				listener.accept(room, event);
 			});
 		}
 
 		if (onMouseDraggedOnLabelHandler != null) {
 			Label label = icon.getLabel();
+			BiConsumer<Room, MouseEvent> listener = onMouseDraggedOnLabelHandler;
 			label.setOnMouseDragged(event -> {
-				onMouseDraggedOnLabelHandler.accept(room, event);
+				listener.accept(room, event);
 			});
 		}
 	}
 
 
+	public Set<Icon> getDirectionsIcons(List<Direction> directions) {
+		return Collections.emptySet();
+	}
+
+	public Set<Icon> getLinkedPathIcons(List<List<Node>> path) {
+		if (true) throw new RuntimeException("Do not use IconManager::getLinkedPathIcons!");
+
+		path = new LinkedList<>(path);
+		List<Node> firstSegment = path.get(0);
+		List<List<Node>> pathMost = path.subList(1, path.size()-1);
+		List<Node> lastSegment = path.get(path.size()-1);
+
+		if (firstSegment.size() == 1) {}
+
+		List<Node> iconNodes = new LinkedList<>();
+
+		for (List<Node> segment : path) {
+			if (segment.size() <= 1) continue;
+
+			iconNodes.add(segment.get(0));
+			iconNodes.add(segment.get(segment.size() - 1));
+		}
+
+		for (int i = 1; i < (path.size() - 1); ++i) {
+			List<Node> segment = path.get(i);
+			Node first = segment.get(0);
+			Node last = segment.get(segment.size()-1);
+
+			first.applyToRoom(this::makePathIcon);
+		}
+		return Collections.emptySet();
+	}
+
+	private void applyPathListeners(Room target, Icon icon) {
+		if (onMouseClickedOnPathSegmentEnd != null) {
+			BiConsumer<Room, MouseEvent> listener = onMouseClickedOnPathSegmentEnd;
+			icon.setOnMouseReleased(event -> {
+				listener.accept(target, event);
+			});
+		}
+	}
+
 	private class MassMap<K, V> extends HashMap<K, V>
 	{
-		public MassMap() {
+		MassMap() {
 			super();
 		}
 		/**

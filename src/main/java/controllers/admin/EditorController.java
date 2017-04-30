@@ -156,11 +156,7 @@ public class EditorController
 		this.iconController.resetAllNodes();
 
 		this.iconManager = new IconManager();
-		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
-					event.consume();
-					room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
-							event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
-				});
+		initializeIcons();
 
 		//Lets us click through items
 		this.imageViewMap.setPickOnBounds(true);
@@ -189,6 +185,13 @@ public class EditorController
 		});
 	}
 
+	void initializeIcons() {
+		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
+			event.consume();
+			room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
+					event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
+		});
+	}
 
 	//check if secondary button is down before populating round panel
 	void displayContextMenu(MouseEvent e){
