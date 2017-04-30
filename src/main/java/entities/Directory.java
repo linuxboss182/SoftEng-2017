@@ -274,7 +274,7 @@ public class Directory
 	 *
 	 * A room's floor is determined by its associated node
 	 *
-	 * @note Only this function and  is one of two Directory functions that natively filter by permissions.
+	 * @note Only this function, getUserRooms, and getNodeNeighbors filter by permissions.
 	 */
 	public Set<Room> getRoomsOnFloor() {
 		return this.filterRooms(room -> (room.getLocation() != null)
@@ -286,7 +286,7 @@ public class Directory
 	/**
 	 * Get all rooms accessible by the current user
 	 *
-	 * @note Only this and getRoomsOnFloor natively filter by permissions
+	 * @note Only this function, getRoomsOnFloor and getNodeNeighbors natively filter by permissions
 	 */
 	public Set<Room> getUserRooms() {
 		return this.filterRooms(room -> (room.getLocation() != null)

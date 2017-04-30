@@ -73,7 +73,6 @@ abstract public class DrawerController
 	}
 
 	private void setUpContentAnchorListeners() {
-		System.out.println("contentAnchorListener");
 		contentAnchor.setOnMousePressed(event -> {
 			clickedX = event.getX();
 			clickedY = event.getY();
