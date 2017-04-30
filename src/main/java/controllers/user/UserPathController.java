@@ -7,10 +7,12 @@ import entities.Direction;
 import entities.FloorProxy;
 import entities.Node;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,6 +24,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -54,7 +57,6 @@ public class UserPathController
 	@FXML private JFXButton sendToPhoneBtn;
 	@FXML protected Pane linePane;
 	@FXML private Pane nodePane;
-	@FXML protected TextFlow directionsTextField; // CHANGE THIS TO A SCROLL PANE OR SOMETHING
 	@FXML private BorderPane parentBorderPane;
 	@FXML private SplitPane mapSplitPane;
 	@FXML private ImageView logoImageView;
@@ -63,7 +65,7 @@ public class UserPathController
 	@FXML private Label startLbl;
 	@FXML private HBox directionsLblHBox;
 	@FXML private ImageView startImageView;
-	@FXML private JFXListView<?> directionsListView;
+	@FXML private JFXListView<Direction> directionsListView;
 	@FXML private HBox destLblHBox;
 	@FXML private Label destLbl;
 	@FXML private Label directionsLbl;
@@ -108,7 +110,7 @@ public class UserPathController
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
-		this.initializeDrawer();
+//		this.initializeDrawer();
 		floatingBorderPane.setPickOnBounds(false);
 
 		this.iconManager = new IconManager();
@@ -134,14 +136,37 @@ public class UserPathController
 
 
 		this.timer.resetTimer(this.getTimerTask());
+
+		this.setUpDirectionListView();
 	}
 
-	private void initializeDrawer() {
-//		this.mapIconDrawer.setContent(mapScroll);
-//		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
-//		this.mapIconDrawer.setOverLayVisible(false);
-//		this.mapIconDrawer.open();
+	private void setUpDirectionListView() {
+		directionsListView.setPrefHeight(300);
+		directionsListView.setMinHeight(300);
+
+		directionsListView.setCellFactory(d -> new ListCell<Direction>() {
+			private final ImageView icon = new ImageView();
+			@Override
+			public void updateItem(Direction direction, boolean empty) {
+				super.updateItem(direction, empty);
+				if(empty) {
+					setText(null);
+					setGraphic(null);
+				} else {
+					setText(direction.getTextDirection());
+					this.icon.setImage(direction.getIcon().getImage());
+					setGraphic(this.icon);
+				}
+			}
+		});
 	}
+
+//	private void initializeDrawer() {
+////		this.mapIconDrawer.setContent(mapScroll);
+////		this.mapIconDrawer.setSidePane(floorsTraveledAnchorPane);
+////		this.mapIconDrawer.setOverLayVisible(false);
+////		this.mapIconDrawer.open();
+//	}
 
 
 	public void setStyleIDs() {
@@ -157,7 +182,10 @@ public class UserPathController
 		directionsLbl.getStyleClass().add("directions-label");
 		doneBtn.getStyleClass().add("blue-button");
 		helpBtn.getStyleClass().add("blue-button");
-		directionsTextField.getStyleClass().add("black-text");
+		textDirections.setFont(Font.font("Roboto", 15));
+//		directionsTextField.getStyleClass().add("black-text");
+//		directionsTextField.setLineSpacing(5);
+//		directionsTextField.setPadding(new Insets(5));
 
 	}
 
@@ -197,16 +225,9 @@ public class UserPathController
 		if (path == null) {
 			return false;
 		}
-		this.directionsTextField.getChildren().clear();
+		this.directionsListView.getItems().clear();
 		directions = DirectionsGenerator.fromPath(path);
-		String textDirs = "";
-		for(Direction d: directions){
-			textDirs  = textDirs+d.getTextDirection()+"\n";
-		}
-
-		textDirections.setText(textDirs);
-		//Call text directions
-		this.directionsTextField.getChildren().add(textDirections);
+		this.directionsListView.setItems(FXCollections.observableList(directions));
 
 		/* Draw the buttons for each floor on a multi-floor path. */
 		// segment paths by floor and place them in a LinkedList
@@ -222,7 +243,6 @@ public class UserPathController
 		seg.add(path.get(path.size()-1));
 		pathSegments.addLast(seg);
 		paintPath(pathSegments.get(0));
-		this.directionsTextField.getChildren().add(textDirections);
 		// pathSegment now has all segments
 		drawMiniMaps(path);
 		return true;
@@ -299,8 +319,7 @@ public class UserPathController
 			// change to the new floor, and draw the path for that floor
 			this.changeFloor(FloorProxy.getFloor(floor.building, floor.number));
 			this.paintPath(path);
-			//Call text directions
-			this.directionsTextField.getChildren().add(textDirections);
+
 			if(this.bgRectangle != null) this.bgRectangle.setVisible(false);
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
@@ -378,7 +397,6 @@ public class UserPathController
 	 */
 	// TODO: Fix bug where separate paths on one floor are connected
 	public void paintPath(List<Node> directionNodes) {
-		this.directionsTextField.getChildren().clear();
 		// This can be any collection type;
 		Collection<Group> path = new HashSet<>();
 		for (int i=0; i < directionNodes.size()-1; ++i) {

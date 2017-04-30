@@ -144,16 +144,7 @@
 
                                     </children>
                                 </HBox>
-                                <ScrollPane fx:id="textDirectionsScrollPane" prefHeight="700" prefWidth="284.0" fitToHeight="true">
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="208.0">
-                                            <children>
-                                                <TextFlow fx:id="directionsTextField" prefHeight="200.0" prefWidth="200.0" />
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
-                                <JFXListView fx:id="directionsListView" />
+                                <JFXListView fx:id="directionsListView"/>
                                 <HBox prefHeight="100.0" prefWidth="200.0">
                                     <children>
                                         <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" text="DONE">
