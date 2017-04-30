@@ -24,19 +24,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import java.awt.*;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -44,8 +39,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import main.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +49,6 @@ import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 
-import javax.xml.stream.*;
 
 
 public class UserMasterController
@@ -294,8 +286,18 @@ public class UserMasterController
 				(ignored, oldValue, selection) -> {
 					Set<Room> rooms = selection.getLocations();
 					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
-					this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
-					this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					if(rooms.size() == 0){
+						//no rooms for this professional
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("No Rooms Found");
+						alert.setHeaderText(null);
+						alert.setContentText("There are no rooms available for this professional. \n" +
+								"Please change your selection and try again");
+						alert.showAndWait();
+					} else {
+						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+						this.destinationTypeTabs.getSelectionModel().select(roomTab);
+					}
 				}
 		);
 
