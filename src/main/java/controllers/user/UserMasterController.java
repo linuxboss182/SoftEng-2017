@@ -76,7 +76,6 @@ public class UserMasterController
 	@FXML private ImageView logoImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
-	@FXML private JFXToggleButton professionalSearchToggleBtn;
 	@FXML private JFXButton helpBtn;
 	@FXML private JFXButton findBathroomBtn;
 
@@ -148,10 +147,7 @@ public class UserMasterController
 		//Enable panning again
 		floatingBorderPane.setPickOnBounds(false);
 
-		this.initFocusTraversables();
-
-		initGlobalFilter();
-
+		initFocusTraversables();
 
 		this.displayRooms();
 	}
@@ -188,6 +184,7 @@ public class UserMasterController
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
+			System.out.println("event consumed");
 		});
 		iconManager.getIcons(directory.getRooms());
 	}

@@ -127,7 +127,6 @@ public class UserPathController
 
 
 		this.timer.resetTimer(this.getTimerTask());
-		this.initGlobalFilter();
 	}
 
 	private void initializeDrawer() {
