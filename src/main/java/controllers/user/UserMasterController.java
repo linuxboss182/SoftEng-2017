@@ -338,7 +338,9 @@ public class UserMasterController
 	 * Reset the list of rooms
 	 */
 	private void resetRoomSearchResults() {
-		this.roomSearchResults.setItems(FXCollections.observableArrayList(directory.filterRooms(r -> r.getLocation() != null)));
+		Set<Room> rooms = directory.getUserRooms();
+		rooms.removeIf(r -> r.getLocation() == null);
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		this.roomSearchResults.getSelectionModel().clearSelection();
 	}
 
