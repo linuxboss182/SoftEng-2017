@@ -134,8 +134,9 @@ public class UserPathController
 	}
 
 	private void setUpDirectionListView() {
-		directionsListView.setPrefHeight(500);
-		directionsListView.setMinHeight(500);
+		directionsListView.setPrefHeight(300);
+		directionsListView.setMinHeight(300);
+		
 		directionsListView.setCellFactory(d -> new ListCell<Direction>() {
 			private final ImageView icon = new ImageView();
 			@Override

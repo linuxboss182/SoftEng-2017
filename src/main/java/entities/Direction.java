@@ -8,7 +8,7 @@ public class Direction
 	private IconType icon;
 	private Node node;
 
-	public Direction(String textDirection, IconType icon){
+	public Direction(String textDirection, IconType icon, Node node){
 		this.textDirection = textDirection;
 		this.icon = icon;
 		this.node = node;
