@@ -190,6 +190,7 @@ public class EditorController
 		Platform.runLater(this::initWindowResizeListener); // Adds the window resize listener
 		timer.resetTimer(getTimerTask());
 		this.initGlobalFilter();
+		this.timeoutField.setText(this.directory.getTimeout()/1000+"");
 	}
 
 
