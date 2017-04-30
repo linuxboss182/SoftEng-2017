@@ -75,8 +75,6 @@ public class UserPathController
 	@FXML private ImageView destImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
-	@FXML private JFXDrawer mapIconDrawer;
-	@FXML protected ImageView backImageView;
 	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
@@ -130,14 +128,25 @@ public class UserPathController
 		setStyleIDs();
 
 
-		backImageView.setImage(new Image("/back.png"));
+		//backImageView.setImage(new Image("/back.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 
 
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater(() -> {
+			resizeDrawerListener(drawerParentPane.getHeight());
+		});
+
+		resizeDrawerListener(677.0);
 		this.timer.resetTimer(this.getTimerTask());
 
 		this.setUpDirectionListView();
+	}
+
+	private void resizeDrawerListener(Double newSceneHeight) {
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
+		//directionsListView.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
 	}
 
 	private void setUpDirectionListView() {
@@ -155,6 +164,8 @@ public class UserPathController
 				} else {
 					setText(direction.getTextDirection());
 					this.icon.setImage(direction.getIcon().getImage());
+					this.icon.setFitHeight(20);
+					this.icon.setFitWidth(20);
 					setGraphic(this.icon);
 				}
 			}
@@ -170,7 +181,6 @@ public class UserPathController
 
 
 	public void setStyleIDs() {
-		backHBox.getStyleClass().add("hbox");
 		startLblHBox.getStyleClass().add("hbox");
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
@@ -358,12 +368,12 @@ public class UserPathController
 		this.mapScroll.getScene().setRoot(userPath);
 	}
 
-	@FXML
-	public void backBtnClicked() throws IOException {
-		iconController.resetAllRooms();
-		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.mapScroll.getScene().setRoot(userPath);
-	}
+//	@FXML
+//	public void backBtnClicked() throws IOException {
+//		iconController.resetAllRooms();
+//		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+//		this.mapScroll.getScene().setRoot(userPath);
+//	}
 
 	@FXML
 	public void sendSMSBtnClicked(){

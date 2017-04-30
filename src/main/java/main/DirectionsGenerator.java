@@ -110,11 +110,11 @@ public class DirectionsGenerator
 					if (isRightTurn(turnAngle)) {
 						// Right Turn
 						if (rightTurns == 0) {
-							directions.add(new Direction("Take a right turn", IconType.HRIGHT, path.get(i)));
+							directions.add(new Direction("Take a right turn", IconType.RIGHT, path.get(i)));
 						} else {
 							rightTurns++;
 							directions.add(new Direction("Take the " + rightTurns
-									+ getTurnPostfix(rightTurns) + " right", IconType.HRIGHT, path.get(i)));
+									+ getTurnPostfix(rightTurns) + " right", IconType.RIGHT, path.get(i)));
 
 						}
 						// if you take a turn, then the count for turns should be reset
@@ -167,11 +167,11 @@ public class DirectionsGenerator
 					} else if (isLeftTurn(turnAngle)) {
 						// Left Turn
 						if (leftTurns == 0) {
-							directions.add(new Direction("Take a left turn", IconType.HLEFT, path.get(i)));
+							directions.add(new Direction("Take a left turn", IconType.LEFT, path.get(i)));
 						} else {
 							leftTurns++;
 							directions.add(new Direction("Take the "+ leftTurns +
-									getTurnPostfix(leftTurns) + " left", IconType.HLEFT, path.get(i)));
+									getTurnPostfix(leftTurns) + " left", IconType.LEFT, path.get(i)));
 						}
 						// if you take a turn, then the count for turns should be reset to 0
 						leftTurns = 0;
