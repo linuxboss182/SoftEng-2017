@@ -14,6 +14,7 @@ public final class TimeoutTimer
 
 	private Directory directory  = ApplicationController.getDirectory();
 	private Timer timer;
+	private TimerTask timerTask;
 
 	private TimeoutTimer(){
 		this.timer = new Timer();
@@ -21,6 +22,7 @@ public final class TimeoutTimer
 	}
 
 	public void resetTimer(TimerTask timerTask) {
+		this.timerTask = timerTask;
 		try {
 			this.timer.cancel();
 		} catch(Exception e) {
@@ -37,14 +39,15 @@ public final class TimeoutTimer
 
 	public void cancelTimer() {
 		try{
+			this.timerTask.cancel();
 			this.timer.cancel();
 			this.timer.purge();
-			this.resetTimer(new TimerTask()
-			{
-				public void run() {
-
-				}
-			});
+//			this.resetTimer(new TimerTask()
+//			{
+//				public void run() {
+//
+//				}
+//			});
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
