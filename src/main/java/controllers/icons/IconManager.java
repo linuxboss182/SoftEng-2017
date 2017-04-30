@@ -72,9 +72,9 @@ public class IconManager
 	}
 
 	public void updateListeners(Set<Room> rooms){
-		for(Room r : rooms){
-			this.applyListeners(r, r.getIcon());
-		}
+//		for(Room r : rooms){
+//			this.applyListeners(r, r.getIcon());
+//		}
 	}
 
 	/**

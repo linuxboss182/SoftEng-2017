@@ -80,8 +80,8 @@ public abstract class MapDisplayController
 		this.setZoomSliding();
 		this.zoomSlider.setValue(0);
 
-		this.initWindowResizeListener();
 		this.initGlobalFilter();
+		Platform.runLater(this::initWindowResizeListener);
 		Platform.runLater(this::fitMapSize);
 	}
 
