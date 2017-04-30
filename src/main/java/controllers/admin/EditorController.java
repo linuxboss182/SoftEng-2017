@@ -934,7 +934,9 @@ public class EditorController
 				room.setType(RoomType.KIOSK);
 				this.selectNode(n);
 				this.setRoomFields(room.getName(), room.getDisplayName(), room.getDescription());
+				Node kiosk = directory.getKiosk().getLocation();
 				directory.setKiosk(room);
+				iconController.resetSingleNode(kiosk);
 				iconController.resetSingleNode(n);
 
 				this.redisplayGraph();
@@ -1153,7 +1155,11 @@ public class EditorController
 	 */
 	@FXML
 	public void selectKioskClicked() {
-		if (selectedNodes.isSingular()) selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+		if (selectedNodes.isSingular()) {
+			Node kiosk = directory.getKiosk().getLocation();
+			selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+			iconController.resetAllNodes();
+		}
 	}
 	@FXML
 	private void helpBtnClicked() throws IOException {
