@@ -195,28 +195,28 @@ public class EditorController
 
 
 		ImageView Bathroom = new ImageView("Bathroom_U.png");
-		Bathroom.setScaleX(1);
-		Bathroom.setScaleY(1);
-		Bathroom.setX(-105);
-		Bathroom.setY(-12);
+		Bathroom.setScaleX(0.3);
+		Bathroom.setScaleY(0.3);
+		Bathroom.setX(-140);
+		Bathroom.setY(-50);
 
 		ImageView Kiosk = new ImageView("Kiosk.png");
-		Kiosk.setScaleX(1);
-		Kiosk.setScaleY(1);
-		Kiosk.setX(80);
-		Kiosk.setY(-12);
+		Kiosk.setScaleX(0.3);
+		Kiosk.setScaleY(0.3);
+		Kiosk.setX(45);
+		Kiosk.setY(-50);
 
-		ImageView ElevatorUp = new ImageView("Elevator.png"/*imageArray.get(9)*/);
-		ElevatorUp.setScaleX(1);
-		ElevatorUp.setScaleY(1);
-		ElevatorUp.setX(-12);
-		ElevatorUp.setY(-105);
+		ImageView ElevatorUp = new ImageView("Elevator.png");
+		ElevatorUp.setScaleX(0.3);
+		ElevatorUp.setScaleY(0.3);
+		ElevatorUp.setX(-45);
+		ElevatorUp.setY(-140);
 
-		ImageView ElevatorDown = new ImageView("Elevator.png"/*imageArray.get(9)*/);
-		ElevatorDown.setScaleX(1);
-		ElevatorDown.setScaleY(1);
-		ElevatorDown.setX(-12);
-		ElevatorDown.setY(80);
+		ImageView ElevatorDown = new ImageView("Elevator.png");
+		ElevatorDown.setScaleX(0.3);
+		ElevatorDown.setScaleY(0.3);
+		ElevatorDown.setX(-50);
+		ElevatorDown.setY(45);
 
 		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);

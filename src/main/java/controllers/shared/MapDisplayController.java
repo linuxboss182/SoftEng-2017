@@ -99,7 +99,7 @@ public abstract class MapDisplayController
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
-		Platform.runLater(this::fitMapSize);
+//		Platform.runLater(this::fitMapSize);
 	}
 
 
@@ -223,34 +223,26 @@ public abstract class MapDisplayController
 	 * Divides the content anchor's width and height to be based on the
 	 */
 	protected void initWindowResizeListener() {
-		this.parentBorderPane.boundsInLocalProperty().addListener((observable, oldValue,
-		                                                           newValue) -> fitMapSize());
+		this.mapScroll.boundsInLocalProperty().addListener((observable, oldValue, newValue) -> {
+			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (newValue.getMaxX() - oldValue.getMaxX())/2);
+			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (newValue.getMaxY() - oldValue.getMaxY())/2);
+
+			mapScroll.setScaleX(mapScroll.getScaleX() * newValue.getMaxX()/oldValue.getMaxX());
+			mapScroll.setScaleY(mapScroll.getScaleY() * newValue.getMaxY()/oldValue.getMaxY());
+		});
 	}
 
 	//This function resets the zoom to default and properly centers the contentAncor to the center of the map view area (mapScroll)
 	public void fitMapSize() {
-		double potentialScaleX;
-		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+		double potentialY =
+				+ mapScroll.getHeight()/2
+				- contentAnchor.getHeight()/2;
 
-		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
-
-		potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-
-		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
-			contentAnchor.setScaleX(potentialScaleX);
-			contentAnchor.setScaleY(potentialScaleX);
-			currentScale = potentialScaleX;
-		} else {
-			contentAnchor.setScaleX(potentialScaleY);
-			contentAnchor.setScaleY(potentialScaleY);
-			currentScale = potentialScaleY;
-		}
+		double potentialX =
+				+ mapScroll.getWidth()/2
+				- contentAnchor.getWidth()/2;
 
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
-
-		zoomSlider.setValue(0);
 	}
 }

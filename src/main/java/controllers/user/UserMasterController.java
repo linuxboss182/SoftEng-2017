@@ -144,6 +144,13 @@ public class UserMasterController
 			resizeDrawerListener(drawerParentPane.getHeight());
 		});
 
+		Platform.runLater(this::fitMapSize);
+
+		// Enable search; if this becomes more than one line, make it a function
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
+
+
 		logAsAdmin.setImage(new Image("/lock.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
@@ -271,7 +278,7 @@ public class UserMasterController
 
 		this.findBathroomBtn.addEventHandler(ActionEvent.ACTION, event -> {
 			try {
-				this.findBathroom();
+				this.findService(RoomType.BATHROOM);
 			} catch (IOException | PathNotFoundException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -448,26 +455,29 @@ public class UserMasterController
 		addAboutStage.showAndWait();
 	}
 
-	public void findBathroom()
+
+	@FXML
+	public void findService(RoomType service)
+
 			throws IOException, InvocationTargetException, PathNotFoundException {
-		Set<Room> bathrooms = this.directory.getRoomsOnFloor();
-		bathrooms.removeIf(room -> room.getType() != RoomType.BATHROOM);
+		Set<Room> services = this.directory.getRoomsOnFloor();
+		services.removeIf(room -> room.getType() != service);
 
 		int prevCost = 0;
-		Room bathroom = null;
-		for(Room r: bathrooms){
+		Room nearest = null;
+		for(Room r: services){
 			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
 			if(prevCost == 0) {
 				prevCost = nodes.size();
-				bathroom = r;
+				nearest = r;
 			}
 			if(nodes.size() < prevCost){
 				prevCost = nodes.size();
-				bathroom = r;
+				nearest = r;
 			}
 			System.out.println(r.getName());
 		}
-		selectEndRoom(bathroom);
+		selectEndRoom(nearest);
 		this.getDirectionsClicked();
 	}
 

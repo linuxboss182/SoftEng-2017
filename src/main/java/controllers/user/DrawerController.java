@@ -4,6 +4,13 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.shared.MapDisplayController;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -45,6 +53,8 @@ abstract public class DrawerController
 
 		backTransition = new HamburgerBackArrowBasicTransition();
 		backTransition.setRate(-1);
+
+		Platform.runLater(this::fitMapSize);
 	}
 
 
@@ -90,40 +100,22 @@ abstract public class DrawerController
 		});
 	}
 
-
-
-	// TODO: See if this really has to override
 	@Override
 	public void fitMapSize() {
-		double potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-		double potentialScaleY = mapScroll.getViewportBounds().getHeight() / contentAnchor.getHeight();
+		double potentialY =
+				+ mapScroll.getHeight()/2
+				- contentAnchor.getHeight()/2;
 
-		double potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double potentialY = contentAnchor.getTranslateY() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
-
-		//Fixes the offset to center
-		if (mainDrawer.isShown()) {
-			potentialX += 420;
-			potentialScaleX = (mapScroll.getViewportBounds().getWidth() - 420) / contentAnchor.getWidth();
-		} else {
-			potentialX = contentAnchor.getTranslateX() + mapScroll.localToScene(mapScroll.getViewportBounds()).getMinX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-			potentialScaleX = mapScroll.getViewportBounds().getWidth() / contentAnchor.getWidth(); //Gets the ratio to default to
-		}
-
-		if(potentialScaleX < potentialScaleY) { //Preserves the ratio by taking the minimum
-			contentAnchor.setScaleX(potentialScaleX);
-			contentAnchor.setScaleY(potentialScaleX);
-			currentScale = potentialScaleX;
-		} else {
-			contentAnchor.setScaleX(potentialScaleY);
-			contentAnchor.setScaleY(potentialScaleY);
-			currentScale = potentialScaleY;
+		double potentialX;
+		if(mainDrawer.isShown()) {
+			potentialX = (mapScroll.getWidth()+420) / 2
+					- contentAnchor.getWidth() / 2;
+		}else{
+			potentialX = (mapScroll.getWidth()) / 2
+					- contentAnchor.getWidth() / 2;
 		}
 
 		contentAnchor.setTranslateX(potentialX);
 		contentAnchor.setTranslateY(potentialY);
-
-		zoomSlider.setValue(0);
 	}
-
 }
