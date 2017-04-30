@@ -22,6 +22,7 @@ public class Directory
 	private Set<Professional> professionals;
 	private Room kiosk;
 	private boolean loggedIn;
+	private Map<String, Account> Accounts;
 
 	private long timeout = 50;
 	private Caretaker caretaker;
@@ -295,7 +296,7 @@ public class Directory
 	public Set<Room> getUserRooms() {
 		return this.filterRooms(room -> (room.getLocation() != null)
 				&& (!room.getLocation().isRestricted()
-				    || this.isLoggedIn()));
+				|| this.isLoggedIn()));
 	}
 
 	/**

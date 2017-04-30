@@ -80,6 +80,8 @@ public class EditorController
 	@FXML private SplitPane mapSplitPane;
 	@FXML private JFXToggleButton showRoomsToggleBtn;
 	@FXML private ToggleButton restrictedView;
+	@FXML private JFXButton modifyAccountBtn;
+
 	@FXML private TextField timeoutField;
 	@FXML private JFXButton modifyAccountBtn;
 

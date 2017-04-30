@@ -69,6 +69,10 @@ abstract public class DrawerController
 		}
 	}
 
+
+
+	private void setUpContentAnchorListeners() {
+		System.out.println("contentAnchorListener");
 	@FXML
 	private void helpBtnClicked()
 			throws IOException {
