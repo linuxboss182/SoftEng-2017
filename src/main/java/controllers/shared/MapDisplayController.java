@@ -213,23 +213,23 @@ public abstract class MapDisplayController
 	}
 
 	public void fitMapSize() {
-		Directory.Viewport defaultView = directory.getDefaultView();
-
-		double potentialScaleY =
-				mapScroll.getHeight() / ( defaultView.maxY - defaultView.minY );
-
-		double potentialScaleX =
-				mapScroll.getWidth() / ( defaultView.maxX - defaultView.minX );
-
-		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
-		mapScroll.setScaleX(potentialScaleX);
-		mapScroll.setScaleY(potentialScaleY);
-		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
-		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
-
-		contentAnchor.setTranslateX(defaultView.minX-offsetX/potentialScaleX);
-		contentAnchor.setTranslateY(defaultView.minY-offsetY/potentialScaleY);
+//		Directory.Viewport defaultView = directory.getDefaultView();
+//
+//		double potentialScaleY =
+//				mapScroll.getHeight() / ( defaultView.maxY - defaultView.minY );
+//
+//		double potentialScaleX =
+//				mapScroll.getWidth() / ( defaultView.maxX - defaultView.minX );
+//
+//		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+//		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+//		mapScroll.setScaleX(potentialScaleX);
+//		mapScroll.setScaleY(potentialScaleY);
+//		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
+//		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
+//
+//		contentAnchor.setTranslateX(defaultView.minX-offsetX/potentialScaleX);
+//		contentAnchor.setTranslateY(defaultView.minY-offsetY/potentialScaleY);
 	}
 
 	/**

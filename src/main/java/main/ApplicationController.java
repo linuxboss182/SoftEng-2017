@@ -52,7 +52,7 @@ public class ApplicationController extends Application
 		Application.launch(args);
 
 		DatabaseWrapper.getInstance().close();
-		TimeoutTimer.getTimeoutTimer().cancelTimer();
+//		TimeoutTimer.getTimeoutTimer().cancelTimer();
 	}
 
 	/** This is called by JavaFX and starts up the application UI user panel*/
