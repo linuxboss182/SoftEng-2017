@@ -222,9 +222,7 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		if(!this.directory.isLoggedIn()) {
-			this.directory.getCaretaker().addState(this.getState());
-		}
+
 		this.timer.cancelTimer();
 		// Unset navigation targets for after logout
 		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
@@ -288,7 +286,7 @@ public class UserMasterController
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/UserPath.fxml"));
 		BorderPane pane = loader.load();
 		UserPathController controller = loader.getController();
-
+		this.timer.cancelTimer();
 		/* change to a scene with the path if possible */
 		if (controller.preparePathSceneSuccess(startRoom, endRoom)) {
 			this.getScene().setRoot(pane);

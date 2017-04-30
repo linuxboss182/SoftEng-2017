@@ -265,9 +265,7 @@ public abstract class MapDisplayController
 	 * Initializes the global filter that will reset the timer whenever an action is performed.
 	 */
 	protected void initGlobalFilter() {
-		System.out.println("UserMasterController.initGlobalFilter");
 		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			System.out.println("timer = " + timer);
 			timer.resetTimer(getTimerTask());
 		});
 		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {

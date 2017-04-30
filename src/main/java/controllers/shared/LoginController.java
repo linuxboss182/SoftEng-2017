@@ -23,6 +23,8 @@ import main.ApplicationController;
 import javafx.scene.input.KeyEvent;
 import main.TimeoutTimer;
 
+import java.awt.*;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.net.URL;
 
@@ -148,16 +150,10 @@ public class LoginController implements Initializable{
 	 */
 	protected void initGlobalFilter() {
 		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("LoginController.initGlobalFilter");
-				timer.resetTimer(getTimerTask());
-			}
+			timer.resetTimer(getTimerTask());
 		});
 		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			if(this.directory.isLoggedIn()) {
-				System.out.println("LoginController.initGlobalFilter");
-				timer.resetTimer(getTimerTask());
-			}
+			timer.resetTimer(getTimerTask());
 		});
 	}
 
