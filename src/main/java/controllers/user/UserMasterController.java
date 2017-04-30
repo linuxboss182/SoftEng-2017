@@ -1,16 +1,18 @@
 package controllers.user;
 
-import com.jfoenix.controls.*;
-import entities.FloorProxy;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.JFXToolbar;
 
 import entities.Node;
 import entities.Professional;
 import entities.RoomType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,28 +21,28 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.text.Collator;
-import java.text.Normalizer;
-import java.util.*;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
 import entities.Room;
-import javafx.stage.Stage;
+import entities.FloorProxy;
 import main.ApplicationController;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
@@ -51,7 +53,7 @@ public class UserMasterController
 		implements Initializable
 {
 	@FXML private ImageView logAsAdmin;
-	@FXML private TabPane destinationTypeTabs;
+	@FXML private JFXTabPane destinationTypeTabs;
 	@FXML private JFXListView<Room> roomSearchResults;
 	@FXML private JFXListView<Professional> profSearchResults;
 	@FXML private JFXListView<RoomType> commonServicesView;
