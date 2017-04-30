@@ -152,8 +152,11 @@ public class UserMasterController
 		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
-
-		logAsAdmin.setImage(new Image("/lock.png"));
+		if(directory.isProfessional()){
+			logAsAdmin.setImage(new Image("/logout.png"));
+		}else{
+			logAsAdmin.setImage(new Image("/lock.png"));
+		}
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 		aboutBtn.setImage(new Image("/about.png"));
@@ -290,9 +293,14 @@ public class UserMasterController
 	@FXML
 	public void logAsAdminClicked()
 			throws IOException, InvocationTargetException {
-		// Unset navigation targets for after logout
-		Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
-		this.getScene().setRoot(loginPrompt);
+		if(directory.isProfessional()){
+			directory.logOut();
+			changeFloor(directory.getFloor());
+			logAsAdmin.setImage(new Image("/lock.png"));
+		}else{
+			Parent loginPrompt = (BorderPane) FXMLLoader.load(this.getClass().getResource("/LoginPrompt.fxml"));
+			this.getScene().setRoot(loginPrompt);
+		}
 	}
 
 	/**
