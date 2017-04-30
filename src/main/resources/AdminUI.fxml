@@ -113,10 +113,10 @@
                                                 <JFXToggleButton fx:id="showRoomsToggleBtn" text="Show Rooms" toggleColor="#5087b4" toggleLineColor="#305672" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                     <HBox prefHeight="45.0" prefWidth="265.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4">
                                        <children>
-                                                      <Label prefHeight="44.0" prefWidth="53.0" text="X Position" fx:id="xPos" />
+                                                      <Label prefHeight="44.0" prefWidth="53.0" text="X" fx:id="xPos" />
                                                       <JFXTextField prefHeight="29.0" prefWidth="99.0" fx:id="xCoordField" />
                                           <Pane prefHeight="0.0" prefWidth="9.0" />
-                                          <Label fx:id="yPos" prefHeight="125.0" prefWidth="53.0" text="Y Position" />
+                                          <Label fx:id="yPos" prefHeight="125.0" prefWidth="53.0" text="Y" />
                                                       <JFXTextField fx:id="yCoordField" prefHeight="28.0" prefWidth="117.0" />
                                        </children>
                                     </HBox>
