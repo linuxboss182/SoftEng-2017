@@ -409,7 +409,6 @@ public class UserMasterController
 		destinationField.setPromptText("Choose destination");
 
 		this.destinationField.setOnKeyReleased(e -> {
-			this.selectingStart = false;
 			this.filterRoomsOrProfessionals(this.destinationField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
 					if (startRoom == null) {
@@ -425,7 +424,6 @@ public class UserMasterController
 		});
 
 		this.startField.setOnKeyReleased(e -> {
-			this.selectingStart = true;
 			this.filterRoomsByName(this.startField.getText());
 			if(e.getCode() == KeyCode.ENTER) {
 				this.destinationField.requestFocus();
@@ -434,6 +432,7 @@ public class UserMasterController
 
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
+				this.selectingStart = true;
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);
 			}
@@ -441,6 +440,7 @@ public class UserMasterController
 
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
+				this.selectingStart = false;
 				resetRoomSearchResults();
 				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
 					destinationTypeTabs.getSelectionModel().select(roomTab);
