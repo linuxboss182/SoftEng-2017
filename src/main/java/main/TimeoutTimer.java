@@ -56,13 +56,14 @@ public final class TimeoutTimer
 
 	}
 
+	public void emptyTasks(){
+		tasks.clear();
+	}
+
 	public void cancelTimer() {
-
-
 		try{
 			if(this.timer == null) return;
 			this.timer.cancel();
-			this.timer.purge();
 
 			if(this.timerTask == null) return;
 			this.timerTask.cancel();
