@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -750,11 +751,23 @@ public class EditorController
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
+
 			this.secondaryPressed = event.isSecondaryButtonDown();
 			if (event.isSecondaryButtonDown() && event.isShiftDown()){
-				selectNode(node);
+//				selectNode(node);
 				displayContextMenu(event);
+			} else if(primaryPressed && !event.isShiftDown()) {
+				this.selectSingleNode(node);
 			}
+		});
+		node.getShape().setOnMouseEntered( e->{
+			e.consume();
+			contentAnchor.getScene().setCursor(Cursor.HAND);
+		});
+
+		node.getShape().setOnMouseExited(e-> {
+			e.consume();
+			contentAnchor.getScene().setCursor(Cursor.DEFAULT);
 		});
 	}
 
@@ -926,6 +939,7 @@ public class EditorController
 		contentAnchor.setOnMouseDragged(e-> {
 			e.consume();
 			if(e.isShiftDown()) {
+				contentAnchor.getScene().setCursor(Cursor.CROSSHAIR);
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -947,6 +961,7 @@ public class EditorController
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
 			} else if(setDefaultViewBtn.selectedProperty().getValue()){
+				contentAnchor.getScene().setCursor(Cursor.CROSSHAIR);
 //				this.selectedMaxX = clickedX;
 //				this.selectedMaxY = clickedY;
 //				this.isSelectingMaxView=false;
@@ -993,6 +1008,7 @@ public class EditorController
 		});
 
 		contentAnchor.setOnMouseReleased(e->{
+			contentAnchor.getScene().setCursor(Cursor.DEFAULT);
 			e.consume();
 			if (e.isShiftDown()) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
