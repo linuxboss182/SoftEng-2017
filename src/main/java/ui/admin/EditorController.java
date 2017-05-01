@@ -98,7 +98,6 @@ public class EditorController
 	@FXML private JFXButton modifyAccountBtn;
 	@FXML private TextField timeoutField;
 	@FXML public JFXComboBox<RoomType> roomTypeComboBox;
-	@FXML private JFXToggleButton fuzzySearchToggleBtn;
 //	@FXML private JFXToggleButton setDefaultViewBtn;
 
 	/**
@@ -189,8 +188,6 @@ public class EditorController
 					this.directory.setTimeout(1000 * Integer.parseInt(this.timeoutField.getText())); // In seconds
 			} catch(NumberFormatException e) {}
 		});
-
-		fuzzySearchToggleBtn.setOnAction(e -> ApplicationController.toggleFuzzySearch());
 	}
 
 	void initializeIcons() {

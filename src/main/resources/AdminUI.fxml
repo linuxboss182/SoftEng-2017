@@ -224,7 +224,6 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <JFXToggleButton fx:id="fuzzySearchToggleBtn" layoutX="107.0" layoutY="228.0" text="Fuzzy Search On" AnchorPane.topAnchor="228.0" />
                                <!--<JFXToggleButton fx:id="setDefaultViewBtn" layoutX="58.0" layoutY="239.0" onMouseClicked="#setDefaultViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="Set Default Zoom Mode" />-->
                            </children>
                         </AnchorPane>
