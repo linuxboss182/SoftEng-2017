@@ -25,7 +25,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -152,7 +154,6 @@ public class UserMasterController
 
 		initFocusTraversables();
 
-
 		this.displayRooms();
 
 		setServicesList();
@@ -190,6 +191,10 @@ public class UserMasterController
 		helpBtn.getStyleClass().add("blue-button");
 		profSearchResults.getStyleClass().add("jfx-list-view");
 		roomSearchResults.getStyleClass().add("jfx-list-view");
+		profTab.getStyleClass().add("jfx-tab");
+		roomTab.getStyleClass().add("jfx-tab");
+		servicesTab.getStyleClass().add("jfx-tab");
+		destinationTypeTabs.getStyleClass().add("jfx-tab-pane");
 	}
 
 
@@ -501,6 +506,10 @@ public class UserMasterController
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 

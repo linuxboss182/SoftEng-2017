@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import entities.Directory;
+import javafx.application.Platform;
 
 public final class TimeoutTimer
 {
@@ -22,7 +23,6 @@ public final class TimeoutTimer
 	private TimeoutTimer(){
 		this.tasks = new HashSet<>();
 		this.timer = new Timer();
-		System.out.println("TimeoutTimer.TimeoutTimer");
 	}
 
 	public void registerTask(Runnable task) {
@@ -34,14 +34,13 @@ public final class TimeoutTimer
 			@Override
 			public void run() {
 				for (Runnable task : tasks) {
-					task.run();
+					Platform.runLater(task::run);
 				}
 			}
 		};
 	}
 
 	public void resetTimer() {
-		System.out.println(tasks);
 		try {
 			this.timer.cancel();
 		} catch(Exception e) {
@@ -71,10 +70,6 @@ public final class TimeoutTimer
 			e.printStackTrace();
 		}
 	}
-
-//	public Timer getTimer() {
-//		return this.timer;
-//	}
 
 	public static TimeoutTimer getTimeoutTimer() {
 		return Singleton.instance;
