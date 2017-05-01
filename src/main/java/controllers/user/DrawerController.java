@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -147,9 +148,20 @@ abstract public class DrawerController
 		if(potentialScaleX < potentialScaleY) {
 			mapScroll.setScaleX(potentialScaleX);
 			mapScroll.setScaleY(potentialScaleX);
+			currentScale = potentialScaleX;
 		}else{
 			mapScroll.setScaleX(potentialScaleY);
 			mapScroll.setScaleY(potentialScaleY);
+			currentScale = potentialScaleY;
+		}
+
+		if (currentScale <= 1) {
+			zoomSlider.setValue(0);
+
+		}else if(currentScale >= 5.5599173134922495) {
+			zoomSlider.setValue(100);
+		}else {
+			zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
 		}
 
 		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
@@ -157,6 +169,36 @@ abstract public class DrawerController
 
 		contentAnchor.setTranslateX(-defaultView.minX - offsetX / potentialScaleX);
 		contentAnchor.setTranslateY(-defaultView.minY - offsetY / potentialScaleY);
+
+
+
+//
+//		if (scaleFactor * currentScale >= 1 && scaleFactor * currentScale <= 6) {
+//			Bounds viewPort = mapScroll.getViewportBounds();
+//			Bounds contentSize = contentAnchor.getBoundsInParent();
+//
+//			double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
+//			double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
+//
+//			mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
+//			mapScroll.setScaleY(mapScroll.getScaleY() * scaleFactor);
+//			currentScale *= scaleFactor;
+//
+//			double newCenterX = centerPosX * scaleFactor;
+//			double newCenterY = centerPosY * scaleFactor;
+//
+//			mapScroll.setHvalue((newCenterX - viewPort.getWidth() / 2) / (contentSize.getWidth() * scaleFactor - viewPort.getWidth()));
+//			mapScroll.setVvalue((newCenterY - viewPort.getHeight() / 2) / (contentSize.getHeight() * scaleFactor - viewPort.getHeight()));
+//		}
+//
+//		if (scaleFactor * currentScale <= 1) {
+//			zoomSlider.setValue(0);
+//
+//		}else if(scaleFactor * currentScale >= 5.5599173134922495) {
+//			zoomSlider.setValue(100);
+//		}else {
+//			zoomSlider.setValue(((currentScale - 1)/4.5599173134922495) * 100);
+//		}
 	}
 
 }

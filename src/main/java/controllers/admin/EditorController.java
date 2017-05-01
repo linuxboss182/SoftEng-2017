@@ -206,6 +206,28 @@ public class EditorController
 		}
 	}
 
+	/**
+	 *  setHotkeys:
+	 *  right + shift: shift the view of map to the right
+	 *  left + shift: shift the view of the map to the left
+	 *  up + shift: shift the view of the map upward
+	 *  down + shift: shift the view of the map downward
+	 *  A + control: select all the nodes on the current map
+	 *  Back_Space: Delete the selected node
+	 *  Digit1 + shift: display the map of Outside
+	 *  Digit1 + control: display the 1st floor of Belkin
+	 *  Digit2 + control: display the 2st floor of Belkin
+	 *  Digit3 + control: display the 3st floor of Belkin
+	 *  Digit4 + control: display the 4st floor of Belkin
+	 *  Digit1: display the 1st floor of Faulkner
+	 *  Digit2: display the 1st floor of Faulkner
+	 *  Digit3: display the 1st floor of Faulkner
+	 *  Digit4: display the 1st floor of Faulkner
+	 *  Digit5: display the 1st floor of Faulkner
+	 *  Digit6: display the 1st floor of Faulkner
+	 *  Digit7: display the 1st floor of Faulkner
+	 *
+	 */
 	@Override
 	protected void setHotkeys(){
 		parentBorderPane.setOnKeyPressed(e -> {
