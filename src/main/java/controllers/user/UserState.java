@@ -1,7 +1,5 @@
 package controllers.user;
 
-import entities.Node;
-import entities.Room;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 

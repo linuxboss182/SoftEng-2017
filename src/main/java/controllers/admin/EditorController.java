@@ -5,10 +5,14 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,6 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -218,10 +223,47 @@ public class EditorController
 				this.selectAllNodesOnFloor();
 			} else if (e.getCode() == KeyCode.BACK_SPACE) {
 				this.deleteSelectedNodes();
+			} else if (e.getCode() == KeyCode.DIGIT1 && e.isShiftDown()){
+				FloorProxy floor = FloorProxy.getFloor("OUTSIDE", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 2);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 3);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 4);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT1){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT2){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 2);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT3){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 3);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT4){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 4);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT5){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 5);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT6){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 6);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT7){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 7);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
 			}
 			e.consume();
 		});
 	}
+
 
 	/**
 	 * Setup a radial context menu
@@ -463,8 +505,22 @@ public class EditorController
 		Stage addProStage = new Stage();
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
+		addProStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		addProStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			addProStage.getScene().getWindow().hide();
+
+		});
 		addProStage.showAndWait();
 		this.populateTableView();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 	@FXML
@@ -564,7 +620,21 @@ public class EditorController
 		Stage addProStage = new Stage();
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
+		addProStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		addProStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			addProStage.getScene().getWindow().hide();
+
+		});
 		addProStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 
@@ -1135,6 +1205,8 @@ public class EditorController
 	 */
 	@FXML
 	private void loadProfessionalsFile() {
+		timer.emptyTasks();
+		timer.cancelTimer();
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains people who are already in the application, they will be duplicated.");
 
@@ -1153,9 +1225,14 @@ public class EditorController
 				this.populateTableView();
 			}
 		}
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 	@FXML
 	private void loadNodesFile() {
+		timer.emptyTasks();
+		timer.cancelTimer();
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains nodes who are already in the application, they will be duplicated.");
 
@@ -1176,6 +1253,9 @@ public class EditorController
 				this.redisplayGraph();
 			}
 		}
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 	/**
@@ -1227,6 +1307,20 @@ public class EditorController
 		helpStage.getIcons().add(new Image("bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
+		helpStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		helpStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			helpStage.getScene().getWindow().hide();
+
+		});
 		helpStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 }

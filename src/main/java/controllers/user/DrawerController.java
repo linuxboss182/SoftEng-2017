@@ -19,10 +19,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.stage.Stage;
+import main.TimeoutTimer;
 
 import java.io.IOException;
 
@@ -81,7 +84,21 @@ abstract public class DrawerController
 		Stage userHelpStage = new Stage();
 		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
 		userHelpStage.setScene(userHelpScene);
+		userHelpStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		userHelpStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			userHelpStage.getScene().getWindow().hide();
+
+		});
 		userHelpStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 	private void setUpContentAnchorListeners() {
