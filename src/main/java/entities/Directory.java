@@ -299,7 +299,7 @@ public class Directory
 				(node.getFloor() == floor.getNumber())
 						&&
 				node.getBuildingName().equalsIgnoreCase(floor.getName())
-		);
+						&& (! node.isRestricted() || this.loggedIn));
 	}
 
 	/**
