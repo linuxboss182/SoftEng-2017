@@ -3,21 +3,17 @@ package controllers.user;
 import entities.Node;
 import entities.Room;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 
 public class UserState
 {
+	private Scene scene;
 	private Parent root;
-	private boolean loggedIn;
 
-	private Room startRoom;
-	private Room endRoom;
-
-	public UserState(Parent root) {
+	public UserState(Parent root, Scene scene) {
 		this.root = root;
-		this.loggedIn = loggedIn;
-		this.startRoom = startRoom;
-		this.endRoom = endRoom;
+		this.scene = scene;
 	}
 
 	public Parent getRoot() {

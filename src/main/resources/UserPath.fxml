@@ -8,7 +8,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.*?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXToolbar?>
 <?import javafx.scene.control.Label?>
@@ -84,20 +84,11 @@
                         <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
                </bottom>
                 </BorderPane>
-                <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
+                <Pane fx:id="drawerParentPane">
                     <children>
-                        <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
+                        <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="418.0">
                             <children>
 
-                                <HBox fx:id="backHBox">
-                                    <children>
-                                        <ImageView fx:id="backImageView" fitHeight="46.0" fitWidth="77.0" onMouseClicked="#backBtnClicked" pickOnBounds="true" preserveRatio="true">
-                                            <HBox.margin>
-                                                <Insets left="15.0" right="15.0" />
-                                            </HBox.margin>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
                                 <HBox fx:id="startLblHBox">
                                     <children>
                                         <ImageView fx:id="startImageView" fitHeight="75.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
@@ -105,7 +96,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <Label fx:id="startLbl" prefHeight="17.0" prefWidth="250.0" text="Label">
+                                        <Label fx:id="startLbl" prefHeight="17.0" prefWidth="250.0" text="Label" textFill="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>
@@ -119,7 +110,7 @@
                                                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                             </HBox.margin>
                                         </ImageView>
-                                        <Label fx:id="destLbl" prefHeight="17.0" prefWidth="250.0" text="Label">
+                                        <Label fx:id="destLbl" prefHeight="17.0" prefWidth="250.0" text="Label" textFill="white">
                                             <HBox.margin>
                                                 <Insets bottom="30.0" right="50.0" top="30.0" />
                                             </HBox.margin>
@@ -128,7 +119,7 @@
                                 </HBox>
                                 <HBox fx:id="directionsLblHBox" alignment="TOP_CENTER">
                                     <children>
-                                        <Label fx:id="directionsLbl" alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:">
+                                        <Label fx:id="directionsLbl" alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:" textFill="white">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
@@ -144,8 +135,8 @@
 
                                     </children>
                                 </HBox>
-                                <JFXListView fx:id="directionsListView"/>
-                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                <JFXListView fx:id="directionsListView" />
+                                <HBox fx:id="doneBtnHBox">
                                     <children>
                                         <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" text="DONE">
                                             <HBox.margin>

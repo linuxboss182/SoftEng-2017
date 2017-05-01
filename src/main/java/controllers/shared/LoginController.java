@@ -61,8 +61,11 @@ public class LoginController implements Initializable{
 		this.loginBtn.setFocusTraversable(false);
 		Platform.runLater( () -> usernameField.requestFocus());
 
-		timer.resetTimer(this.getTimerTask());
-		initGlobalFilter();
+		timer.emptyTasks();
+		this.initGlobalFilter();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 
@@ -150,10 +153,10 @@ public class LoginController implements Initializable{
 	 */
 	protected void initGlobalFilter() {
 		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			timer.resetTimer(getTimerTask());
+			timer.resetTimer();
 		});
 		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			timer.resetTimer(getTimerTask());
+			timer.resetTimer();
 		});
 	}
 

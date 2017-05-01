@@ -17,6 +17,7 @@
     -fx-background-color: #4285f4;
     -fx-font-size: 18px;
     -fx-alignment: baseline-left;
+    -fx-font-family: "Roboto";
 }
 
 
@@ -24,10 +25,8 @@
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-alignment: baseline-left;
-    -fx-font-family: "Trebuchet MS";
+    -fx-font-family: "Roboto";
 }
-
-
 
 .vbox {
     -fx-max-width: 418px;
@@ -48,12 +47,14 @@
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-prompt-text-fill: #d5d5d5;
+    -fx-font-family: "Roboto";
 
 }
 .blue-button {
     -fx-background-color: #5087b4;
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
+    -fx-font-family: "Roboto";
 }
 
 .drawer {
@@ -61,14 +62,13 @@
 }
 
 .jfx-list-view {
-    -fx-fit-to-height: true;
     -fx-max-width: 418px;
     -fx-pref-width: 418px;
     -fx-min-width: 418px;
     -fx-cell-size: 50px;
-    -fx-highlight-fill: #BDBDBD;
     -fx-font-size: 14px;
     -fx-focus-traversable: false;
+    -fx-font-family: "Roboto";
 
 }
 .jfx-hamburger {
@@ -78,4 +78,23 @@
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #0288D1;
     -fx-font-size: 14px;
+    -fx-font-family: "Roboto";
+}
+.jfx-tab {
+    -fx-background-color: gray;
+    -fx-text-fill: white;
+}
+/*
+    The tab bar
+*/
+
+.jfx-tab-pane .headers-region {
+    -fx-background-color: darkgray;
+}
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: gray;
+}
+.jfx-tab-pane .tab-selected-line {
+    -fx-stroke: #FFFFFF;
+    -fx-stroke-width: 2pt;
 }

@@ -25,7 +25,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -133,15 +135,17 @@ public class UserMasterController
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater(() -> {
-			resizeDrawerListener(drawerParentPane.getHeight());
+			resizeDrawerListener();
 			destinationField.requestFocus();
+
 		});
+		resizeDrawerListener();
+		System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
-		resizeDrawerListener(677.0);
 
 		mainDrawer.open();
 
@@ -149,7 +153,6 @@ public class UserMasterController
 		floatingBorderPane.setPickOnBounds(false);
 
 		initFocusTraversables();
-
 
 		this.displayRooms();
 
@@ -168,9 +171,13 @@ public class UserMasterController
 
 	}
 
-	private void resizeDrawerListener(Double newSceneHeight) {
-		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	private void resizeDrawerListener() {
+		destinationTypeTabs.setPrefHeight(drawerParentPane.getHeight() - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
+			destinationTypeTabs.setPrefHeight((double)newHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
+		});
+
 	}
 
 	private void setStyleIDs() {
@@ -182,6 +189,12 @@ public class UserMasterController
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
 		helpBtn.getStyleClass().add("blue-button");
+		profSearchResults.getStyleClass().add("jfx-list-view");
+		roomSearchResults.getStyleClass().add("jfx-list-view");
+		profTab.getStyleClass().add("jfx-tab");
+		roomTab.getStyleClass().add("jfx-tab");
+		servicesTab.getStyleClass().add("jfx-tab");
+		destinationTypeTabs.getStyleClass().add("jfx-tab-pane");
 	}
 
 
@@ -191,7 +204,7 @@ public class UserMasterController
 			event.consume();
 			System.out.println("event consumed");
 		});
-		iconManager.updateListeners(this.directory.getRooms());
+		iconManager.updateListeners(directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
 	}
 
@@ -338,8 +351,8 @@ public class UserMasterController
 	private void resetRoomSearchResults() {
 		Set<Room> rooms = directory.getUserRooms();
 		rooms.removeIf(r -> r.getLocation() == null);
-		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		this.roomSearchResults.getSelectionModel().clearSelection();
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 	}
 
 	/**
@@ -461,6 +474,7 @@ public class UserMasterController
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = true;
+				startField.setText("");
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);
 			}
@@ -469,6 +483,7 @@ public class UserMasterController
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = false;
+				destinationField.setText("");
 				resetRoomSearchResults();
 				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
 					destinationTypeTabs.getSelectionModel().select(roomTab);
@@ -491,6 +506,10 @@ public class UserMasterController
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 
