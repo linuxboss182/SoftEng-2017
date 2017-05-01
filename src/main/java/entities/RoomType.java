@@ -15,8 +15,8 @@ public enum RoomType
 	PARKING("Parking", "/Parking.png", "/ParkingOrigin.png", "/ParkingDest.png"),
 	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	BATHROOM("Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
-	SHOP("Gift Shop", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
-	CAFE("Cafe/Food", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
+	SHOP("Gift Shop", "/Shop.png", "/ShopOrigin.png", "/ShopDest.png"),
+	CAFE("Cafe/Food", "/Cafe.png", "/CafeCaferigin.png", "/CafeDest.png"),
 	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"),
 	;
 
