@@ -434,7 +434,7 @@ public class UserMasterController
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectStartRoom(r);
-		iconManager.removeIcon(r);
+//		iconManager.removeIcon(r);
 		startField.setText(r.getName());
 		this.displayRooms();
 	}
@@ -443,7 +443,7 @@ public class UserMasterController
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectEndRoom(r);
-		iconManager.removeIcon(r);
+//		iconManager.removeIcon(r);
 		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
