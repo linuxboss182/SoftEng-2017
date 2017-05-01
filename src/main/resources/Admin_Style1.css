@@ -33,3 +33,15 @@
 .grid-pane {
 	-fx-background-color: #3367d6;
 }
+
+
+.jfx-tab-pane .headers-region {
+    -fx-background-color: darkgray;
+}
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: gray;
+}
+.jfx-tab-pane .tab-selected-line {
+    -fx-stroke: #FFFFFF;
+    -fx-stroke-width: 2pt;
+}
