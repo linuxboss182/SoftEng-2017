@@ -82,6 +82,8 @@ public class UserMasterController
 
 	private Room startRoom;
 	private Room endRoom;
+	private Image destRoomImage = new Image("/bPin.png");
+	private Image destProfImage = new Image("/professional.png");
 
 	private boolean selectingStart = false; // TODO: Find a way to remove this state
 
@@ -157,15 +159,14 @@ public class UserMasterController
 	}
 
 	private void initImages() {
-		if(directory.isProfessional()){
+		if (directory.isProfessional()) {
 			logAsAdmin.setImage(new Image("/logout.png"));
-		}else{
+		} else {
 			logAsAdmin.setImage(new Image("/lock.png"));
 		}
 		startImageView.setImage(new Image("/aPin.png"));
-		destImageView.setImage(new Image("/bPin.png"));
+		destImageView.setImage(destRoomImage);
 		aboutBtn.setImage(new Image("/about.png"));
-
 	}
 
 	private void resizeDrawerListener(Double newSceneHeight) {
@@ -268,6 +269,16 @@ public class UserMasterController
 
 		destinationTypeTabs.getSelectionModel().select(servicesTab);
 
+		destinationTypeTabs.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, old, selection) -> {
+					destinationField.setText("");
+					if (selection == profTab) {
+						destImageView.setImage(destProfImage);
+					} else {
+						destImageView.setImage(destRoomImage);
+					}
+				});
+
 		// Set the selection actions for the search results
 		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
@@ -289,15 +300,15 @@ public class UserMasterController
 					}
 				}
 		);
-			this.servicesList.getSelectionModel().selectedItemProperty().addListener(
-					(ignored, oldValue, selection) -> {
-						try {
-							findService(selection);
-						} catch (IOException | InvocationTargetException | PathNotFoundException e) {
-							e.printStackTrace();
-						}
+		this.servicesList.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> {
+					try {
+						findService(selection);
+					} catch (IOException | InvocationTargetException | PathNotFoundException e) {
+						e.printStackTrace();
 					}
-			);
+				}
+		);
 
 
 	}
