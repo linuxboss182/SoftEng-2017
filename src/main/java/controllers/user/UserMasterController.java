@@ -25,7 +25,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -149,7 +151,6 @@ public class UserMasterController
 		floatingBorderPane.setPickOnBounds(false);
 
 		initFocusTraversables();
-
 
 		this.displayRooms();
 
@@ -493,6 +494,10 @@ public class UserMasterController
 		addAboutStage.initOwner(contentAnchor.getScene().getWindow());
 		addAboutStage.setScene(addAboutScene);
 		addAboutStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 

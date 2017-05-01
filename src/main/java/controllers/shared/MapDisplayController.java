@@ -80,7 +80,11 @@ public abstract class MapDisplayController
 		this.setZoomSliding();
 		this.zoomSlider.setValue(0);
 
+		timer.emptyTasks();
 		this.initGlobalFilter();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 		Platform.runLater(this::initWindowResizeListener);
 		Platform.runLater(this::fitMapSize);
 	}
@@ -248,7 +252,7 @@ public abstract class MapDisplayController
 	}
 
 	// place inside controller
-	private void setState(UserState state) {
+	protected void setState(UserState state) {
 		try {
 			parentBorderPane.getScene().setRoot(state.getRoot());
 			this.directory.logOut();
