@@ -1,6 +1,7 @@
 package controllers.shared;
 
 import com.jfoenix.controls.JFXDrawer;
+import controllers.admin.EditorController;
 import controllers.icons.IconController;
 import controllers.user.UserState;
 import controllers.icons.IconManager;
