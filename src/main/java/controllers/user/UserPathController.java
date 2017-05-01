@@ -77,7 +77,7 @@ public class UserPathController
 	@FXML private BorderPane floatingBorderPane;
 	@FXML private  JFXButton helpBtn;
 
-	private static final double PATH_WIDTH = 4.0;
+	private static final double PATH_WIDTH = 2.0;
 	private double clickedX;
 	private double clickedY;
 	private List<Direction> directions;
