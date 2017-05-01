@@ -172,7 +172,10 @@ public class EditorController
 
 		this.populateTableView();
 
-		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
+		this.showRoomsToggleBtn.setOnAction(action -> {
+			this.iconManager = new IconManager();
+			this.redisplayGraph();
+		});
 
 		timer.resetTimer();
 		this.timeoutField.setText(Double.toString(this.directory.getTimeout()/1000));
