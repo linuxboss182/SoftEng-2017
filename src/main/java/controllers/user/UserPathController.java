@@ -75,16 +75,15 @@ public class UserPathController
 	@FXML private ImageView destImageView;
 	@FXML private JFXToolbar topToolBar;
 	@FXML private BorderPane floatingBorderPane;
-	@FXML private JFXDrawer mapIconDrawer;
-	@FXML protected ImageView backImageView;
 	@FXML private  JFXButton helpBtn;
 
 	private static final double PATH_WIDTH = 4.0;
 	private double clickedX;
 	private double clickedY;
+	private List<Direction> directions;
 	private Text textDirections = new Text();
 	private Rectangle bgRectangle = null;
-	private LinkedList<LinkedList<Node>> pathSegments = new LinkedList<>();
+	private LinkedList<List<Node>> pathSegments = new LinkedList<>();
 
 
 
@@ -106,7 +105,6 @@ public class UserPathController
 		}
 	}
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
@@ -114,6 +112,13 @@ public class UserPathController
 		floatingBorderPane.setPickOnBounds(false);
 
 		this.iconManager = new IconManager();
+		iconManager.setOnMouseClickedOnPathSegmentEnd((r, e) -> {
+			Node node = r.getLocation();
+			int floorNum = node.getFloor();
+			String buildingName = node.getBuildingName();
+			FloorProxy floor = FloorProxy.getFloor(buildingName, floorNum);
+			this.changeFloor(floor);
+		});
 		iconManager.getIcons(directory.getRooms());
 
 		this.displayRooms();
@@ -123,20 +128,31 @@ public class UserPathController
 		setStyleIDs();
 
 
-		backImageView.setImage(new Image("/back.png"));
+		//backImageView.setImage(new Image("/back.png"));
 		startImageView.setImage(new Image("/aPin.png"));
 		destImageView.setImage(new Image("/bPin.png"));
 
 
+		// Slightly delay the call so that the bounds aren't screwed up
+		Platform.runLater(() -> {
+			resizeDrawerListener(drawerParentPane.getHeight());
+		});
+
+		resizeDrawerListener(677.0);
 		this.timer.resetTimer();
 
 		this.setUpDirectionListView();
 	}
 
+	private void resizeDrawerListener(Double newSceneHeight) {
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
+		//directionsListView.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	}
+
 	private void setUpDirectionListView() {
 		directionsListView.setPrefHeight(300);
 		directionsListView.setMinHeight(300);
-		
+
 		directionsListView.setCellFactory(d -> new ListCell<Direction>() {
 			private final ImageView icon = new ImageView();
 			@Override
@@ -165,7 +181,6 @@ public class UserPathController
 
 
 	public void setStyleIDs() {
-		backHBox.getStyleClass().add("hbox");
 		startLblHBox.getStyleClass().add("hbox");
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
@@ -221,12 +236,12 @@ public class UserPathController
 			return false;
 		}
 		this.directionsListView.getItems().clear();
-		List<Direction> directions = DirectionsGenerator.fromPath(path);
+		directions = DirectionsGenerator.fromPath(path);
 		this.directionsListView.setItems(FXCollections.observableList(directions));
 
 		/* Draw the buttons for each floor on a multi-floor path. */
 		// segment paths by floor and place them in a LinkedList
-		LinkedList<Node> seg = new LinkedList<>();
+		List<Node> seg = new LinkedList<>();
 		for(int i = 0; i < path.size()-1; i++){
 			seg.add(path.get(i));
 			if((path.get(i).getFloor() != path.get(i+1).getFloor()) ||
@@ -258,7 +273,7 @@ public class UserPathController
 				Node n = pathSegments.get(i).get(0);
 				here = new MiniFloor(n.getFloor(), n.getBuildingName());
 				floors.add(here);
-				LinkedList<Node> seg = pathSegments.get(i);
+				List<Node> seg = pathSegments.get(i);
 				this.createNewFloorButton(here, seg, floors.size());
 			}
 		}
@@ -269,7 +284,7 @@ public class UserPathController
 			Node n = pathSegments.getLast().get(0);
 			here = new MiniFloor(n.getFloor(), n.getBuildingName());
 			floors.add(here);
-			LinkedList<Node> seg = pathSegments.getLast();
+			List<Node> seg = pathSegments.getLast();
 			this.createNewFloorButton(here, seg, floors.size());
 		}
 	}
@@ -314,8 +329,7 @@ public class UserPathController
 			// change to the new floor, and draw the path for that floor
 			this.changeFloor(FloorProxy.getFloor(floor.building, floor.number));
 			this.paintPath(path);
-			//Call text directions
-//			this.directionsTextField.getChildren().add(textDirections);// TODO: Fix here if it doesn't work
+
 			if(this.bgRectangle != null) this.bgRectangle.setVisible(false);
 			backgroundRectangle.setVisible(true);
 			this.bgRectangle = backgroundRectangle;
@@ -354,12 +368,12 @@ public class UserPathController
 		this.mapScroll.getScene().setRoot(userPath);
 	}
 
-	@FXML
-	public void backBtnClicked() throws IOException {
-		iconController.resetAllRooms();
-		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
-		this.mapScroll.getScene().setRoot(userPath);
-	}
+//	@FXML
+//	public void backBtnClicked() throws IOException {
+//		iconController.resetAllRooms();
+//		Parent userPath = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
+//		this.mapScroll.getScene().setRoot(userPath);
+//	}
 
 	@FXML
 	public void sendSMSBtnClicked(){
@@ -439,6 +453,6 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
+		this.nodePane.getChildren().setAll(iconManager.getDirectionsIcons(directions));
 	}
 }

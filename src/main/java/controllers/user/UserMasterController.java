@@ -152,6 +152,8 @@ public class UserMasterController
 
 
 		this.displayRooms();
+
+		setServicesList();
 	}
 
 	private void initImages() {
