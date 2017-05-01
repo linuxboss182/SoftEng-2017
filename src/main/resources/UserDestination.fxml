@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import com.jfoenix.controls.*?>
@@ -23,7 +24,7 @@
          <right>
             <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" text="Help"  styleClass="blue-button" >
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" styleClass="blue-button" text="Help">
                      <HBox.margin>
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
@@ -87,16 +88,22 @@
                                         </JFXButton>
                                     </children>
                                 </HBox>
-                                <JFXTabPane fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
+                                <JFXTabPane id="jfx-tab-pane" fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
                                         <Tab fx:id="servicesTab" text="Services">
-                                            <JFXListView fx:id="servicesList" />
+                                           <content>
+                                               <JFXListView fx:id="servicesList" />
+                                           </content>
                                         </Tab>
                                         <Tab fx:id="roomTab" text="Rooms">
-                                            <JFXListView fx:id="roomSearchResults" />
+                                           <content>
+                                               <JFXListView fx:id="roomSearchResults" />
+                                           </content>
                                         </Tab>
                                         <Tab fx:id="profTab" text="Professionals">
-                                            <JFXListView fx:id="profSearchResults" />
+                                           <content>
+                                               <JFXListView fx:id="profSearchResults" />
+                                           </content>
                                         </Tab>
                                     </tabs>
                                 </JFXTabPane>

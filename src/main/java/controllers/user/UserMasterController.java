@@ -190,6 +190,10 @@ public class UserMasterController
 		helpBtn.getStyleClass().add("blue-button");
 		profSearchResults.getStyleClass().add("jfx-list-view");
 		roomSearchResults.getStyleClass().add("jfx-list-view");
+		profTab.getStyleClass().add("jfx-tab");
+		roomTab.getStyleClass().add("jfx-tab");
+		servicesTab.getStyleClass().add("jfx-tab");
+		destinationTypeTabs.getStyleClass().add("jfx-tab-pane");
 	}
 
 
