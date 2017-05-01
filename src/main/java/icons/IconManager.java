@@ -14,7 +14,14 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -195,6 +202,21 @@ public class IconManager
 		if (showFullNamesOnHover) {
 			ImageView image = icon.getImage();
 			Label label = icon.getLabel();
+			label.setPickOnBounds(false);
+			label.setOnMouseEntered(event -> {
+				icon.updateLabel(room.getName());
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
+				label.setScaleX(LABEL_SIZE_LARGE);
+				label.setScaleY(LABEL_SIZE_LARGE);
+			});
+			label.setOnMouseExited(event -> {
+				icon.updateLabel(room.getDisplayName());
+				image.setScaleX(ICON_SIZE);
+				image.setScaleY(ICON_SIZE);
+				label.setScaleX(LABEL_SIZE);
+				label.setScaleY(LABEL_SIZE);
+			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
 				image.setScaleX(ICON_SIZE_LARGE);
@@ -290,7 +312,7 @@ public class IconManager
 		if (iconNodes.get(0) != null) {
 			Icon icon = this.roomIcons.computeIfAbsent(iconNodes.get(0).getRoom(), this::makeFrozenIcon);
 			Label label = icon.getLabel();
-			label.setText("You are here");
+			label.setVisible(false);
 		}
 
 		for (int i = 1; i < iconNodes.size(); i += 2) {
@@ -313,7 +335,7 @@ public class IconManager
 		if (iconNodes.get(iconNodes.size()-1) != null) {
 			Icon icon = this.roomIcons.computeIfAbsent(iconNodes.get(iconNodes.size()-1).getRoom(), this::makeFrozenIcon);
 			Label label = icon.getLabel();
-			label.setText("Destination");
+			label.setVisible(false);
 		}
 
 		return roomIcons.computeAllIfAbsent(
