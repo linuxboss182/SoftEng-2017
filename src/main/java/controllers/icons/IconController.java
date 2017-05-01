@@ -117,10 +117,7 @@ public class IconController
 	/* Methods for Rooms */
 
 	private void resetRoom(Room room) {
-		if (room == null || room.getLocation() == null) return;
-
-		Icon icon = room.getIcon();
-		icon.setImage(RoomType.DEFAULT.getImage());
+		if (room == null || room.getIcon() == null) return;
 
 		room.getIcon().setImage(room.getType().getImage());
 	}
