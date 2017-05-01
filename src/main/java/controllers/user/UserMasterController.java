@@ -144,10 +144,6 @@ public class UserMasterController
 		resizeDrawerListener();
 		System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 
-		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
-		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
-
 
 		mainDrawer.open();
 
@@ -284,6 +280,7 @@ public class UserMasterController
 
 		destinationTypeTabs.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, old, selection) -> {
+					System.out.println(destinationField);
 					destinationField.setText("");
 					if (selection == profTab) {
 						destinationField.setPromptText("Choose a professional");
@@ -292,6 +289,11 @@ public class UserMasterController
 						destinationField.setPromptText("Choose destination");
 						destImageView.setImage(destRoomImage);
 					}
+					if (selection != roomTab) {
+						endRoom = null;
+						enableOrDisableNavigationButtons();
+						resetRoomSearchResults();
+					}
 				});
 
 		// Set the selection actions for the search results
@@ -299,15 +301,19 @@ public class UserMasterController
 				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
 		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, oldValue, selection) -> {
+					if (selection == null) {
+						this.resetProfessionalSearchResults();
+						return;
+					}
+
 					Set<Room> rooms = selection.getLocations();
 					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
-					if(rooms.size() == 0){
+					if (rooms.isEmpty()) {
 						//no rooms for this professional
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						alert.setTitle("No Rooms Found");
 						alert.setHeaderText(null);
-						alert.setContentText("There are no rooms available for this professional. \n" +
-								"Please change your selection and try again");
+						alert.setContentText("There are no rooms available for this professional. \nPlease change your selection and try again");
 						alert.showAndWait();
 					} else {
 						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
@@ -463,6 +469,9 @@ public class UserMasterController
 
 	private void setupSearchFields() {
 		destinationField.setPromptText("Choose destination");
+
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsOrProfessionals(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsOrProfessionals(this.startField.getText()));
 
 		this.destinationField.setOnKeyReleased(e -> {
 			this.filterRoomsOrProfessionals(this.destinationField.getText());
