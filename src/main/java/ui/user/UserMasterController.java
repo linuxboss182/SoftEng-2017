@@ -193,10 +193,15 @@ public class UserMasterController
 		iconManager.setOnMouseClickedOnSymbol((room, event) -> {
 			if (event.getButton() == MouseButton.PRIMARY) this.selectRoomAction(room);
 			event.consume();
-			System.out.println("event consumed");
 		});
 		iconManager.updateListeners(directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
+
+		iconManager.setOnMouseEnteredRoomHandler((room, event) -> {
+			roomSearchResults.scrollTo(room);
+			System.out.println("hg");
+			//roomSearchResults.
+		});
 	}
 
 
