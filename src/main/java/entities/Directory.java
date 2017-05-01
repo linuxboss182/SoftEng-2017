@@ -491,11 +491,14 @@ public class Directory
 	 * @return The currently-available neighbors of the node
 	 */
 	public Set<Node> getNodeNeighbors(Node node) {
-		Set<Node> neighbors = node.getNeighbors();
+		Set<Node> neighbors = this.getAllNodeNeighbors(node);
 		if (! this.loggedIn) {
 			neighbors.removeIf(Node::isRestricted);
 		}
 		return neighbors;
+	}
+	public Set<Node> getAllNodeNeighbors(Node node) {
+		return node.getNeighbors();
 	}
 
 
