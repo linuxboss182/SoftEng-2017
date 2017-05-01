@@ -3,6 +3,7 @@ package entities;
 import javafx.scene.shape.Circle;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,26 +15,6 @@ import java.util.function.Function;
  */
 public class Node
 {
-	public RoomType getType() {
-		if(this.room == null) {
-			return RoomType.NONE;
-		} else {
-			switch (room.getDescription()) {
-				case "elevator":
-					return RoomType.ELEVATOR;
-				case "stairs":
-					return RoomType.STAIRS;
-				case "portal":
-					return RoomType.PORTAL;
-				case "hallway":
-					return RoomType.HALLWAY;
-				case "parking lot":
-					return RoomType.PARKING;
-				default:
-					return RoomType.DEFAULT;
-			}
-		}
-	}
 	private double x;
 	private double y;
 	private int floor;
@@ -45,7 +26,7 @@ public class Node
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
-	private static final double CIRCLE_RADIUS = 5;
+	private static final double CIRCLE_RADIUS = 3;
 
 	Node(double x, double y, int floor, String buildingName, boolean isRestricted) {
 		this.x = x;
@@ -312,5 +293,10 @@ public class Node
 
 	private void makeShape() {
 		this.circ = new Circle(this.x, this.y, Node.CIRCLE_RADIUS);
+	}
+
+	public RoomType getType() {
+		RoomType type = this.mapToRoom(Room::getType);
+		return (type == null) ? RoomType.NONE : type;
 	}
 }

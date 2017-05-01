@@ -96,7 +96,7 @@ public class DirectionsGenerator
 					leftTurns = 0;
 					break;
 				case ELEVATOR:
-					while (path.get(i + 1).getType() == RoomType.ELEVATOR) {
+					while ((i + 1 != path.size()) && (path.get(i + 1).getType() == RoomType.ELEVATOR)) {
 						i++;
 					}
 					directions.add(new Direction("Take the elevator to the " +

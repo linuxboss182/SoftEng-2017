@@ -84,6 +84,8 @@ public class UserMasterController
 
 	private Room startRoom;
 	private Room endRoom;
+	private Image destRoomImage = new Image("/bPin.png");
+	private Image destProfImage = new Image("/professional.png");
 
 	private boolean selectingStart = false; // TODO: Find a way to remove this state
 
@@ -142,10 +144,6 @@ public class UserMasterController
 		resizeDrawerListener();
 		System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 
-		// Enable search; if this becomes more than one line, make it a function
-		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
-		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
-
 
 		mainDrawer.open();
 
@@ -160,15 +158,14 @@ public class UserMasterController
 	}
 
 	private void initImages() {
-		if(directory.isProfessional()){
+		if (directory.isProfessional()) {
 			logAsAdmin.setImage(new Image("/logout.png"));
-		}else{
+		} else {
 			logAsAdmin.setImage(new Image("/lock.png"));
 		}
 		startImageView.setImage(new Image("/aPin.png"));
-		destImageView.setImage(new Image("/bPin.png"));
+		destImageView.setImage(destRoomImage);
 		aboutBtn.setImage(new Image("/about.png"));
-
 	}
 
 	private void resizeDrawerListener() {
@@ -335,20 +332,42 @@ public class UserMasterController
 
 		destinationTypeTabs.getSelectionModel().select(servicesTab);
 
+		destinationTypeTabs.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, old, selection) -> {
+					System.out.println(destinationField);
+					destinationField.setText("");
+					if (selection == profTab) {
+						destinationField.setPromptText("Choose a professional");
+						destImageView.setImage(destProfImage);
+					} else {
+						destinationField.setPromptText("Choose destination");
+						destImageView.setImage(destRoomImage);
+					}
+					if (selection != roomTab) {
+						endRoom = null;
+						enableOrDisableNavigationButtons();
+						resetRoomSearchResults();
+					}
+				});
+
 		// Set the selection actions for the search results
 		this.roomSearchResults.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, oldValue, selection) -> this.selectRoomAction(selection));
 		this.profSearchResults.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, oldValue, selection) -> {
+					if (selection == null) {
+						this.resetProfessionalSearchResults();
+						return;
+					}
+
 					Set<Room> rooms = selection.getLocations();
 					rooms.removeIf(r -> (! directory.isLoggedIn()) && r.getLocation().isRestricted());
-					if(rooms.size() == 0){
+					if (rooms.isEmpty()) {
 						//no rooms for this professional
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						alert.setTitle("No Rooms Found");
 						alert.setHeaderText(null);
-						alert.setContentText("There are no rooms available for this professional. \n" +
-								"Please change your selection and try again");
+						alert.setContentText("There are no rooms available for this professional. \nPlease change your selection and try again");
 						alert.showAndWait();
 					} else {
 						this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
@@ -356,15 +375,15 @@ public class UserMasterController
 					}
 				}
 		);
-			this.servicesList.getSelectionModel().selectedItemProperty().addListener(
-					(ignored, oldValue, selection) -> {
-						try {
-							findService(selection);
-						} catch (IOException | InvocationTargetException | PathNotFoundException e) {
-							e.printStackTrace();
-						}
+		this.servicesList.getSelectionModel().selectedItemProperty().addListener(
+				(ignored, oldValue, selection) -> {
+					try {
+						findService(selection);
+					} catch (IOException | InvocationTargetException | PathNotFoundException e) {
+						e.printStackTrace();
 					}
-			);
+				}
+		);
 
 
 	}
@@ -488,6 +507,7 @@ public class UserMasterController
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectStartRoom(r);
+//		iconManager.removeIcon(r);
 		startField.setText(r.getName());
 		this.displayRooms();
 	}
@@ -496,12 +516,16 @@ public class UserMasterController
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectEndRoom(r);
+//		iconManager.removeIcon(r);
 		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
 
 	private void setupSearchFields() {
 		destinationField.setPromptText("Choose destination");
+
+		this.destinationField.setOnKeyReleased(e -> this.filterRoomsOrProfessionals(this.destinationField.getText()));
+		this.startField.setOnKeyReleased(e -> this.filterRoomsOrProfessionals(this.startField.getText()));
 
 		this.destinationField.setOnKeyReleased(e -> {
 			this.filterRoomsOrProfessionals(this.destinationField.getText());
@@ -528,6 +552,7 @@ public class UserMasterController
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = true;
+				this.startRoom = directory.getKiosk();
 				startField.setText("");
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);

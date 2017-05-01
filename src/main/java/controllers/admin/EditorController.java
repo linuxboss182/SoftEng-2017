@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -486,6 +487,7 @@ public class EditorController
 		directory.logOut();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
+
 			// true if and only if the button pressed in the alert did not say "OK"
 			if (! warn.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
 				return;
@@ -525,6 +527,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.setTitle("Faulkner Hospital Navigator Import Professionals");
+		addProStage.getIcons().add(new Image("/bwhIcon.png"));
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -640,6 +644,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AccountPopup.fxml"));
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.setTitle("Faulkner Hospital Navigator Account Manager");
+		addProStage.getIcons().add(new Image("/bwhIcon.png"));
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -745,11 +751,23 @@ public class EditorController
 		node.getShape().setOnMouseReleased(event -> this.releaseNodeListener(event, node));
 		node.getShape().setOnMousePressed((MouseEvent event) -> {
 			this.primaryPressed = event.isPrimaryButtonDown();
+
 			this.secondaryPressed = event.isSecondaryButtonDown();
 			if (event.isSecondaryButtonDown() && event.isShiftDown()){
-				selectNode(node);
+//				selectNode(node);
 				displayContextMenu(event);
+			} else if(primaryPressed && !event.isShiftDown()) {
+				this.selectSingleNode(node);
 			}
+		});
+		node.getShape().setOnMouseEntered( e->{
+			e.consume();
+			contentAnchor.getScene().setCursor(Cursor.HAND);
+		});
+
+		node.getShape().setOnMouseExited(e-> {
+			e.consume();
+			contentAnchor.getScene().setCursor(Cursor.DEFAULT);
 		});
 	}
 
@@ -921,6 +939,7 @@ public class EditorController
 		contentAnchor.setOnMouseDragged(e-> {
 			e.consume();
 			if(e.isShiftDown()) {
+				contentAnchor.getScene().setCursor(Cursor.CROSSHAIR);
 				Rectangle r = new Rectangle();
 				if(e.getX() > selectionStartX) {
 					r.setX(selectionStartX);
@@ -943,16 +962,33 @@ public class EditorController
 				this.linePane.getChildren().add(r);
 			}
 //			else if(setDefaultViewBtn.selectedProperty().getValue()){
+//				contentAnchor.getScene().setCursor(Cursor.CROSSHAIR);
 ////				this.selectedMaxX = clickedX;
 ////				this.selectedMaxY = clickedY;
 ////				this.isSelectingMaxView=false;
 //
 //				Rectangle r = new Rectangle();
-//				r.setX(selectionStartX);
-//				r.setWidth(e.getX() - selectionStartX);
 //
-//				r.setY(selectionStartY);
-//				r.setHeight(e.getY() - selectionStartY);
+//				if(e.getX() > selectionStartX) {
+//					r.setX(selectionStartX);
+//					r.setWidth(e.getX() - selectionStartX);
+//				} else {
+//					r.setX(e.getX());
+//					r.setWidth(selectionStartX - e.getX());
+//				}
+//				if(e.getY() > selectionStartY) {
+//					r.setY(selectionStartY);
+//					r.setHeight(e.getY() - selectionStartY);
+//				} else {
+//					r.setY(e.getY());
+//					r.setHeight(selectionStartY - e.getY());
+//				}
+//
+////				r.setX(selectionStartX);
+////				r.setWidth(e.getX() - selectionStartX);
+////
+////				r.setY(selectionStartY);
+////				r.setHeight(e.getY() - selectionStartY);
 //
 //				r.setFill(Color.SKYBLUE);
 //				r.setStroke(Color.BLUE);
@@ -974,6 +1010,7 @@ public class EditorController
 		});
 
 		contentAnchor.setOnMouseReleased(e->{
+			contentAnchor.getScene().setCursor(Cursor.DEFAULT);
 			e.consume();
 			if (e.isShiftDown()) { // this is so that you are allowed to release shift after pressing it at the start of the drag
 				this.selectionEndX = e.getX();
@@ -1006,6 +1043,39 @@ public class EditorController
 					}
 				});
 			}
+//			else if(setDefaultViewBtn.selectedProperty().getValue()){
+//				this.selectionEndX = e.getX();
+//				this.selectionEndY = e.getY();
+////				this.redisplayAll(); // this is to clear the rectangle off of the pane
+//
+//
+//				double topLeftX;
+//				double topLeftY;
+//				double botRightX;
+//				double botRightY;
+//				if(this.selectionStartX < this.selectionEndX) {
+//					topLeftX = this.selectionStartX;
+//					botRightX = this.selectionEndX;
+//				} else {
+//					topLeftX = this.selectionEndX;
+//					botRightX = this.selectionStartX;
+//				}
+//				if(this.selectionStartY < this.selectionEndY) {
+//					topLeftY = this.selectionStartY;
+//					botRightY = this.selectionEndY;
+//				} else {
+//					topLeftY = this.selectionEndY;
+//					botRightY = this.selectionStartY;
+//				}
+//
+//				System.out.println("selectedMinX = " + topLeftX);
+//				System.out.println("selectedMaxX = " + botRightX);
+//				System.out.println("selectedMinY = " + topLeftY);
+//				System.out.println("selectedMaxY = " + botRightY);
+//
+//				directory.setDefaultView(topLeftX, botRightX,
+//						topLeftY, botRightY);
+//			}
 //			else if(setDefaultViewBtn.selectedProperty().getValue()){
 //				this.selectionEndX = e.getX();
 //				this.selectionEndY = e.getY();
@@ -1329,7 +1399,7 @@ public class EditorController
 		Scene helpScene = new Scene(loader.load());
 		Stage helpStage = new Stage();
 		helpStage.setTitle("Faulkner Hospital Navigator Help Page");
-		helpStage.getIcons().add(new Image("bwhIcon.png"));
+		helpStage.getIcons().add(new Image("/bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
 		helpStage.addEventFilter(MouseEvent.ANY, e-> {
