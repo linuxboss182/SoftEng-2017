@@ -535,6 +535,13 @@ public class UserMasterController
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
+					} else if (roomSearchResults.getItems().size() == 1) {
+						endRoom = roomSearchResults.getItems().get(0);
+						try {
+							this.getDirectionsClicked();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
 			}
 		});
