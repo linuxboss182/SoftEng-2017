@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
@@ -8,29 +9,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.stage.Screen?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.shared.LoginController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.user.LoginController">
    <top>
-      <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #82b6e7;" BorderPane.alignment="CENTER">
+      <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
          <center>
-            <GridPane prefHeight="37.0" prefWidth="629.0" BorderPane.alignment="CENTER">
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <columnConstraints>
-                  <ColumnConstraints />
-               </columnConstraints>
+            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton fx:id="cancelBtn" onMouseClicked="#cancelBtnClicked" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #82b6e7;" text="Back" textFill="WHITE" />
+                  <JFXButton fx:id="cancelBtn" buttonType="RAISED" onMouseClicked="#cancelBtnClicked" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #5087b4;" text="Back" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
                </children>
-            </GridPane>
+            </HBox>
          </center>
-         <top>
-            <JFXToolbar prefHeight="17.0" prefWidth="1174.0" style="-fx-background-color: #5086b5;" BorderPane.alignment="CENTER">
-               <center>
-                  <Label text="Faulkner Hospital - Login" textFill="WHITE" BorderPane.alignment="CENTER" />
-               </center>
-            </JFXToolbar>
-         </top>
       </JFXToolbar>
    </top>
    <center>
@@ -50,8 +42,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <JFXTextField onKeyPressed="#enterPressed1" fx:id="usernameField" promptText="Enter username" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXPasswordField onKeyPressed="#enterPressed" fx:id="passwordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <JFXTextField fx:id="usernameField" onKeyPressed="#enterPressed1" promptText="Enter username" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <JFXPasswordField fx:id="passwordField" onKeyPressed="#enterPressed" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <JFXButton fx:id="loginBtn" buttonType="RAISED" onMouseClicked="#loginBtnClicked" prefHeight="43.0" prefWidth="151.0" style="-fx-background-color: #5087b4;" text="Login" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <font>

@@ -1,18 +1,6 @@
 package entities;
 
-import controllers.icons.IconManager;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-
-import controllers.icons.Icon;
+import icons.Icon;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,13 +49,17 @@ public class Room
 		this.labelOffsetY=y;
 	}
 
+	Room(String name, String description, String displayName, RoomType type) {
+		this(name, displayName, description);
+		this.type = type;
+	}
 
 	/* Methods */
 
 	public void setLabelOffset(double x, double y) {
-		this.labelOffsetX = x - this.getLocation().getX();
-		this.labelOffsetY = y - this.getLocation().getY();
-		this.icon.setLabelOffset(x, y);
+		this.labelOffsetX = x - this.location.getX();
+		this.labelOffsetY = y - this.location.getY();
+		//this.icon.setLabelOffset(x, y);
 	}
 
 	public String getName() {

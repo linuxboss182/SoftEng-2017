@@ -1,13 +1,13 @@
-import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
+import entities.floor.FloorProxy;
 import main.ApplicationController;
-import main.algorithms.Algorithm;
-import main.algorithms.PathNotFoundException;
-import main.algorithms.Pathfinder;
+import algorithms.Algorithm;
+import algorithms.PathNotFoundException;
+import algorithms.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -187,25 +187,25 @@ public class PathfinderTester
   E = elevator
 
    01234567890
-  0X          
-  1           
-  2  Z        
-  3           
-  4           
-  5     E     
-  6           
-  7           
-  8           
-  9           
+  0X
+  1
+  2  Z
+  3
+  4
+  5     E
+  6
+  7
+  8
+  9
   0          O
 
  */
-		Node origin = dir.addNewNode(0, 0, 1); //Create a start node
-		Node dest = dir.addNewNode(10, 10, 2); //Create a end node
-		Node n1 = dir.addNewNode(2, 2, 1); //Node between origin and elev1
-		Node n2 = dir.addNewNode(2, 2, 2); //Node between elev2 and dest
-		Node elev1 = dir.addNewNode(5, 5, 1);
-		Node elev2 = dir.addNewNode(5, 5, 2);
+		Node origin = dir.addNewRoomNode(0.0, 0.0, FloorProxy.getFloor("FAULKNER", 1), "E", "E", "E"); //Create a start node
+		Node dest = dir.addNewRoomNode(10.0, 10.0, FloorProxy.getFloor("FAULKNER", 2), "E", "E", "E"); //Create a end node
+		Node n1 = dir.addNewRoomNode(2.0, 2.0, FloorProxy.getFloor("FAULKNER", 1), "E", "E", "E"); //Node between origin and elev1
+		Node n2 = dir.addNewRoomNode(2.0, 2.0, FloorProxy.getFloor("FAULKNER", 2), "E", "E", "E"); //Node between elev2 and dest
+		Node elev1 = dir.addNewRoomNode(5.0, 5.0, FloorProxy.getFloor("FAULKNER", 1), "E", "E", "E");
+		Node elev2 = dir.addNewRoomNode(5.0, 5.0, FloorProxy.getFloor("FAULKNER", 2), "E", "E", "E");
 
 		//Connect nodes on same floor
 		dir.connectNodes(origin, n1);

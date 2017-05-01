@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import com.jfoenix.controls.*?>
@@ -7,9 +9,9 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.user.UserMasterController">
     <top>
-        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
+        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #FFFFFF;" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="navHamburgerBtn" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -17,20 +19,49 @@
                     </padding>
                 </JFXHamburger>
             </left>
-            <center>
-                <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" BorderPane.alignment="CENTER" />
-            </center>
          <right>
-            <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="63.0" prefWidth="248.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" text="Help"  styleClass="blue-button" >
+                            <ImageView fx:id="aboutBtn" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true">
                      <HBox.margin>
-                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                            <ImageView fx:id="logAsAdmin" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="29.0" prefWidth="81.0" style="-fx-background-color: #5087b4;" styleClass="blue-button" text="Help" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets bottom="15.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </JFXButton>
                </children>
             </HBox>
          </right>
+         <center>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="FLOORS: " HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="10.0" top="5.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                      <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" HBox.hgrow="ALWAYS">
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </JFXComboBox>
+               </children>
+            </HBox>
+         </center>
         </JFXToolbar>
     </top>
     <center>
@@ -87,26 +118,25 @@
                                         </JFXButton>
                                     </children>
                                 </HBox>
-                                <JFXTabPane fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
+                                <JFXTabPane id="jfx-tab-pane" fx:id="destinationTypeTabs" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
                                         <Tab fx:id="servicesTab" text="Services">
-                                            <JFXButton fx:id="findBathroomBtn" />
-                                            <!--<JFXListView fx:id="commonServicesView" />-->
+                                           <content>
+                                               <JFXListView fx:id="servicesList" />
+                                           </content>
                                         </Tab>
                                         <Tab fx:id="roomTab" text="Rooms">
-                                            <JFXListView fx:id="roomSearchResults" />
+                                           <content>
+                                               <JFXListView fx:id="roomSearchResults" />
+                                           </content>
                                         </Tab>
                                         <Tab fx:id="profTab" text="Professionals">
-                                            <JFXListView fx:id="profSearchResults" />
+                                           <content>
+                                               <JFXListView fx:id="profSearchResults" />
+                                           </content>
                                         </Tab>
                                     </tabs>
                                 </JFXTabPane>
-                                <HBox fx:id="bottomHBox">
-                                    <children>
-                                        <ImageView fx:id="logAsAdmin" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#logAsAdminClicked" pickOnBounds="true" preserveRatio="true" />
-                                        <ImageView fx:id="aboutBtn" fitHeight="63.0" fitWidth="81.0" onMouseClicked="#aboutBtnClicked" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                </HBox>
                             </children>
                         </VBox>
                     </children>

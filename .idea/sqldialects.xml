@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/main/database/StoredProcedures.java" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/src/main/java/database/StoredProcedures.java" dialect="Derby" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql.d/DatabaseData.sql" dialect="Derby" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql.d/DatabaseSchema.sql" dialect="Derby" />
   </component>

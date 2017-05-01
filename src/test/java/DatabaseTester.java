@@ -2,8 +2,8 @@ import entities.Directory;
 import entities.Node;
 import entities.Room;
 import main.ApplicationController;
-import main.database.DatabaseWrapper;
-import main.database.DatabaseException;
+import database.DatabaseWrapper;
+import database.DatabaseException;
 import org.junit.Test;
 import org.junit.Assert;
 

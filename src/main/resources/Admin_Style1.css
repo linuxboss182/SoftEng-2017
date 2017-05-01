@@ -1,3 +1,47 @@
-#anchorPane{
-	-fx-border-width: 2px;
+
+.jfx-tool-bar {
+	-fx-background-color: #FFFFFF;
+}
+.hbox-go {
+	-fx-background-color: #3367d6;
+}
+
+
+.blue-button {
+	-fx-background-color: #5087b4;
+	-fx-text-fill: #FFFFFF;
+	-fx-font-size: 14px;
+	-fx-font-family: "Roboto";
+}
+
+.drawer {
+	-fx-effect: dropshadow(one-pass-box, darkgrey, 2, 1.0, 2, 2);
+}
+
+.jfx-hamburger {
+	-fx-effect: dropshadow(gaussian, gray, 10, 1.0, 100, 100);
+}
+.jfx-tab {
+	-fx-background-color: gray;
+	-fx-text-fill: white;
+}
+/*
+    The tab bar
+*/
+
+
+.grid-pane {
+	-fx-background-color: #3367d6;
+}
+
+
+.jfx-tab-pane .headers-region {
+    -fx-background-color: darkgray;
+}
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: gray;
+}
+.jfx-tab-pane .tab-selected-line {
+    -fx-stroke: #FFFFFF;
+    -fx-stroke-width: 2pt;
 }

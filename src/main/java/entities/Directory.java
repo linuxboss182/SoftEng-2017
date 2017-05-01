@@ -1,6 +1,8 @@
 package entities;
 
-import controllers.user.Caretaker;
+import memento.Caretaker;
+import entities.floor.FloorImage;
+import entities.floor.FloorProxy;
 import javafx.scene.image.Image;
 
 import java.util.*;
@@ -26,8 +28,8 @@ public class Directory
 	private long timeout = 50;
 	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
-
 	private FloorImage floor;
+	private Map<String, Viewport> defaultViews;
 
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
@@ -44,16 +46,32 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.Accounts = new HashMap<>();
+		this.defaultViews = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
 		this.loggedIn = false;
 	}
 
+	public void resetFloor() {
+		this.floor = FloorProxy.getFloor("FAULKNER", 1);
+	}
+
 
 	/* Methods */
 
 	/* Getters */
+
+	public Viewport getDefaultView(){
+		return defaultViews.getOrDefault(this.floor.getName()+this.floor.getNumber(), null);
+	}
+
+	public void setDefaultView(double minX, double maxX, double minY, double maxY){
+//		defaultViews.remove(this.floor);
+		defaultViews.put(this.floor.getName()+this.floor.getNumber(), new Viewport( minX, maxX, minY, maxY));
+	}
+
+
 	public boolean isProfessional() {
 		return loggedIn;
 	}
@@ -187,6 +205,11 @@ public class Directory
 	 *
 	 * @return The new node.
 	 */
+	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc, RoomType type) {
+		Node newNode = this.addNewRoomNode(x, y, floor, name, shortName, desc);
+		newNode.getRoom().setType(type);
+		return newNode;
+	}
 	public Node addNewRoomNode(double x, double y, FloorImage floor, String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
 		Node newNode = new Node(x, y, floor.getNumber(), floor.getName(), loggedIn);
@@ -200,17 +223,25 @@ public class Directory
 	/**
 	 * Add a new room with the given attributes to the given node
 	 */
-	public void addNewRoomToNode(Node node, String name, String shortName, String desc) {
-		Room room = new Room(name, shortName, desc);
-		node.setRoom(room);
-		room.setLocation(node);
-		this.rooms.add(room);
+	public Room addNewRoomToNode(Node node, String name, String shortName, String desc, RoomType type) {
+		Room newRoom = this.addNewRoomToNode(node, name, shortName, desc);
+		newRoom.setType(type);
+		return newRoom;
+	}
+	public Room addNewRoomToNode(Node node, String name, String shortName, String desc) {
+		Room newRoom = new Room(name, shortName, desc);
+		node.setRoom(newRoom);
+		newRoom.setLocation(node);
+		this.rooms.add(newRoom);
+		return newRoom;
 	}
 
 	/**
 	 * Create a new room in this directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 *
+	 * @note Used in test cases
 	 */
 	public Room addNewRoom(String name, String shortName, String desc) {
 		Room newRoom = new Room(name, shortName, desc);
@@ -222,6 +253,8 @@ public class Directory
 	 * Create a new room in this directory
 	 *
 	 * This does not associate the room with a node. For that, use addNewRoomNode.
+	 *
+	 * Used in loading from the database
 	 */
 	public Room addNewRoom(String name, String shortName, String desc, double labelX, double labelY) {
 		Room newRoom = new Room(name, desc, shortName, labelX, labelY);
@@ -270,7 +303,7 @@ public class Directory
 				(node.getFloor() == floor.getNumber())
 						&&
 				node.getBuildingName().equalsIgnoreCase(floor.getName())
-		);
+						&& (! node.isRestricted() || this.loggedIn));
 	}
 
 	/**
@@ -422,7 +455,7 @@ public class Directory
 			node.getRoom().setType(RoomType.ELEVATOR);
 
 			Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
-					"", "Elevator to floor below");
+					"", "Elevator to floor below", RoomType.ELEVATOR);
 			n.getRoom().setType(RoomType.ELEVATOR);
 			this.connectNodes(node, n);
 		}
@@ -443,7 +476,7 @@ public class Directory
 			node.getRoom().setType(RoomType.ELEVATOR);
 
 			Node n = this.addNewRoomNode(node.getX(), node.getY(), targetFloor, "",
-					"", "Elevator to floor above");
+					"", "Elevator to floor above", RoomType.ELEVATOR);
 			n.getRoom().setType(RoomType.ELEVATOR);
 			this.connectNodes(node, n);
 		}
@@ -521,5 +554,19 @@ public class Directory
 		return this.caretaker;
 	}
 
+	public static class Viewport
+	{
+		public double minX;
+		public double maxX;
+		public double minY;
+		public double maxY;
+
+		public Viewport(double minX, double maxX, double minY, double maxY){
+			this.minX = minX;
+			this.maxX = maxX;
+			this.minY = minY;
+			this.maxY = maxY;
+		}
+	}
 }
 
