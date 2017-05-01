@@ -64,8 +64,9 @@ public class IconManager
 	/* Listener variables */
 	private BiConsumer<Room, MouseEvent> onMouseClickedOnRoomHandler;
 	private BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
+	private BiConsumer<Room, MouseEvent> onMouseEnteredRoomHandler;
 	private BiConsumer<Room, MouseEvent> onMouseClickedOnPathSegmentEnd;
-	private boolean showFullNamesOnHover = true;
+	private boolean showFullNamesOnHover = false;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
@@ -205,31 +206,31 @@ public class IconManager
 			label.setPickOnBounds(false);
 			label.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
-				image.setScaleX(ICON_SIZE_LARGE);
-				image.setScaleY(ICON_SIZE_LARGE);
-				label.setScaleX(LABEL_SIZE_LARGE);
-				label.setScaleY(LABEL_SIZE_LARGE);
+				//image.setScaleX(ICON_SIZE_LARGE);
+				//image.setScaleY(ICON_SIZE_LARGE);
+//				label.setScaleX(LABEL_SIZE_LARGE);
+//				label.setScaleY(LABEL_SIZE_LARGE);
 			});
 			label.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
-				image.setScaleX(ICON_SIZE);
-				image.setScaleY(ICON_SIZE);
-				label.setScaleX(LABEL_SIZE);
-				label.setScaleY(LABEL_SIZE);
+				//image.setScaleX(ICON_SIZE);
+				//image.setScaleY(ICON_SIZE);
+//				label.setScaleX(LABEL_SIZE);
+//				label.setScaleY(LABEL_SIZE);
 			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
-				image.setScaleX(ICON_SIZE_LARGE);
-				image.setScaleY(ICON_SIZE_LARGE);
-				label.setScaleX(LABEL_SIZE_LARGE);
-				label.setScaleY(LABEL_SIZE_LARGE);
+				//image.setScaleX(ICON_SIZE_LARGE);
+				//image.setScaleY(ICON_SIZE_LARGE);
+//				label.setScaleX(LABEL_SIZE_LARGE);
+//				label.setScaleY(LABEL_SIZE_LARGE);
 			});
 			image.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
-				image.setScaleX(ICON_SIZE);
-				image.setScaleY(ICON_SIZE);
-				label.setScaleX(LABEL_SIZE);
-				label.setScaleY(LABEL_SIZE);
+				//image.setScaleX(ICON_SIZE);
+				//image.setScaleY(ICON_SIZE);
+//				label.setScaleX(LABEL_SIZE);
+//				label.setScaleY(LABEL_SIZE);
 			});
 		}
 
@@ -238,6 +239,14 @@ public class IconManager
 			ImageView image = icon.getImage();
 			BiConsumer<Room, MouseEvent> listener = onMouseClickedOnRoomHandler;
 			image.setOnMouseClicked(event -> {
+				listener.accept(room, event);
+			});
+		}
+
+		if (onMouseEnteredRoomHandler != null) {
+			ImageView image = icon.getImage();
+			BiConsumer<Room, MouseEvent> listener = onMouseEnteredRoomHandler;
+			image.setOnMouseEntered(event -> {
 				listener.accept(room, event);
 			});
 		}
@@ -356,6 +365,10 @@ public class IconManager
 				listener.accept(target, event);
 			});
 		}
+	}
+
+	public void setOnMouseEnteredRoomHandler(BiConsumer<Room, MouseEvent> handler) {
+		this.onMouseEnteredRoomHandler = handler;
 	}
 
 	private class MassMap<K, V> extends HashMap<K, V>
