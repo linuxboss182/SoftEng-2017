@@ -137,7 +137,6 @@ public class UserMasterController
 
 		});
 		resizeDrawerListener();
-		System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 
 
 		mainDrawer.open();
@@ -167,9 +166,7 @@ public class UserMasterController
 		destinationTypeTabs.setPrefHeight(drawerParentPane.getHeight() - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight());
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
 			destinationTypeTabs.setPrefHeight((double)newHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight());
-			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 		});
-
 	}
 
 	private void setStyleIDs() {
@@ -196,12 +193,6 @@ public class UserMasterController
 		});
 		iconManager.updateListeners(directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
-
-		iconManager.setOnMouseEnteredRoomHandler((room, event) -> {
-			roomSearchResults.scrollTo(room);
-			System.out.println("hg");
-			//roomSearchResults.
-		});
 	}
 
 
@@ -333,7 +324,7 @@ public class UserMasterController
 
 		destinationTypeTabs.getSelectionModel().selectedItemProperty().addListener(
 				(ignored, old, selection) -> {
-					System.out.println(destinationField);
+
 					destinationField.setText("");
 					if (selection == profTab) {
 						destinationField.setPromptText("Choose a professional");
@@ -622,7 +613,6 @@ public class UserMasterController
 					prevCost = nodes.size();
 					nearest = r;
 				}
-				System.out.println(r.getName());
 			}
 			selectEndRoom(nearest);
 			this.getDirectionsClicked();
