@@ -57,9 +57,15 @@ public final class TimeoutTimer
 	}
 
 	public void cancelTimer() {
+
+
 		try{
+			if(this.timer == null) return;
 			this.timer.cancel();
 			this.timer.purge();
+
+			if(this.timerTask == null) return;
+			this.timerTask.cancel();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
