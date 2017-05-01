@@ -205,7 +205,7 @@
                            <children>
                               <JFXButton fx:id="importBtn" buttonType="RAISED" layoutX="57.0" layoutY="40.0" onMouseClicked="#loadProfessionalsFile" prefHeight="27.0" prefWidth="223.0" style="-fx-background-color: #5087b4;" text="Add Professionals from File" textFill="WHITE" />
                               <JFXButton fx:id="importNodeBtn" buttonType="RAISED" layoutX="58.0" layoutY="114.0" onMouseClicked="#loadNodesFile" prefHeight="27.0" prefWidth="221.0" style="-fx-background-color: #5087b4;" text="Add Nodes and Rooms from File" textFill="WHITE" />
-                               <JFXToggleButton fx:id="setDefaultViewBtn" layoutX="58.0" layoutY="239.0" onMouseClicked="#setDefaultViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="Set Default Zoom Mode" />
+                               <!--<JFXToggleButton fx:id="setDefaultViewBtn" layoutX="58.0" layoutY="239.0" onMouseClicked="#setDefaultViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="Set Default Zoom Mode" />-->
                            </children>
                         </AnchorPane>
                     </content>

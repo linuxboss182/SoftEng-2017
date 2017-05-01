@@ -103,12 +103,12 @@ public abstract class MapDisplayController
 	protected abstract void redisplayMapItems();
 
 	protected void changeFloor(FloorImage floor) {
-		String oldFloor = floor.getName();
+		String oldFloor = directory.getFloorName();
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
 
-		if(!directory.getFloor().getName().equals(oldFloor)) {
+		if(!directory.getFloorName().equals(oldFloor)) {
 			this.fitMapSize();
 		}
 	}
