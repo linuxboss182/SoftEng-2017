@@ -187,7 +187,7 @@
                                         </Label>
                                         <JFXComboBox fx:id="algorithmComboBox" layoutX="77.0" layoutY="78.0" prefHeight="25.0" prefWidth="233.0" />
                                         <JFXButton fx:id="setAsKioskBtn" buttonType="RAISED" layoutX="135.0" layoutY="195.0" onMouseClicked="#selectKioskClicked" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #5087b4;" text="Set As Kiosk" textFill="WHITE" />
-                                        <JFXToggleButton fx:id="restrictedView" layoutX="79.0" layoutY="248.0" onMouseClicked="#restrictedViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="View Restricted" />
+                                        <JFXToggleButton fx:id="restrictedView" layoutX="79.0" layoutY="248.0" onMouseClicked="#restrictedViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="View Restricted" toggleColor="#5087b4" toggleLineColor="#305672" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -196,13 +196,18 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <JFXButton fx:id="modifyAccountBtn" buttonType="RAISED" layoutX="131.0" layoutY="76.0" onMouseClicked="#modifyAccountBtnPressed" style="-fx-background-color: #5087b4;" text="Modify Accounts" textFill="WHITE" />
-                                        <Label layoutX="120.0" layoutY="148.0" text="Idle Time (seconds):">
+                                        <JFXButton fx:id="modifyAccountBtn" buttonType="RAISED" layoutX="132.0" layoutY="77.0" onMouseClicked="#modifyAccountBtnPressed" style="-fx-background-color: #5087b4;" text="Modify Accounts" textFill="WHITE" />
+                                        <Label layoutX="113.0" layoutY="150.0" text="Idle Time (seconds):">
                                             <font>
                                                 <Font size="18.0" />
                                             </font>
                                         </Label>
-                                        <JFXTextField fx:id="timeoutField" layoutX="131" layoutY="185" prefHeight="27" prefWidth="136" />
+                                        <JFXTextField fx:id="timeoutField" layoutX="124.0" layoutY="184.0" prefHeight="27" prefWidth="136" />
+                              <Label layoutX="96.0" layoutY="32.0" text="Account Management">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
                                     </children>
                                 </AnchorPane>
 
@@ -212,8 +217,13 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <JFXButton fx:id="importBtn" buttonType="RAISED" layoutX="57.0" layoutY="40.0" onMouseClicked="#loadProfessionalsFile" prefHeight="27.0" prefWidth="223.0" style="-fx-background-color: #5087b4;" text="Add Professionals from File" textFill="WHITE" />
-                              <JFXButton fx:id="importNodeBtn" buttonType="RAISED" layoutX="58.0" layoutY="114.0" onMouseClicked="#loadNodesFile" prefHeight="27.0" prefWidth="221.0" style="-fx-background-color: #5087b4;" text="Add Nodes and Rooms from File" textFill="WHITE" />
+                              <JFXButton fx:id="importBtn" buttonType="RAISED" layoutX="80.0" layoutY="97.0" onMouseClicked="#loadProfessionalsFile" prefHeight="27.0" prefWidth="223.0" style="-fx-background-color: #5087b4;" text="Add Professionals from File" textFill="WHITE" />
+                              <JFXButton fx:id="importNodeBtn" buttonType="RAISED" layoutX="81.0" layoutY="171.0" onMouseClicked="#loadNodesFile" prefHeight="27.0" prefWidth="221.0" style="-fx-background-color: #5087b4;" text="Add Nodes and Rooms from File" textFill="WHITE" />
+                              <Label layoutX="127.0" layoutY="33.0" text="Import from File">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
                                <!--<JFXToggleButton fx:id="setDefaultViewBtn" layoutX="58.0" layoutY="239.0" onMouseClicked="#setDefaultViewBtnClicked" prefHeight="58.0" prefWidth="225.0" text="Set Default Zoom Mode" />-->
                            </children>
                         </AnchorPane>

@@ -16,8 +16,8 @@ public class Arrow extends Group {
 		this(direction, new Line(), new Line());
 	}
 
-	private static final double arrowLength = 10; // This is the length of each of the side arrow lines
-	private static final double arrowWidth = 10; // This is the angle between the side arrow lines and the main line
+	private static final double arrowLength = 5; // This is the length of each of the side arrow lines
+	private static final double arrowWidth = 5; // This is the angle between the side arrow lines and the main line
 
 	private Arrow(Line line, Line arrow1, Line arrow2) {
 		super(line, arrow1, arrow2);

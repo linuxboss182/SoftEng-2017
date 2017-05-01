@@ -40,7 +40,7 @@
             <Font name="Bookman Old Style" size="24.0" />
          </font>
       </Label>
-      <Label layoutX="29.0" layoutY="468.0" text="Assitant Project Manager: Robert Harrison">
+      <Label layoutX="29.0" layoutY="468.0" text="Assistant Project Manager: Robert Harrison">
          <font>
             <Font name="Bookman Old Style" size="24.0" />
          </font>
