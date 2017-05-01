@@ -39,9 +39,9 @@ public class IconManager
 	private static final double ICON_SIZE = 0.1; //Scale factor on the icon image
 	private static final double ICON_SIZE_LARGE = 0.2; //Scale factor of icon when hovered over
 	private static final double ICON_SIZE_HUGE = 0.4;
-	private static final double LABEL_SIZE = 0.2; //Scale factor on the icon image
-	private static final double LABEL_SIZE_LARGE = 0.5; //Scale factor on the icon image
-	private static final double LABEL_SIZE_HUGE = 0.4; //Scale factor on the icon image
+	private static final double LABEL_SIZE = 0.3; //Scale factor on the icon image
+	private static final double LABEL_SIZE_LARGE = 0.6; //Scale factor on the icon image
+	private static final double LABEL_SIZE_HUGE = 0.9; //Scale factor on the icon image
 	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
@@ -195,20 +195,6 @@ public class IconManager
 		if (showFullNamesOnHover) {
 			ImageView image = icon.getImage();
 			Label label = icon.getLabel();
-			label.setOnMouseEntered(event -> {
-				icon.updateLabel(room.getName());
-				image.setScaleX(ICON_SIZE_LARGE);
-				image.setScaleY(ICON_SIZE_LARGE);
-				label.setScaleX(LABEL_SIZE_LARGE);
-				label.setScaleY(LABEL_SIZE_LARGE);
-			});
-			label.setOnMouseExited(event -> {
-				icon.updateLabel(room.getDisplayName());
-				image.setScaleX(ICON_SIZE);
-				image.setScaleY(ICON_SIZE);
-				label.setScaleX(LABEL_SIZE);
-				label.setScaleY(LABEL_SIZE);
-			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
 				image.setScaleX(ICON_SIZE_LARGE);
