@@ -39,7 +39,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 
-import main.ApplicationController;
 import memento.TimeoutTimer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -212,7 +211,6 @@ public class UserMasterController
 			filterProfessionalsByName(searchString);
 		}
 	}
-
 
 	/**
 	 * Filter the room list to show only rooms matching the given string
@@ -604,7 +602,7 @@ public class UserMasterController
 	private void findService(RoomType service)
 			throws IOException, InvocationTargetException {
 		try {
-			Set<Room> services = this.directory.getRoomsOnFloor();
+			Set<Room> services = this.directory.getUserRooms();
 			services.removeIf(room -> room.getType() != service);
 
 			int prevCost = 0;
@@ -630,7 +628,6 @@ public class UserMasterController
 			alert.setContentText("There is no existing path to your destination. \n" +
 					"Please check your start and end location and try again");
 			alert.showAndWait();
-			return;
 		}
 	}
 
