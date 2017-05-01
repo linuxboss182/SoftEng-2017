@@ -294,8 +294,8 @@ public class EditorController
 	 * Setup a radial context menu
 	 */
 	public void populateRoundPane(MouseEvent e, double x, double y){
-
-		contextMenu.setLayoutX(x);
+		double MAGIC_X_OFFSET = 6;
+		contextMenu.setLayoutX(x-MAGIC_X_OFFSET);
 		contextMenu.setLayoutY(y);
 
 
