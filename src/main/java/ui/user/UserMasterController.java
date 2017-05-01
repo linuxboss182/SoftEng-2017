@@ -216,13 +216,22 @@ public class UserMasterController
 	 * Filter the room list to show only rooms matching the given string
 	 */
 	private void filterRoomsByName(String searchString) {
+
 		if ((searchString == null) || (searchString.length() == 0)) {
 			this.resetRoomSearchResults();
 		} else {
-			String search = searchString.toLowerCase();
-			Set<Room> rooms = directory.getUserRooms();
-			rooms.removeIf(room -> ! room.getName().toLowerCase().contains(search));
-			this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
+			Set<Room> results = new HashSet<Room>();
+			for(Room r: this.directory.getUserRooms()) {
+				//fuzzy max value is ~3x the number of chars in the string
+				double rmThreshold = (r.getName().length()*3)*.1;
+				//match the whole thing
+				if(searchString.length() < r.getName().length()+2) {
+					if (StringUtils.getFuzzyDistance(searchString, r.getName(), Locale.ENGLISH) >= rmThreshold) {
+						results.add(r);
+					}
+				}
+			}
+			this.roomSearchResults.setItems(FXCollections.observableArrayList(results));
 		}
 	}
 
@@ -238,16 +247,33 @@ public class UserMasterController
 			search = StringUtils.removeStart(search, "doctor ");
 			String finalSearch = search;
 
-			Set<Professional> surnameMatches = directory.getProfessionals();
-			surnameMatches.removeIf(p -> ! p.getSurname().toLowerCase().contains(finalSearch));
 
-			Set<Professional> fullNameMatches = directory.getProfessionals();
-			fullNameMatches.removeIf(p -> ! p.getFullName().toLowerCase().contains(finalSearch));
-			fullNameMatches.removeAll(surnameMatches);
-
-			List<Professional> results = new LinkedList<>(surnameMatches);
-			results.addAll(fullNameMatches);
-
+			List<Professional> results = new LinkedList<>();
+			for(Professional p: this.directory.getProfessionals()) {
+				//fuzzy max value is ~3x the number of chars in the string
+				//god this is such a mess
+				double snThreshold = (p.getSurname().length()*3)*.15;
+				double fmnThreshold = (p.getFormalName().length()*3)*.15;
+				double fnThreshold = (p.getSurname().length()*3)*.15;
+				//match just the surname
+				if(finalSearch.length() < p.getSurname().length()+2){
+					if(StringUtils.getFuzzyDistance(finalSearch, p.getSurname(), Locale.ENGLISH) >= snThreshold && !results.contains(p)){
+						results.add(p);
+					}
+				}
+				//match just the name
+				if(finalSearch.length() <= p.getFormalName().length()+2){
+					if(StringUtils.getFuzzyDistance(finalSearch, p.getFormalName(), Locale.ENGLISH) >= fmnThreshold && !results.contains(p)){
+						results.add(p);
+					}
+				}
+				//match the whole thing
+				if(finalSearch.length() < p.getFullName().length()+2) {
+					if (StringUtils.getFuzzyDistance(finalSearch, p.getFullName(), Locale.ENGLISH) >= fnThreshold && !results.contains(p)) {
+						results.add(p);
+					}
+				}
+			}
 			this.profSearchResults.setItems(FXCollections.observableList(results));
 		}
 	}
