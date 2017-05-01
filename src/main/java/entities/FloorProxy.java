@@ -1,7 +1,6 @@
 package entities;
 
 import javafx.scene.image.Image;
-import main.ApplicationController;
 
 import java.util.*;
 

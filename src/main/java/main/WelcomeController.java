@@ -2,21 +2,59 @@ package main;
 
 import controllers.user.UserState;
 import entities.Directory;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
-import java.util.TimerTask;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class WelcomeController
+public class WelcomeController implements Initializable
 {
-	@FXML private GridPane welcome;
+	@FXML private Pane welcome;
 
 	Directory directory = ApplicationController.getDirectory();
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		ImageView imageView = new ImageView(new Image("/faulkner_welcome.png"));
+		Pane bottomColor = new Pane();
+
+		this.welcome.getChildren().add(bottomColor);
+		this.welcome.getChildren().add(imageView);
+
+
+		bottomColor.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, new CornerRadii(0), new Insets(0))));
+		double ratio = 2.4;
+
+		imageView.setPreserveRatio(true);
+		Platform.runLater( ()-> {
+			imageView.setFitHeight(750);
+			imageView.setFitWidth(750);
+			imageView.setLayoutX(welcome.getWidth()/2 - imageView.getFitWidth()/2);
+			imageView.setLayoutY(welcome.getHeight()/2 - imageView.getFitHeight()/2);
+			bottomColor.setPrefWidth(this.welcome.getWidth());
+			bottomColor.setPrefHeight(this.welcome.getHeight()/ratio);
+			this.welcome.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(0), new Insets(0))));
+
+			this.welcome.boundsInLocalProperty().addListener((observable, oldValue, newValue) -> {
+
+				imageView.setLayoutX(welcome.getWidth()/2 - imageView.getFitWidth()/2);
+				imageView.setLayoutY(welcome.getHeight()/2 - imageView.getFitHeight()/2);
+				bottomColor.setPrefWidth(this.welcome.getWidth());
+				bottomColor.setPrefHeight(this.welcome.getHeight()/ratio);
+			});
+		});
+	}
 
 	protected Scene getScene() {
 		// The parentBorderPane should always exist, so use it to get the scene
@@ -34,4 +72,6 @@ public class WelcomeController
 			this.welcome.getScene().setRoot(UserMaster);
 		} catch (Exception e){e.printStackTrace();}
 	}
+
+
 }

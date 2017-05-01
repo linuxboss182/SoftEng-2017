@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import main.database.DatabaseWrapper;
 import main.database.DatabaseException;
@@ -59,7 +60,7 @@ public class ApplicationController extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		ApplicationController.stage = primaryStage;
-		Parent root = (GridPane) FXMLLoader.load(this.getClass().getResource("/Welcome.fxml"));
+		Parent root = (Pane) FXMLLoader.load(this.getClass().getResource("/Welcome.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
 		primaryStage.getIcons().add(new Image("bwhIcon.png"));
 		Scene user = new Scene(root, 1300, 800);

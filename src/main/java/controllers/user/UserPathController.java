@@ -302,7 +302,7 @@ public class UserPathController
 		int buttonCenterX = 430;
 
 		int labelCenterX = 460;
-		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 15; //change the +x value so the label is at the bottom
+		int labelY = (int)floorsTraveledAnchorPane.getHeight()/2 + 95; //change the +x value so the label is at the bottom
 
 
 		newFloorLabel.setLayoutX(floorsTraveledAnchorPane.getLayoutX() + labelCenterX + (buttonSpread)*buttonCount);
