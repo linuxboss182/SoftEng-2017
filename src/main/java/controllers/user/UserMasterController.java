@@ -133,15 +133,17 @@ public class UserMasterController
 
 		// Slightly delay the call so that the bounds aren't screwed up
 		Platform.runLater(() -> {
-			resizeDrawerListener(drawerParentPane.getHeight());
+			resizeDrawerListener();
 			destinationField.requestFocus();
+
 		});
+		resizeDrawerListener();
+		System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 
 		// Enable search; if this becomes more than one line, make it a function
 		this.destinationField.setOnKeyReleased(e -> this.filterRoomsByName(this.destinationField.getText()));
 		this.startField.setOnKeyReleased(e -> this.filterRoomsByName(this.startField.getText()));
 
-		resizeDrawerListener(677.0);
 
 		mainDrawer.open();
 
@@ -168,9 +170,13 @@ public class UserMasterController
 
 	}
 
-	private void resizeDrawerListener(Double newSceneHeight) {
-		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		destinationTypeTabs.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	private void resizeDrawerListener() {
+		destinationTypeTabs.setPrefHeight(drawerParentPane.getHeight() - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
+			destinationTypeTabs.setPrefHeight((double)newHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
+		});
+
 	}
 
 	private void setStyleIDs() {
@@ -182,6 +188,8 @@ public class UserMasterController
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
 		helpBtn.getStyleClass().add("blue-button");
+		profSearchResults.getStyleClass().add("jfx-list-view");
+		roomSearchResults.getStyleClass().add("jfx-list-view");
 	}
 
 
