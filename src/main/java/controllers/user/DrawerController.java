@@ -85,6 +85,7 @@ abstract public class DrawerController
 		Stage userHelpStage = new Stage();
 		userHelpStage.setTitle("Faulkner Hospital Navigator Help Screen");
 		userHelpStage.getIcons().add(new Image("/bwhIcon.png"));
+		userHelpStage.setResizable(false);
 		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
 		userHelpStage.setScene(userHelpScene);
 		userHelpStage.addEventFilter(MouseEvent.ANY, e-> {
