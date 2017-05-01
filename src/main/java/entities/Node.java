@@ -26,7 +26,7 @@ public class Node
 
 	/* Default shape parameters */
 	// TODO: Fix all Node shape operations
-	private static final double CIRCLE_RADIUS = 5;
+	private static final double CIRCLE_RADIUS = 3;
 
 	Node(double x, double y, int floor, String buildingName, boolean isRestricted) {
 		this.x = x;
