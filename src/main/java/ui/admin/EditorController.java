@@ -396,6 +396,8 @@ public class EditorController
 		contextMenu.getChildren().add(ElevatorUpText);
 		contextMenu.getChildren().add(ElevatorDownText);
 		contextMenu.setVisible(true);
+		contextMenu.setScaleX(0.3);
+		contextMenu.setScaleY(0.3);
 		this.nodePane.getChildren().add(contextMenu);
 	}
 
