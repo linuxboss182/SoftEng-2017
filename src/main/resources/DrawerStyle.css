@@ -80,6 +80,14 @@
     -fx-font-size: 14px;
     -fx-font-family: "Roboto";
 }
+
+.jfx-button-blue {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-family: "Roboto";
+}
+
 .jfx-tab {
     -fx-background-color: gray;
     -fx-text-fill: white;

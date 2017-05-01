@@ -193,8 +193,7 @@ public class UserPathController
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
 		directionsLbl.getStyleClass().add("directions-label");
-		doneBtn.getStyleClass().add("blue-button");
-		helpBtn.getStyleClass().add("blue-button");
+		doneBtn.getStyleClass().add("jfx-button-blue");
 		textDirections.setFont(Font.font("Roboto", 15));
 
 	}
