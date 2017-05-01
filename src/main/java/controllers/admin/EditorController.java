@@ -575,6 +575,14 @@ public class EditorController
 		}
 		double x = this.readX();
 		double y = this.readY();
+		if(Double.isNaN(x)) {
+			xPos.setTextFill(Color.RED);
+			return;
+		}
+		if(Double.isNaN(y)) {
+			yPos.setTextFill(Color.RED);
+			return;
+		}
 		String name = this.nameField.getText();
 		String description = this.descriptField.getText();
 		RoomType type = this.roomTypeComboBox.getSelectionModel().getSelectedItem();
@@ -619,6 +627,14 @@ public class EditorController
 	public void modifyRoomBtnClicked() {
 		if(! this.selectedNodes.isSingular()) return;
 
+		if(Double.isNaN(this.readX())) {
+			xPos.setTextFill(Color.RED);
+			return;
+		}
+		if(Double.isNaN(this.readY())) {
+			yPos.setTextFill(Color.RED);
+			return;
+		}
 		this.updateSelectedRoom(this.readX(), this.readY(), this.nameField.getText(),
 				this.displayNameField.getText(), this.descriptField.getText(),
 				this.roomTypeComboBox.getSelectionModel().getSelectedItem());
@@ -774,11 +790,19 @@ public class EditorController
 	}
 
 	private double readX() {
-		return Double.parseDouble(this.xCoordField.getText());
+		try {
+			return Double.parseDouble(this.xCoordField.getText());
+		} catch (NumberFormatException e) {
+			return Double.NaN;
+		}
 	}
 
 	private double readY() {
-		return Double.parseDouble(this.yCoordField.getText());
+		try {
+			return Double.parseDouble(this.yCoordField.getText());
+		} catch (NumberFormatException e) {
+			return Double.NaN;
+		}
 	}
 
 
