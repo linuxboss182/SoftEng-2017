@@ -48,9 +48,6 @@ public class Icon
 		double y = this.room.getLocation().getY();
 		double imageHeight = image.getHeight();
 		double imageWidth = image.getWidth();
-		this.image.setScaleX(0.05);
-		this.image.setScaleY(0.05);
-		//Center image on the xy coordinates
 		this.image.setLayoutX(x - imageWidth/2);
 		this.image.setLayoutY(y - imageHeight/2);
 	}

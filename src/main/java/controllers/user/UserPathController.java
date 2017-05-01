@@ -121,7 +121,6 @@ public class UserPathController
 		});
 		iconManager.getIcons(directory.getRooms());
 
-		this.displayRooms();
 		iconController.resetAllRooms();
 
 		setScrollZoom();
@@ -134,9 +133,7 @@ public class UserPathController
 
 
 		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater(() -> {
-			resizeDrawerListener(drawerParentPane.getHeight());
-		});
+		Platform.runLater(() -> resizeDrawerListener(drawerParentPane.getHeight()));
 
 		resizeDrawerListener(677.0);
 		this.timer.resetTimer(this.getTimerTask());
@@ -251,9 +248,9 @@ public class UserPathController
 			}
 		}
 		seg.add(path.get(path.size()-1));
-		pathSegments.addLast(seg);
+		pathSegments.addLast(seg); // pathSegment now has all segments
 		paintPath(pathSegments.get(0));
-		// pathSegment now has all segments
+		this.displayRooms();
 		drawMiniMaps(path);
 		return true;
 	}
@@ -453,6 +450,6 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getDirectionsIcons(directions));
+		this.nodePane.getChildren().setAll(iconManager.getLinkedPathIcons(pathSegments));
 	}
 }

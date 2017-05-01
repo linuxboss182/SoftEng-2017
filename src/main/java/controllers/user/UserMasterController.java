@@ -191,7 +191,7 @@ public class UserMasterController
 			event.consume();
 			System.out.println("event consumed");
 		});
-		iconManager.updateListeners(this.directory.getRooms());
+		iconManager.updateListeners(directory.getRooms());
 		iconManager.getIcons(directory.getRooms());
 	}
 
@@ -338,8 +338,8 @@ public class UserMasterController
 	private void resetRoomSearchResults() {
 		Set<Room> rooms = directory.getUserRooms();
 		rooms.removeIf(r -> r.getLocation() == null);
-		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 		this.roomSearchResults.getSelectionModel().clearSelection();
+		this.roomSearchResults.setItems(FXCollections.observableArrayList(rooms));
 	}
 
 	/**
@@ -461,6 +461,7 @@ public class UserMasterController
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = true;
+				startField.setText("");
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);
 			}
@@ -469,6 +470,7 @@ public class UserMasterController
 		destinationField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = false;
+				destinationField.setText("");
 				resetRoomSearchResults();
 				if (destinationTypeTabs.getSelectionModel().getSelectedItem() == servicesTab) {
 					destinationTypeTabs.getSelectionModel().select(roomTab);

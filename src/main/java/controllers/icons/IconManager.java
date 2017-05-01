@@ -71,10 +71,12 @@ public class IconManager
 		this.onMouseClickedOnRoomHandler = handler;
 	}
 
-	public void updateListeners(Set<Room> rooms){
-//		for(Room r : rooms){
-//			this.applyListeners(r, r.getIcon());
-//		}
+	public void updateListeners(Set<Room> rooms) {
+		for (Room r : rooms) {
+			if (this.roomIcons.containsKey(r)) {
+				this.applyListeners(r, r.getIcon());
+			}
+		}
 	}
 
 	/**
@@ -227,10 +229,6 @@ public class IconManager
 		}
 	}
 
-
-	public Set<Icon> getDirectionsIcons(List<Direction> directions) {
-		return Collections.emptySet();
-	}
 
 	public Set<Icon> getLinkedPathIcons(List<List<Node>> path) {
 		if (true) throw new RuntimeException("Do not use IconManager::getLinkedPathIcons!");
