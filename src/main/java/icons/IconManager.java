@@ -44,10 +44,10 @@ import java.util.stream.Collectors;
 public class IconManager
 {
 	private static final double ICON_SIZE = 0.1; //Scale factor on the icon image
-	private static final double ICON_SIZE_LARGE = 0.2; //Scale factor of icon when hovered over
-	private static final double ICON_SIZE_HUGE = 0.4;
+	private static final double ICON_SIZE_LARGE = 0.13333; //Scale factor of icon when hovered over
+	private static final double ICON_SIZE_HUGE = 0.2;
 	private static final double LABEL_SIZE = 0.3; //Scale factor on the icon image
-	private static final double LABEL_SIZE_LARGE = 0.6; //Scale factor on the icon image
+	private static final double LABEL_SIZE_LARGE = 0.4; //Scale factor on the icon image
 	private static final double LABEL_SIZE_HUGE = 0.9; //Scale factor on the icon image
 	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
