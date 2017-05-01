@@ -92,7 +92,6 @@ public class UserMasterController
 	@FXML private HBox startHBox;
 	@FXML private HBox destHBox;
 	@FXML private HBox goHBox;
-	@FXML private HBox bottomHBox;
 
 	private TimeoutTimer timer = TimeoutTimer.getTimeoutTimer();
 
@@ -169,9 +168,9 @@ public class UserMasterController
 	}
 
 	private void resizeDrawerListener() {
-		destinationTypeTabs.setPrefHeight(drawerParentPane.getHeight() - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+		destinationTypeTabs.setPrefHeight(drawerParentPane.getHeight() - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight());
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
-			destinationTypeTabs.setPrefHeight((double)newHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+			destinationTypeTabs.setPrefHeight((double)newHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight());
 			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 		});
 
@@ -181,7 +180,6 @@ public class UserMasterController
 		startHBox.getStyleClass().add("hbox");
 		destHBox.getStyleClass().add("hbox");
 		goHBox.getStyleClass().add("hbox-go");
-		bottomHBox.getStyleClass().addAll("hbox", "hbox-bottom");
 		getDirectionsBtn.getStyleClass().add("jfx-button");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
