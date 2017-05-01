@@ -1,8 +1,6 @@
 package entities;
 
-import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
-import main.ApplicationController;
 
 import java.util.*;
 

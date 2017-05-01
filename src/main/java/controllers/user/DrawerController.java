@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import controllers.shared.MapDisplayController;
+import entities.Directory;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -99,23 +100,42 @@ abstract public class DrawerController
 		});
 	}
 
-//	@Override
-//	public void fitMapSize() {
-//		double potentialY =
-//				+ mapScroll.getHeight()/2
-//				- contentAnchor.getHeight()/2;
-//
-//		double potentialX;
-//		if(mainDrawer.isShown()) {
-//			potentialX = (mapScroll.getWidth()+420) / 2
-//					- contentAnchor.getWidth() / 2;
-//		}else{
-//			potentialX = (mapScroll.getWidth()) / 2
-//					- contentAnchor.getWidth() / 2;
-//		}
-//
-//		contentAnchor.setTranslateX(potentialX);
-//		contentAnchor.setTranslateY(potentialY);
-//	}
+	@Override
+	public void fitMapSize() {
+		Directory.Viewport defaultView = directory.getDefaultView();
+
+		if (defaultView == null) {
+			if ("Faulkner".equals(directory.getFloor().getName())) {
+				defaultView = new Directory.Viewport(70, 480, 107, 348);
+			} else if ("Belkin".equals(directory.getFloor().getName())) {
+				defaultView = new Directory.Viewport(300, 400, 230, 280);
+			} else if ("Outside".equals(directory.getFloor().getName())) {
+				defaultView = new Directory.Viewport(0, 675, 0, 486);
+			}
+		}
+
+		double potentialScaleY =
+				mapScroll.getHeight() / (defaultView.maxY - defaultView.minY);
+
+		double potentialScaleX =
+				mapScroll.getWidth() / (defaultView.maxX - defaultView.minX);
+
+		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
+		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
+
+		if(potentialScaleX < potentialScaleY) {
+			mapScroll.setScaleX(potentialScaleX);
+			mapScroll.setScaleY(potentialScaleX);
+		}else{
+			mapScroll.setScaleX(potentialScaleY);
+			mapScroll.setScaleY(potentialScaleY);
+		}
+
+		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
+		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
+
+		contentAnchor.setTranslateX(-defaultView.minX - offsetX / potentialScaleX);
+		contentAnchor.setTranslateY(-defaultView.minY - offsetY / potentialScaleY);
+	}
 
 }

@@ -27,7 +27,7 @@ public class Directory
 	private Caretaker caretaker;
 	private Map<String, Account> Accounts;
 	private FloorImage floor;
-	private Map<FloorImage, Viewport> defaultViews;
+	private Map<String, Viewport> defaultViews;
 
 	/** Comparator to allow comparing rooms by name */
 	private static Comparator<Room> roomComparator = (r1, r2) -> {
@@ -44,6 +44,7 @@ public class Directory
 		this.nodes = new HashSet<>();
 		this.rooms = new HashSet<>();
 		this.Accounts = new HashMap<>();
+		this.defaultViews = new HashMap<>();
 		this.professionals = new TreeSet<>(); // these are sorted
 		this.kiosk = null;
 		this.floor = FloorProxy.getFloor("FAULKNER", 1);
@@ -56,12 +57,12 @@ public class Directory
 	/* Getters */
 
 	public Viewport getDefaultView(){
-		return defaultViews.get(this.floor);
+		return defaultViews.getOrDefault(this.floor.getName()+this.floor.getNumber(), null);
 	}
 
 	public void setDefaultView(double minX, double maxX, double minY, double maxY){
-		defaultViews.remove(this.floor);
-		defaultViews.put(this.floor, new Viewport( minX, maxX, minY, maxY));
+//		defaultViews.remove(this.floor);
+		defaultViews.put(this.floor.getName()+this.floor.getNumber(), new Viewport( minX, maxX, minY, maxY));
 	}
 
 
