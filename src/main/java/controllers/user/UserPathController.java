@@ -2,6 +2,7 @@ package controllers.user;
 
 import com.jfoenix.controls.*;
 import controllers.extras.SMSController;
+import controllers.icons.Icon;
 import controllers.icons.IconManager;
 import entities.Direction;
 import entities.FloorProxy;
@@ -120,9 +121,9 @@ public class UserPathController
 			FloorProxy floor = FloorProxy.getFloor(buildingName, floorNum);
 			this.changeFloor(floor);
 		});
-		iconManager.getIcons(directory.getRooms());
+		// iconManager.getIcons(directory.getRooms());
 
-		iconController.resetAllRooms();
+		// iconController.resetAllRooms();
 
 		setScrollZoom();
 		setStyleIDs();
@@ -151,11 +152,9 @@ public class UserPathController
 			System.out.println("listView Height: "+ directionsListView.getHeight());
 			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 		});
-
 	}
 
 	private void setUpDirectionListView() {
-
 		directionsListView.setCellFactory(d -> new ListCell<Direction>() {
 			private final ImageView icon = new ImageView();
 			@Override
@@ -173,6 +172,9 @@ public class UserPathController
 				}
 			}
 		});
+
+		directionsListView.setMouseTransparent(true);
+		directionsListView.setFocusTraversable(false);
 	}
 
 //	private void initializeDrawer() {
@@ -253,6 +255,7 @@ public class UserPathController
 
 		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
 		paintPath(pathSegments.get(0));
+		iconManager.getLinkedPathIcons(pathSegments);
 		this.displayRooms();
 		drawMiniMaps(path);
 
@@ -454,6 +457,6 @@ public class UserPathController
 	}
 
 	private void displayRooms() {
-		this.nodePane.getChildren().setAll(iconManager.getLinkedPathIcons(pathSegments));
+		this.nodePane.getChildren().setAll(iconManager.getSavedIcons(directory.getRoomsOnFloor()));
 	}
 }

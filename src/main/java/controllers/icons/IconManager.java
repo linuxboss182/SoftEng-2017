@@ -18,6 +18,7 @@ import javafx.scene.text.Font;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Class for managing room icons
@@ -121,6 +122,13 @@ public class IconManager
 	 */
 	public Set<Icon> getIcons (Collection<Room> rooms) {
 		return roomIcons.computeAllIfAbsent(rooms, this::makeIcon);
+	}
+
+	/**
+	 * Get the existing icons for the given room, ignoring rooms without icons
+	 */
+	public Set<Icon> getSavedIcons(Collection<Room> rooms) {
+		return roomIcons.getAll(rooms);
 	}
 
 	/**
@@ -236,20 +244,6 @@ public class IconManager
 
 		List<Node> firstSegment = path.get(0);
 
-		/**
-		This is the format of iconNodes:
-
-		Each pair of nodes is the beginning and end node of a segment.
-
-		No nodes are present for length-one segments, except the first and last
-		segments.
-
-		If the first segment has only one node, then the first entry in
-		iconNodes will be null.
-
-		If the last segment has only one node, then the next-to-last entry in
-		iconNodes will be null.
-		 */
 		List<Node> iconNodes = new LinkedList<>();
 
 		iconNodes.add(firstSegment.get(0));
@@ -280,9 +274,57 @@ public class IconManager
 		return this.getPathNodeIcons(iconNodes);
 	}
 
+	/**
+	 * Create icons for the key points of a path.
+	 *
+	 * This is the format for the argument:
+	 *
+	 * Each pair of nodes is the beginning and end node of a segment.
+	 *
+	 * No nodes are present for length-one segments, except the first and last
+	 * segments.
+	 *
+	 * If the first segment has only one node, then the first entry will be null.
+	 *
+	 * If the last segment has only one node, then the next-to-last entry will be null.
+	 *
+	 *  @param iconNodes A list of nodes in a path, following the format described above
+	 *
+	 * @return A set of icons for the given nodes
+	 */
 	private Set<Icon> getPathNodeIcons(List<Node> iconNodes) {
+		Set<Icon> icons = new HashSet<>();
 
-		return Collections.emptySet();
+		if (iconNodes.get(0) != null) {
+			Icon icon = this.roomIcons.computeIfAbsent(iconNodes.get(0).getRoom(), this::makeIcon);
+			Label label = icon.getLabel();
+			label.setText("You are here");
+		}
+
+		for (int i = 1; i < iconNodes.size(); i += 2) {
+			Node next = iconNodes.get(i);
+			Node last = iconNodes.get(i-1);
+
+			if (last != null) {
+				Icon icon = last.mapToRoom(this::makePathIcon);
+				if (icon != null) icons.add(icon);
+			}
+
+			if (next != null) {
+				Icon icon = next.mapToRoom(this::makePathIcon);
+				if (icon != null) icons.add(icon);
+			}
+		}
+
+		if (iconNodes.get(iconNodes.size()-1) != null) {
+			Icon icon = this.roomIcons.computeIfAbsent(iconNodes.get(iconNodes.size()-1).getRoom(), this::makeIcon);
+			Label label = icon.getLabel();
+			label.setText("Destination");
+		}
+
+		return roomIcons.computeAllIfAbsent(iconNodes.stream().filter(Objects::nonNull).map(n -> n.getRoom()).filter(Objects::nonNull).collect(Collectors.toSet()), this::makePathIcon);
+
+//		return icons;
 	}
 
 	private void applyPathListeners(Room target, Icon icon) {
@@ -309,6 +351,19 @@ public class IconManager
 			Set<V> values = new HashSet<>();
 			for (K key : keys) {
 				values.add(computeIfAbsent(key, mappingFunction));
+			}
+			return values;
+		}
+
+		/**
+		 * Get the values for the given keys, ignoring non-present keys
+		 */
+		public Set<V> getAll(Collection<K> keys) {
+			Set<V> values = new HashSet<>();
+			for (K key : keys) {
+				if (containsKey(key)) {
+					values.add(get(key));
+				}
 			}
 			return values;
 		}
