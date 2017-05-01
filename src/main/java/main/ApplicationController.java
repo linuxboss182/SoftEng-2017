@@ -21,6 +21,15 @@ public class ApplicationController extends Application
 	private static IconController iconController;
 	private static Stage stage;
 
+	private static boolean useFuzzySearch = false;
+
+	public static void toggleFuzzySearch() {
+		ApplicationController.useFuzzySearch = ! ApplicationController.useFuzzySearch;
+	}
+	public static boolean searchIsFuzzy() {
+		return ApplicationController.useFuzzySearch;
+	}
+
 	public static Stage getStage() {
 		return ApplicationController.stage;
 	}
