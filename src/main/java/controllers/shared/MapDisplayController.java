@@ -98,9 +98,14 @@ public abstract class MapDisplayController
 	protected abstract void redisplayMapItems();
 
 	protected void changeFloor(FloorImage floor) {
+		String oldFloor = floor.getName();
 		Image map = this.directory.switchFloors(floor);
 		this.imageViewMap.setImage(map);
 		this.redisplayMapItems();
+
+		if(!directory.getFloor().getName().equals(oldFloor)) {
+			this.fitMapSize();
+		}
 	}
 
 
@@ -207,29 +212,31 @@ public abstract class MapDisplayController
 			contentAnchor.setTranslateX(contentAnchor.getTranslateX() + (newValue.getMaxX() - oldValue.getMaxX())/2);
 			contentAnchor.setTranslateY(contentAnchor.getTranslateY() + (newValue.getMaxY() - oldValue.getMaxY())/2);
 
-			mapScroll.setScaleX(mapScroll.getScaleX() * newValue.getMaxX()/oldValue.getMaxX());
-			mapScroll.setScaleY(mapScroll.getScaleY() * newValue.getMaxY()/oldValue.getMaxY());
+			double ScaleX = mapScroll.getScaleX() * newValue.getMaxX()/oldValue.getMaxX();
+			double ScaleY = mapScroll.getScaleY() * newValue.getMaxY()/oldValue.getMaxY();
+
+			if(ScaleX < ScaleY) {
+				mapScroll.setScaleX(ScaleX);
+				mapScroll.setScaleY(ScaleX);
+			}else{
+				mapScroll.setScaleX(ScaleY);
+				mapScroll.setScaleY(ScaleY);
+			}
 		});
 	}
 
 	public void fitMapSize() {
-//		Directory.Viewport defaultView = directory.getDefaultView();
-//
-//		double potentialScaleY =
-//				mapScroll.getHeight() / ( defaultView.maxY - defaultView.minY );
-//
-//		double potentialScaleX =
-//				mapScroll.getWidth() / ( defaultView.maxX - defaultView.minX );
-//
-//		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
-//		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();
-//		mapScroll.setScaleX(potentialScaleX);
-//		mapScroll.setScaleY(potentialScaleY);
-//		offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX() - offsetX;
-//		offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY() - offsetY;
-//
-//		contentAnchor.setTranslateX(defaultView.minX-offsetX/potentialScaleX);
-//		contentAnchor.setTranslateY(defaultView.minY-offsetY/potentialScaleY);
+
+		double potentialY =
+				+ mapScroll.getHeight()/2
+						- contentAnchor.getHeight()/2;
+
+		double potentialX = (mapScroll.getWidth()) / 2
+				- contentAnchor.getWidth() / 2;
+
+		contentAnchor.setTranslateX(potentialX);
+		contentAnchor.setTranslateY(potentialY);
+
 	}
 
 	/**
