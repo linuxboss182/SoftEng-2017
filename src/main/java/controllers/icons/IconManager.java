@@ -38,6 +38,9 @@ public class IconManager
 	private static final double ICON_SIZE = 0.1; //Scale factor on the icon image
 	private static final double ICON_SIZE_LARGE = 0.2; //Scale factor of icon when hovered over
 	private static final double ICON_SIZE_HUGE = 0.4;
+	private static final double LABEL_SIZE = 0.2; //Scale factor on the icon image
+	private static final double LABEL_SIZE_LARGE = 0.5; //Scale factor on the icon image
+	private static final double LABEL_SIZE_HUGE = 0.4; //Scale factor on the icon image
 	private static final int FONT_SIZE = 15;
 	private static final Color BACKGROUND_COLOR = Color.DARKGRAY.deriveColor(0, 0, 0, 0.5);
 	private static final BackgroundFill BACKGROUND_FILL = new BackgroundFill(
@@ -155,8 +158,8 @@ public class IconManager
 		label.setFont(new Font(FONT_SIZE));
 		label.setTextFill(Color.LIGHTGRAY);
 		label.setBackground(LABEL_BACKGROUND);
-		label.setScaleX(0.1);
-		label.setScaleY(0.1);
+		label.setScaleX(LABEL_SIZE);
+		label.setScaleY(LABEL_SIZE);
 
 		//Create Icon and link to room
 		Icon icon = new Icon(room, image, label);
@@ -185,29 +188,29 @@ public class IconManager
 				icon.updateLabel(room.getName());
 				image.setScaleX(ICON_SIZE_LARGE);
 				image.setScaleY(ICON_SIZE_LARGE);
-				label.setScaleX(0.5);
-				label.setScaleY(0.5);
+				label.setScaleX(LABEL_SIZE_LARGE);
+				label.setScaleY(LABEL_SIZE_LARGE);
 			});
 			label.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
 				image.setScaleX(ICON_SIZE);
 				image.setScaleY(ICON_SIZE);
-				label.setScaleX(0.1);
-				label.setScaleY(0.1);
+				label.setScaleX(LABEL_SIZE);
+				label.setScaleY(LABEL_SIZE);
 			});
 			image.setOnMouseEntered(event -> {
 				icon.updateLabel(room.getName());
 				image.setScaleX(ICON_SIZE_LARGE);
 				image.setScaleY(ICON_SIZE_LARGE);
-				label.setScaleX(0.5);
-				label.setScaleY(0.5);
+				label.setScaleX(LABEL_SIZE_LARGE);
+				label.setScaleY(LABEL_SIZE_LARGE);
 			});
 			image.setOnMouseExited(event -> {
 				icon.updateLabel(room.getDisplayName());
 				image.setScaleX(ICON_SIZE);
 				image.setScaleY(ICON_SIZE);
-				label.setScaleX(0.1);
-				label.setScaleY(0.1);
+				label.setScaleX(LABEL_SIZE);
+				label.setScaleY(LABEL_SIZE);
 			});
 		}
 
