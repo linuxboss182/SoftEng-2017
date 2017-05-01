@@ -226,7 +226,6 @@ public class UserPathController
 
 		Node startNode = startRoom.getLocation();
 		MiniFloor startFloor = new MiniFloor(startNode.getFloor(), startNode.getBuildingName());
-		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
 
 		List<Node> path= this.getPathOrAlert(startRoom, endRoom);
 		if (path == null) {
@@ -249,9 +248,12 @@ public class UserPathController
 		}
 		seg.add(path.get(path.size()-1));
 		pathSegments.addLast(seg); // pathSegment now has all segments
+
+		this.changeFloor(FloorProxy.getFloor(startNode.getBuildingName(), startNode.getFloor()));
 		paintPath(pathSegments.get(0));
 		this.displayRooms();
 		drawMiniMaps(path);
+
 		return true;
 	}
 

@@ -231,31 +231,57 @@ public class IconManager
 
 
 	public Set<Icon> getLinkedPathIcons(List<List<Node>> path) {
-		if (true) throw new RuntimeException("Do not use IconManager::getLinkedPathIcons!");
+//		if (true) throw new RuntimeException("Do not use IconManager::getLinkedPathIcons!");
+		if (path.size() == 0) return Collections.emptySet();
 
-		path = new LinkedList<>(path);
 		List<Node> firstSegment = path.get(0);
-		List<List<Node>> pathMost = path.subList(1, path.size()-1);
-		List<Node> lastSegment = path.get(path.size()-1);
 
-		if (firstSegment.size() == 1) {}
+		/**
+		This is the format of iconNodes:
 
+		Each pair of nodes is the beginning and end node of a segment.
+
+		No nodes are present for length-one segments, except the first and last
+		segments.
+
+		If the first segment has only one node, then the first entry in
+		iconNodes will be null.
+
+		If the last segment has only one node, then the next-to-last entry in
+		iconNodes will be null.
+		 */
 		List<Node> iconNodes = new LinkedList<>();
 
-		for (List<Node> segment : path) {
-			if (segment.size() <= 1) continue;
-
-			iconNodes.add(segment.get(0));
-			iconNodes.add(segment.get(segment.size() - 1));
+		iconNodes.add(firstSegment.get(0));
+		if (firstSegment.size() != 1) {
+			iconNodes.add(firstSegment.get(firstSegment.size()-1));
+		} else {
+			iconNodes.add(null);
 		}
 
-		for (int i = 1; i < (path.size() - 1); ++i) {
-			List<Node> segment = path.get(i);
-			Node first = segment.get(0);
-			Node last = segment.get(segment.size()-1);
-
-			first.applyToRoom(this::makePathIcon);
+		if (path.size() > 2) {
+			for (List<Node> segment : path.subList(1, path.size()-1)) {
+				if (segment.size() <= 1) continue;
+				iconNodes.add(segment.get(0));
+				iconNodes.add(segment.get(segment.size() - 1));
+			}
 		}
+
+		if (path.size() > 1) {
+			List<Node> lastSegment = path.get(path.size()-1);
+			if (lastSegment.size() != 1) {
+				iconNodes.add(lastSegment.get(0));
+			} else {
+				iconNodes.add(null);
+			}
+			iconNodes.add(lastSegment.get(lastSegment.size() - 1));
+		}
+
+		return this.getPathNodeIcons(iconNodes);
+	}
+
+	private Set<Icon> getPathNodeIcons(List<Node> iconNodes) {
+
 		return Collections.emptySet();
 	}
 
