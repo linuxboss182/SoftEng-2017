@@ -129,7 +129,6 @@ public abstract class MapDisplayController
 				Bounds contentSize = contentAnchor.getBoundsInParent();
 
 				double centerPosX = (contentSize.getWidth() - viewPort.getWidth()) * mapScroll.getHvalue() + viewPort.getWidth() / 2;
-
 				double centerPosY = (contentSize.getHeight() - viewPort.getHeight()) * mapScroll.getVvalue() + viewPort.getHeight() / 2;
 
 				mapScroll.setScaleX(mapScroll.getScaleX() * scaleFactor);
@@ -222,9 +221,11 @@ public abstract class MapDisplayController
 			if(ScaleX < ScaleY) {
 				mapScroll.setScaleX(ScaleX);
 				mapScroll.setScaleY(ScaleX);
+//				currentScale = ScaleX;
 			}else{
 				mapScroll.setScaleX(ScaleY);
 				mapScroll.setScaleY(ScaleY);
+//				currentScale = ScaleY;
 			}
 		});
 	}
