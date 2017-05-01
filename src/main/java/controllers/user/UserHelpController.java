@@ -24,7 +24,8 @@ public class UserHelpController  implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Text userHelp = new Text();
-		userHelp.setTextAlignment(TextAlignment.CENTER);
+//		userHelp.setWrappingWidth(700);
+		userHelp.setTextAlignment(TextAlignment.RIGHT);
 		userHelp.setStyle("-fx-font-size: 16.0;");
 		userHelp.setText("Press the three line icon on the top left\n" +
 				"Press the text field to start finding location\n" +
