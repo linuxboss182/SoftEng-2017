@@ -132,7 +132,9 @@ public class IconController
 	public void selectEndRoom(Room room) {
 		if (endRoom != null) this.resetRoom(endRoom);
 		endRoom = room;
-		room.getIcon().setImage(room.getType().getDestImage());
+		if (room.getIcon() != null) {
+			room.getIcon().setImage(room.getType().getDestImage());
+		}
 	}
 
 	public void selectStartRoom(Room room) {

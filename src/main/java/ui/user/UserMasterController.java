@@ -593,7 +593,7 @@ public class UserMasterController
 
 	private void findService(RoomType service)
 			throws IOException, InvocationTargetException, PathNotFoundException {
-		Set<Room> services = this.directory.getRoomsOnFloor();
+		Set<Room> services = this.directory.getUserRooms();
 		services.removeIf(room -> room.getType() != service);
 
 		int prevCost = 0;
