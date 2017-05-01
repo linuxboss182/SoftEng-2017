@@ -373,7 +373,8 @@ public class UserMasterController
 				(ignored, oldValue, selection) -> {
 					try {
 						findService(selection);
-					} catch (IOException | InvocationTargetException | PathNotFoundException e) {
+					} catch (IOException | InvocationTargetException e) {
+						System.err.println("Path found, but another error occurred");
 						e.printStackTrace();
 					}
 				}
@@ -592,26 +593,36 @@ public class UserMasterController
 	}
 
 	private void findService(RoomType service)
-			throws IOException, InvocationTargetException, PathNotFoundException {
-		Set<Room> services = this.directory.getRoomsOnFloor();
-		services.removeIf(room -> room.getType() != service);
+			throws IOException, InvocationTargetException {
+		try {
+			Set<Room> services = this.directory.getRoomsOnFloor();
+			services.removeIf(room -> room.getType() != service);
 
-		int prevCost = 0;
-		Room nearest = null;
-		for(Room r: services){
-			List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
-			if(prevCost == 0) {
-				prevCost = nodes.size();
-				nearest = r;
+			int prevCost = 0;
+			Room nearest = null;
+			for (Room r : services) {
+				List<Node> nodes = Pathfinder.findPath(startRoom.getLocation(), r.getLocation());
+				if (prevCost == 0) {
+					prevCost = nodes.size();
+					nearest = r;
+				}
+				if (nodes.size() < prevCost) {
+					prevCost = nodes.size();
+					nearest = r;
+				}
+				System.out.println(r.getName());
 			}
-			if(nodes.size() < prevCost){
-				prevCost = nodes.size();
-				nearest = r;
-			}
-			System.out.println(r.getName());
+			selectEndRoom(nearest);
+			this.getDirectionsClicked();
+		} catch (PathNotFoundException e) {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("No Path Found");
+			alert.setHeaderText(null);
+			alert.setContentText("There is no existing path to your destination. \n" +
+					"Please check your start and end location and try again");
+			alert.showAndWait();
+			return;
 		}
-		selectEndRoom(nearest);
-		this.getDirectionsClicked();
 	}
 
 
