@@ -43,9 +43,9 @@ import java.util.stream.Collectors;
  */
 public class IconManager
 {
-	private static final double ICON_SIZE = 0.1; //Scale factor on the icon image
-	private static final double ICON_SIZE_LARGE = 0.13333; //Scale factor of icon when hovered over
-	private static final double ICON_SIZE_HUGE = 0.2;
+	private static final double ICON_SIZE = 0.08; //Scale factor on the icon image
+	private static final double ICON_SIZE_LARGE = 0.1; //Scale factor of icon when hovered over
+	private static final double ICON_SIZE_HUGE = 0.1333333;
 	private static final double LABEL_SIZE = 0.3; //Scale factor on the icon image
 	private static final double LABEL_SIZE_LARGE = 0.4; //Scale factor on the icon image
 	private static final double LABEL_SIZE_HUGE = 0.9; //Scale factor on the icon image
@@ -66,7 +66,7 @@ public class IconManager
 	private BiConsumer<Room, MouseEvent> onMouseDraggedOnLabelHandler;
 	private BiConsumer<Room, MouseEvent> onMouseEnteredRoomHandler;
 	private BiConsumer<Room, MouseEvent> onMouseClickedOnPathSegmentEnd;
-	private boolean showFullNamesOnHover = false;
+	private boolean increaseRoomSizeOnHover = true;
 
 	public IconManager() {
 		this.roomIcons = new MassMap<>();
@@ -113,14 +113,14 @@ public class IconManager
 	}
 
 	/**
-	 * Set whether icons should show full room names when the mouse hovers over the room
+	 * Set whether icons should increase in size when the icon or label is hovered
 	 *
 	 * The default value is true
 	 *
-	 * @param value true to show full names on hover, false to never show full names
+	 * @param value true to change room sizes when hovered
 	 */
-	public void showFullNamesOnHover(boolean value) {
-		this.showFullNamesOnHover = value;
+	public void increaseRoomSizeOnHover(boolean value) {
+		this.increaseRoomSizeOnHover = value;
 	}
 
 	/**
@@ -200,37 +200,25 @@ public class IconManager
 	 * @param icon The room's icon
 	 */
 	private void applyListeners(Room room, Icon icon) {
-		if (showFullNamesOnHover) {
+		if (increaseRoomSizeOnHover) {
 			ImageView image = icon.getImage();
 			Label label = icon.getLabel();
 			label.setPickOnBounds(false);
 			label.setOnMouseEntered(event -> {
-				icon.updateLabel(room.getName());
-				//image.setScaleX(ICON_SIZE_LARGE);
-				//image.setScaleY(ICON_SIZE_LARGE);
-//				label.setScaleX(LABEL_SIZE_LARGE);
-//				label.setScaleY(LABEL_SIZE_LARGE);
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
 			});
 			label.setOnMouseExited(event -> {
-				icon.updateLabel(room.getDisplayName());
-				//image.setScaleX(ICON_SIZE);
-				//image.setScaleY(ICON_SIZE);
-//				label.setScaleX(LABEL_SIZE);
-//				label.setScaleY(LABEL_SIZE);
+				image.setScaleX(ICON_SIZE);
+				image.setScaleY(ICON_SIZE);
 			});
 			image.setOnMouseEntered(event -> {
-				icon.updateLabel(room.getName());
-				//image.setScaleX(ICON_SIZE_LARGE);
-				//image.setScaleY(ICON_SIZE_LARGE);
-//				label.setScaleX(LABEL_SIZE_LARGE);
-//				label.setScaleY(LABEL_SIZE_LARGE);
+				image.setScaleX(ICON_SIZE_LARGE);
+				image.setScaleY(ICON_SIZE_LARGE);
 			});
 			image.setOnMouseExited(event -> {
-				icon.updateLabel(room.getDisplayName());
-				//image.setScaleX(ICON_SIZE);
-				//image.setScaleY(ICON_SIZE);
-//				label.setScaleX(LABEL_SIZE);
-//				label.setScaleY(LABEL_SIZE);
+				image.setScaleX(ICON_SIZE);
+				image.setScaleY(ICON_SIZE);
 			});
 		}
 

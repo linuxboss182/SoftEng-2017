@@ -1422,6 +1422,7 @@ public class EditorController
 	public void selectKioskClicked() {
 		if (selectedNodes.isSingular()) {
 			selectedNodes.getSoleElement().applyToRoom(room -> directory.setKiosk(room));
+			iconManager = new IconManager();
 			iconController.resetAllNodes();
 		}
 	}
