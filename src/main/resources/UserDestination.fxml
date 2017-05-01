@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
@@ -10,7 +11,7 @@
 
 <BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
     <top>
-        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
+        <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #FFFFFF;" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
             <left>
                 <JFXHamburger fx:id="navHamburgerBtn" onMouseClicked="#onHamburgerBtnClicked" BorderPane.alignment="CENTER">
                     <padding>
@@ -18,13 +19,10 @@
                     </padding>
                 </JFXHamburger>
             </left>
-            <center>
-                <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" BorderPane.alignment="CENTER" />
-            </center>
          <right>
             <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" styleClass="blue-button" text="Help">
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" style="-fx-background-color: #5087b4;" styleClass="blue-button" text="Help" textFill="WHITE">
                      <HBox.margin>
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
@@ -32,6 +30,28 @@
                </children>
             </HBox>
          </right>
+         <center>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="FLOORS: " HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="10.0" top="5.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                      <JFXComboBox fx:id="floorComboBox" prefHeight="25.0" prefWidth="306.0" HBox.hgrow="ALWAYS">
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </JFXComboBox>
+               </children>
+            </HBox>
+         </center>
         </JFXToolbar>
     </top>
     <center>
