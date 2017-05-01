@@ -17,9 +17,6 @@ public class UserAboutPage
 		closeBtn.getScene().getWindow().hide();
 	}
 
-	@FXML
-	public void parrotTestBtnPressed() {
 
-	}
 
 }

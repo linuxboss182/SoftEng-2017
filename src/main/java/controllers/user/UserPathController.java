@@ -128,7 +128,7 @@ public class UserPathController
 		destImageView.setImage(new Image("/bPin.png"));
 
 
-		this.timer.resetTimer(this.getTimerTask());
+		this.timer.resetTimer();
 
 		this.setUpDirectionListView();
 	}
