@@ -53,6 +53,10 @@ public class Directory
 		this.loggedIn = false;
 	}
 
+	public void resetFloor() {
+		this.floor = FloorProxy.getFloor("FAULKNER", 1);
+	}
+
 
 	/* Methods */
 

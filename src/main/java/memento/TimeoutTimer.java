@@ -34,6 +34,7 @@ public final class TimeoutTimer
 		return new TimerTask() {
 			@Override
 			public void run() {
+				directory.resetFloor();
 				for (Runnable task : tasks) {
 					Platform.runLater(task::run);
 				}
