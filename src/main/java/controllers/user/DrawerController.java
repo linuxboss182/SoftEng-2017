@@ -54,6 +54,8 @@ abstract public class DrawerController
 
 		backTransition = new HamburgerBackArrowBasicTransition();
 		backTransition.setRate(-1);
+
+
 	}
 
 
