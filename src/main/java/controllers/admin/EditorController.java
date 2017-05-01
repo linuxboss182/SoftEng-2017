@@ -464,6 +464,7 @@ public class EditorController
 		directory.logOut();
 		if (! directory.roomsAreConnected()) {
 			Alert warn = new Alert(Alert.AlertType.CONFIRMATION, "Not all rooms are connected: some paths will not exist.");
+			
 			// true if and only if the button pressed in the alert did not say "OK"
 			if (! warn.showAndWait().map(result -> "OK".equals(result.getText())).orElse(false)) {
 				return;
@@ -503,6 +504,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.setTitle("Faulkner Hospital Navigator Import Professionals");
+		addProStage.getIcons().add(new Image("/bwhIcon.png"));
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -618,6 +621,8 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AccountPopup.fxml"));
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.setTitle("Faulkner Hospital Navigator Account Manager");
+		addProStage.getIcons().add(new Image("/bwhIcon.png"));
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -1304,7 +1309,7 @@ public class EditorController
 		Scene helpScene = new Scene(loader.load());
 		Stage helpStage = new Stage();
 		helpStage.setTitle("Faulkner Hospital Navigator Help Page");
-		helpStage.getIcons().add(new Image("bwhIcon.png"));
+		helpStage.getIcons().add(new Image("/bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
 		helpStage.addEventFilter(MouseEvent.ANY, e-> {
