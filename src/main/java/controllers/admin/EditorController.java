@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -101,6 +102,7 @@ public class EditorController
 	@FXML private JFXButton modifyAccountBtn;
 	@FXML private TextField timeoutField;
 	@FXML public JFXComboBox<RoomType> roomTypeComboBox;
+	@FXML private JFXToggleButton setDefaultViewBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -133,7 +135,6 @@ public class EditorController
 	private double selectionStartY;
 	private double selectionEndX;
 	private double selectionEndY;
-
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private double contextRad = 120;
@@ -205,6 +206,28 @@ public class EditorController
 		}
 	}
 
+	/**
+	 *  setHotkeys:
+	 *  right + shift: shift the view of map to the right
+	 *  left + shift: shift the view of the map to the left
+	 *  up + shift: shift the view of the map upward
+	 *  down + shift: shift the view of the map downward
+	 *  A + control: select all the nodes on the current map
+	 *  Back_Space: Delete the selected node
+	 *  Digit1 + shift: display the map of Outside
+	 *  Digit1 + control: display the 1st floor of Belkin
+	 *  Digit2 + control: display the 2st floor of Belkin
+	 *  Digit3 + control: display the 3st floor of Belkin
+	 *  Digit4 + control: display the 4st floor of Belkin
+	 *  Digit1: display the 1st floor of Faulkner
+	 *  Digit2: display the 1st floor of Faulkner
+	 *  Digit3: display the 1st floor of Faulkner
+	 *  Digit4: display the 1st floor of Faulkner
+	 *  Digit5: display the 1st floor of Faulkner
+	 *  Digit6: display the 1st floor of Faulkner
+	 *  Digit7: display the 1st floor of Faulkner
+	 *
+	 */
 	@Override
 	protected void setHotkeys(){
 		parentBorderPane.setOnKeyPressed(e -> {
@@ -421,8 +444,6 @@ public class EditorController
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
 
-//		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
-
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
@@ -441,8 +462,6 @@ public class EditorController
 			}
 		});
 
-//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
 
@@ -456,6 +475,10 @@ public class EditorController
 		});
 
 
+	}
+
+	@FXML
+	private void setDefaultViewBtnClicked(){
 	}
 
 	@FXML
@@ -889,6 +912,10 @@ public class EditorController
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
 			}
+			if(setDefaultViewBtn.selectedProperty().getValue()){
+				this.selectionStartX = e.getX();
+				this.selectionStartY = e.getY();
+			}
 		});
 
 		contentAnchor.setOnMouseDragged(e-> {
@@ -914,6 +941,25 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
+			} else if(setDefaultViewBtn.selectedProperty().getValue()){
+//				this.selectedMaxX = clickedX;
+//				this.selectedMaxY = clickedY;
+//				this.isSelectingMaxView=false;
+
+				Rectangle r = new Rectangle();
+				r.setX(selectionStartX);
+				r.setWidth(e.getX() - selectionStartX);
+
+				r.setY(selectionStartY);
+				r.setHeight(e.getY() - selectionStartY);
+
+				r.setFill(Color.SKYBLUE);
+				r.setStroke(Color.BLUE);
+				r.setOpacity(0.5);
+
+				this.redisplayAll();
+
+				linePane.getChildren().add(r);
 			} else if(! this.showRoomsToggleBtn.isSelected()) {
 				// Limits the dragging for x and y coordinates. (panning I mean)
 				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
@@ -957,6 +1003,18 @@ public class EditorController
 						this.selectNode(n);
 					}
 				});
+			}else if(setDefaultViewBtn.selectedProperty().getValue()){
+				this.selectionEndX = e.getX();
+				this.selectionEndY = e.getY();
+//				this.redisplayAll(); // this is to clear the rectangle off of the pane
+
+				System.out.println("selectedMinX = " + selectionStartX);
+				System.out.println("selectedMaxX = " + selectionEndX);
+				System.out.println("selectedMinY = " + selectionStartY);
+				System.out.println("selectedMaxY = " + selectionEndY);
+
+				directory.setDefaultView(selectionStartX, selectionEndX,
+						selectionStartY, selectionEndY);
 			}
 			if(this.showRoomsToggleBtn.isSelected()) {
 				this.displayRooms();
