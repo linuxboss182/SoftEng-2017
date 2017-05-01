@@ -131,14 +131,6 @@ public class EditorController
 	private double selectionEndX;
 	private double selectionEndY;
 
-	private boolean isSelectingMinView = false;
-	private boolean isSelectingMaxView = false;
-	private double selectedMinX;
-	private double selectedMaxX;
-	private double selectedMinY;
-	private double selectedMaxY;
-
-
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
 	private double contextRad = 120;
 	private double contextWidth = 60;
@@ -388,8 +380,6 @@ public class EditorController
 	public void populateTableView() {
 		Collection<Professional> profs = directory.getProfessionals();
 
-//		roomCol.setCellValueFactory(cdf -> new SimpleStringProperty(cdf.getValue().toString()));
-
 		roomCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professional, String>, ObservableValue<String>>() {
 			@Override
 			public ObservableValue<String> call(TableColumn.CellDataFeatures<Professional, String> cdf) {
@@ -408,8 +398,6 @@ public class EditorController
 			}
 		});
 
-//		profCol.setCellValueFactory(new PropertyValueFactory<>("givenName"));
-
 		roomProfTable.getSortOrder().add(profCol);
 		roomProfTable.getSortOrder().add(roomCol);
 
@@ -427,7 +415,6 @@ public class EditorController
 
 	@FXML
 	private void setDefaultViewBtnClicked(){
-		isSelectingMinView=true;
 	}
 
 	@FXML
@@ -836,43 +823,6 @@ public class EditorController
 			if(setDefaultViewBtn.selectedProperty().getValue()){
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
-
-//				this.selectedMinX = clickedX;
-//				this.selectedMinY = clickedY;
-//				this.isSelectingMaxView=true;
-//				this.isSelectingMinView=false;
-
-//				Rectangle r = new Rectangle(15, 15, Color.RED);
-//				r.setX(selectionStartX);
-//				r.setY(selectionStartY);
-
-//				linePane.getChildren().add(r);
-			}else if(this.isSelectingMaxView){
-//				this.selectedMaxX = clickedX;
-//				this.selectedMaxY = clickedY;
-//				this.isSelectingMaxView=false;
-//				directory.setDefaultView(selectedMinX, selectedMaxX,
-//						selectedMinY, selectedMaxY);
-//				System.out.println("selectedMinX = " + selectedMinX);
-//				System.out.println("selectedMaxX = " + selectedMaxX);
-//				System.out.println("selectedMinY = " + selectedMinY);
-//				System.out.println("selectedMaxY = " + selectedMaxY);
-//
-//				Rectangle r = new Rectangle();
-//				r.setX(selectionStartX);
-//				r.setWidth(e.getX() - selectionStartX);
-//
-//				r.setY(selectionStartY);
-//				r.setHeight(e.getY() - selectionStartY);
-//
-//				r.setFill(Color.SKYBLUE);
-//				r.setStroke(Color.BLUE);
-//				r.setOpacity(0.5);
-//
-//				this.redisplayAll();
-//
-//				linePane.getChildren().add(r);
-
 			}
 		});
 
