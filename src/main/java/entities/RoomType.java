@@ -16,7 +16,7 @@ public enum RoomType
 	HALLWAY("Hallway", "/Room.png", "/RoomOrigin.png", "/RoomDest.png"),
 	BATHROOM("Bathroom", "/Bathroom_U.png", "/Bathroom_UOrigin.png", "/Bathroom_UDest.png"),
 	SHOP("Gift Shop", "/Shop.png", "/ShopOrigin.png", "/ShopDest.png"),
-	CAFE("Cafe/Food", "/Cafe.png", "/CafeCaferigin.png", "/CafeDest.png"),
+	CAFE("Cafe/Food", "/Cafe.png", "/CafeOrigin.png", "/CafeDest.png"),
 	NONE("NO ROOM", "/MysteryRoom.png", "/MysteryRoom.png", "/MysteryRoom.png"),
 	;
 

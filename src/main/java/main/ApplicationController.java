@@ -62,7 +62,7 @@ public class ApplicationController extends Application
 		ApplicationController.stage = primaryStage;
 		Parent root = (Pane) FXMLLoader.load(this.getClass().getResource("/Welcome.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Navigator");
-		primaryStage.getIcons().add(new Image("bwhIcon.png"));
+		primaryStage.getIcons().add(new Image("/bwhIcon.png"));
 		Scene user = new Scene(root, 1300, 800);
 		primaryStage.setMinWidth(1180);
 		primaryStage.setMinHeight(722);

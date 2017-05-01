@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -39,6 +40,7 @@ public class WelcomeController implements Initializable
 
 		imageView.setPreserveRatio(true);
 		Platform.runLater( ()-> {
+			this.welcome.getScene().setCursor(Cursor.HAND);
 			imageView.setFitHeight(750);
 			imageView.setFitWidth(750);
 			imageView.setLayoutX(welcome.getWidth()/2 - imageView.getFitWidth()/2);
@@ -69,6 +71,7 @@ public class WelcomeController implements Initializable
 	public void onClick(){
 		this.directory.getCaretaker().addState(this.getState());
 		try {
+			this.welcome.getScene().setCursor(Cursor.DEFAULT);
 			Parent UserMaster = (BorderPane) FXMLLoader.load(this.getClass().getResource("/UserDestination.fxml"));
 			this.welcome.getScene().setRoot(UserMaster);
 		} catch (IOException e) {

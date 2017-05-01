@@ -83,6 +83,8 @@ abstract public class DrawerController
 		loader.setLocation(this.getClass().getResource("/UserHelp.fxml"));
 		Scene userHelpScene = new Scene(loader.load());
 		Stage userHelpStage = new Stage();
+		userHelpStage.setTitle("Faulkner Hospital Navigator Help Screen");
+		userHelpStage.getIcons().add(new Image("/bwhIcon.png"));
 		userHelpStage.initOwner(contentAnchor.getScene().getWindow());
 		userHelpStage.setScene(userHelpScene);
 		userHelpStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -128,9 +130,9 @@ abstract public class DrawerController
 			if ("Faulkner".equals(directory.getFloor().getName())) {
 				defaultView = new Directory.Viewport(70, 480, 107, 348);
 			} else if ("Belkin".equals(directory.getFloor().getName())) {
-				defaultView = new Directory.Viewport(300, 400, 230, 280);
+				defaultView = new Directory.Viewport(140, 540, 30, 150);
 			} else if ("Outside".equals(directory.getFloor().getName())) {
-				defaultView = new Directory.Viewport(0, 675, 0, 486);
+				defaultView = new Directory.Viewport(12, 622, 13, 342);
 			}
 		}
 
@@ -139,6 +141,11 @@ abstract public class DrawerController
 
 		double potentialScaleX =
 				mapScroll.getWidth() / (defaultView.maxX - defaultView.minX);
+
+		contentAnchor.setTranslateY(0);
+		contentAnchor.setTranslateX(0);
+		mapScroll.setScaleX(1);
+		mapScroll.setScaleY(1);
 
 		double offsetX = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX();
 		double offsetY = contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY();

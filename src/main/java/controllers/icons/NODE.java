@@ -10,14 +10,14 @@ enum NODE
 		implements ShapeScheme
 {
 	/* fill, strokeWidth, stroke, scale */
-	SELECTED(null, 2.0, Color.LIGHTGREEN, 1.5),
+	SELECTED(null, 1.0, Color.LIGHTGREEN, 0.75),
 
-	DEFAULT(Color.BLUE, 1.5, Color.BLACK, 1.0),
+	DEFAULT(Color.BLUE, 0.75, Color.BLACK, 0.5),
 	ROOM(Color.YELLOW, null, null, null),
 	ELEVATOR(Color.FUCHSIA, null, null, null),
 	PORTAL(Color.DARKORANGE, null, null, null),
 
-	RESTRICTED(Color.LIGHTBLUE, 1.5, Color.BLACK, 1.0),
+	RESTRICTED(Color.LIGHTBLUE, 0.75, Color.BLACK, 0.5),
 	RESTRICTED_ELEVATOR(Color.LIGHTPINK, null, null, null),
 	RESTRICTED_ROOM(Color.LIGHTYELLOW, null, null, null),
 	RESTRICTED_PORTAL(Color.ORANGE, null, null, null),
