@@ -5,10 +5,14 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import controllers.icons.IconManager;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -218,10 +222,47 @@ public class EditorController
 				this.selectAllNodesOnFloor();
 			} else if (e.getCode() == KeyCode.BACK_SPACE) {
 				this.deleteSelectedNodes();
+			} else if (e.getCode() == KeyCode.DIGIT1 && e.isShiftDown()){
+				FloorProxy floor = FloorProxy.getFloor("OUTSIDE", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT1 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT2 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 2);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT3 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 3);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT4 && e.isControlDown()){
+				FloorProxy floor = FloorProxy.getFloor("BELKIN", 4);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT1){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 1);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT2){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 2);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT3){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 3);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT4){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 4);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT5){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 5);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT6){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 6);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
+			} else if (e.getCode() == KeyCode.DIGIT7){
+				FloorProxy floor = FloorProxy.getFloor("FAULKNER", 7);
+				if (floor != null) floorComboBox.getSelectionModel().select(floor);
 			}
 			e.consume();
 		});
 	}
+
 
 	/**
 	 * Setup a radial context menu

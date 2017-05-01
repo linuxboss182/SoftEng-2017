@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Pane?>
 
-<GridPane fx:id="welcome" onMouseClicked="#onClick" prefHeight="694.0" prefWidth="1038.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.WelcomeController">
-  <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="564.0" minWidth="8.0" prefWidth="253.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="629.0" minWidth="0.0" prefWidth="440.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.0" minWidth="10.0" prefWidth="343.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="297.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="537.0" minHeight="10.0" prefHeight="537.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="157.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <ImageView fitHeight="588.0" fitWidth="759.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-         <image>
-            <Image url="@faulkner_welcome.png" />
-         </image></ImageView>
-   </children>
-</GridPane>
+
+<Pane fx:controller="main.WelcomeController" fx:id="welcome" onMouseClicked="#onClick" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="1119.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"/>
