@@ -273,8 +273,10 @@ public class UserMasterController
 				(ignored, old, selection) -> {
 					destinationField.setText("");
 					if (selection == profTab) {
+						destinationField.setPromptText("Choose a professional");
 						destImageView.setImage(destProfImage);
 					} else {
+						destinationField.setPromptText("Choose destination");
 						destImageView.setImage(destRoomImage);
 					}
 				});
@@ -432,6 +434,7 @@ public class UserMasterController
 		this.startRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectStartRoom(r);
+		iconManager.removeIcon(r);
 		startField.setText(r.getName());
 		this.displayRooms();
 	}
@@ -440,6 +443,7 @@ public class UserMasterController
 		this.endRoom = r;
 		this.enableOrDisableNavigationButtons();
 		iconController.selectEndRoom(r);
+		iconManager.removeIcon(r);
 		destinationField.setText(r.getName());
 		this.displayRooms();
 	}
@@ -472,6 +476,7 @@ public class UserMasterController
 		startField.focusedProperty().addListener((ignored, old, nowFocused) -> {
 			if (nowFocused) {
 				this.selectingStart = true;
+				this.startRoom = directory.getKiosk();
 				startField.setText("");
 				resetRoomSearchResults();
 				destinationTypeTabs.getSelectionModel().select(roomTab);
