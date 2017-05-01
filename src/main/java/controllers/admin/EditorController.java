@@ -952,11 +952,27 @@ public class EditorController
 //				this.isSelectingMaxView=false;
 
 				Rectangle r = new Rectangle();
-				r.setX(selectionStartX);
-				r.setWidth(e.getX() - selectionStartX);
 
-				r.setY(selectionStartY);
-				r.setHeight(e.getY() - selectionStartY);
+				if(e.getX() > selectionStartX) {
+					r.setX(selectionStartX);
+					r.setWidth(e.getX() - selectionStartX);
+				} else {
+					r.setX(e.getX());
+					r.setWidth(selectionStartX - e.getX());
+				}
+				if(e.getY() > selectionStartY) {
+					r.setY(selectionStartY);
+					r.setHeight(e.getY() - selectionStartY);
+				} else {
+					r.setY(e.getY());
+					r.setHeight(selectionStartY - e.getY());
+				}
+
+//				r.setX(selectionStartX);
+//				r.setWidth(e.getX() - selectionStartX);
+//
+//				r.setY(selectionStartY);
+//				r.setHeight(e.getY() - selectionStartY);
 
 				r.setFill(Color.SKYBLUE);
 				r.setStroke(Color.BLUE);
@@ -1013,13 +1029,33 @@ public class EditorController
 				this.selectionEndY = e.getY();
 //				this.redisplayAll(); // this is to clear the rectangle off of the pane
 
-				System.out.println("selectedMinX = " + selectionStartX);
-				System.out.println("selectedMaxX = " + selectionEndX);
-				System.out.println("selectedMinY = " + selectionStartY);
-				System.out.println("selectedMaxY = " + selectionEndY);
 
-				directory.setDefaultView(selectionStartX, selectionEndX,
-						selectionStartY, selectionEndY);
+				double topLeftX;
+				double topLeftY;
+				double botRightX;
+				double botRightY;
+				if(this.selectionStartX < this.selectionEndX) {
+					topLeftX = this.selectionStartX;
+					botRightX = this.selectionEndX;
+				} else {
+					topLeftX = this.selectionEndX;
+					botRightX = this.selectionStartX;
+				}
+				if(this.selectionStartY < this.selectionEndY) {
+					topLeftY = this.selectionStartY;
+					botRightY = this.selectionEndY;
+				} else {
+					topLeftY = this.selectionEndY;
+					botRightY = this.selectionStartY;
+				}
+
+				System.out.println("selectedMinX = " + topLeftX);
+				System.out.println("selectedMaxX = " + botRightX);
+				System.out.println("selectedMinY = " + topLeftY);
+				System.out.println("selectedMaxY = " + botRightY);
+
+				directory.setDefaultView(topLeftX, botRightX,
+						topLeftY, botRightY);
 			}
 			if(this.showRoomsToggleBtn.isSelected()) {
 				this.displayRooms();
