@@ -189,10 +189,10 @@ public class UserPathController
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
 		drawerParentPane.getStyleClass().add("drawer");
-		startLbl.getStyleClass().add("path-label");
-		destLbl.getStyleClass().add("path-label");
+		startLbl.getStyleClass().add("label-path");
+		destLbl.getStyleClass().add("label-path");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
-		directionsLbl.getStyleClass().add("directions-label");
+		directionsLbl.getStyleClass().add("label-directions");
 		doneBtn.getStyleClass().add("jfx-button-blue");
 		textDirections.setFont(Font.font("Roboto", 15));
 
