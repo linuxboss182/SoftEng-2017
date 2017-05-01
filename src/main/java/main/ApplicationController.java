@@ -1,18 +1,18 @@
 package main;
 
 //import controllers.SMSController;
-import controllers.icons.IconController;
+import icons.IconController;
 import javafx.application.Application;
 import entities.Directory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import main.database.DatabaseWrapper;
-import main.database.DatabaseException;
+import database.DatabaseWrapper;
+import database.DatabaseException;
+import memento.TimeoutTimer;
 
 public class ApplicationController extends Application
 {

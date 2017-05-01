@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Text?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<AnchorPane fx:id="backToPathClicked" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserAboutPage">
+<AnchorPane fx:id="backToPathClicked" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.user.UserAboutPage">
    <children>
       <Label layoutX="500.0" layoutY="49.0" text="Thank You!" textAlignment="CENTER" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="500.0">
          <font>

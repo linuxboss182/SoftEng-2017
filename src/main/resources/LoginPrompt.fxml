@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.stage.Screen?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.shared.LoginController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.user.LoginController">
    <top>
       <JFXToolbar prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
          <center>

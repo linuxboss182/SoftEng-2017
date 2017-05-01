@@ -9,7 +9,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.user.UserMasterController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.user.UserMasterController">
     <top>
         <JFXToolbar fx:id="topToolBar" prefHeight="45.0" prefWidth="1174.0" style="-fx-background-color: #FFFFFF;" styleClass="jfx-tool-bar" BorderPane.alignment="CENTER">
             <left>

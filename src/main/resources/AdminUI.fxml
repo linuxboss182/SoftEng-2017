@@ -34,7 +34,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.EditorController">
+<BorderPane fx:id="parentBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1174.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.admin.EditorController">
     <center>
         <SplitPane fx:id="mapSplitPane" orientation="VERTICAL" prefHeight="642.0" prefWidth="846.0" BorderPane.alignment="CENTER">
             <items>

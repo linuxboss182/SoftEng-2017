@@ -1,18 +1,6 @@
 package entities;
 
-import controllers.icons.IconManager;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-
-import controllers.icons.Icon;
+import icons.Icon;
 
 import java.util.Collection;
 import java.util.HashSet;

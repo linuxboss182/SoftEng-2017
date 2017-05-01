@@ -3,4 +3,4 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<Pane fx:controller="main.WelcomeController" fx:id="welcome" onMouseClicked="#onClick" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="1119.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"/>
+<Pane fx:controller="ui.WelcomeController" fx:id="welcome" onMouseClicked="#onClick" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="1119.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"/>

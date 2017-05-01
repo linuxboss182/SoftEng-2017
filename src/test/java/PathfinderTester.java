@@ -1,13 +1,12 @@
-import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
 import main.ApplicationController;
-import main.algorithms.Algorithm;
-import main.algorithms.PathNotFoundException;
-import main.algorithms.Pathfinder;
+import algorithms.Algorithm;
+import algorithms.PathNotFoundException;
+import algorithms.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -187,16 +186,16 @@ public class PathfinderTester
   E = elevator
 
    01234567890
-  0X          
-  1           
-  2  Z        
-  3           
-  4           
-  5     E     
-  6           
-  7           
-  8           
-  9           
+  0X
+  1
+  2  Z
+  3
+  4
+  5     E
+  6
+  7
+  8
+  9
   0          O
 
  */

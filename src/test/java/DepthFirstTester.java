@@ -1,12 +1,10 @@
-import java.nio.file.Path;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import entities.Directory;
-import main.algorithms.Algorithm;
-import main.algorithms.PathNotFoundException;
-import main.algorithms.Pathfinder;
+import algorithms.Algorithm;
+import algorithms.PathNotFoundException;
+import algorithms.Pathfinder;
 import org.junit.Test;
 import org.junit.Assert;
 

@@ -1,6 +1,8 @@
 package entities;
 
-import controllers.user.Caretaker;
+import memento.Caretaker;
+import entities.floor.FloorImage;
+import entities.floor.FloorProxy;
 import javafx.scene.image.Image;
 
 import java.util.*;
