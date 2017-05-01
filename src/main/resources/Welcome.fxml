@@ -18,7 +18,7 @@
     <RowConstraints maxHeight="157.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <ImageView fitHeight="793.0" fitWidth="546.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <ImageView fitHeight="588.0" fitWidth="759.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <image>
             <Image url="@faulkner_welcome.png" />
          </image></ImageView>
