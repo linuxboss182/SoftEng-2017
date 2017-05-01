@@ -12,21 +12,7 @@
 }
 
 
-.label-path {
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #4285f4;
-    -fx-font-size: 18px;
-    -fx-alignment: baseline-left;
-    -fx-font-family: "Roboto";
-}
 
-
-.label {
-    -fx-text-fill: black;
-    -fx-font-size: 14px;
-    -fx-alignment: baseline-left;
-    -fx-font-family: "Roboto";
-}
 
 .vbox {
     -fx-max-width: 418px;

@@ -73,8 +73,11 @@
                                         </ImageView>
                                         <Label fx:id="startLbl" prefHeight="17.0" prefWidth="250.0" text="Label" textFill="white">
                                             <HBox.margin>
-                                                <Insets bottom="30.0" right="50.0" top="30.0" />
+                                                <Insets bottom="30.0" right="50.0" top="40.0" />
                                             </HBox.margin>
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
                                         </Label>
                                     </children>
                                 </HBox>
@@ -87,8 +90,11 @@
                                         </ImageView>
                                         <Label fx:id="destLbl" prefHeight="17.0" prefWidth="250.0" text="Label" textFill="white">
                                             <HBox.margin>
-                                                <Insets bottom="30.0" right="50.0" top="30.0" />
+                                                <Insets bottom="30.0" right="50.0" top="40.0" />
                                             </HBox.margin>
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
                                         </Label>
                                     </children>
                                 </HBox>
@@ -96,7 +102,7 @@
                                     <children>
                                         <Label fx:id="directionsLbl" alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="116.0" text="Directions:" textFill="white">
                                             <font>
-                                                <Font size="15.0" />
+                                                <Font name="System Bold" size="20.0" />
                                             </font>
                                             <HBox.margin>
                                                 <Insets bottom="15.0" right="50.0" top="15.0" />
