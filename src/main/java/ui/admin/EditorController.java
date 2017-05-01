@@ -383,10 +383,6 @@ public class EditorController
 		selectionWedge.setFill(null);
 		selectionWedge.setOpacity(0.2);
 
-		selectionWedge.lengthProperty().addListener((ignored, oldValue, newValue) -> {
-			System.out.println("Showing context menu");
-		});
-
 		contextMenu.getChildren().add(roundPanel);
 		contextMenu.getChildren().add(selectionWedge);
 		contextMenu.getChildren().add(split1);

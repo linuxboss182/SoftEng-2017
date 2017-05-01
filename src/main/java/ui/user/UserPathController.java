@@ -141,8 +141,6 @@ public class UserPathController
 
 		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
 			directionsListView.setPrefHeight((double)newHeight - startLblHBox.getHeight() - destLblHBox.getHeight() - directionsLblHBox.getHeight() - doneBtnHBox.getHeight());
-			System.out.println("listView Height: "+ directionsListView.getHeight());
-			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
 		});
 	}
 
