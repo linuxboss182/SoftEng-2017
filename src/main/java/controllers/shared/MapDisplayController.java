@@ -231,10 +231,10 @@ public abstract class MapDisplayController
 	 */
 	protected void initGlobalFilter() {
 		this.parentBorderPane.addEventFilter(MouseEvent.ANY, e-> {
-			timer.resetTimer(getTimerTask());
+			timer.resetTimer();
 		});
 		this.parentBorderPane.addEventFilter(KeyEvent.ANY, e-> {
-			timer.resetTimer(getTimerTask());
+			timer.resetTimer();
 		});
 	}
 

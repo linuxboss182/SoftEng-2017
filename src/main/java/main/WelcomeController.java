@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
+import java.util.TimerTask;
+
 
 public class WelcomeController
 {
@@ -22,7 +24,7 @@ public class WelcomeController
 	}
 
 	public UserState getState() {
-		return new UserState(this.getScene().getRoot());
+		return new UserState(this.getScene().getRoot(), this.getScene());
 	}
 	@FXML
 	public void onClick(){

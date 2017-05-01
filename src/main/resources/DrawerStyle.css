@@ -62,12 +62,10 @@
 }
 
 .jfx-list-view {
-    -fx-fit-to-height: true;
     -fx-max-width: 418px;
     -fx-pref-width: 418px;
     -fx-min-width: 418px;
     -fx-cell-size: 50px;
-    -fx-highlight-fill: #BDBDBD;
     -fx-font-size: 14px;
     -fx-focus-traversable: false;
     -fx-font-family: "Roboto";

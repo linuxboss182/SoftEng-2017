@@ -84,9 +84,9 @@
                         <AnchorPane fx:id="floorsTraveledAnchorPane" prefHeight="106.0" prefWidth="803.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
                </bottom>
                 </BorderPane>
-                <Pane fx:id="drawerParentPane" prefHeight="200.0" prefWidth="200.0">
+                <Pane fx:id="drawerParentPane">
                     <children>
-                        <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="418.0">
+                        <VBox fx:id="pathVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="418.0">
                             <children>
 
                                 <HBox fx:id="startLblHBox">
@@ -135,8 +135,8 @@
 
                                     </children>
                                 </HBox>
-                                <JFXListView fx:id="directionsListView"/>
-                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                <JFXListView fx:id="directionsListView" />
+                                <HBox fx:id="doneBtnHBox">
                                     <children>
                                         <JFXButton fx:id="doneBtn" buttonType="RAISED" onMouseClicked="#doneBtnClicked" prefHeight="25.0" prefWidth="211.0" text="DONE">
                                             <HBox.margin>
