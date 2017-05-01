@@ -174,7 +174,7 @@ public class EditorController
 
 		this.showRoomsToggleBtn.setOnAction(action -> this.redisplayGraph());
 
-		timer.resetTimer(getTimerTask());
+		timer.resetTimer();
 		this.timeoutField.setText(Double.toString(this.directory.getTimeout()/1000));
 
 		this.timeoutField.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -70,7 +70,7 @@ public class UserPathController
 	@FXML private Label destLbl;
 	@FXML private Label directionsLbl;
 	@FXML private VBox pathVBox;
-	@FXML private HBox backHBox;
+	@FXML private HBox doneBtnHBox;
 	@FXML private HBox startLblHBox;
 	@FXML private ImageView destImageView;
 	@FXML private JFXToolbar topToolBar;
@@ -105,6 +105,7 @@ public class UserPathController
 		}
 	}
 
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize();
@@ -132,23 +133,28 @@ public class UserPathController
 		destImageView.setImage(new Image("/bPin.png"));
 
 
-		// Slightly delay the call so that the bounds aren't screwed up
-		Platform.runLater(() -> resizeDrawerListener(drawerParentPane.getHeight()));
+		Platform.runLater(() -> {
+			resizeDrawerListener();
+		});
 
-		resizeDrawerListener(677.0);
-		this.timer.resetTimer(this.getTimerTask());
+
+		this.timer.resetTimer();
 
 		this.setUpDirectionListView();
 	}
 
-	private void resizeDrawerListener(Double newSceneHeight) {
-		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> resizeDrawerListener((double)newHeight));
-		//directionsListView.setPrefHeight(newSceneHeight - startHBox.getHeight() - destHBox.getHeight() - goHBox.getHeight() - bottomHBox.getHeight());
+	private void resizeDrawerListener() {
+		directionsListView.setPrefHeight(drawerParentPane.getHeight() - startLblHBox.getHeight() - destLblHBox.getHeight() - directionsLblHBox.getHeight() - doneBtnHBox.getHeight());
+
+		drawerParentPane.heightProperty().addListener((ignored, old, newHeight) -> {
+			directionsListView.setPrefHeight((double)newHeight - startLblHBox.getHeight() - destLblHBox.getHeight() - directionsLblHBox.getHeight() - doneBtnHBox.getHeight());
+			System.out.println("listView Height: "+ directionsListView.getHeight());
+			System.out.println("drawerParentPane: " + drawerParentPane.getHeight());
+		});
+
 	}
 
 	private void setUpDirectionListView() {
-		directionsListView.setPrefHeight(300);
-		directionsListView.setMinHeight(300);
 
 		directionsListView.setCellFactory(d -> new ListCell<Direction>() {
 			private final ImageView icon = new ImageView();
@@ -182,7 +188,7 @@ public class UserPathController
 		destLblHBox.getStyleClass().add("hbox");
 		directionsLblHBox.getStyleClass().add("hbox-go");
 		topToolBar.getStyleClass().add("tool-bar");
-		//drawerParentPane.getStyleClass().add("drawer");
+		drawerParentPane.getStyleClass().add("drawer");
 		startLbl.getStyleClass().add("path-label");
 		destLbl.getStyleClass().add("path-label");
 		sendToPhoneBtn.getStyleClass().add("jfx-button");
@@ -190,9 +196,6 @@ public class UserPathController
 		doneBtn.getStyleClass().add("blue-button");
 		helpBtn.getStyleClass().add("blue-button");
 		textDirections.setFont(Font.font("Roboto", 15));
-//		directionsTextField.getStyleClass().add("black-text");
-//		directionsTextField.setLineSpacing(5);
-//		directionsTextField.setPadding(new Insets(5));
 
 	}
 
