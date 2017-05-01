@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -462,8 +463,22 @@ public class EditorController
 		Stage addProStage = new Stage();
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
+		addProStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		addProStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			addProStage.getScene().getWindow().hide();
+
+		});
 		addProStage.showAndWait();
 		this.populateTableView();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 	@FXML
@@ -563,7 +578,21 @@ public class EditorController
 		Stage addProStage = new Stage();
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
+		addProStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		addProStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			addProStage.getScene().getWindow().hide();
+
+		});
 		addProStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 
@@ -1099,6 +1128,8 @@ public class EditorController
 	 */
 	@FXML
 	private void loadProfessionalsFile() {
+		timer.emptyTasks();
+		timer.cancelTimer();
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains people who are already in the application, they will be duplicated.");
 
@@ -1117,9 +1148,14 @@ public class EditorController
 				this.populateTableView();
 			}
 		}
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 	@FXML
 	private void loadNodesFile() {
+		timer.emptyTasks();
+		timer.cancelTimer();
 		Alert ask = new Alert(Alert.AlertType.CONFIRMATION, "If the selected file "
 				+ "contains nodes who are already in the application, they will be duplicated.");
 
@@ -1140,6 +1176,9 @@ public class EditorController
 				this.redisplayGraph();
 			}
 		}
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 
 	/**
@@ -1191,6 +1230,20 @@ public class EditorController
 		helpStage.getIcons().add(new Image("bwhIcon.png"));
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
+		helpStage.addEventFilter(MouseEvent.ANY, e-> {
+			timer.resetTimer();
+		});
+		helpStage.addEventFilter(KeyEvent.ANY, e ->{
+			timer.resetTimer();
+		});
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			helpStage.getScene().getWindow().hide();
+
+		});
 		helpStage.showAndWait();
+		timer.emptyTasks();
+		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
+			setState(directory.getCaretaker().getState());
+		});
 	}
 }
