@@ -236,24 +236,44 @@ public class EditorController
 		Bathroom.setScaleY(0.3);
 		Bathroom.setX(-140);
 		Bathroom.setY(-50);
+		ImageView RestroomText = new ImageView("RestroomText.png");
+		RestroomText.setScaleX(0.25);
+		RestroomText.setScaleY(0.25);
+		RestroomText.setX(-240);
+		RestroomText.setY(-20);
 
 		ImageView Kiosk = new ImageView("Kiosk.png");
 		Kiosk.setScaleX(0.3);
 		Kiosk.setScaleY(0.3);
 		Kiosk.setX(45);
 		Kiosk.setY(-50);
+		ImageView KioskText = new ImageView("KioskText.png");
+		KioskText.setScaleX(0.25);
+		KioskText.setScaleY(0.25);
+		KioskText.setX(-60);
+		KioskText.setY(-20);
 
-		ImageView ElevatorUp = new ImageView("Elevator.png");
+		ImageView ElevatorUp = new ImageView("ElevatorUp.png");
 		ElevatorUp.setScaleX(0.3);
 		ElevatorUp.setScaleY(0.3);
 		ElevatorUp.setX(-50);
 		ElevatorUp.setY(-140);
+		ImageView ElevatorUpText = new ImageView("ElevatorUpText.png");
+		ElevatorUpText.setScaleX(0.25);
+		ElevatorUpText.setScaleY(0.25);
+		ElevatorUpText.setX(-155);
+		ElevatorUpText.setY(-110);
 
-		ImageView ElevatorDown = new ImageView("Elevator.png");
+		ImageView ElevatorDown = new ImageView("ElevatorDown.png");
 		ElevatorDown.setScaleX(0.3);
 		ElevatorDown.setScaleY(0.3);
 		ElevatorDown.setX(-50);
 		ElevatorDown.setY(45);
+		ImageView ElevatorDownText = new ImageView("ElevatorDownText.png");
+		ElevatorDownText.setScaleX(0.25);
+		ElevatorDownText.setScaleY(0.25);
+		ElevatorDownText.setX(-155);
+		ElevatorDownText.setY(25);
 
 		Arc roundPanel = new Arc(0, 0, contextRad, contextRad, 0, 360);
 		roundPanel.setType(ArcType.OPEN);
@@ -299,8 +319,6 @@ public class EditorController
 			System.out.println("Showing context menu");
 		});
 
-//		selectionWedge.setOnMouseDragReleased(__ -> System.out.println("released wedge"));
-//		roundPanel.setOnMouseDragReleased(__ -> System.out.println("released panel"));
 		contextMenu.getChildren().add(roundPanel);
 		contextMenu.getChildren().add(selectionWedge);
 		contextMenu.getChildren().add(split1);
@@ -311,6 +329,10 @@ public class EditorController
 		contextMenu.getChildren().add(Kiosk);
 		contextMenu.getChildren().add(ElevatorUp);
 		contextMenu.getChildren().add(ElevatorDown);
+		contextMenu.getChildren().add(RestroomText);
+		contextMenu.getChildren().add(KioskText);
+		contextMenu.getChildren().add(ElevatorUpText);
+		contextMenu.getChildren().add(ElevatorDownText);
 		contextMenu.setVisible(true);
 		this.nodePane.getChildren().add(contextMenu);
 	}
@@ -996,7 +1018,7 @@ public class EditorController
 	}
 
 
-	
+
 	private void selectAllNodesOnFloor() {
 		this.directory.getNodesOnFloor(directory.getFloor()).forEach(node -> {
 			if (!this.selectedNodes.contains(node)) {
