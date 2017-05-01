@@ -97,6 +97,7 @@ public class EditorController
 	@FXML private JFXButton modifyAccountBtn;
 	@FXML private TextField timeoutField;
 	@FXML public JFXComboBox<RoomType> roomTypeComboBox;
+	@FXML private JFXToggleButton setDefaultViewBtn;
 
 	/**
 	 * Class implemented for use in multiple selection
@@ -129,6 +130,13 @@ public class EditorController
 	private double selectionStartY;
 	private double selectionEndX;
 	private double selectionEndY;
+
+	private boolean isSelectingMinView = false;
+	private boolean isSelectingMaxView = false;
+	private double selectedMinX;
+	private double selectedMaxX;
+	private double selectedMinY;
+	private double selectedMaxY;
 
 
 	private double clickedX, clickedY; //Where we clicked on the anchorPane
@@ -394,8 +402,7 @@ public class EditorController
 
 	@FXML
 	private void setDefaultViewBtnClicked(){
-		Bounds viewport = contentAnchor.localToScene(contentAnchor.getBoundsInLocal());
-		directory.setDefaultView(viewport.getMinX(), viewport.getMaxX(), viewport.getMinY(), viewport.getMaxY());
+		isSelectingMinView=true;
 	}
 
 	@FXML
@@ -801,6 +808,47 @@ public class EditorController
 				this.selectionStartX = e.getX();
 				this.selectionStartY = e.getY();
 			}
+			if(setDefaultViewBtn.selectedProperty().getValue()){
+				this.selectionStartX = e.getX();
+				this.selectionStartY = e.getY();
+
+//				this.selectedMinX = clickedX;
+//				this.selectedMinY = clickedY;
+//				this.isSelectingMaxView=true;
+//				this.isSelectingMinView=false;
+
+//				Rectangle r = new Rectangle(15, 15, Color.RED);
+//				r.setX(selectionStartX);
+//				r.setY(selectionStartY);
+
+//				linePane.getChildren().add(r);
+			}else if(this.isSelectingMaxView){
+//				this.selectedMaxX = clickedX;
+//				this.selectedMaxY = clickedY;
+//				this.isSelectingMaxView=false;
+//				directory.setDefaultView(selectedMinX, selectedMaxX,
+//						selectedMinY, selectedMaxY);
+//				System.out.println("selectedMinX = " + selectedMinX);
+//				System.out.println("selectedMaxX = " + selectedMaxX);
+//				System.out.println("selectedMinY = " + selectedMinY);
+//				System.out.println("selectedMaxY = " + selectedMaxY);
+//
+//				Rectangle r = new Rectangle();
+//				r.setX(selectionStartX);
+//				r.setWidth(e.getX() - selectionStartX);
+//
+//				r.setY(selectionStartY);
+//				r.setHeight(e.getY() - selectionStartY);
+//
+//				r.setFill(Color.SKYBLUE);
+//				r.setStroke(Color.BLUE);
+//				r.setOpacity(0.5);
+//
+//				this.redisplayAll();
+//
+//				linePane.getChildren().add(r);
+
+			}
 		});
 
 		contentAnchor.setOnMouseDragged(e-> {
@@ -826,6 +874,25 @@ public class EditorController
 				r.setOpacity(0.5);
 				this.redisplayAll();
 				this.linePane.getChildren().add(r);
+			} else if(setDefaultViewBtn.selectedProperty().getValue()){
+//				this.selectedMaxX = clickedX;
+//				this.selectedMaxY = clickedY;
+//				this.isSelectingMaxView=false;
+
+				Rectangle r = new Rectangle();
+				r.setX(selectionStartX);
+				r.setWidth(e.getX() - selectionStartX);
+
+				r.setY(selectionStartY);
+				r.setHeight(e.getY() - selectionStartY);
+
+				r.setFill(Color.SKYBLUE);
+				r.setStroke(Color.BLUE);
+				r.setOpacity(0.5);
+
+				this.redisplayAll();
+
+				linePane.getChildren().add(r);
 			} else if(! this.showRoomsToggleBtn.isSelected()) {
 				// Limits the dragging for x and y coordinates. (panning I mean)
 				if (e.getSceneX() >= mapSplitPane.localToScene(mapSplitPane.getBoundsInLocal()).getMinX() && e.getSceneX() <=  mapScroll.localToScene(mapScroll.getBoundsInLocal()).getMaxX()) {
@@ -869,6 +936,18 @@ public class EditorController
 						this.selectNode(n);
 					}
 				});
+			}else if(setDefaultViewBtn.selectedProperty().getValue()){
+				this.selectionEndX = e.getX();
+				this.selectionEndY = e.getY();
+//				this.redisplayAll(); // this is to clear the rectangle off of the pane
+
+				System.out.println("selectedMinX = " + selectionStartX);
+				System.out.println("selectedMaxX = " + selectionEndX);
+				System.out.println("selectedMinY = " + selectionStartY);
+				System.out.println("selectedMaxY = " + selectionEndY);
+
+				directory.setDefaultView(selectionStartX, selectionEndX,
+						selectionStartY, selectionEndY);
 			}
 			if(this.showRoomsToggleBtn.isSelected()) {
 				this.displayRooms();
