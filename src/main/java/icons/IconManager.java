@@ -150,7 +150,7 @@ public class IconManager
 	 */
 	public Icon makeIconInner(Room room, BiConsumer<Room, Icon> listenerAdder) {
 		RoomType type = room.getType();
-		String name = room.getDisplayName();
+		String name = room.getDisplayName(); // CHANGE TO getName TO SHOW ALL LABELS
 		Image originalImage = type.getImage();
 		double x = room.getLocation().getX();
 		double y = room.getLocation().getY();
@@ -242,13 +242,13 @@ public class IconManager
 			});
 		}
 
-		if (onMouseDraggedOnLabelHandler != null) {
-			Label label = icon.getLabel();
-			BiConsumer<Room, MouseEvent> listener = onMouseDraggedOnLabelHandler;
-			label.setOnMouseDragged(event -> {
-				listener.accept(room, event);
-			});
-		}
+//		if (onMouseDraggedOnLabelHandler != null) {
+//			Label label = icon.getLabel();
+//			BiConsumer<Room, MouseEvent> listener = onMouseDraggedOnLabelHandler;
+//			label.setOnMouseDragged(event -> {
+//				listener.accept(room, event);
+//			});
+//		}
 	}
 
 

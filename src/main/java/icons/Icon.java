@@ -36,8 +36,12 @@ public class Icon
 		return this.image;
 	}
 
-	Label getLabel() {
+	public Label getLabel() {
 		return this.label;
+	}
+
+	public Room getRoom() {
+		return this.room;
 	}
 
 	void setImage(Image image) {

@@ -3,6 +3,7 @@ package ui.admin;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
+import icons.Icon;
 import icons.IconManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -189,11 +190,16 @@ public class EditorController
 	}
 
 	void initializeIcons() {
-		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
-			event.consume();
-			room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
-					event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
-		});
+//		iconManager.setOnMouseDraggedOnLabel((room, event) -> {
+//			event.consume();
+//			Icon icon = room.getIcon();
+//			if (icon != null) {
+//				Label label = icon.getLabel();
+//				label.relocate(event.getX(), event.getY());
+//			}
+//			room.setLabelOffset(event.getSceneX() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinX(),
+//					event.getSceneY() - contentAnchor.localToScene(contentAnchor.getBoundsInLocal()).getMinY());
+//		});
 	}
 
 	//check if secondary button is down before populating round panel
@@ -948,6 +954,7 @@ public class EditorController
 
 		contentAnchor.setOnMousePressed(e -> {
 			e.consume();
+			LabelTracker.update(e);
 			clickedX = e.getX();
 			clickedY = e.getY();
 			if(e.isShiftDown()) {
@@ -1402,6 +1409,13 @@ public class EditorController
 	 */
 	public void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getIcons(directory.getRoomsOnFloor()));
+		for (Icon icon : iconManager.getIcons(directory.getRoomsOnFloor())) {
+			icon.getTransforms().clear();
+			Label label = icon.getLabel();
+			label.setOnMouseClicked(event -> {
+				LabelTracker.set(label, icon.getRoom());
+			});
+		}
 	}
 
 	/**
@@ -1442,5 +1456,33 @@ public class EditorController
 		TimeoutTimer.getTimeoutTimer().registerTask(() -> {
 			setState(directory.getCaretaker().getState());
 		});
+	}
+
+}
+
+/**
+ * Class used to move labels
+ *
+ * @note This class should ABSOLUTELY NEVER be used outside this file
+ */
+class LabelTracker // Actually, this class should never be used at all; oops.
+{
+	static double MAGIC_X_OFFSET = 27;
+	static double MAGIC_Y_OFFSET = 7;
+	static boolean isActive = false;
+	static Room room;
+	static Label label;
+	static void set(Label label, Room room) {
+		LabelTracker.label = label;
+		LabelTracker.room = room;
+		LabelTracker.isActive = true;
+	}
+	static void update(MouseEvent e) {
+		if ((LabelTracker.label != null) && LabelTracker.isActive) {
+			label.relocate(e.getX() - MAGIC_X_OFFSET, e.getY() - MAGIC_Y_OFFSET);
+			LabelTracker.isActive = false;
+			room.setLabelOffset(e.getX() - MAGIC_X_OFFSET, e.getY() - MAGIC_Y_OFFSET);
+			LabelTracker.label = null;
+		}
 	}
 }
