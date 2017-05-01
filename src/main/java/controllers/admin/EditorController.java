@@ -527,6 +527,7 @@ public class EditorController
 		loader.setLocation(this.getClass().getResource("/AddProUI.fxml"));
 		Scene addProScene = new Scene(loader.load());
 		Stage addProStage = new Stage();
+		addProStage.setResizable(false);
 		addProStage.setTitle("Faulkner Hospital Navigator Import Professionals");
 		addProStage.getIcons().add(new Image("/bwhIcon.png"));
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
@@ -646,6 +647,7 @@ public class EditorController
 		Stage addProStage = new Stage();
 		addProStage.setTitle("Faulkner Hospital Navigator Account Manager");
 		addProStage.getIcons().add(new Image("/bwhIcon.png"));
+		addProStage.setResizable(false);
 		addProStage.initOwner(contentAnchor.getScene().getWindow());
 		addProStage.setScene(addProScene);
 		addProStage.addEventFilter(MouseEvent.ANY, e-> {
@@ -1400,6 +1402,7 @@ public class EditorController
 		Stage helpStage = new Stage();
 		helpStage.setTitle("Faulkner Hospital Navigator Help Page");
 		helpStage.getIcons().add(new Image("/bwhIcon.png"));
+		helpStage.setResizable(false);
 		helpStage.initOwner(contentAnchor.getScene().getWindow());
 		helpStage.setScene(helpScene);
 		helpStage.addEventFilter(MouseEvent.ANY, e-> {

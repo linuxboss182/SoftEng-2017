@@ -25,11 +25,16 @@
                 </JFXHamburger>
             </left>
          <right>
-            <HBox prefHeight="45.0" prefWidth="86.0" BorderPane.alignment="CENTER">
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="63.0" prefWidth="248.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="25.0" prefWidth="81.0" style="-fx-background-color: #5087b4;" styleClass="blue-button" text="Help" textFill="WHITE">
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <HBox.margin>
-                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <JFXButton id="jfx-button" fx:id="helpBtn" buttonType="RAISED" onMouseClicked="#helpBtnClicked" prefHeight="29.0" prefWidth="81.0" style="-fx-background-color: #5087b4;" styleClass="blue-button" text="Help" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets bottom="15.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </JFXButton>
                </children>

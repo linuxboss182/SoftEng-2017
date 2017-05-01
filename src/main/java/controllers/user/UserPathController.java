@@ -29,6 +29,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
@@ -37,6 +38,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import main.ApplicationController;
 import main.DirectionsGenerator;
+import main.TimeoutTimer;
 import main.algorithms.PathNotFoundException;
 import main.algorithms.Pathfinder;
 
@@ -459,4 +461,6 @@ public class UserPathController
 	private void displayRooms() {
 		this.nodePane.getChildren().setAll(iconManager.getSavedIcons(directory.getRoomsOnFloor()));
 	}
+
+
 }
