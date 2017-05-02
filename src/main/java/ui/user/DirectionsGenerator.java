@@ -64,8 +64,7 @@ public class DirectionsGenerator
 	 * @return String directions that tell how to reach a destination
 	 */
 	private static List<Direction> getTextDirections(LinkedList<Node> path) {
-		List<Direction>  directions = new ArrayList<Direction>();
-		directions.add(new Direction("First, ", IconType.PORTAL, path.get(0)));
+		List<Direction>  directions = new ArrayList<>();
 
 		int leftTurns = 0, rightTurns = 0;
 		// redo text directions with switch cases based on types of nodes

@@ -163,7 +163,7 @@ public class UserPathController
 			}
 		});
 
-		directionsListView.setMouseTransparent(true);
+//		directionsListView.setMouseTransparent(true);
 		directionsListView.setFocusTraversable(false);
 	}
 

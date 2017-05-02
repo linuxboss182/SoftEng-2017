@@ -315,7 +315,7 @@ class DatabaseLoader
 
 		for (Node n : dir.getNodes()) {
 //			PRINTLN("Saving edges for node "+n.hashCode());
-			for (Node m : dir.getNodeNeighbors(n)) {
+			for (Node m : dir.getAllNodeNeighbors(n)) {
 //				PRINTLN("Saving edge to "+m.hashCode());
 				query = StoredProcedures.procInsertEdge(n.hashCode(), m.hashCode());
 				db.executeUpdate(query);
